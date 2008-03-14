@@ -88,10 +88,10 @@ UNINITED = 2
 INITED   = 3
 DISABLED = 4
 
-def deleteFile(path) {
+def deleteFile(path):
     if os.path.exists(path):
         os.unlink(path)
-}
+
 
 def makeDataName(path, ext = ''):
     (dir, test) = os.path.split(path)
