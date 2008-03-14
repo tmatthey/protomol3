@@ -11,7 +11,6 @@ protomol-test/ConfigTests/CnTest -text
 protomol-test/ConfigTests/CoulombForceCutoffTest -text
 protomol-test/ConfigTests/CoulombForceSFTest -text
 protomol-test/ConfigTests/CutoffTest -text
-protomol-test/ConfigTests/DielecForceCutoffTest -text
 protomol-test/ConfigTests/DielecForceSFTest -text
 protomol-test/ConfigTests/DihedralForceTest -text
 protomol-test/ConfigTests/EnergiesTest -text
