@@ -1,4 +1,6 @@
 * text=auto !eol
+fah-core/SConstruct -text
+fah-core/protomol.cpp -text
 protomol-test/ConfigTests/ProtoMolCheckSize -text
 protomol-test/ConfigTests/VelacTest -text
 protomol-test/ConfigTests/data/VelacTest.conf -text
