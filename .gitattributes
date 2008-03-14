@@ -4,9 +4,15 @@ fah-core/protomol.cpp -text
 protomol-test/ConfigTests/AngleForceTest -text
 protomol-test/ConfigTests/BondForceTest -text
 protomol-test/ConfigTests/BornForceTest -text
+protomol-test/ConfigTests/CoulombForceCutoffTest -text
+protomol-test/ConfigTests/CoulombForceSFTest -text
+protomol-test/ConfigTests/DielecForceCutoffTest -text
+protomol-test/ConfigTests/DielecForceSFTest -text
 protomol-test/ConfigTests/DihedralForceTest -text
 protomol-test/ConfigTests/EnergiesTest -text
 protomol-test/ConfigTests/ImproperForceTest -text
+protomol-test/ConfigTests/LJForceCutoffTest -text
+protomol-test/ConfigTests/LJForceSFTest -text
 protomol-test/ConfigTests/PDBTest -text
 protomol-test/ConfigTests/ProtoMolCheckSize -text
 protomol-test/ConfigTests/SCPISMForceTest -text
