@@ -3,4 +3,4 @@ import os
 import sys
 
 dir = os.path.dirname(sys.argv[0])
-os.system('python ProtoMolCheckSize DielecForceSF xyz')
+os.system('python ProtoMolCheck DielecForceSF xyz')

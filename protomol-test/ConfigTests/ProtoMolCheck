@@ -1,0 +1,44 @@
+#!/usr/bin/python
+import subprocess
+import os
+import sys
+
+
+# Setup variables
+name = sys.argv[1]
+test = name + 'Test'
+base = 'data' + os.sep + test
+cmd = 'ProtoMol ' + base + '.conf'
+log = base + '.log'
+
+
+# Check for DataComparator
+comparator = '../DataComparator'
+if not os.path.exists(comparator):
+    print 'ERROR missing DataComparator please run scons in test root'
+    sys.exit(1)
+
+
+# Run the test
+stdout = stderr = open(log, 'w')
+p = subprocess.Popen(cmd, shell = True, stdout = stdout, stderr = stderr)
+p.wait()
+
+
+# Check the output
+for ext in sys.argv[2:]:
+    output = 'data' + os.sep + test + '.' + ext
+    expect = output + '.expect'
+
+    if os.path.exists(output):
+        if os.path.exists(expect):
+            cmd = comparator + ' ' + output + ' ' + expect + ' 0.000001'
+            subprocess.Popen(cmd, shell = True).wait()
+
+        else:
+            print '%8d byte %s' % (os.stat(output).st_size, ext)
+
+        os.unlink(output)
+
+    else:
+        print 'ERROR no "' + output + '" file'

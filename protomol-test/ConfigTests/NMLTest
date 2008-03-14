@@ -3,5 +3,5 @@ import os
 import sys
 
 dir = os.path.dirname(sys.argv[0])
-os.system('python ProtoMolCheckSize HessianInt xyz')
-os.system('python ProtoMolCheckSize NML xyz')
+os.system('python ProtoMolCheck HessianInt xyz')
+os.system('python ProtoMolCheck NML xyz')
