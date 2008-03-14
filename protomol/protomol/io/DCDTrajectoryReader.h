@@ -41,6 +41,7 @@ namespace ProtoMol {
   public:
 
     bool read(Vector3DBlock &coords);
+    void doRead(Vector3DBlock &coords);
     XYZ getXYZ() const;
 
     Vector3DBlock *orphanCoords();

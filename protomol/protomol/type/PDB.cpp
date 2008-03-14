@@ -62,7 +62,7 @@ void PDB::clear() {
 //____  with both systems (since we never change the length, we you give us is
 //____  what we use)
 
-MyStreamer &operator<<(MyStreamer &OS, const PDB::Atom &p) {
+MyStreamer &ProtoMol::operator<<(MyStreamer &OS, const PDB::Atom &p) {
   OS << p.elementType << "," << p.elementNum << "," << p.elementName <<
   "," << p.altLoc << "," << p.residueName << "," << p.chainID << "," <<
   p.residueNum << "," << p.insertionCode << "," << p.occupancy << "," <<

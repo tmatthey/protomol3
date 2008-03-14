@@ -187,14 +187,14 @@ void XYZTrajectoryWriter::setCoords(const Vector3DBlock &coords) {
   myCoords = &coords;
 }
 
-XYZTrajectoryWriter &operator<<(XYZTrajectoryWriter &xyzWriter,
-                                const XYZ &xyz) {
+XYZTrajectoryWriter &ProtoMol::operator<<(XYZTrajectoryWriter &xyzWriter,
+                                          const XYZ &xyz) {
   xyzWriter.write(xyz);
   return xyzWriter;
 }
 
-XYZTrajectoryWriter &operator<<(XYZTrajectoryWriter &xyzWriter,
-                                const Vector3DBlock &coords) {
+XYZTrajectoryWriter &ProtoMol::operator<<(XYZTrajectoryWriter &xyzWriter,
+                                          const Vector3DBlock &coords) {
   xyzWriter.write(coords);
   return xyzWriter;
 }

@@ -15,9 +15,8 @@ namespace ProtoMol {
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XYZ() {};
-    XYZ(size_t n) : coords(n,
-                           Vector3D(0.0, 0.0,
-                                    0.0)), names(n, std::string("")) {}
+    XYZ(size_t n) :
+      coords(n, Vector3D(0.0, 0.0, 0.0)), names(n, std::string()) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class XYZ
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

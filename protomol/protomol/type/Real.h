@@ -39,6 +39,8 @@ namespace ProtoMol {
 #ifdef USE_REAL_IS_FLOAT
   typedef float Real;
 #endif
+
+  inline Real RealAbs(Real x) {return x < 0 ? -x : x;}
 }
 #endif /*REAL_H*/
 

@@ -18,6 +18,9 @@ namespace ProtoMol {
   /// Does an abort, calling the adequate abort system function
   void protomolAbort();
 
+  void splitFileName(const std::string &filename, std::string &dirname,
+                     std::string &basename, std::string &extension);
+
   /// Sets function to be called when calling protomolAbort()
   void setProtomolAbort(void (*abortFunction)());
 

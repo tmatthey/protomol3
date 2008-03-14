@@ -123,14 +123,19 @@ vector<string> *XYZReader::orphanNames() {
 }
 
 XYZReader &ProtoMol::operator>>(XYZReader &xyzReader, XYZ &xyz) {
-  xyzReader.read(xyz.coords, xyz.names);
+  if (!xyzReader.read(xyz.coords, xyz.names))
+    THROWS("Failed to read XYZ file '" << xyzReader.getFilename() << "'");
+
   return xyzReader;
 }
 
-XYZReader &ProtoMol::operator>>(XYZReader &xyzReader, Vector3DBlock &coords) {
-  if (xyzReader.myNames == NULL)
-    xyzReader.myNames = new vector<string>();
-  xyzReader.read(coords, *xyzReader.myNames);
+XYZReader &ProtoMol::operator>>(XYZReader &xyzReader,
+                                Vector3DBlock &coords) {
+  if (xyzReader.myNames == NULL) xyzReader.myNames = new vector<string>();
+
+  if (!xyzReader.read(coords, *xyzReader.myNames))
+    THROWS("Failed to read XYZ file '" << xyzReader.getFilename() << "'");
+
   return xyzReader;
 }
 

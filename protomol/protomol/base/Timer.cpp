@@ -177,7 +177,7 @@ Timer &Timer::operator-=(const TimeRep &time) {
   return *this;
 }
 
-MyStreamer &operator<<(MyStreamer &os, const Timer &timer) {
+MyStreamer &ProtoMol::operator<<(MyStreamer &os, const Timer &timer) {
   os << timer.getTime();
   return os;
 }

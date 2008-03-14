@@ -70,6 +70,25 @@ namespace ProtoMol {
   bool isAccessible(const string &fileName) {
     return ::access(fileName.c_str(), F_OK) == 0;
   }
+  
+  void splitFileName(const string &filename, string &dirname,
+                     string &basename, string &extension) {
+    string::size_type pos = filename.rfind(PATHSEP);
+
+    if (pos == string::npos) basename = filename;
+    else {
+      dirname = filename.substr(0, pos);
+      basename = filename.substr(pos + 1);
+    }
+
+    pos = basename.rfind('.');
+
+    if (pos != string::npos) {
+      extension = basename.substr(pos + 1);
+      basename = basename.substr(0, pos);
+    }
+  }
+
 
 //____ protomolAbort
 

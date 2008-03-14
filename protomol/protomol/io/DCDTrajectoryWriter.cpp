@@ -240,14 +240,14 @@ void DCDTrajectoryWriter::setFirststep(unsigned int firststep) {
   myFirstStep = firststep;
 }
 
-DCDTrajectoryWriter &operator<<(DCDTrajectoryWriter &dcdWriter,
-                                const Vector3DBlock &coords) {
+DCDTrajectoryWriter &ProtoMol::operator<<(DCDTrajectoryWriter &dcdWriter,
+                                          const Vector3DBlock &coords) {
   dcdWriter.write(coords);
   return dcdWriter;
 }
 
-DCDTrajectoryWriter &operator<<(DCDTrajectoryWriter &dcdWriter,
-                                const XYZ &xyz) {
+DCDTrajectoryWriter &ProtoMol::operator<<(DCDTrajectoryWriter &dcdWriter,
+                                          const XYZ &xyz) {
   dcdWriter.write(xyz.coords);
   return dcdWriter;
 }

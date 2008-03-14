@@ -2,6 +2,7 @@
 
 #include <protomol/base/Report.h>
 #include <protomol/base/SystemUtilities.h>
+#include <protomol/base/StringUtilities.h>
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -47,19 +48,28 @@ bool DCDTrajectoryReader::tryFormat() {
 }
 
 bool DCDTrajectoryReader::read() {
-  if (myCoords == NULL)
-    myCoords = new Vector3DBlock();
+  if (!myCoords) myCoords = new Vector3DBlock();
   return read(*myCoords);
 }
 
 bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
+  try {
+    doRead(coords);
+
+    return true;
+  } catch (const Exception &e) {}
+
+  return false;
+}
+  
+void DCDTrajectoryReader::doRead(Vector3DBlock &coords) {
   if (!is_open()) {
     // First time ...
     myX.resize(0);
     myY.resize(0);
     myZ.resize(0);
 
-    if (!open()) return false;
+    if (!open()) THROW("Open failed");
 
     file.seekg(0, ios::end);
     ios::pos_type size = file.tellg();
@@ -76,18 +86,21 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
 
     // Check endianess and if the header looks ok out ...
     if (static_cast<long>(size) >= 104 &&
-        (n == 84 || m == 84) && string(coord) == "CORD")
+        (n == 84 || m == 84) && string(coord) == "CORD") {
       if (m == 84) {
         mySwapEndian = true;
-        report << hint << "[DCDTrajectoryReader::read] Reading " <<
-        (ISLITTLEENDIAN ? "big" : "little")
-               << "endian input on " <<
-        (ISLITTLEENDIAN ? "little" : "big") << "endian machine." << endr;
-      } else {
-        file.setstate(ios::failbit);
-        close();
-        return false;
+        report << hint << "[DCDTrajectoryReader::read] Reading "
+               << (ISLITTLEENDIAN ? "big" : "little")
+               << "endian input on "
+               << (ISLITTLEENDIAN ? "little" : "big") << "endian machine."
+               << endr;
       }
+    } else {
+      file.setstate(ios::failbit);
+      close();
+      THROWS("Header invalid size=" << size << " n=" << n << " m=" << m
+             << " coord=" << coord);
+    }
 
     int32 freeIndexes = 0;
     file.seekg(40, ios::beg);
@@ -102,7 +115,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
     if (n != 84 || file.fail()) {
       file.setstate(ios::failbit);
       close();
-      return false;
+      THROW("Header check failed");
     }
     // Skip titles
     int32 l = 0;
@@ -124,7 +137,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
     if ((n - 4) % 80 != 0 || file.fail() || l != n) {
       file.setstate(ios::failbit);
       close();
-      return false;
+      THROW("Flag check failed");
     }
 
     n = 0;
@@ -139,7 +152,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
     if (n != 4 || l != 4 || file.fail()) {
       file.setstate(ios::failbit);
       close();
-      return false;
+      THROW("Length check failed");
     }
 
     // Skip free indexes
@@ -160,7 +173,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
   if ((unsigned int)count != myX.size() || file.fail()) {
     file.setstate(ios::failbit);
     close();
-    return false;
+    THROW("X dimension does not match atom count");
   }
 
   File::read(reinterpret_cast<char *>(&(myX[0])), sizeof(float4) * count);
@@ -171,7 +184,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
   if ((unsigned int)count != myX.size() || file.fail()) {
     file.setstate(ios::failbit);
     close();
-    return false;
+    THROW("X dimension does not match atom count");
   }
 
   // Y-dim
@@ -182,7 +195,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
   if ((unsigned int)count != myY.size() || file.fail()) {
     file.setstate(ios::failbit);
     close();
-    return false;
+    THROW("Y dimension does not match atom count");
   }
 
   File::read(reinterpret_cast<char *>(&(myY[0])), sizeof(float4) * count);
@@ -193,7 +206,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
   if ((unsigned int)count != myY.size() || file.fail()) {
     file.setstate(ios::failbit);
     close();
-    return false;
+    THROW("Y dimension does not match atom count");
   }
 
   // Z-dim
@@ -204,7 +217,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
   if ((unsigned int)count != myZ.size() || file.fail()) {
     file.setstate(ios::failbit);
     close();
-    return false;
+    THROW("Z dimension does not match atom count");
   }
 
   File::read(reinterpret_cast<char *>(&(myZ[0])), sizeof(float4) * count);
@@ -215,7 +228,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
   if ((unsigned int)count != myZ.size() || file.fail()) {
     file.setstate(ios::failbit);
     close();
-    return false;
+    THROW("Z dimension does not match atom count");
   }
 
   // Copy back to right structure
@@ -229,7 +242,7 @@ bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
     coords[i].z = myZ[i];
   }
 
-  return !file.fail();
+  if (file.fail()) THROW("IO failure");
 }
 
 XYZ DCDTrajectoryReader::getXYZ() const {
@@ -246,16 +259,29 @@ Vector3DBlock *DCDTrajectoryReader::orphanCoords() {
   return tmp;
 }
 
-DCDTrajectoryReader &operator>>(DCDTrajectoryReader &dcdTrajectoryReader,
-                                XYZ &xyz) {
-  dcdTrajectoryReader.read(xyz.coords);
+DCDTrajectoryReader &ProtoMol::
+operator>>(DCDTrajectoryReader &reader, XYZ &xyz) {
+  try {
+    reader.doRead(xyz.coords);
+
+  } catch (const Exception &e) {
+    THROWSC("Failed to read DCD file '" << reader.getFilename() << "'", e);
+  }
+
   if (xyz.coords.size() != xyz.names.size())
     xyz.names.resize(xyz.coords.size(), "NONAME");
-  return dcdTrajectoryReader;
+
+  return reader;
 }
 
-DCDTrajectoryReader &operator>>(DCDTrajectoryReader &dcdTrajectoryReader,
-                                Vector3DBlock &coords) {
-  dcdTrajectoryReader.read(coords);
-  return dcdTrajectoryReader;
+DCDTrajectoryReader &ProtoMol::
+operator>>(DCDTrajectoryReader &reader, Vector3DBlock &coords) {
+  try {
+    reader.doRead(coords);
+
+  } catch (const Exception &e) {
+    THROWSC("Failed to read DCD file '" << reader.getFilename() << "'", e);
+  }
+
+  return reader;
 }

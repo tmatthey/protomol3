@@ -61,7 +61,7 @@ bool XYZWriter::write(const Vector3DBlock &coords,
   return !file.fail();
 }
 
-XYZWriter &operator<<(XYZWriter &xyzWriter, const XYZ &xyz) {
+XYZWriter &ProtoMol::operator<<(XYZWriter &xyzWriter, const XYZ &xyz) {
   xyzWriter.write(xyz.coords, xyz.names);
   return xyzWriter;
 }
