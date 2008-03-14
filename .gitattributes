@@ -73,9 +73,6 @@ protomol-test/ConfigTests/data/CoulombForceSFTest.return.expect -text
 protomol-test/ConfigTests/data/CoulombForceSFTest.stderr.expect -text
 protomol-test/ConfigTests/data/CoulombForceSFTest.stdout.expect -text
 protomol-test/ConfigTests/data/CutoffTest.conf -text
-protomol-test/ConfigTests/data/CutoffTest.return.expect -text
-protomol-test/ConfigTests/data/CutoffTest.stderr.expect -text
-protomol-test/ConfigTests/data/CutoffTest.stdout.expect -text
 protomol-test/ConfigTests/data/DielecForceSFTest.conf -text
 protomol-test/ConfigTests/data/DielecForceSFTest.return.expect -text
 protomol-test/ConfigTests/data/DielecForceSFTest.stderr.expect -text
