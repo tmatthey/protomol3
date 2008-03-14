@@ -88,6 +88,10 @@ UNINITED = 2
 INITED   = 3
 DISABLED = 4
 
+def deleteFile(path) {
+    if os.path.exists(path):
+        os.unlink(path)
+}
 
 def makeDataName(path, ext = ''):
     (dir, test) = os.path.split(path)
@@ -215,9 +219,10 @@ def doTest(path):
         return FAILED
 
     # Clean up
-    os.unlink(std_file)
-    os.unlink(err_file)
-    os.unlink(ret_file)
+    deleteFile(std_file)
+    deleteFile(err_file)
+    deleteFile(ret_file)
+    deleteFile(base + LOG)
 
     return PASSED
 
@@ -285,8 +290,7 @@ def diffTest(path):
 
 def enableTest(test):
     name = makeDataName(test, DISABLE)
-    if os.path.exists(name):
-        os.unlink(name)
+    deleteFile(name)
 
 
 def disableTest(test):
@@ -434,8 +438,7 @@ def initializeTest(path):
     for ext in [STD, ERR, RET]:
         name = makeDataName(path, ext)
         expect = name + '.' + EXP
-        if os.path.exists(expect):
-            os.unlink(expect)
+        deleteFile(expect)
         os.rename(name, expect)
 
 
@@ -447,12 +450,10 @@ def initTest(test):
 
 
 def resetTest(path):
-    for ext in [STD, ERR, RET, DISABLE]:
+    for ext in [STD, ERR, RET, DISABLE, LOG]:
         name = makeDataName(path, ext)
-        if os.path.exists(name):
-            os.unlink(name)
-        if os.path.exists(name + '.' + EXP):
-            os.unlink(name + '.' + EXP)
+        deleteFile(name);
+        deleteFile(name + '.' + EXP)
 
 
 def tryTest(test):
