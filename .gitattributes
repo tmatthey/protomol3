@@ -515,6 +515,7 @@ protomol/protomol/switch/CmpCnCnSwitchingFunction.h -text
 protomol/protomol/switch/CnSwitchingFunction.cpp -text
 protomol/protomol/switch/CnSwitchingFunction.h -text
 protomol/protomol/switch/ComplementSwitchingFunction.h -text
+protomol/protomol/switch/CutoffSwitchingFunction.h -text
 protomol/protomol/switch/SConscript -text
 protomol/protomol/switch/UniversalSwitchingFunction.h -text
 protomol/protomol/topology/Angle.h -text

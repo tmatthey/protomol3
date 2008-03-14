@@ -54,6 +54,9 @@ void IOModule::read(ProtoMolApp *app) {
 
     swap(app->positions, pdb.coords);
 
+    // Add to output cache
+    app->outputCache.add(pdb.atoms);
+
   } else if (!(reader >> app->positions))
     THROW(string("Could not parse position file '") +
       config[InputPositions::keyword].getString() +

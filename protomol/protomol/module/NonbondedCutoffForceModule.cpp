@@ -21,6 +21,7 @@
 #include <protomol/switch/CmpCnCnSwitchingFunction.h>
 #include <protomol/switch/CnSwitchingFunction.h>
 #include <protomol/switch/UniversalSwitchingFunction.h>
+#include <protomol/switch/CutoffSwitchingFunction.h>
 
 #include <protomol/topology/CellListEnumeratorPeriodicBoundaries.h>
 #include <protomol/topology/CellListEnumeratorStandard.h>
@@ -41,6 +42,7 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
   typedef CnSwitchingFunction Cn;
   typedef CmpCnCnSwitchingFunction CmpCnCn;
   typedef UniversalSwitchingFunction Universal;
+  typedef CutoffSwitchingFunction Cutoff;
 #define CutoffSystem NonbondedCutoffSystemForce
 #define CutoffBorn NonbondedCutoffBornForce
 
@@ -128,6 +130,8 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
     f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, C2, CoulombBornRadiiForce> >());
     f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, Cn, CoulombBornRadiiForce> >());
     f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, CmpCnCn,
+          CoulombBornRadiiForce> >());
+    f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, Cutoff,
           CoulombBornRadiiForce> >());
   }
 }
