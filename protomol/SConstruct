@@ -9,6 +9,8 @@ Export('opts')
 
 opts.AddOptions(
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
+    BoolOption('lapack', 'Use LAPACK', 0),
+    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
     )
 
 compiler_add_opts()
@@ -28,6 +30,8 @@ subsrc = SConscript('protomol/SConscript')
 
 # Get options
 fah = int(env.get('fah', 0))
+use_lapack = int(env.get('lapack', 0))
+use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
 
 # Configure compiler
