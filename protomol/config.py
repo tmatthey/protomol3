@@ -4,6 +4,12 @@ if env['PLATFORM'] == 'win32':
 else:
     env.Append(LIBS = 'pthread')
 
+
+# BOOST_HOME
+if os.environ.has_key('BOOST_HOME'):
+    env.Append(CPPPATH = [os.environ['BOOST_HOME']])
+
+
 have_libfah=0
 if os.environ.has_key('LIBFAH_HOME'):
     env.Append(CPPPATH = [os.environ['LIBFAH_HOME']])
