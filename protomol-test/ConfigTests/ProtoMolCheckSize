@@ -1,0 +1,23 @@
+#!/usr/bin/python
+import subprocess
+import os
+import sys
+
+name = sys.argv[1]
+test = name + 'Test'
+cmd = 'ProtoMol data' + os.sep + test + '.conf'
+
+stdout = open(os.devnull, 'w')
+stderr = open(os.devnull, 'w')
+p = subprocess.Popen(cmd, shell = True, stdout = stdout, stderr = stderr)
+p.wait()
+
+for ext in sys.argv[2:]:
+    output = 'data' + os.sep + test + '.' + ext
+
+    if os.path.exists(output):
+        print '%8d byte %s' % (os.stat(output).st_size, ext)
+        os.unlink(output)
+
+    else:
+        print 'ERROR no "' + output + '" file'
