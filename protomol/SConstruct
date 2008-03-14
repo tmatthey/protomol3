@@ -51,71 +51,21 @@ libs.append(libname)
 
 
 if not env.GetOption('clean'):
-  # package.h
   execfile('package_h.py')
+  execfile('config.py')
 
-  # libbip2
-  have_bzip2=0
-  if os.environ.has_key('LIBBZ2_HOME'):
-    env.Append(LIBPATH = [os.environ['LIBBZ2_HOME']])
-    env.Append(CPPPATH = [os.environ['LIBBZ2_HOME'] + '/src'])
-
-  if not conf.CheckLib('bz2'):
-    print 'libbzip2 not found.  Please set LIBBZ2_HOME'
-
-  else: have_bzip2 = 1
-
-
-  # Look for boost::iostreams
-  if os.environ.has_key('BOOST_HOME'):
-    env.Append(CPPPATH = [os.environ['BOOST_HOME']])
-
-  have_boost_iostreams=0
-  if (conf.CheckCXXHeader('boost/iostreams/stream.hpp')):
-    have_boost_iostreams=1
-
-
-  # libFAH
-  if env['PLATFORM'] == 'win32':
-    env.Append(LIBS = 'wsock32')
-  else:
-    env.Append(LIBS = 'pthread')
-
-  have_libfah=0
-  if os.environ.has_key('LIBFAH_HOME'):
-    env.Append(CPPPATH = [os.environ['LIBFAH_HOME']])
-    env.Append(LIBPATH = [os.environ['LIBFAH_HOME']])
-
-  if (have_bzip2 and have_boost_iostreams and conf.CheckLib('fah') and
-      conf.CheckCXXHeader('fah/core/ChecksumDevice.h')):
+  if (have_bzip2 and have_boost_iostreams and have_libfah):
     env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
     have_libfah=1
 
 
-  # pthreads
-  if env['PLATFORM'] != 'win32' and have_libfah:
-    if not conf.CheckLib('pthread'):
-      print ('Need libpthreads for Folding@Home GUI server on non-win32 ' +
-             'platforms')
-      Exit(1)
-
-
   # Folding@Home library version
   if fah:
-    if not have_libfah:
+    if not (have_libfah and have_bzip2 and have_boost_iostreams):
       print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
       Exit(1)
 
     env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
-
-
-  # LAPACK
-  if os.environ.has_key('LAPACK_HOME'):
-    env.Append(CPPPATH = [os.environ['LAPACK_HOME']])
-    env.Append(LIBPATH = [os.environ['LAPACK_HOME']])
-  
-  if conf.CheckLib('lapack'):
-    env.Append(CPPDEFINES = ['HAVE_LAPACK'])
 
 
   env = conf.Finish()

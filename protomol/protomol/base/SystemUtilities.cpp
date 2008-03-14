@@ -5,6 +5,9 @@
 
 #ifdef _WIN32
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h> /* for GetFullPathName */
+
 //____ Define the missing symbols from <unistd.h> for M$ ....
 #include <direct.h>
 #define CHDIR _chdir
@@ -17,24 +20,16 @@
 #define W_OK 2
 #define R_OK 4
 
-#else
+#else // _WIN32
 
+#include <libgen.h>
 #include <unistd.h>
 #define CHDIR chdir
 #define PATHSEP '/'
 #define PATHSEPSTR "/"
-#include <pwd.h>
 #endif
 
 #include <sys/stat.h>
-
-#if defined (_WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h> /* for GetFullPathName */
-
-#else
-#include <libgen.h>
-#endif
 
 using namespace std;
 
@@ -141,18 +136,6 @@ namespace ProtoMol {
     }
   };
   const bool ISLITTLEENDIAN = Endian::isLittleEndian();
-
-//____ getUserName
-  string getUserName() {
-#ifdef _WIN32
-    return "Win32";
-#else
-    if (getpwuid(getuid()) != NULL)
-      return string(getpwuid(getuid())->pw_name);
-    else
-      return toString(getuid());
-#endif
-  }
 
   string getCanonicalPath(const string &path) {
     char buf[4096];

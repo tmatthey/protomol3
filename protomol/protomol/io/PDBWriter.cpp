@@ -3,7 +3,6 @@
 #include <protomol/type/PDB.h>
 #include <protomol/base/Report.h>
 #include <protomol/base/StringUtilities.h>
-#include <protomol/base/SystemUtilities.h>
 
 #include <iomanip>
 #include <map>
@@ -44,11 +43,11 @@ bool PDBWriter::write(const Vector3DBlock &coords,
     report << error << "[PDBWriter::write]"
            << " Size of coordinates and atoms differ." << endr;
 
-  file << "REMARKS ProtoMol (built on " << __DATE__ << " at " <<
-  __TIME__ << ") by " << getUserName() << endl
-         << "REMARKS This .pdb file was created by PDBWriter" << endl
-         << "REMARKS It was not manually assembled" << endl
-         << "REMARKS " << comment << endl;
+  file << "REMARKS ProtoMol (built on " << __DATE__ << " at "
+       << __TIME__ << ") " << endl
+       << "REMARKS This .pdb file was created by PDBWriter" << endl
+       << "REMARKS It was not manually assembled" << endl
+       << "REMARKS " << comment << endl;
 
   map<int, int> tersMap;
   for (unsigned int i = 0; i < ters.size(); ++i)

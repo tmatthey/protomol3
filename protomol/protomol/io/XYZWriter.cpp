@@ -4,7 +4,6 @@
 
 #include <protomol/base/Report.h>
 #include <protomol/base/StringUtilities.h>
-#include <protomol/base/SystemUtilities.h>
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -46,9 +45,8 @@ bool XYZWriter::write(const Vector3DBlock &coords,
   file << count << endl;
 
   // Comment
-  file << "!ProtoMol (built on " << __DATE__ << " at " << __TIME__ <<
-  ") generated this XYZ file by " << getUserName() << ". " << comment <<
-  endl;
+  file << "!ProtoMol (built on " << __DATE__ << " at " << __TIME__ 
+       << ") generated this XYZ file." << comment << endl;
 
   // Write atoms
   file << setprecision(15);   // This should be some FLT_DIG or DBL_DIG ...

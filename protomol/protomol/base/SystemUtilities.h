@@ -39,9 +39,6 @@ namespace ProtoMol {
   /// Sets function to be called to end serialization
   void setProtomolEndSerial(void (*endSerialFunction)(bool));
 
-  /// Returns the username or user id
-  std::string getUserName();
-
   /// Return an resolved absolute path
   std::string getCanonicalPath(const std::string &path);
 

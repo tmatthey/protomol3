@@ -1,7 +1,6 @@
 #include <protomol/io/DCDTrajectoryWriter.h>
 
 #include <protomol/base/Report.h>
-#include <protomol/base/SystemUtilities.h>
 #include <protomol/base/StringUtilities.h>
 
 using namespace std;
@@ -167,13 +166,12 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.write(reinterpret_cast<char *>(&n164), 4);
     file.write(reinterpret_cast<char *>(&n2), 4);
     file.write(getRightFill(string("Remarks: File \'" +
-                                     filename + "\' by " +
-                                     getUserName() + ". ProtoMol ("
-                                     + string(__DATE__) + " at "
-                                     + string(__TIME__) + ")")
-                              , 80).c_str(), 80);
+                                   filename + "\'. ProtoMol ("
+                                   + string(__DATE__) + " at "
+                                   + string(__TIME__) + ")")
+                            , 80).c_str(), 80);
     file.write(getRightFill(string("Remarks: " + comment),
-                              80).c_str(), 80);
+                            80).c_str(), 80);
     file.write(reinterpret_cast<char *>(&n164), 4);
 
     // Write DCD num-atoms record
