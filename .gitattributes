@@ -39,6 +39,10 @@ protomol-test/ConfigTests/data/BornForceTest.conf -text
 protomol-test/ConfigTests/data/BornForceTest.return.expect -text
 protomol-test/ConfigTests/data/BornForceTest.stderr.expect -text
 protomol-test/ConfigTests/data/BornForceTest.stdout.expect -text
+protomol-test/ConfigTests/data/C1Test.conf -text
+protomol-test/ConfigTests/data/C2Test.conf -text
+protomol-test/ConfigTests/data/CGMinimizerTest.conf -text
+protomol-test/ConfigTests/data/CnTest.conf -text
 protomol-test/ConfigTests/data/CoulombForceCutoffTest.conf -text
 protomol-test/ConfigTests/data/CoulombForceCutoffTest.return.expect -text
 protomol-test/ConfigTests/data/CoulombForceCutoffTest.stderr.expect -text
@@ -47,6 +51,7 @@ protomol-test/ConfigTests/data/CoulombForceSFTest.conf -text
 protomol-test/ConfigTests/data/CoulombForceSFTest.return.expect -text
 protomol-test/ConfigTests/data/CoulombForceSFTest.stderr.expect -text
 protomol-test/ConfigTests/data/CoulombForceSFTest.stdout.expect -text
+protomol-test/ConfigTests/data/CutoffTest.conf -text
 protomol-test/ConfigTests/data/DielecForceCutoffTest.conf -text
 protomol-test/ConfigTests/data/DielecForceCutoffTest.return.expect -text
 protomol-test/ConfigTests/data/DielecForceCutoffTest.stderr.expect -text
@@ -75,6 +80,9 @@ protomol-test/ConfigTests/data/LJForceSFTest.conf -text
 protomol-test/ConfigTests/data/LJForceSFTest.return.expect -text
 protomol-test/ConfigTests/data/LJForceSFTest.stderr.expect -text
 protomol-test/ConfigTests/data/LJForceSFTest.stdout.expect -text
+protomol-test/ConfigTests/data/LangevinTest.conf -text
+protomol-test/ConfigTests/data/LeapfrogTest.conf -text
+protomol-test/ConfigTests/data/LeapfrogTruncatedShadowTest.conf -text
 protomol-test/ConfigTests/data/PDBTest.conf -text
 protomol-test/ConfigTests/data/PDBTest.in.pdb -text
 protomol-test/ConfigTests/data/PDBTest.par -text
@@ -86,6 +94,7 @@ protomol-test/ConfigTests/data/SCPISMForceTest.conf -text
 protomol-test/ConfigTests/data/SCPISMForceTest.return.expect -text
 protomol-test/ConfigTests/data/SCPISMForceTest.stderr.expect -text
 protomol-test/ConfigTests/data/SCPISMForceTest.stdout.expect -text
+protomol-test/ConfigTests/data/UniversalTest.conf -text
 protomol-test/ConfigTests/data/VelacTest.conf -text
 protomol-test/ConfigTests/data/VelacTest.coor -text
 protomol-test/ConfigTests/data/VelacTest.par -text
