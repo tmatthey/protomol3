@@ -19,9 +19,9 @@ GOTO END
 
 :BUILD_ROOT_SET
 set SCONSOPTS=debug=0 optimize=1 fah=1
-set LIBBZ2_HOME=%BUILD_ROOT%\libbzip2
-set LIBFAH_HOME=%BUILD_ROOT%\libfah
-set PROTOMOL_HOME=%BUILD_ROOT%\protomol-3.0
+set LIBBZ2_HOME=%BUILD_ROOT%\fah\libbzip2
+set LIBFAH_HOME=%BUILD_ROOT%\fah\libfah
+set PROTOMOL_HOME=%BUILD_ROOT%\protomol\protomol
 set TARGET=
 
 REM **************************************************************************
@@ -41,7 +41,7 @@ goto DO_PART
 :LIBPROTOMOL_FAH_DONE
 
 set NAME=PROTOMOL_CORE
-set DIR=%BUILD_ROOT%\cores\protomol
+set DIR=%BUILD_ROOT%\protomol\fah-core
 goto DO_PART
 :PROTOMOL_CORE_DONE
 
