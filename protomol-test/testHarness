@@ -47,6 +47,7 @@ IN="stdin"
 STD="stdout"
 ERR="stderr"
 RET="return"
+LOG="log"
 EXP="expect"
 DISABLE="disable"
 ARGS="args"
@@ -463,7 +464,7 @@ def tryTest(test):
 def viewTest(path):
     (dir, name) = os.path.split(path)
 
-    for ext in [STD, ERR, RET, IN]:
+    for ext in [STD, ERR, RET, IN, LOG]:
         for ext in [ext, ext + '.' + EXP]:
             file = makeDataName(path, ext)
             if os.path.exists(file):

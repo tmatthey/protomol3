@@ -5,10 +5,11 @@ import sys
 
 name = sys.argv[1]
 test = name + 'Test'
-cmd = 'ProtoMol data' + os.sep + test + '.conf'
+base = 'data' + os.sep + test
+cmd = 'ProtoMol ' + base + '.conf'
+log = base + '.log'
 
-stdout = open(os.devnull, 'w')
-stderr = open(os.devnull, 'w')
+stdout = stderr = open(log, 'w')
 p = subprocess.Popen(cmd, shell = True, stdout = stdout, stderr = stderr)
 p.wait()
 
