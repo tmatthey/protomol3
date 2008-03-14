@@ -42,6 +42,7 @@ goto DO_PART
 
 set NAME=PROTOMOL_CORE
 set DIR=%BUILD_ROOT%\protomol\fah-core
+set TARGET=simtk_lapack=1
 goto DO_PART
 :PROTOMOL_CORE_DONE
 
