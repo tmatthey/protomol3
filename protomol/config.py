@@ -89,7 +89,7 @@ if os.environ.has_key('SIMTK_LAPACK_HOME'):
     env.Append(LIBPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/lib'])
   
 have_simtk_lapack = 0
-if conf.CheckLib('SimTKlapack'):
+if conf.CheckLib('SimTKlapack') and conf.CheckCXXHeader('SimTKlapack.h'):
     env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
     have_simtk_lapack = 1
 
