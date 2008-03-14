@@ -43,12 +43,6 @@ bool PDBWriter::write(const Vector3DBlock &coords,
     report << error << "[PDBWriter::write]"
            << " Size of coordinates and atoms differ." << endr;
 
-  file << "REMARKS ProtoMol (built on " << __DATE__ << " at "
-       << __TIME__ << ") " << endl
-       << "REMARKS This .pdb file was created by PDBWriter" << endl
-       << "REMARKS It was not manually assembled" << endl
-       << "REMARKS " << comment << endl;
-
   map<int, int> tersMap;
   for (unsigned int i = 0; i < ters.size(); ++i)
     tersMap[ters[i].elementNum - 1] = i;

@@ -44,10 +44,6 @@ bool XYZWriter::write(const Vector3DBlock &coords,
   // First, write the number of atoms
   file << count << endl;
 
-  // Comment
-  file << "!ProtoMol (built on " << __DATE__ << " at " << __TIME__ 
-       << ") generated this XYZ file." << comment << endl;
-
   // Write atoms
   file << setprecision(15);   // This should be some FLT_DIG or DBL_DIG ...
   for (unsigned int i = 0; i < count; ++i) {
