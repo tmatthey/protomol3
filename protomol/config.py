@@ -33,9 +33,6 @@ else: have_bzip2 = 1
 
 
 # boost::iostreams
-if os.environ.has_key('BOOST_HOME'):
-    env.Append(CPPPATH = [os.environ['BOOST_HOME']])
-
 have_boost_iostreams=0
 if (conf.CheckCXXHeader('boost/iostreams/stream.hpp')):
     have_boost_iostreams=1
@@ -84,3 +81,16 @@ if env['CC'] == 'gcc' and have_lapack:
     have_g2c = 0  
     if conf.CheckLib('g2c'):
         have_g2c = 1
+
+
+# SimTK LAPACK
+if os.environ.has_key('SIMTK_LAPACK_HOME'):
+    env.Append(CPPPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/include'])
+    env.Append(LIBPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/lib'])
+  
+have_simtk_lapack = 0
+if conf.CheckLib('SimTKlapack'):
+    env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
+    have_simtk_lapack = 1
+
+
