@@ -21,7 +21,7 @@ if not env.GetOption('clean'):
   env.Append(CPPPATH = [PROTOMOL_HOME])
   env.Append(LIBPATH = [PROTOMOL_HOME])
 
-  if not conf.CheckLib('protomol-fah'):
+  if not (conf.CheckLib('protomol') or conf.CheckLib('protomol-fah')):
     print 'Need protomol >= 3.0 please set PROTOMOL_HOME';
     Exit(1)
 
