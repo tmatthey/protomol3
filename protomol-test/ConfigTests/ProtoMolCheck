@@ -38,7 +38,7 @@ for ext in sys.argv[2:]:
         else:
             print '%8d byte %s' % (os.stat(output).st_size, ext)
 
-        os.unlink(output)
+        #os.unlink(output)
 
     else:
         print 'ERROR no "' + output + '" file'
