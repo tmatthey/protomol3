@@ -66,10 +66,6 @@ protomol-test/ConfigTests/data/CutoffTest.conf -text
 protomol-test/ConfigTests/data/CutoffTest.return.expect -text
 protomol-test/ConfigTests/data/CutoffTest.stderr.expect -text
 protomol-test/ConfigTests/data/CutoffTest.stdout.expect -text
-protomol-test/ConfigTests/data/DielecForceCutoffTest.conf -text
-protomol-test/ConfigTests/data/DielecForceCutoffTest.return.expect -text
-protomol-test/ConfigTests/data/DielecForceCutoffTest.stderr.expect -text
-protomol-test/ConfigTests/data/DielecForceCutoffTest.stdout.expect -text
 protomol-test/ConfigTests/data/DielecForceSFTest.conf -text
 protomol-test/ConfigTests/data/DielecForceSFTest.return.expect -text
 protomol-test/ConfigTests/data/DielecForceSFTest.stderr.expect -text
