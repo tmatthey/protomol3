@@ -159,7 +159,6 @@ protomol-test/ConfigTests/data/XYZTest.stdout.expect -text
 protomol-test/ConfigTests/data/alanine.par -text
 protomol-test/ConfigTests/data/alanine.pdb -text
 protomol-test/ConfigTests/data/alanine.psf -text
-protomol-test/ConfigTests/data/eigVmC7eq -text
 protomol-test/testHarness -text
 protomol/SConstruct -text
 protomol/compiler.py -text
