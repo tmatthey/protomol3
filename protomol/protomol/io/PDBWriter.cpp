@@ -41,7 +41,8 @@ bool PDBWriter::write(const Vector3DBlock &coords,
   const unsigned int count = atoms.size();
   if (coords.size() != count)
     report << error << "[PDBWriter::write]"
-           << " Size of coordinates and atoms differ." << endr;
+           << " Size of coordinates(" << coords.size() << ") and atoms("
+           << atoms.size() << ") differ." << endr;
 
   map<int, int> tersMap;
   for (unsigned int i = 0; i < ters.size(); ++i)
