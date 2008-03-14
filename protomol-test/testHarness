@@ -107,6 +107,7 @@ def makeDataName(path, ext = ''):
 
 def compare(file1, file2):
     try:
+        lines1 = lines2 = None
         lines1 = open(file1)
         lines2 = open(file2)
 
@@ -122,8 +123,8 @@ def compare(file1, file2):
         return True
 
     finally:
-        lines1.close()
-        lines2.close()
+        if lines1: lines1.close()
+        if lines2: lines2.close()
 
 
 def doTest(path):
@@ -302,7 +303,7 @@ def interact(test, result):
 
     while options.interactive:
         sys.stdout.write('(a)bort (c)ontinue (D)isable (d)iff (i)nitialize '
-                         '(r)eset (t)est (q)uit (v)iew? ')
+                         '(l)og (r)eset (t)est (q)uit (v)iew? ')
         sys.stdout.flush()
 
         cmd = sys.stdin.readline()[0]
@@ -322,6 +323,9 @@ def interact(test, result):
         elif cmd == 'i':
             initializeTest(test)
             return INITED
+
+        elif cmd == 'l':
+            viewTest(test, [LOG])
 
         elif cmd == 'r':
             resetTest(test)
@@ -462,10 +466,10 @@ def tryTest(test):
     viewTest(test)
 
 
-def viewTest(path):
+def viewTest(path, exts = [STD, ERR, RET, IN]):
     (dir, name) = os.path.split(path)
 
-    for ext in [STD, ERR, RET, IN, LOG]:
+    for ext in exts:
         for ext in [ext, ext + '.' + EXP]:
             file = makeDataName(path, ext)
             if os.path.exists(file):

@@ -28,17 +28,17 @@ p.wait()
 # Check the output
 for ext in sys.argv[2:]:
     output = 'data' + os.sep + test + '.' + ext
-    expect = output + '.expect'
+    orig = output + '.orig'
 
     if os.path.exists(output):
-        if os.path.exists(expect):
-            cmd = comparator + ' ' + output + ' ' + expect + ' 0.000001'
+        if os.path.exists(orig):
+            cmd = comparator + ' ' + output + ' ' + orig + ' 0.000001'
             subprocess.Popen(cmd, shell = True).wait()
 
         else:
             print '%8d byte %s' % (os.stat(output).st_size, ext)
 
-        #os.unlink(output)
+        os.unlink(output)
 
     else:
         print 'ERROR no "' + output + '" file'
