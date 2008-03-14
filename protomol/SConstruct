@@ -1,0 +1,157 @@
+import os
+import sys
+execfile('compiler.py')
+
+
+# Command Line Options
+opts = Options('options.py')
+Export('opts')
+
+opts.AddOptions(
+    BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
+    )
+
+compiler_add_opts()
+
+# Create environment and import external PATH
+env = Environment(options = opts, ENV = os.environ)
+Export('env')
+
+
+# Configure
+conf = Configure(env)
+Export('conf')
+
+
+# Import subdir build files
+subsrc = SConscript('protomol/SConscript')
+
+# Get options
+fah = int(env.get('fah', 0))
+
+
+# Configure compiler
+compiler_configure()
+
+
+# Include protomol
+env.Append(CPPPATH = '#')
+
+
+# Generate Help
+Help(opts.GenerateHelpText(env))
+
+
+# libprotomol
+libname = 'protomol'
+if fah: libname = libname + '-fah'
+libsrc = []
+libs = []
+libs.append(libname)
+
+
+if not env.GetOption('clean'):
+  # package.h
+  execfile('package_h.py')
+
+  # libbip2
+  have_bzip2=0
+  if os.environ.has_key('LIBBZ2_HOME'):
+    env.Append(LIBPATH = [os.environ['LIBBZ2_HOME']])
+    env.Append(CPPPATH = [os.environ['LIBBZ2_HOME'] + '/src'])
+
+  if not conf.CheckLib('bz2'):
+    print 'libbzip2 not found.  Please set LIBBZ2_HOME'
+
+  else: have_bzip2 = 1
+
+
+  # Look for boost::iostreams
+  if os.environ.has_key('BOOST_HOME'):
+    env.Append(CPPPATH = [os.environ['BOOST_HOME']])
+
+  have_boost_iostreams=0
+  if (conf.CheckCXXHeader('boost/iostreams/stream.hpp')):
+    have_boost_iostreams=1
+
+
+  # libFAH
+  if env['PLATFORM'] == 'win32':
+    env.Append(LIBS = 'wsock32')
+  else:
+    env.Append(LIBS = 'pthread')
+
+  have_libfah=0
+  if os.environ.has_key('LIBFAH_HOME'):
+    env.Append(CPPPATH = [os.environ['LIBFAH_HOME']])
+    env.Append(LIBPATH = [os.environ['LIBFAH_HOME']])
+
+  if (have_bzip2 and have_boost_iostreams and conf.CheckLib('fah') and
+      conf.CheckCXXHeader('fah/core/ChecksumDevice.h')):
+    env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+    have_libfah=1
+
+
+  # pthreads
+  if env['PLATFORM'] != 'win32' and have_libfah:
+    if not conf.CheckLib('pthread'):
+      print ('Need libpthreads for Folding@Home GUI server on non-win32 ' +
+             'platforms')
+      Exit(1)
+
+
+  # Folding@Home library version
+  if fah:
+    if not have_libfah:
+      print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
+      Exit(1)
+
+    env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
+
+
+  # LAPACK
+  if os.environ.has_key('LAPACK_HOME'):
+    env.Append(CPPPATH = [os.environ['LAPACK_HOME']])
+    env.Append(LIBPATH = [os.environ['LAPACK_HOME']])
+  
+  if conf.CheckLib('lapack'):
+    env.Append(CPPDEFINES = ['HAVE_LAPACK'])
+
+
+  env = conf.Finish()
+
+
+if fah:
+  libsrc.append('#/protomol/modules.cpp')
+
+# Build
+for s in subsrc:
+    libsrc.append('#/protomol/' + s)
+
+
+# Build libprotomol
+env.Library(libname, libsrc)
+
+
+# Build Protomol
+env.Append(LIBPATH = ['.'])
+env.Prepend(LIBS = [libname])
+src = ['protomol/main.cpp', 'protomol/modules.cpp']
+protomol = env.Program('ProtoMol', src)
+Default(protomol)
+
+
+if env['PLATFORM'] == 'win32':
+  # Build MSVC project
+  if not os.path.exists('MSVC'): os.mkdir('MSVC')
+  if debug: variant = 'Debug'
+  else: variant = 'Release'
+  env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
+                  srcs = src + libsrc, 
+                  auto_build_solution = 0,
+                  variant = ['Debug', 'Release'],
+                  buildtarget = ['debug=1', 'debug=0'])
+
+
+# Tidy
+env.Command('tidy', '', 'rm -f config.log $$(find . -name \*~ -o -name \#*)')
