@@ -6,10 +6,13 @@
 #include <protomol/type/String.h>
 
 #include <protomol/io/DCDTrajectoryReader.h>
+#include <protomol/io/XYZTrajectoryReader.h>
 #include <protomol/io/XYZReader.h>
+#include <protomol/type/XYZ.h>
 
 #ifdef DATA_COMPARATOR_STANDALONE
 #include <iostream>
+#include <iomanip>
 #endif
 
 using namespace std;
@@ -53,80 +56,128 @@ Real DataComparator::compare(const Vector3DBlock &data1,
   return max;  
 }
 
-Real DataComparator::compare(const string &file1, const string &file2) {
-  Vector3DBlock data1;
-  Vector3DBlock data2;
+Real DataComparator::compare(const vector<XYZ> &data1,
+                             const vector<XYZ> &data2, Real tolerance,
+                             unsigned int &divergeFrame) {
+  Real max = 0;
+  Real d;
+
+  divergeFrame = 0;
+
+  if (data1.size() != data2.size())
+    THROWS("Frame sizes not equal " << data1.size() << " != " << data2.size());
+
+  for (unsigned int i = 0; i < data1.size(); i++) {
+    d = compare(data1[i].coords, data2[i].coords);
+    if (d > max) max = d;
+
+    if (max > tolerance && !divergeFrame)
+      divergeFrame = i + 1;
+  }
+
+  return max;
+}
+
+Real DataComparator::compare(const string &file1, const string &file2,
+                             Real tolerance, unsigned int &divergeFrame) {
+  vector<XYZ> data1;
+  vector<XYZ> data2;
 
   read(file1, data1);
   read(file2, data2);
 
-  return compare(data1, data2);
+  return compare(data1, data2, tolerance, divergeFrame);
 }
 
-void DataComparator::read(const string &filename, Vector3DBlock &data) {
+void DataComparator::read(const string &filename, vector<XYZ> &data) {
   if (!isAccessible(filename)) THROWS("Cannot access '" << filename << "'");
 
-  string dir, base, ext;
-  splitFileName(filename, dir, base, ext);
+  XYZTrajectoryReader reader(filename);
+  data.clear();
 
-  if (ext == "dcd") {
-    DCDTrajectoryReader reader(filename);
-
-    if (!reader.tryFormat()) THROWS("Invalid DCD file '" << filename << '"');
+  try {
     reader >> data;
 
-  } else if (ext == "xyz") {
+  } catch (const Exception &e1) {
+    reader.close();
     XYZReader reader(filename);
 
-    if (!reader.tryFormat()) THROWS("Invalid XYZ file '" << filename << '"');
-    reader >> data;
+    try {
+      XYZ xyz;
+      reader >> xyz;
+      data.push_back(xyz);
 
-  } else {
-    XYZReader reader(filename);
-    if (reader.tryFormat()) {
-      reader >> data;
-
-    } else {
+    } catch (const Exception &e2) {
       reader.close();
       DCDTrajectoryReader reader(filename);
 
-      if (reader.tryFormat()) {
+      try {
         reader >> data;
-
-      } else THROWS("Unsupported file format '" << filename << "'");
+        
+      } catch (const Exception &e3) {
+        THROWS("Unsupported file format '" << filename << "' due to errors:"
+               << endl << e1 << endl << e2 << endl << e3 << endl);
+      }
     }
   }
 
 #ifdef DATA_COMPARATOR_STANDALONE
-  cout << "Vector3DBlock Size = " << data.size() << endl;
+  cout << "Frames: " << setw(5) << data.size();
+  if (data.size()) cout << " Atoms: " << setw(5) << data[0].size();
+  cout << endl;
 #endif // DATA_COMPARATOR_STANDALONE
 }
 
 #ifdef DATA_COMPARATOR_STANDALONE
+#ifndef _WIN32
+#include <protomol/debug/Debugger.h>
+#endif
+
 int main(int argc, char *argv[]) {
+  Exception::enableStackTraces = true;
+#ifndef _WIN32
+  Debugger::initStackTrace(argv[0]);
+#endif
+
+  bool result = true;
+
   try {
 
     if (argc != 3 && argc != 4) {
       cerr << "Syntax: " << argv[0] << " <file1> <file2> [tolerance]" << endl;
       return -1;
     }
-    
-    Real d = DataComparator::compare(argv[1], argv[2]);
+
+    Real tolerance = 0;
+    unsigned int divergeFrame = 0;
+
+    if (argc == 4) tolerance = String::parseDouble(argv[3]);
+
+    Real d = DataComparator::compare(argv[1], argv[2], tolerance, divergeFrame);
     
     if (argc == 4) {
-      Real tolerance = String::parseDouble(argv[3]);
-      
-      if (tolerance < d)
-        cout << "Files are not within tolerance" << endl;
-      else cout << "Files match" << endl;
-      
-    } else cout << "Maximum difference: " << d << endl;
+      if (tolerance < d) {
+        cout << "Files do not match" << endl
+             << "  Tolerance       = " << tolerance << endl
+             << "  Max diff        = " << d << endl
+             << "  Divergent frame = " << divergeFrame << endl;
 
-    return 0;
+        result = false;
+
+      } else cout << "Files match" << endl;
+      
+    } else {
+      cout << "Maximum difference: " << d << endl;
+      if (d) result = false;
+    }
 
   } catch (const Exception &e) {
     cerr << e << endl;
+    cerr << setw(10) << getFileSize(argv[1]) << " bytes " << argv[1] << endl;
+    cerr << setw(10) << getFileSize(argv[2]) << " bytes " << argv[2] << endl;
   }
+
+  return result ? 0 : 1;
 }
 
 #endif // DATA_COMPARATOR_STANDALONE

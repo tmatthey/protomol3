@@ -31,14 +31,18 @@ for ext in sys.argv[2:]:
     orig = output + '.orig'
 
     if os.path.exists(output):
+        ret = 0;
+
         if os.path.exists(orig):
-            cmd = comparator + ' ' + output + ' ' + orig + ' 0.000001'
-            subprocess.Popen(cmd, shell = True).wait()
+            cmd = [comparator, output, orig, ' 0.000001']
+            p = subprocess.Popen(cmd)
+            p.wait()
+            ret = p.returncode
 
         else:
             print '%8d byte %s' % (os.stat(output).st_size, ext)
 
-        os.unlink(output)
+        if not ret: os.unlink(output)
 
     else:
         print 'ERROR no "' + output + '" file'

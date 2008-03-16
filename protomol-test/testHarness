@@ -329,7 +329,7 @@ def interact(test, result):
 
         elif cmd == 'r':
             resetTest(test)
-            result = UNINITIALZED
+            result = UNINITED
 
         elif cmd == 't':
             result = runTest(test)
@@ -572,13 +572,6 @@ parser.add_option("-C", "--disable-color", help="disable color output",
 
 # Parse args
 (options, args) = parser.parse_args()
-
-if options.interactive:
-    print "Interactive Mode"
-
-if options.valgrind:
-    print "Valgrind enabled"
-
 
 if options.color:
     SUINT_COLOR='[30;43m'
