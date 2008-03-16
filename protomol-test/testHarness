@@ -138,7 +138,8 @@ def doTest(path):
         sys.exit(1)
 
     # Create output directory if necessary
-    dataDir = dir + os.sep + DATADIR
+    if dir == '': dataDir = DATADIR
+    else: dataDir = dir + os.sep + DATADIR
     if os.path.exists(dataDir):
         if not os.path.isdir(dataDir):
             print dataDir + ' is not a directory!'

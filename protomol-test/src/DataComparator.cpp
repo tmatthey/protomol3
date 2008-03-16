@@ -37,7 +37,8 @@ Real DataComparator::compare(const Vector3D &data1, const Vector3D &data2) {
 }
 
 Real DataComparator::compare(const Vector3DBlock &data1,
-                             const Vector3DBlock &data2) {
+                             const Vector3DBlock &data2,
+                             Real tolerance, unsigned int &count) {
   Real max = 0;
   Real d;
 
@@ -48,6 +49,8 @@ Real DataComparator::compare(const Vector3DBlock &data1,
        it1 != data1.end() && it2 != data2.end(); it1++, it2++) {
     d = compare(*it1, *it2);
     if (d > max) max = d;
+
+    if (d > tolerance) count++;
   }    
 
   if (it1 != data1.end() || it2 != data2.end())
@@ -57,7 +60,8 @@ Real DataComparator::compare(const Vector3DBlock &data1,
 }
 
 Real DataComparator::compare(const vector<XYZ> &data1,
-                             const vector<XYZ> &data2, Real tolerance,
+                             const vector<XYZ> &data2,
+                             Real tolerance, unsigned int &count,
                              unsigned int &divergeFrame) {
   Real max = 0;
   Real d;
@@ -68,25 +72,25 @@ Real DataComparator::compare(const vector<XYZ> &data1,
     THROWS("Frame sizes not equal " << data1.size() << " != " << data2.size());
 
   for (unsigned int i = 0; i < data1.size(); i++) {
-    d = compare(data1[i].coords, data2[i].coords);
+    d = compare(data1[i].coords, data2[i].coords, tolerance, count);
     if (d > max) max = d;
 
-    if (max > tolerance && !divergeFrame)
-      divergeFrame = i + 1;
+    if (d > tolerance && !divergeFrame) divergeFrame = i + 1;
   }
 
   return max;
 }
 
 Real DataComparator::compare(const string &file1, const string &file2,
-                             Real tolerance, unsigned int &divergeFrame) {
+                             Real tolerance, unsigned int &count,
+                             unsigned int &divergeFrame) {
   vector<XYZ> data1;
   vector<XYZ> data2;
 
   read(file1, data1);
   read(file2, data2);
 
-  return compare(data1, data2, tolerance, divergeFrame);
+  return compare(data1, data2, tolerance, count, divergeFrame);
 }
 
 void DataComparator::read(const string &filename, vector<XYZ> &data) {
@@ -149,18 +153,21 @@ int main(int argc, char *argv[]) {
     }
 
     Real tolerance = 0;
+    unsigned int count = 0;
     unsigned int divergeFrame = 0;
 
     if (argc == 4) tolerance = String::parseDouble(argv[3]);
 
-    Real d = DataComparator::compare(argv[1], argv[2], tolerance, divergeFrame);
+    Real d = DataComparator::compare(argv[1], argv[2], tolerance,
+                                     count, divergeFrame);
     
     if (argc == 4) {
       if (tolerance < d) {
         cout << "Files do not match" << endl
-             << "  Tolerance       = " << tolerance << endl
-             << "  Max diff        = " << d << endl
-             << "  Divergent frame = " << divergeFrame << endl;
+             << "  Tolerance         = " << tolerance << endl
+             << "  Max diff          = " << d << endl
+             << "  Divergent vectors = " << count << endl
+             << "  Divergent frame   = " << divergeFrame << endl;
 
         result = false;
 
