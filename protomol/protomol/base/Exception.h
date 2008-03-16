@@ -116,12 +116,20 @@ namespace ProtoMol {
       init();
     }
 
-    /// Copy constructor
 #ifdef HAVE_STACK_TRACE
+    Exception(const Exception &e, const Exception &cause) :
+      message(e.message), location(e.location), cause(new Exception(cause)),
+      trace(e.trace) {}
+
+    /// Copy constructor
     Exception(const Exception &e) :
       message(e.message), location(e.location), cause(e.cause),
       trace(e.trace) {}
 #else
+    Exception(const Exception &e, const Exception &cause) :
+      message(e.message), location(e.location), cause(new Exception(cause)) {}
+
+    /// Copy constructor
     Exception(const Exception &e) :
       message(e.message), location(e.location), cause(e.cause) {}
 #endif

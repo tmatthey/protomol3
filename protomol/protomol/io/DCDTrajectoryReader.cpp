@@ -8,276 +8,230 @@ using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;
 
-//____DCDTrajectoryReader
 
-DCDTrajectoryReader::DCDTrajectoryReader() :
-  Reader(ios::binary), myCoords(NULL), mySwapEndian(false) {}
+DCDTrajectoryReader::DCDTrajectoryReader() : Reader(ios::binary), xyz(0) {}
+
 
 DCDTrajectoryReader::DCDTrajectoryReader(const string &filename) :
-  Reader(ios::binary, filename), myCoords(NULL), mySwapEndian(false) {}
+  Reader(ios::binary, filename), xyz(0) {}
+
 
 DCDTrajectoryReader::~DCDTrajectoryReader() {
-  if (myCoords != NULL)
-    delete myCoords;
+  if (xyz) delete xyz;
 }
 
-bool DCDTrajectoryReader::tryFormat() {
-  if (!open())
-    return false;
 
+bool DCDTrajectoryReader::tryFormat() {
+  if (!open()) return false;
+
+  // Get file size
   file.seekg(0, ios::end);
   ios::pos_type size = file.tellg();
   file.seekg(0, ios::beg);
 
+
+  // Get endian
   int32 n = 0;
-  File::read(reinterpret_cast<char *>(&n), sizeof(int32));
+  File::read((char *)&n, sizeof(int32));
+  int32 m = n;
+  swapBytes(m);
+
+
+  // Read DCD magic
   char coord[5];
   File::read(coord, 4);
   coord[4] = '\0';
   close();
 
-  int32 m = n;
-  swapBytes(m);
 
-  if (static_cast<long>(size) >= 104 &&
-      (n == 84 || m == 84) && string(coord) == "CORD")
+  // Check it
+  if (size >= 104 && (n == 84 || m == 84) && string(coord) == "CORD")
     return !file.fail();
 
-  file.setstate(ios::failbit);
+
   return false;
 }
 
+
 bool DCDTrajectoryReader::read() {
-  if (!myCoords) myCoords = new Vector3DBlock();
-  return read(*myCoords);
+  if (!xyz) xyz = new vector<XYZ>();
+  return read(*xyz);
 }
 
-bool DCDTrajectoryReader::read(Vector3DBlock &coords) {
+
+bool DCDTrajectoryReader::read(vector<XYZ> &xyz) {
   try {
-    doRead(coords);
+    doRead(xyz);
 
     return true;
   } catch (const Exception &e) {}
 
   return false;
 }
-  
-void DCDTrajectoryReader::doRead(Vector3DBlock &coords) {
-  if (!is_open()) {
-    // First time ...
-    myX.resize(0);
-    myY.resize(0);
-    myZ.resize(0);
 
-    if (!open()) THROW("Open failed");
 
-    file.seekg(0, ios::end);
-    ios::pos_type size = file.tellg();
-    file.seekg(0, ios::beg);
+void DCDTrajectoryReader::doRead(vector<XYZ> &xyz) {
+  try {
+    if (!is_open()) if (!open()) THROW("Open failed");
 
+    // Check endian
     int32 n = 0;
-    File::read(reinterpret_cast<char *>(&n), sizeof(int32));
-    char coord[5];
-    File::read(coord, 4);
-    coord[4] = '\0';
-
+    File::read((char *)&n, sizeof(int32));
     int32 m = n;
     swapBytes(m);
+    
+    if (n != 84 && m != 84) THROW("Invalid DCD header");
+    if (m == 84) {
+      swap = true;
+      report
+        << hint << "[DCDTrajectoryReader::read] Reading "
+        << (ISLITTLEENDIAN ? "big" : "little") << "endian input on "
+        << (ISLITTLEENDIAN ? "little" : "big") << "endian machine." << endr;
 
-    // Check endianess and if the header looks ok out ...
-    if (static_cast<long>(size) >= 104 &&
-        (n == 84 || m == 84) && string(coord) == "CORD") {
-      if (m == 84) {
-        mySwapEndian = true;
-        report << hint << "[DCDTrajectoryReader::read] Reading "
-               << (ISLITTLEENDIAN ? "big" : "little")
-               << "endian input on "
-               << (ISLITTLEENDIAN ? "little" : "big") << "endian machine."
-               << endr;
-      }
-    } else {
-      file.setstate(ios::failbit);
-      close();
-      THROWS("Header invalid size=" << size << " n=" << n << " m=" << m
-             << " coord=" << coord);
+    } else swap = false;
+    
+
+    // Get file size
+    file.seekg(0, ios::end);
+    ios::pos_type filesize = file.tellg();
+    file.seekg(0, ios::beg);
+    if (filesize < 104) THROWS("Invalid file size = " << filesize);
+
+      
+    // Read header
+    struct {
+      char cord[4];
+      int32 frames;
+      char ignore1[28];
+      int32 freeIndexes;
+      char ignore2[44];
+    } header;
+
+    fortranRead((char *)&header, sizeof(header), "header");
+    if (swap) {
+      swapBytes(header.frames);
+      swapBytes(header.freeIndexes);
     }
 
-    int32 freeIndexes = 0;
-    file.seekg(40, ios::beg);
-    File::read(reinterpret_cast<char *>(&freeIndexes), sizeof(int32));
-    if (mySwapEndian) swapBytes(freeIndexes);
 
-    // Skip header
-    file.seekg(84 + 4, ios::beg);
-    n = 0;
-    File::read(reinterpret_cast<char *>(&n), sizeof(int32));
-    if (mySwapEndian) swapBytes(n);
-    if (n != 84 || file.fail()) {
-      file.setstate(ios::failbit);
-      close();
-      THROW("Header check failed");
-    }
-    // Skip titles
-    int32 l = 0;
-    n = 0;
-    m = 0;
-    File::read(reinterpret_cast<char *>(&n), sizeof(int32));
-    if (mySwapEndian) swapBytes(n);
-    File::read(reinterpret_cast<char *>(&m), sizeof(int32));
-    if (mySwapEndian) swapBytes(m);
-    //file.seekg (m*80, ios::cur);
-    comment.resize(m * 80 + m - 1);
-    for (unsigned int i = 0, j = 0; i < (unsigned int)m; i++, j += 81) {
-      File::read(&comment[j], 80);
-      comment[j + 80] = '\n';
+    // Check header
+    if (string(header.cord, 4) != "CORD") THROW("Header invalid");
+
+
+    // Read comment
+    unsigned int size = 0;
+    char *commentData = fortranReadX(0, size, "comment");
+    if (size) {
+      comment.resize(size + 1);
+      memcpy(&comment[0], commentData, size);
+      comment[size] = 0;
     }
 
-    File::read(reinterpret_cast<char *>(&l), sizeof(int32));
-    if (mySwapEndian) swapBytes(l);
-    if ((n - 4) % 80 != 0 || file.fail() || l != n) {
-      file.setstate(ios::failbit);
-      close();
-      THROW("Flag check failed");
-    }
 
-    n = 0;
-    l = 0;
-    int32 count = 0;
-    File::read(reinterpret_cast<char *>(&n), sizeof(int32));
-    if (mySwapEndian) swapBytes(n); // 4
-    File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-    if (mySwapEndian) swapBytes(count); // number of atoms
-    File::read(reinterpret_cast<char *>(&l), sizeof(int32));
-    if (mySwapEndian) swapBytes(l); // 4
-    if (n != 4 || l != 4 || file.fail()) {
-      file.setstate(ios::failbit);
-      close();
-      THROW("Length check failed");
-    }
+    // Read number of atoms
+    int32 natoms = 0;
+    fortranRead((char *)&natoms, sizeof(int32), "# atoms");
+    if (swap) swapBytes(natoms);
+
 
     // Skip free indexes
-    if (freeIndexes > 0)
-      file.seekg(4 * (count - freeIndexes + 2), ios::cur);
+    if (header.freeIndexes > 0)
+      file.seekg(4 * (natoms - header.freeIndexes + 2), ios::cur);
 
-    myX.resize(count);
-    myY.resize(count);
-    myZ.resize(count);
+    if (file.fail())
+      THROWS("Error skipping " << header.freeIndexes << "free indexes");
+
+
+    // Read next frame
+    std::vector<float4> x(natoms);
+    std::vector<float4> y(natoms);
+    std::vector<float4> z(natoms);    
+
+    for (int i = 0; i < header.frames; i++) {
+      fortranRead((char *)&x[0], natoms * 4, "X dimension");
+      fortranRead((char *)&y[0], natoms * 4, "Y dimension");
+      fortranRead((char *)&z[0], natoms * 4, "Z dimension");
+
+
+      // Copy back to correct structure
+      xyz.push_back(XYZ(natoms));
+
+      for (int j = 0; j < natoms; j++) {
+        if (swap) {
+          swapBytes(x[j]);
+          swapBytes(y[j]);
+          swapBytes(z[j]);
+        }
+      
+        xyz[i].coords[j].x = x[j];
+        xyz[i].coords[j].y = y[j];
+        xyz[i].coords[j].z = z[j];
+      }
+    }
+    
+  } catch (const Exception &e) {
+    THROWSC("DCD read error at " << file.tellg() << " in "
+            << getFilename(), e);
   }
-
-  // Read next frame
-  // X-dim
-  int32 count = 0;
-  File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-  if (mySwapEndian) swapBytes(count); // number of atoms
-  count /= sizeof(int32);
-  if ((unsigned int)count != myX.size() || file.fail()) {
-    file.setstate(ios::failbit);
-    close();
-    THROW("X dimension does not match atom count");
-  }
-
-  File::read(reinterpret_cast<char *>(&(myX[0])), sizeof(float4) * count);
-  count = 0;
-  File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-  if (mySwapEndian) swapBytes(count);
-  count /= sizeof(int32);
-  if ((unsigned int)count != myX.size() || file.fail()) {
-    file.setstate(ios::failbit);
-    close();
-    THROW("X dimension does not match atom count");
-  }
-
-  // Y-dim
-  count = 0;
-  File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-  if (mySwapEndian) swapBytes(count); // number of atoms
-  count /= sizeof(int32);
-  if ((unsigned int)count != myY.size() || file.fail()) {
-    file.setstate(ios::failbit);
-    close();
-    THROW("Y dimension does not match atom count");
-  }
-
-  File::read(reinterpret_cast<char *>(&(myY[0])), sizeof(float4) * count);
-  count = 0;
-  File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-  if (mySwapEndian) swapBytes(count);
-  count /= sizeof(int32);
-  if ((unsigned int)count != myY.size() || file.fail()) {
-    file.setstate(ios::failbit);
-    close();
-    THROW("Y dimension does not match atom count");
-  }
-
-  // Z-dim
-  count = 0;
-  File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-  if (mySwapEndian) swapBytes(count); // number of atoms
-  count /= sizeof(int32);
-  if ((unsigned int)count != myZ.size() || file.fail()) {
-    file.setstate(ios::failbit);
-    close();
-    THROW("Z dimension does not match atom count");
-  }
-
-  File::read(reinterpret_cast<char *>(&(myZ[0])), sizeof(float4) * count);
-  count = 0;
-  File::read(reinterpret_cast<char *>(&count), sizeof(int32));
-  if (mySwapEndian) swapBytes(count);
-  count /= sizeof(int32);
-  if ((unsigned int)count != myZ.size() || file.fail()) {
-    file.setstate(ios::failbit);
-    close();
-    THROW("Z dimension does not match atom count");
-  }
-
-  // Copy back to right structure
-  coords.resize(count);
-  for (int i = 0; i < count; ++i) {
-    if (mySwapEndian) swapBytes(myX[i]);
-    coords[i].x = myX[i];
-    if (mySwapEndian) swapBytes(myY[i]);
-    coords[i].y = myY[i];
-    if (mySwapEndian) swapBytes(myZ[i]);
-    coords[i].z = myZ[i];
-  }
-
-  if (file.fail()) THROW("IO failure");
 }
 
-XYZ DCDTrajectoryReader::getXYZ() const {
-  XYZ res;
-  if (myCoords != NULL)
-    res.coords = (*myCoords);
-  res.names.resize(res.coords.size(), "NONAME");
-  return res;
-}
-
-Vector3DBlock *DCDTrajectoryReader::orphanCoords() {
-  Vector3DBlock *tmp = myCoords;
-  myCoords = NULL;
+vector<XYZ> *DCDTrajectoryReader::orphanXYZ() {
+  vector<XYZ> *tmp = xyz;
+  xyz = 0;
   return tmp;
 }
 
-DCDTrajectoryReader &ProtoMol::
-operator>>(DCDTrajectoryReader &reader, XYZ &xyz) {
-  try {
-    reader.doRead(xyz.coords);
-
-  } catch (const Exception &e) {
-    THROWSC("Failed to read DCD file '" << reader.getFilename() << "'", e);
-  }
-
-  if (xyz.coords.size() != xyz.names.size())
-    xyz.names.resize(xyz.coords.size(), "NONAME");
-
-  return reader;
+void DCDTrajectoryReader::fortranRead(char *data, unsigned int size,
+                                      const string &err) {
+  unsigned int x = size;
+  fortranReadX(data, x, err);
 }
 
+char *DCDTrajectoryReader::fortranReadX(char *data, unsigned int &size,
+                                        const std::string &err) {
+  int32 head;
+
+  // Read record head
+  File::read((char *)&head, sizeof(int32));
+  if (swap) swapBytes(head);
+
+  if (head <= 0) THROWS("Invalid record header: " << err);
+
+  if (size && size != (unsigned int)head)
+    THROWS("Record size " << head << " not what expected " << size << ": "
+           << err);
+
+
+  // Read data
+  if (!size) {
+    size = (unsigned int)head;
+    data = new char[size];
+    if (!data) THROWS("Failed to allocate " << size << " bytes");
+  }
+  File::read(data, size);
+
+
+  // Read record tail
+  int32 tail;
+  File::read((char *)&tail, sizeof(int32));
+  if (swap) swapBytes(tail);
+
+  if (head != tail)
+    THROWS("Record tail " << tail << " does not match head " << head
+           << ": " << err);
+
+
+  if (file.fail()) THROW("IO failure");
+
+
+  return data;
+}
+
+
 DCDTrajectoryReader &ProtoMol::
-operator>>(DCDTrajectoryReader &reader, Vector3DBlock &coords) {
+operator>>(DCDTrajectoryReader &reader, vector<XYZ> &xyz) {
   try {
-    reader.doRead(coords);
+    reader.doRead(xyz);
 
   } catch (const Exception &e) {
     THROWSC("Failed to read DCD file '" << reader.getFilename() << "'", e);

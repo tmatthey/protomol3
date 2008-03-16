@@ -3,6 +3,7 @@
 #define FILE_H
 
 #include <string>
+#include <vector>
 
 #ifdef BUILD_FOR_FAH
 #include <boost/iostreams/stream.hpp>
@@ -61,6 +62,7 @@ namespace ProtoMol {
     bool open();
     void close();
     bool is_open();
+    bool eof() {return file.eof();}
 
     // enable expression testing
     operator void*() const {return !*this ? 0 : const_cast<File *>(this);}
@@ -70,6 +72,7 @@ namespace ProtoMol {
     // more than one char ...)
     void read(char *c, std::streamsize count);
     std::string getline();
+    unsigned int getLineTokens(std::vector<std::string> &tokens);
   };
 }
 

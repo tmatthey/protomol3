@@ -6,6 +6,7 @@
 #include <protomol/config/Configuration.h>
 #include <protomol/base/Report.h>
 #include <protomol/base/Exception.h>
+#include <protomol/parallel/Parallel.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -58,6 +59,13 @@ void MainModule::configure(ProtoMolApp *app) {
 
   //  Set report level
   report << reportlevel((int)config[InputDebug::keyword]);
+
+  // Set random seed
+  int seed = config[InputSeed::keyword];
+  Parallel::bcast(seed);
+  config[InputSeed::keyword] = seed;
+  randomNumber(seed);
+
 
   // Check if configuration is complete
   if (config.hasUndefinedKeywords()) {

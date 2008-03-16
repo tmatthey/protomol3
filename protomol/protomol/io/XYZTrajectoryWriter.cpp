@@ -64,12 +64,10 @@ bool XYZTrajectoryWriter::openWith(const string &filename,
 bool XYZTrajectoryWriter::reopen() {
   if (myFirst) {
     myFirst = false;
-    if (!open())
-      return false;
+    if (!open()) return false;
   }
 
-  if (is_open())
-    close();
+  if (is_open()) close();
 
   // Try to read the number of frames
   file.clear();
@@ -87,6 +85,7 @@ bool XYZTrajectoryWriter::reopen() {
     open(filename.c_str(), ios::in | ios::out);
     file.seekp(0, ios::beg);
     file.write(str.c_str(), str.size());
+
   } else {
     // First time ...
     file.clear();
@@ -98,6 +97,7 @@ bool XYZTrajectoryWriter::reopen() {
   close();
   file.clear();
   open(filename.c_str(), ios::out | ios::app);
+
   return !file.fail();
 }
 
@@ -128,19 +128,22 @@ bool XYZTrajectoryWriter::write(const Vector3DBlock &coords,
 }
 
 bool XYZTrajectoryWriter::write() {
-  if (!reopen())
-    return false;
+  if (!reopen()) return false;
+
   if (myCoords == NULL)
     report << error << "[XYZTrajectoryWriter::write]"
            << " No coordinates specified." << endr;
+
   if (!(myNames != NULL || (myAtoms != NULL && myAtomTypes != NULL)))
     report << error << "[XYZTrajectoryWriter::write]"
            << " No atom names specified." << endr;
+
   const unsigned int count = myCoords->size();
   if ((myNames != NULL && myNames->size() != count) ||
       (myAtoms != NULL && myAtomTypes != NULL && myAtoms->size() != count))
     report << error << "[XYZTrajectoryWriter::write]"
            << " Coorindate and atom name size are not equal." << endr;
+
 
   // First, write the number of atoms
   file << count << endl;
@@ -148,9 +151,8 @@ bool XYZTrajectoryWriter::write() {
   // Write atoms
   file << setprecision(15);   // This should be some FLT_DIG or DBL_DIG ...
   for (unsigned int i = 0; i < count; ++i) {
-    file <<
-    (myNames !=
-     NULL ? (*myNames)[i] : (*myAtomTypes)[(*myAtoms)[i].type].name) << "\t";
+    file << (myNames ? (*myNames)[i] : (*myAtomTypes)[(*myAtoms)[i].type].name)
+         << "\t";
     file.width(24);
     file << (*myCoords)[i].x;
     file.width(24);

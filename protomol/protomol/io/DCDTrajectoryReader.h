@@ -6,6 +6,8 @@
 #include <protomol/type/XYZ.h>
 #include <protomol/type/TypeSelection.h>
 
+#include <vector>
+
 namespace ProtoMol {
   //____DCDTrajectoryReader
 
@@ -40,34 +42,31 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
 
-    bool read(Vector3DBlock &coords);
-    void doRead(Vector3DBlock &coords);
-    XYZ getXYZ() const;
+    bool read(std::vector<XYZ> &coords);
+    void doRead(std::vector<XYZ> &coords);
 
-    Vector3DBlock *orphanCoords();
+    std::vector<XYZ> *orphanXYZ();
+
+  private:
+    void fortranRead(char *data, unsigned int size,
+                     const std::string &err = "");
+    char *fortranReadX(char *data, unsigned int &size,
+                      const std::string &err = "");
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Friends
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    friend DCDTrajectoryReader &operator>>(
-      DCDTrajectoryReader &DCDTrajectoryReader, XYZ &xyz);
-
-    friend DCDTrajectoryReader &operator>>(
-      DCDTrajectoryReader &DCDTrajectoryReader, Vector3DBlock &coords);
+    friend DCDTrajectoryReader &operator>>(DCDTrajectoryReader &reader,
+                                           std::vector<XYZ> &xyz);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    std::vector<float4> myX;
-    std::vector<float4> myY;
-    std::vector<float4> myZ;
-    Vector3DBlock *myCoords;
-    bool mySwapEndian;
+    std::vector<XYZ> *xyz;
+    bool swap;
   };
-
-  //____INLINES
 }
 #endif /* DCDTRAJECTORYREADER_H */
 

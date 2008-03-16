@@ -15,11 +15,13 @@ namespace ProtoMol {
   /// Test if the file is accessible
   bool isAccessible(const std::string &fileName);
 
-  /// Does an abort, calling the adequate abort system function
-  void protomolAbort();
-
   void splitFileName(const std::string &filename, std::string &dirname,
                      std::string &basename, std::string &extension);
+
+  unsigned int getFileSize(const std::string &filename);
+
+  /// Does an abort, calling the adequate abort system function
+  void protomolAbort();
 
   /// Sets function to be called when calling protomolAbort()
   void setProtomolAbort(void (*abortFunction)());
@@ -57,9 +59,7 @@ namespace ProtoMol {
 
   /// Shift left of four Real's
   inline void shift(Real &a, Real &b, Real &c, const Real d) {
-    a = b;
-    b = c;
-    c = d;
+    a = b; b = c; c = d;
   }
 
   /// bool constant if the machine is littleEndian or not
@@ -67,16 +67,10 @@ namespace ProtoMol {
 
   /// Clears a container explicitly
   template<typename T> inline
-  void realclear(T &t) {
-    T tmp;
-    t.swap(tmp);
-  }
+  void realclear(T &t) {T tmp; t.swap(tmp);}
 
   /// Shrinks the capacity of a container explicitly
   template<typename T> inline
-  void shrink(T &t) {
-    T tmp(t);
-    t.swap(tmp);
-  }
+  void shrink(T &t) {T tmp(t); t.swap(tmp);}
 }
 #endif /* SYSTEMUTILITIES_H */

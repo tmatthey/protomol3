@@ -32,6 +32,7 @@ namespace ProtoMol {
   public:
     bool read(XYZ &xyz);
     bool read(Vector3DBlock &coords, std::vector<std::string> &names);
+    void doRead(Vector3DBlock &coords, std::vector<std::string> &names);
 
     XYZ getXYZ() const;
     Vector3DBlock *orphanCoords();

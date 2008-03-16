@@ -29,6 +29,7 @@
 #define PATHSEPSTR "/"
 #endif
 
+#include <fstream>
 #include <sys/stat.h>
 
 using namespace std;
@@ -59,7 +60,7 @@ namespace ProtoMol {
       confFile = tmp + 1;
       if (CHDIR(currentdir))
         return false;
-    } else if (*tmp == PATHSEP)  // config file in / is odd, but it might happen
+    } else if (*tmp == PATHSEP) // config file in / is odd, but it might happen
       if (CHDIR(PATHSEPSTR))
         return false;
 
@@ -89,6 +90,13 @@ namespace ProtoMol {
     }
   }
 
+  unsigned int getFileSize(const string &filename) {
+    ifstream f(filename.c_str());
+    if (!f.is_open()) THROWS("Failed to open '" << filename << "'");
+
+    f.seekg(0, ios::end);
+    return (unsigned int)f.tellg();
+  }
 
 //____ protomolAbort
 

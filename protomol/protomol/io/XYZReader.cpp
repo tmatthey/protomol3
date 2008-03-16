@@ -1,10 +1,9 @@
 #include <protomol/io/XYZReader.h>
 
-#include <protomol/base/Report.h>
+#include <protomol/type/String.h>
 #include <protomol/base/StringUtilities.h>
 
 using namespace std;
-using namespace ProtoMol::Report;
 using namespace ProtoMol;
 //____XYZReader
 
@@ -15,50 +14,20 @@ XYZReader::XYZReader(const string &filename) :
   Reader(filename), myCoords(NULL), myNames(NULL) {}
 
 XYZReader::~XYZReader() {
-  if (myCoords != NULL)
-    delete myCoords;
-  if (myNames != NULL)
-    delete myNames;
+  if (myCoords) delete myCoords;
+  if (myNames) delete myNames;
 }
 
 bool XYZReader::tryFormat() {
-  if (!open())
-    return false;
+  Vector3DBlock coords;
+  vector<string> names;
 
-  // Number of atoms
-  unsigned int count = 0;
-  file >> count;
-  if (file.good() && count == 0) {
-    close();
-    return true;
-  }
-
-  string str(getline());
-
-  // Comment
-  str = getline();
-  bool testTrajectory = isUInt(str) && (toUInt(str) > 1);
-
-  // Atoms
-  Real x;
-  if (testTrajectory) {
-    unsigned int frames = toUInt(str);
-    for (unsigned int i = 0; i < count && !file.fail(); ++i)
-      file >> str >> x >> x >> x;
-
-    if (frames > 1)
-      file >> count >> str >> x >> x >> x;
-  } else
-    file >> str >> x >> x >> x;
-  close();
-  return !file.fail();
+  return read(coords, names);
 }
 
 bool XYZReader::read() {
-  if (myCoords == NULL)
-    myCoords = new Vector3DBlock();
-  if (myNames == NULL)
-    myNames = new vector<string>();
+  if (!myCoords) myCoords = new Vector3DBlock();
+  if (!myNames) myNames = new vector<string>();
   return read(*myCoords, *myNames);
 }
 
@@ -67,46 +36,48 @@ bool XYZReader::read(XYZ &xyz) {
 }
 
 bool XYZReader::read(Vector3DBlock &coords, vector<string> &names) {
-  if (!tryFormat())
-    return false;
-  if (!open())
-    return false;
+  try {
+    doRead(coords, names);
+    return true;
+
+  } catch (const Exception &e) {}
+
+  return false;
+}
+
+void XYZReader::doRead(Vector3DBlock &coords, vector<string> &names) {
+  if (!is_open()) if (!open()) THROW("Open failed");
+
+  vector<string> tokens;
 
   // Number of atoms
-  unsigned int n = 0;
-  file >> n;
-  string str(getline());
+  if (getLineTokens(tokens) != 1) THROW("Invalid atom count");
+  unsigned int n = String::parseUInteger(tokens[0]);
 
-  // Comment
-  str = getline();
-  if (file.fail()) {
-    close();
-    return false;
-  }
-
-  if (isInt(str))
-    report << hint <<
-    "[XYZReader::read] Does also match XYZ trajectory format." << endr;
-
-  comment = str;
+  // Check for comment
+  if (file.peek() == '!') comment = getline();
 
   coords.resize(n);
   names.resize(n);
 
   // Read atoms
-  for (unsigned int i = 0; i < n && !file.fail(); ++i)
-    file >> names[i] >> coords[i].x >> coords[i].y >> coords[i].z;
+  for (unsigned int i = 0; i < n && !file.fail(); ++i) {
+    unsigned int count = getLineTokens(tokens);
+    if (count != 4) THROWS("Invalid XYZ line " << i << " tokens " << count);
+    names[i] = tokens[0];
+    coords[i].x = String::parseDouble(tokens[1]);
+    coords[i].y = String::parseDouble(tokens[2]);
+    coords[i].z = String::parseDouble(tokens[3]);
+  }
 
   close();
-  return !file.fail();
+  if (file.fail()) THROW("Data read failed");
 }
 
 XYZ XYZReader::getXYZ() const {
   XYZ res;
-  if (myCoords != NULL)
-    res.coords = (*myCoords);
-  if (myNames != NULL)
-    res.names = (*myNames);
+  if (myCoords) res.coords = *myCoords;
+  if (myNames) res.names = *myNames;
   return res;
 }
 
@@ -122,20 +93,14 @@ vector<string> *XYZReader::orphanNames() {
   return tmp;
 }
 
-XYZReader &ProtoMol::operator>>(XYZReader &xyzReader, XYZ &xyz) {
-  if (!xyzReader.read(xyz.coords, xyz.names))
-    THROWS("Failed to read XYZ file '" << xyzReader.getFilename() << "'");
-
-  return xyzReader;
+XYZReader &ProtoMol::operator>>(XYZReader &reader, XYZ &xyz) {
+  reader.doRead(xyz.coords, xyz.names);
+  return reader;
 }
 
-XYZReader &ProtoMol::operator>>(XYZReader &xyzReader,
-                                Vector3DBlock &coords) {
-  if (xyzReader.myNames == NULL) xyzReader.myNames = new vector<string>();
-
-  if (!xyzReader.read(coords, *xyzReader.myNames))
-    THROWS("Failed to read XYZ file '" << xyzReader.getFilename() << "'");
-
-  return xyzReader;
+XYZReader &ProtoMol::operator>>(XYZReader &reader, Vector3DBlock &coords) {
+  if (!reader.myNames) reader.myNames = new vector<string>();
+  reader.read(coords, *reader.myNames);
+  return reader;
 }
 

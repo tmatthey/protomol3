@@ -1,12 +1,14 @@
 #include <protomol/io/File.h>
 
 #include <protomol/base/SystemUtilities.h>
+#include <protomol/base/StringUtilities.h>
 #include <protomol/base/Zap.h>
 #include <protomol/type/String.h>
 
 using namespace std;
 using namespace ProtoMol;
 
+#include <sstream>
 #include <iostream>
 
 //____ File
@@ -72,4 +74,16 @@ string File::getline() {
     file.clear(file.rdstate() & (~ios::failbit));
 
   return res;
+}
+
+unsigned int File::getLineTokens(vector<string> &tokens) {
+  tokens.clear();
+
+  stringstream ss(getline());
+  string str;
+  while (ss >> str)
+    if (!str.empty())
+      tokens.push_back(str);
+
+  return tokens.size();
 }
