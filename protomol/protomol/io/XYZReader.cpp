@@ -61,7 +61,7 @@ void XYZReader::doRead(Vector3DBlock &coords, vector<string> &names) {
   names.resize(n);
 
   // Read atoms
-  for (unsigned int i = 0; i < n && !file.fail(); ++i) {
+  for (unsigned int i = 0; i < n && !file.fail(); i++) {
     unsigned int count = getLineTokens(tokens);
     if (count != 4) THROWS("Invalid XYZ line " << i << " tokens " << count);
     names[i] = tokens[0];
@@ -70,7 +70,6 @@ void XYZReader::doRead(Vector3DBlock &coords, vector<string> &names) {
     coords[i].z = String::parseDouble(tokens[3]);
   }
 
-  close();
   if (file.fail()) THROW("Data read failed");
 }
 
