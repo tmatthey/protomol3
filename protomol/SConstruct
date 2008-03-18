@@ -107,12 +107,12 @@ if env['PLATFORM'] == 'win32':
         src += [dir + os.sep + file]
 
   os.path.walk('protomol', add_hdrs, '.h')
-  hdr = src
+  inc = src
   src = []
   os.path.walk('protomol', add_hdrs, '.cpp')
 
   env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
-                  srcs = src, hdrs = hdr,
+                  srcs = src, incs = inc,
                   auto_build_solution = 0,
                   variant = ['Debug', 'Release'],
                   buildtarget = ['debug=1', 'debug=0'])
