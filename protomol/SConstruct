@@ -78,29 +78,37 @@ if not env.GetOption('clean'):
 if fah:
   libsrc.append('#/protomol/modules.cpp')
 
-# Build
-for s in subsrc:
-    libsrc.append('#/protomol/' + s)
 
+# Get source
+for s in subsrc:
+  libsrc.append('#/protomol/' + s)
+
+src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
 # Build libprotomol
 env.Library(libname, libsrc)
 
-
 # Build Protomol
 env.Append(LIBPATH = ['.'])
 env.Prepend(LIBS = [libname])
-src = ['protomol/main.cpp', 'protomol/modules.cpp']
 protomol = env.Program('ProtoMol', src)
 Default(protomol)
 
 
 if env['PLATFORM'] == 'win32':
-  # Build MSVC project
   if debug: variant = 'Debug'
   else: variant = 'Release'
+
+  def add_hdrs(arg, dir, files):
+    for file in files:
+      if file.endswith('.h'):
+        arg += [file]
+
+  hdr = []
+  os.path.walk('protomol', add_hdrs, hdr)
+
   env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
-                  srcs = src + libsrc, 
+                  srcs = src + libsrc, hdrs = hdr,
                   auto_build_solution = 0,
                   variant = ['Debug', 'Release'],
                   buildtarget = ['debug=1', 'debug=0'])
