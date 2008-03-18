@@ -99,16 +99,19 @@ if env['PLATFORM'] == 'win32':
   if debug: variant = 'Debug'
   else: variant = 'Release'
 
+  src = []
   def add_hdrs(arg, dir, files):
     for file in files:
-      if file.endswith('.h'):
-        arg += [file]
+      if file.endswith(arg):
+        src += [file]
 
-  hdr = []
-  os.path.walk('protomol', add_hdrs, hdr)
+  os.path.walk('protomol', add_hdrs, '.h')
+  hdr = src
+  src = []
+  os.path.walk('protomol', add_hdrs, '.cpp')
 
   env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
-                  srcs = src + libsrc, hdrs = hdr,
+                  srcs = src, hdrs = hdr,
                   auto_build_solution = 0,
                   variant = ['Debug', 'Release'],
                   buildtarget = ['debug=1', 'debug=0'])
