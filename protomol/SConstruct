@@ -104,7 +104,7 @@ if env['PLATFORM'] == 'win32':
     global src
     for file in files:
       if file.endswith(arg):
-        src += [file]
+        src += [dir + os.sep + file]
 
   os.path.walk('protomol', add_hdrs, '.h')
   hdr = src
