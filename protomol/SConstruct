@@ -101,6 +101,7 @@ if env['PLATFORM'] == 'win32':
 
   src = []
   def add_hdrs(arg, dir, files):
+    global src
     for file in files:
       if file.endswith(arg):
         src += [file]
