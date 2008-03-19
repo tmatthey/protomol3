@@ -8,6 +8,7 @@
 #include <protomol/io/DCDTrajectoryReader.h>
 #include <protomol/io/XYZTrajectoryReader.h>
 #include <protomol/io/XYZReader.h>
+#include <protomol/io/PDBReader.h>
 #include <protomol/type/XYZ.h>
 
 #ifdef DATA_COMPARATOR_STANDALONE
@@ -119,8 +120,18 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
         reader >> data;
         
       } catch (const Exception &e3) {
+
+          reader.close();
+          PDBReader reader(filename);
+
+          try {
+              XYZ xyz;
+              reader >> xyz;
+              data.push_back(xyz);
+          } catch(const Exception &e4) {
         THROWS("Unsupported file format '" << filename << "' due to errors:"
                << endl << e1 << endl << e2 << endl << e3 << endl);
+          }
       }
     }
   }
