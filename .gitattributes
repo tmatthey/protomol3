@@ -145,6 +145,10 @@ protomol-test/ConfigTests/data/ShakeTest.stderr.expect -text
 protomol-test/ConfigTests/data/ShakeTest.stdout.expect -text
 protomol-test/ConfigTests/data/ShakeTest.xyz.orig -text
 protomol-test/ConfigTests/data/UniversalTest.conf -text
+protomol-test/ConfigTests/data/UniversalTest.return.expect -text
+protomol-test/ConfigTests/data/UniversalTest.stderr.expect -text
+protomol-test/ConfigTests/data/UniversalTest.stdout.expect -text
+protomol-test/ConfigTests/data/UniversalTest.xyz.orig -text
 protomol-test/ConfigTests/data/VelacTest.conf -text
 protomol-test/ConfigTests/data/VelacTest.coor -text
 protomol-test/ConfigTests/data/VelacTest.par -text
