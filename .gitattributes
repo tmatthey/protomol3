@@ -68,6 +68,10 @@ protomol-test/ConfigTests/data/COMTest.stderr.expect -text
 protomol-test/ConfigTests/data/COMTest.stdout.expect -text
 protomol-test/ConfigTests/data/COMTest.xyz.orig -text
 protomol-test/ConfigTests/data/CnTest.conf -text
+protomol-test/ConfigTests/data/CnTest.return.expect -text
+protomol-test/ConfigTests/data/CnTest.stderr.expect -text
+protomol-test/ConfigTests/data/CnTest.stdout.expect -text
+protomol-test/ConfigTests/data/CnTest.xyz.orig -text
 protomol-test/ConfigTests/data/CoulombForceCutoffTest.conf -text
 protomol-test/ConfigTests/data/CoulombForceCutoffTest.return.expect -text
 protomol-test/ConfigTests/data/CoulombForceCutoffTest.stderr.expect -text
