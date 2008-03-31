@@ -164,6 +164,9 @@ protomol-test/ConfigTests/data/VelacTest.vel -text
 protomol-test/ConfigTests/data/VelacTest.veldcd.orig -text
 protomol-test/ConfigTests/data/VelacTest.xyz.orig -text
 protomol-test/ConfigTests/data/XYZTest.conf -text
+protomol-test/ConfigTests/data/XYZTest.return.expect -text
+protomol-test/ConfigTests/data/XYZTest.stderr.expect -text
+protomol-test/ConfigTests/data/XYZTest.stdout.expect -text
 protomol-test/ConfigTests/data/XYZTest.xyz.orig -text
 protomol-test/ConfigTests/data/alanine.par -text
 protomol-test/ConfigTests/data/alanine.pdb -text
