@@ -41,23 +41,23 @@ namespace ProtoMol {
         if (diff.normSquared() > myD) {
           // diff not small engouh, we do have to do more ...
           // ... may be it's just a single wrapping
-          if (diff.x < -myH2.x)
-            diff.x += myH.x;
-          else if (diff.x > myH2.x)
-            diff.x -= myH.x;
-          if (diff.y < -myH2.y)
-            diff.y += myH.y;
-          else if (diff.y > myH2.y)
-            diff.y -= myH.y;
-          if (diff.z < -myH2.z)
-            diff.z += myH.z;
-          else if (diff.z > myH2.z)
-            diff.z -= myH.z;
+          if (diff.c[0] < -myH2.c[0])
+            diff.c[0] += myH.c[0];
+          else if (diff.c[0] > myH2.c[0])
+            diff.c[0] -= myH.c[0];
+          if (diff.c[1] < -myH2.c[1])
+            diff.c[1] += myH.c[1];
+          else if (diff.c[1] > myH2.c[1])
+            diff.c[1] -= myH.c[1];
+          if (diff.c[2] < -myH2.c[2])
+            diff.c[2] += myH.c[2];
+          else if (diff.c[2] > myH2.c[2])
+            diff.c[2] -= myH.c[2];
           if (diff.normSquared() > myD) {
             // ... distance was pretty big, hu? ...
-            diff.x -= myE1.x * rint(myE1r.x * diff.x);
-            diff.y -= myE2.y * rint(myE2r.y * diff.y);
-            diff.z -= myE3.z * rint(myE3r.z * diff.z);
+            diff.c[0] -= myE1.c[0] * rint(myE1r.c[0] * diff.c[0]);
+            diff.c[1] -= myE2.c[1] * rint(myE2r.c[1] * diff.c[1]);
+            diff.c[2] -= myE3.c[2] * rint(myE3r.c[2] * diff.c[2]);
           }
         }
       else
@@ -78,24 +78,24 @@ namespace ProtoMol {
         if (distSquared > myD) {
           // diff not small engouh, we do have to do more ...
           // ... may be it's just a single wrapping
-          if (diff.x < -myH2.x)
-            diff.x += myH.x;
-          else if (diff.x > myH2.x)
-            diff.x -= myH.x;
-          if (diff.y < -myH2.y)
-            diff.y += myH.y;
-          else if (diff.y > myH2.y)
-            diff.y -= myH.y;
-          if (diff.z < -myH2.z)
-            diff.z += myH.z;
-          else if (diff.z > myH2.z)
-            diff.z -= myH.z;
+          if (diff.c[0] < -myH2.c[0])
+            diff.c[0] += myH.c[0];
+          else if (diff.c[0] > myH2.c[0])
+            diff.c[0] -= myH.c[0];
+          if (diff.c[1] < -myH2.c[1])
+            diff.c[1] += myH.c[1];
+          else if (diff.c[1] > myH2.c[1])
+            diff.c[1] -= myH.c[1];
+          if (diff.c[2] < -myH2.c[2])
+            diff.c[2] += myH.c[2];
+          else if (diff.c[2] > myH2.c[2])
+            diff.c[2] -= myH.c[2];
           distSquared = diff.normSquared();
           if (distSquared > myD) {
             // ... distance was pretty big, hu? ...
-            diff.x -= myE1.x * rint(myE1r.x * diff.x);
-            diff.y -= myE2.y * rint(myE2r.y * diff.y);
-            diff.z -= myE3.z * rint(myE3r.z * diff.z);
+            diff.c[0] -= myE1.c[0] * rint(myE1r.c[0] * diff.c[0]);
+            diff.c[1] -= myE2.c[1] * rint(myE2r.c[1] * diff.c[1]);
+            diff.c[2] -= myE3.c[2] * rint(myE3r.c[2] * diff.c[2]);
             distSquared = diff.normSquared();
           }
         }
@@ -119,25 +119,25 @@ namespace ProtoMol {
           return diff;
         else {
           // ... may be it's just a single wrapping
-          if (diff.x < -myH2.x)
-            diff.x += myH.x;
-          else if (diff.x > myH2.x)
-            diff.x -= myH.x;
-          if (diff.y < -myH2.y)
-            diff.y += myH.y;
-          else if (diff.y > myH2.y)
-            diff.y -= myH.y;
-          if (diff.z < -myH2.z)
-            diff.z += myH.z;
-          else if (diff.z > myH2.z)
-            diff.z -= myH.z;
+          if (diff.c[0] < -myH2.c[0])
+            diff.c[0] += myH.c[0];
+          else if (diff.c[0] > myH2.c[0])
+            diff.c[0] -= myH.c[0];
+          if (diff.c[1] < -myH2.c[1])
+            diff.c[1] += myH.c[1];
+          else if (diff.c[1] > myH2.c[1])
+            diff.c[1] -= myH.c[1];
+          if (diff.c[2] < -myH2.c[2])
+            diff.c[2] += myH.c[2];
+          else if (diff.c[2] > myH2.c[2])
+            diff.c[2] -= myH.c[2];
           if (diff.normSquared() <= myD)
             return diff;
           else
             // ... distance was pretty big, hu? ...
-            return Vector3D(diff - Vector3D(myE1.x * rint(myE1r.x * diff.x),
-                myE2.y * rint(myE2r.y * diff.y),
-                myE3.z * rint(myE3r.z * diff.z)));
+            return Vector3D(diff - Vector3D(myE1.c[0] * rint(myE1r.c[0] * diff.c[0]),
+                myE2.c[1] * rint(myE2r.c[1] * diff.c[1]),
+                myE3.c[2] * rint(myE3r.c[2] * diff.c[2])));
         }
       else
         // ... really difficult!
@@ -155,9 +155,9 @@ namespace ProtoMol {
           // diff so small, we do not have to do more ...
           return Vector3D(0.0, 0.0, 0.0);
         else
-          return Vector3D(myE1.x * rint(myE1r.x * diff.x),
-            myE2.y * rint(myE2r.y * diff.y),
-            myE3.z * rint(myE3r.z * diff.z));
+          return Vector3D(myE1.c[0] * rint(myE1r.c[0] * diff.c[0]),
+            myE2.c[1] * rint(myE2r.c[1] * diff.c[1]),
+            myE3.c[2] * rint(myE3r.c[2] * diff.c[2]));
       else
         // ... really difficult!
         return Vector3D(myE1 * rint(myE1r.dot(diff))
@@ -173,9 +173,9 @@ namespace ProtoMol {
           // diff so small, we do not have to do more ...
           return Vector3D(0.0, 0.0, 0.0);
         else
-          return Vector3D(myE1.x * rint(myE1r.x * diff.x),
-            myE2.y * rint(myE2r.y * diff.y),
-            myE3.z * rint(myE3r.z * diff.z));
+          return Vector3D(myE1.c[0] * rint(myE1r.c[0] * diff.c[0]),
+            myE2.c[1] * rint(myE2r.c[1] * diff.c[1]),
+            myE3.c[2] * rint(myE3r.c[2] * diff.c[2]));
       else
         // ... really difficult!
         return Vector3D(myE1 * rint(myE1r.dot(diff))

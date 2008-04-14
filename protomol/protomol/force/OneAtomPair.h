@@ -64,6 +64,7 @@ namespace ProtoMol {
       Vector3D diff = realTopo->
         boundaryConditions.minimalDifference((*positions)[i], (*positions)[j],
                                              distSquared);
+      //      cout << "DIFF: " << diff << endl;
       // Do switching function rough test, if necessary.
       if (TSwitchingFunction::USE || TNonbondedForce::CUTOFF)
         if (distSquared > mySquaredCutoff)
@@ -82,6 +83,7 @@ namespace ProtoMol {
       Real rDistSquared = (TNonbondedForce::DIST_R2 ? 1.0 / distSquared : 1.0);
       nonbondedForceFunction(energy, force, distSquared, rDistSquared, diff,
                              realTopo, i, j, excl);
+      //      cout << "EN: " << energy << " FO: " << force << endl;
       // Calculate the switched force and energy.
       if (TSwitchingFunction::MODIFY) {
         Real switchingValue, switchingDeriv;

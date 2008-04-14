@@ -138,7 +138,7 @@ namespace ProtoMol {
 
 //____ toString
   string toString(const Vector3D &c) {
-    return string(toString(c.x) + " " + toString(c.y) + " " + toString(c.z));
+    return string(toString(c.c[0]) + " " + toString(c.c[1]) + " " + toString(c.c[2]));
   }
 
 //____ toString
@@ -287,9 +287,9 @@ namespace ProtoMol {
     string x, y, z;
     ss >> x >> y >> z;
     bool bx, by, bz;
-    bx = toReal(x, c.x);
-    by = toReal(y, c.y);
-    bz = toReal(z, c.z);
+    bx = toReal(x, c.c[0]);
+    by = toReal(y, c.c[1]);
+    bz = toReal(z, c.c[2]);
     return ss.eof() && bx && by && bz;
   }
 

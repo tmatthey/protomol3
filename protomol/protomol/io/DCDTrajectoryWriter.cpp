@@ -175,9 +175,9 @@ bool DCDTrajectoryWriter::write(const Vector3DBlock &coords) {
   myZ.resize(count);
 
   for (unsigned int i = 0; i < count; ++i) {
-    myX[i] = static_cast<float>(coords[i].x);
-    myY[i] = static_cast<float>(coords[i].y);
-    myZ[i] = static_cast<float>(coords[i].z);
+    myX[i] = static_cast<float>(coords[i].c[0]);
+    myY[i] = static_cast<float>(coords[i].c[1]);
+    myZ[i] = static_cast<float>(coords[i].c[2]);
     if (myIsLittleEndian != ISLITTLEENDIAN) {
       swapBytes(myX[i]);
       swapBytes(myY[i]);

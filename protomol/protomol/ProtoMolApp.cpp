@@ -144,6 +144,7 @@ void ProtoMolApp::build() {
     topology->doSCPISM = true;
   }
 
+
   buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword]);
 
 
@@ -169,6 +170,7 @@ void ProtoMolApp::build() {
 
   report << plain << "Actual start temperature : "
          << temperature(topology, &velocities) << "K" << endr;
+
 
   // Add Integrator Modifiers
   modManager->addModifiers(this);
@@ -209,7 +211,6 @@ void ProtoMolApp::build() {
   forceFactory.unregisterAllExemplars();
   outputFactory.unregisterAllExemplars();
  
-
   // Setup run
   currentStep = config[InputFirststep::keyword];
   lastStep = currentStep + (int)config[InputNumsteps::keyword];
@@ -231,7 +232,9 @@ bool ProtoMolApp::step() {
   currentStep += inc;
 
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].start();
+
   integrator->run(inc);
+
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].stop();
 
   return true;

@@ -161,9 +161,9 @@ namespace ProtoMol {
           res += "Atom/cell            : " + toString(
             this->atoms.size() * this->cellManager.getCellVolume() / v) + "\n";
           res += "Real cell size       : (" + toString(
-            this->cellManager.getRealCellSize().x) + "," + toString(
-            this->cellManager.getRealCellSize().y) + "," + toString(
-            this->cellManager.getRealCellSize().z) + ")\n";
+            this->cellManager.getRealCellSize().c[0]) + "," + toString(
+            this->cellManager.getRealCellSize().c[1]) + "," + toString(
+            this->cellManager.getRealCellSize().c[2]) + ")\n";
           res += "Cell dimension       : (" +
                  toString(this->cellLists.getDimX()) + "," + toString(
             this->cellLists.getDimY()) + "," +
@@ -174,27 +174,27 @@ namespace ProtoMol {
       Vector3D a, b;
       this->getBoundaryConditionsBox(a, b);
       res +=
-        "Simulation box       : (" + toString(a.x) + "," + toString(a.y) +
-        "," + toString(a.z) + ")-" + "(" + toString(b.x) + "," +
-        toString(b.y) + "," + toString(b.z) + ") " + "(" + toString(b.x - a.x) +
-        "," + toString(b.y - a.y) + "," + toString(b.z - a.z) + ")";
+        "Simulation box       : (" + toString(a.c[0]) + "," + toString(a.c[1]) +
+        "," + toString(a.c[2]) + ")-" + "(" + toString(b.c[0]) + "," +
+        toString(b.c[1]) + "," + toString(b.c[2]) + ") " + "(" + toString(b.c[0] - a.c[0]) +
+        "," + toString(b.c[1] - a.c[1]) + "," + toString(b.c[2] - a.c[2]) + ")";
 
       if (positions != NULL) {
         this->getBoundingbox(*positions, a, b);
         res +=
-          "\nParticle             : (" + toString(a.x) + "," + toString(a.y) +
-          "," + toString(a.z) + ")-" + "(" + toString(b.x) + "," +
-          toString(b.y) + "," + toString(b.z) + ") " + "(" +
-          toString(b.x - a.x) + "," + toString(b.y - a.y) + "," +
-          toString( b.z - a.z) + ")";
+          "\nParticle             : (" + toString(a.c[0]) + "," + toString(a.c[1]) +
+          "," + toString(a.c[2]) + ")-" + "(" + toString(b.c[0]) + "," +
+          toString(b.c[1]) + "," + toString(b.c[2]) + ") " + "(" +
+          toString(b.c[0] - a.c[0]) + "," + toString(b.c[1] - a.c[1]) + "," +
+          toString( b.c[2] - a.c[2]) + ")";
 
         positions->boundingbox(a, b);
         res +=
-          "\nParticle extended    : (" + toString(a.x) + "," + toString(a.y) +
-          "," + toString(a.z) + ")-" + "(" + toString(b.x) + "," +
-          toString(b.y) + "," + toString(b.z) + ") " + "(" +
-          toString(b.x - a.x) + "," + toString(b.y - a.y) + "," +
-          toString(b.z - a.z) + ")";
+          "\nParticle extended    : (" + toString(a.c[0]) + "," + toString(a.c[1]) +
+          "," + toString(a.c[2]) + ")-" + "(" + toString(b.c[0]) + "," +
+          toString(b.c[1]) + "," + toString(b.c[2]) + ") " + "(" +
+          toString(b.c[0] - a.c[0]) + "," + toString(b.c[1] - a.c[1]) + "," +
+          toString(b.c[2] - a.c[2]) + ")";
       }
 
       return res;

@@ -93,9 +93,9 @@ bool XYZBinReader::read(Vector3DBlock &coords) {
         swapBytes(vec[i * 3 + 1]);
         swapBytes(vec[i * 3 + 2]);
       }
-      coords[i].x = static_cast<Real>(vec[i * 3 + 0]);
-      coords[i].y = static_cast<Real>(vec[i * 3 + 1]);
-      coords[i].z = static_cast<Real>(vec[i * 3 + 2]);
+      coords[i].c[0] = static_cast<Real>(vec[i * 3 + 0]);
+      coords[i].c[1] = static_cast<Real>(vec[i * 3 + 1]);
+      coords[i].c[2] = static_cast<Real>(vec[i * 3 + 2]);
     }
 
     delete[] vec;
@@ -111,9 +111,9 @@ bool XYZBinReader::read(Vector3DBlock &coords) {
         swapBytes(vec[i * 3 + 1]);
         swapBytes(vec[i * 3 + 2]);
       }
-      coords[i].x = static_cast<Real>(vec[i * 3 + 0]);
-      coords[i].y = static_cast<Real>(vec[i * 3 + 1]);
-      coords[i].z = static_cast<Real>(vec[i * 3 + 2]);
+      coords[i].c[0] = static_cast<Real>(vec[i * 3 + 0]);
+      coords[i].c[1] = static_cast<Real>(vec[i * 3 + 1]);
+      coords[i].c[2] = static_cast<Real>(vec[i * 3 + 2]);
     }
 
     delete[] vec;
@@ -131,9 +131,9 @@ bool XYZBinReader::read(Vector3DBlock &coords) {
         swapBytes(vec[i * 3 + 1]);
         swapBytes(vec[i * 3 + 2]);
       }
-      coords[i].x = static_cast<Real>(vec[i * 3 + 0]);
-      coords[i].y = static_cast<Real>(vec[i * 3 + 1]);
-      coords[i].z = static_cast<Real>(vec[i * 3 + 2]);
+      coords[i].c[0] = static_cast<Real>(vec[i * 3 + 0]);
+      coords[i].c[1] = static_cast<Real>(vec[i * 3 + 1]);
+      coords[i].c[2] = static_cast<Real>(vec[i * 3 + 2]);
     }
 
     delete[] vec;

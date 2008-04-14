@@ -76,8 +76,9 @@ void ModuleManager::configure(ProtoMolApp *app) {
 void ModuleManager::read(ProtoMolApp *app) {
   modules_t::iterator it;
 
-  for (it = modules.begin(); it != modules.end(); it++)
+  for (it = modules.begin(); it != modules.end(); it++) {
     (*it)->read(app);
+  }
 }
 
 void ModuleManager::registerForces(ProtoMolApp *app) {

@@ -163,9 +163,9 @@ void DCDTrajectoryReader::doRead(vector<XYZ> &xyz) {
           swapBytes(z[j]);
         }
       
-        xyz[i].coords[j].x = x[j];
-        xyz[i].coords[j].y = y[j];
-        xyz[i].coords[j].z = z[j];
+        xyz[i].coords[j].c[0] = x[j];
+        xyz[i].coords[j].c[1] = y[j];
+        xyz[i].coords[j].c[2] = z[j];
       }
     }
     

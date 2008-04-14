@@ -51,9 +51,11 @@ void IOModule::read(ProtoMolApp *app) {
     if (!(reader >> pdb))
       THROW(string("Could not parse PDB position file '") +
         config[InputPositions::keyword].getString() + "'.");
-
-    swap(app->positions, pdb.coords);
-
+    
+    // TMC: Can no longer do std::swap, must use swap function
+    // of Vector3DBlock
+    //swap(app->positions, pdb.coords);
+    app->positions.swap(pdb.coords);
     // Add to output cache
     app->outputCache.add(pdb.atoms);
 

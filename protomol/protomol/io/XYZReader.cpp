@@ -65,9 +65,9 @@ void XYZReader::doRead(Vector3DBlock &coords, vector<string> &names) {
     unsigned int count = getLineTokens(tokens);
     if (count != 4) THROWS("Invalid XYZ line " << i << " tokens " << count);
     names[i] = tokens[0];
-    coords[i].x = String::parseDouble(tokens[1]);
-    coords[i].y = String::parseDouble(tokens[2]);
-    coords[i].z = String::parseDouble(tokens[3]);
+    coords[i].c[0] = String::parseDouble(tokens[1]);
+    coords[i].c[1] = String::parseDouble(tokens[2]);
+    coords[i].c[2] = String::parseDouble(tokens[3]);
   }
 
   if (file.fail()) THROW("Data read failed");

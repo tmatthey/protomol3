@@ -42,9 +42,9 @@ namespace ProtoMol {
       kbToverM = sqrt(kbT / topology->atoms[i].scaledMass);
 
       // Generates a random Gaussian number with mean 0, std dev kbToverM.
-      (*velocities)[i].x = kbToverM * randomGaussianNumber(seed);
-      (*velocities)[i].y = kbToverM * randomGaussianNumber(seed);
-      (*velocities)[i].z = kbToverM * randomGaussianNumber(seed);
+      (*velocities)[i].c[0] = kbToverM * randomGaussianNumber(seed);
+      (*velocities)[i].c[1] = kbToverM * randomGaussianNumber(seed);
+      (*velocities)[i].c[2] = kbToverM * randomGaussianNumber(seed);
     }
   }
 
@@ -528,9 +528,9 @@ namespace ProtoMol {
     inertia.zeroMatrix();
     for (unsigned int i = 0; i < topo->atoms.size(); i++) {
       Vector3D r((*positions)[i] - centerOfMass);
-      Real x = r.x;
-      Real y = r.y;
-      Real z = r.z;
+      Real x = r.c[0];
+      Real y = r.c[1];
+      Real z = r.c[2];
       inertia += Matrix3By3(y * y + z * z, -x * y, -x * z,
         -x * y, x * x + z * z, -y * z,
         -x * z, -y * z, x * x + y * y) * topo->atoms[i].scaledMass;
@@ -548,9 +548,9 @@ namespace ProtoMol {
     for (unsigned int i = 0; i < topo->atoms.size(); i++)
       if (topo->molecules[topo->atoms[i].molecule].water == false) {
         Vector3D r((*positions)[i] - centerOfMass);
-        Real x = r.x;
-        Real y = r.y;
-        Real z = r.z;
+        Real x = r.c[0];
+        Real y = r.c[1];
+        Real z = r.c[2];
         inertia += Matrix3By3(y * y + z * z, -x * y, -x * z,
           -x * y, x * x + z * z, -y * z,
           -x * z, -y * z, x * x + y * y) * topo->atoms[i].scaledMass;
@@ -1050,15 +1050,15 @@ namespace ProtoMol {
 
     numAtoms = angles->size();
 
-    a.x = (*positions)[innerAtom2].x - (*positions)[innerAtom1].x;
-    a.y = (*positions)[innerAtom2].y - (*positions)[innerAtom1].y;
-    a.z = (*positions)[innerAtom2].z - (*positions)[innerAtom1].z;
-    norm_a = sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-    a.x = a.x / norm_a;
-    a.y = a.y / norm_a;
-    a.z = a.z / norm_a;
+    a.c[0] = (*positions)[innerAtom2].c[0] - (*positions)[innerAtom1].c[0];
+    a.c[1] = (*positions)[innerAtom2].c[1] - (*positions)[innerAtom1].c[1];
+    a.c[2] = (*positions)[innerAtom2].c[2] - (*positions)[innerAtom1].c[2];
+    norm_a = sqrt(a.c[0] * a.c[0] + a.c[1] * a.c[1] + a.c[2] * a.c[2]);
+    a.c[0] = a.c[0] / norm_a;
+    a.c[1] = a.c[1] / norm_a;
+    a.c[2] = a.c[2] / norm_a;
 
-    d = sqrt(a.y * a.y + a.z * a.z);
+    d = sqrt(a.c[1] * a.c[1] + a.c[2] * a.c[2]);
     if (d == 0.0)
       for (unsigned int c = 0; c < numAtoms; c++) {
         angle = (*angles)[c].getAngle();
@@ -1066,13 +1066,13 @@ namespace ProtoMol {
         sinTheta = sin(angle);
 
         if (0.0 < angle) {
-          temp[1] = (*positions)[c].y - (*positions)[innerAtom1].y;
-          temp[2] = (*positions)[c].z - (*positions)[innerAtom1].z;
+          temp[1] = (*positions)[c].c[1] - (*positions)[innerAtom1].c[1];
+          temp[2] = (*positions)[c].c[2] - (*positions)[innerAtom1].c[2];
 
-          (*positions)[c].y = temp[1] * cosTheta - temp[2] * sinTheta +
-                              (*positions)[innerAtom1].y;
-          (*positions)[c].z = temp[1] * sinTheta + temp[2] * cosTheta +
-                              (*positions)[innerAtom1].z;
+          (*positions)[c].c[1] = temp[1] * cosTheta - temp[2] * sinTheta +
+                              (*positions)[innerAtom1].c[1];
+          (*positions)[c].c[2] = temp[1] * sinTheta + temp[2] * cosTheta +
+                              (*positions)[innerAtom1].c[2];
         }
       }
 
@@ -1085,25 +1085,25 @@ namespace ProtoMol {
         if (0.0 < angle) {
           cosTheta = cos(angle);
           sinTheta = sin(angle);
-          temp[0] = (*positions)[c].x - (*positions)[innerAtom1].x;
-          temp[1] = (*positions)[c].y - (*positions)[innerAtom1].y;
-          temp[8] = (*positions)[c].z - (*positions)[innerAtom1].z;
+          temp[0] = (*positions)[c].c[0] - (*positions)[innerAtom1].c[0];
+          temp[1] = (*positions)[c].c[1] - (*positions)[innerAtom1].c[1];
+          temp[8] = (*positions)[c].c[2] - (*positions)[innerAtom1].c[2];
           ;
-          temp[2] = d * temp[0] + - a.x * ((temp[1] * a.y + temp[8] * a.z) / d);
-          temp[3] = (temp[1] * a.z - temp[8] * a.y) / d;
+          temp[2] = d * temp[0] + - a.c[0] * ((temp[1] * a.c[1] + temp[8] * a.c[2]) / d);
+          temp[3] = (temp[1] * a.c[2] - temp[8] * a.c[1]) / d;
           temp[4] = (cosTheta * temp[2] - sinTheta * temp[3]);
-          temp[5] = (a.x * temp[0] + (temp[1] * a.y + temp[8] * a.z));
+          temp[5] = (a.c[0] * temp[0] + (temp[1] * a.c[1] + temp[8] * a.c[2]));
           temp[6] = sinTheta * temp[2] + cosTheta * temp[3];
-          temp[7] = -a.x * temp[4] + d * temp[5];
+          temp[7] = -a.c[0] * temp[4] + d * temp[5];
 
-          (*positions)[c].x = d * temp[4] + a.x * temp[5] +
-                              (*positions)[innerAtom1].x;
-          (*positions)[c].y =
-            (a.z * (temp[6]) + a.y *
-             (temp[7])) / d + (*positions)[innerAtom1].y;
-          (*positions)[c].z =
-            (-a.y * (temp[6]) + a.z *
-             (temp[7])) / d + (*positions)[innerAtom1].z;
+          (*positions)[c].c[0] = d * temp[4] + a.c[0] * temp[5] +
+                              (*positions)[innerAtom1].c[0];
+          (*positions)[c].c[1] =
+            (a.c[2] * (temp[6]) + a.c[1] *
+             (temp[7])) / d + (*positions)[innerAtom1].c[1];
+          (*positions)[c].c[2] =
+            (-a.c[1] * (temp[6]) + a.c[2] *
+             (temp[7])) / d + (*positions)[innerAtom1].c[2];
         }
       }
 
@@ -1125,15 +1125,15 @@ namespace ProtoMol {
 
     numAtoms = angles->size();
 
-    a.x = (*positions)[innerAtom2].x - (*positions)[innerAtom1].x;
-    a.y = (*positions)[innerAtom2].y - (*positions)[innerAtom1].y;
-    a.z = (*positions)[innerAtom2].z - (*positions)[innerAtom1].z;
-    norm_a = sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-    a.x = a.x / norm_a;
-    a.y = a.y / norm_a;
-    a.z = a.z / norm_a;
+    a.c[0] = (*positions)[innerAtom2].c[0] - (*positions)[innerAtom1].c[0];
+    a.c[1] = (*positions)[innerAtom2].c[1] - (*positions)[innerAtom1].c[1];
+    a.c[2] = (*positions)[innerAtom2].c[2] - (*positions)[innerAtom1].c[2];
+    norm_a = sqrt(a.c[0] * a.c[0] + a.c[1] * a.c[1] + a.c[2] * a.c[2]);
+    a.c[0] = a.c[0] / norm_a;
+    a.c[1] = a.c[1] / norm_a;
+    a.c[2] = a.c[2] / norm_a;
 
-    d = sqrt(a.y * a.y + a.z * a.z);
+    d = sqrt(a.c[1] * a.c[1] + a.c[2] * a.c[2]);
 
     if (d == 0.0)
       for (unsigned int c = 0; c < numAtoms; c++) {
@@ -1142,22 +1142,22 @@ namespace ProtoMol {
         sinTheta = sin(angle);
 
         if (0.0 < angle) {
-          temp[1] = (*positions)[c].y - (*positions)[innerAtom1].y;
-          temp[2] = (*positions)[c].z - (*positions)[innerAtom1].z;
+          temp[1] = (*positions)[c].c[1] - (*positions)[innerAtom1].c[1];
+          temp[2] = (*positions)[c].c[2] - (*positions)[innerAtom1].c[2];
 
-          tempVelo[1] = (*velocities)[c].y + temp[1];
-          tempVelo[2] = (*velocities)[c].z + temp[2];
+          tempVelo[1] = (*velocities)[c].c[1] + temp[1];
+          tempVelo[2] = (*velocities)[c].c[2] + temp[2];
 
-          (*positions)[c].y = temp[1] * cosTheta - temp[2] * sinTheta;
-          (*positions)[c].z = temp[1] * sinTheta + temp[2] * cosTheta;
+          (*positions)[c].c[1] = temp[1] * cosTheta - temp[2] * sinTheta;
+          (*positions)[c].c[2] = temp[1] * sinTheta + temp[2] * cosTheta;
 
-          (*velocities)[c].y = tempVelo[1] * cosTheta - tempVelo[2] *
-                               sinTheta - (*positions)[c].y;
-          (*velocities)[c].z = tempVelo[1] * sinTheta + tempVelo[2] *
-                               cosTheta - (*positions)[c].z;
+          (*velocities)[c].c[1] = tempVelo[1] * cosTheta - tempVelo[2] *
+                               sinTheta - (*positions)[c].c[1];
+          (*velocities)[c].c[2] = tempVelo[1] * sinTheta + tempVelo[2] *
+                               cosTheta - (*positions)[c].c[2];
 
-          (*positions)[c].y += (*positions)[innerAtom1].y;
-          (*positions)[c].z += (*positions)[innerAtom1].z;
+          (*positions)[c].c[1] += (*positions)[innerAtom1].c[1];
+          (*positions)[c].c[2] += (*positions)[innerAtom1].c[2];
         }
       }
 
@@ -1170,43 +1170,43 @@ namespace ProtoMol {
         if (0.0 < angle) {
           cosTheta = cos(angle);
           sinTheta = sin(angle);
-          temp[0] = (*positions)[c].x - (*positions)[innerAtom1].x;
-          temp[1] = (*positions)[c].y - (*positions)[innerAtom1].y;
-          temp[8] = (*positions)[c].z - (*positions)[innerAtom1].z;
-          temp[2] = d * temp[0] + - a.x * ((temp[1] * a.y + temp[8] * a.z) / d);
-          temp[3] = (temp[1] * a.z - temp[8] * a.y) / d;
+          temp[0] = (*positions)[c].c[0] - (*positions)[innerAtom1].c[0];
+          temp[1] = (*positions)[c].c[1] - (*positions)[innerAtom1].c[1];
+          temp[8] = (*positions)[c].c[2] - (*positions)[innerAtom1].c[2];
+          temp[2] = d * temp[0] + - a.c[0] * ((temp[1] * a.c[1] + temp[8] * a.c[2]) / d);
+          temp[3] = (temp[1] * a.c[2] - temp[8] * a.c[1]) / d;
           temp[4] = (cosTheta * temp[2] - sinTheta * temp[3]);
-          temp[5] = (a.x * temp[0] + (temp[1] * a.y + temp[8] * a.z));
+          temp[5] = (a.c[0] * temp[0] + (temp[1] * a.c[1] + temp[8] * a.c[2]));
           temp[6] = sinTheta * temp[2] + cosTheta * temp[3];
-          temp[7] = -a.x * temp[4] + d * temp[5];
+          temp[7] = -a.c[0] * temp[4] + d * temp[5];
 
-          tempVelo[0] = (*velocities)[c].x + temp[0];
-          tempVelo[1] = (*velocities)[c].y + temp[1];
-          tempVelo[8] = (*velocities)[c].z + temp[8];
-          tempVelo[2] = d * tempVelo[0] + - a.x *
-                        ((tempVelo[1] * a.y + tempVelo[8] * a.z) / d);
-          tempVelo[3] = (tempVelo[1] * a.z - tempVelo[8] * a.y) / d;
+          tempVelo[0] = (*velocities)[c].c[0] + temp[0];
+          tempVelo[1] = (*velocities)[c].c[1] + temp[1];
+          tempVelo[8] = (*velocities)[c].c[2] + temp[8];
+          tempVelo[2] = d * tempVelo[0] + - a.c[0] *
+                        ((tempVelo[1] * a.c[1] + tempVelo[8] * a.c[2]) / d);
+          tempVelo[3] = (tempVelo[1] * a.c[2] - tempVelo[8] * a.c[1]) / d;
           tempVelo[4] = (cosTheta * tempVelo[2] - sinTheta * tempVelo[3]);
           tempVelo[5] =
-            (a.x * tempVelo[0] + (tempVelo[1] * a.y + tempVelo[8] * a.z));
+            (a.c[0] * tempVelo[0] + (tempVelo[1] * a.c[1] + tempVelo[8] * a.c[2]));
           tempVelo[6] = sinTheta * tempVelo[2] + cosTheta * tempVelo[3];
-          tempVelo[7] = -a.x * tempVelo[4] + d * tempVelo[5];
+          tempVelo[7] = -a.c[0] * tempVelo[4] + d * tempVelo[5];
 
-          (*positions)[c].x = d * temp[4] + a.x * temp[5];
-          (*positions)[c].y = (a.z * (temp[6]) + a.y * (temp[7])) / d;
-          (*positions)[c].z = (-a.y * (temp[6]) + a.z * (temp[7])) / d;
+          (*positions)[c].c[0] = d * temp[4] + a.c[0] * temp[5];
+          (*positions)[c].c[1] = (a.c[2] * (temp[6]) + a.c[1] * (temp[7])) / d;
+          (*positions)[c].c[2] = (-a.c[1] * (temp[6]) + a.c[2] * (temp[7])) / d;
 
-          (*velocities)[c].x = d * tempVelo[4] + a.x * tempVelo[5] -
-                               (*positions)[c].x;
-          (*velocities)[c].y =
-            (a.z * (tempVelo[6]) + a.y * (tempVelo[7])) / d - (*positions)[c].y;
-          (*velocities)[c].z =
-            (-a.y * (tempVelo[6]) + a.z *
-             (tempVelo[7])) / d - (*positions)[c].z;
+          (*velocities)[c].c[0] = d * tempVelo[4] + a.c[0] * tempVelo[5] -
+                               (*positions)[c].c[0];
+          (*velocities)[c].c[1] =
+            (a.c[2] * (tempVelo[6]) + a.c[1] * (tempVelo[7])) / d - (*positions)[c].c[1];
+          (*velocities)[c].c[2] =
+            (-a.c[1] * (tempVelo[6]) + a.c[2] *
+             (tempVelo[7])) / d - (*positions)[c].c[2];
 
-          (*positions)[c].x += (*positions)[innerAtom1].x;
-          (*positions)[c].y += (*positions)[innerAtom1].y;
-          (*positions)[c].z += (*positions)[innerAtom1].z;
+          (*positions)[c].c[0] += (*positions)[innerAtom1].c[0];
+          (*positions)[c].c[1] += (*positions)[innerAtom1].c[1];
+          (*positions)[c].c[2] += (*positions)[innerAtom1].c[2];
         }
       }
 

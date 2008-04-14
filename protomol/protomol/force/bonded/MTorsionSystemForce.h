@@ -116,23 +116,23 @@ namespace ProtoMol {
 
       Real k1 = dpotdphi / sinPhi;
 
-      f1.x = k1 * (r23.y * dcosdA.z - r23.z * dcosdA.y);
-      f1.y = k1 * (r23.z * dcosdA.x - r23.x * dcosdA.z);
-      f1.z = k1 * (r23.x * dcosdA.y - r23.y * dcosdA.x);
+      f1.c[0] = k1 * (r23.c[1] * dcosdA.c[2] - r23.c[2] * dcosdA.c[1]);
+      f1.c[1] = k1 * (r23.c[2] * dcosdA.c[0] - r23.c[0] * dcosdA.c[2]);
+      f1.c[2] = k1 * (r23.c[0] * dcosdA.c[1] - r23.c[1] * dcosdA.c[0]);
 
-      f3.x = k1 * (r23.z * dcosdB.y - r23.y * dcosdB.z);
-      f3.y = k1 * (r23.x * dcosdB.z - r23.z * dcosdB.x);
-      f3.z = k1 * (r23.y * dcosdB.x - r23.x * dcosdB.y);
+      f3.c[0] = k1 * (r23.c[2] * dcosdB.c[1] - r23.c[1] * dcosdB.c[2]);
+      f3.c[1] = k1 * (r23.c[0] * dcosdB.c[2] - r23.c[2] * dcosdB.c[0]);
+      f3.c[2] = k1 * (r23.c[1] * dcosdB.c[0] - r23.c[0] * dcosdB.c[1]);
 
-      f2.x = k1 *
-             (r12.z * dcosdA.y - r12.y * dcosdA.z + r34.y * dcosdB.z - r34.z *
-              dcosdB.y);
-      f2.y = k1 *
-             (r12.x * dcosdA.z - r12.z * dcosdA.x + r34.z * dcosdB.x - r34.x *
-              dcosdB.z);
-      f2.z = k1 *
-             (r12.y * dcosdA.x - r12.x * dcosdA.y + r34.x * dcosdB.y - r34.y *
-              dcosdB.x);
+      f2.c[0] = k1 *
+             (r12.c[2] * dcosdA.c[1] - r12.c[1] * dcosdA.c[2] + r34.c[1] * dcosdB.c[2] - r34.c[2] *
+              dcosdB.c[1]);
+      f2.c[1] = k1 *
+             (r12.c[0] * dcosdA.c[2] - r12.c[2] * dcosdA.c[0] + r34.c[2] * dcosdB.c[0] - r34.c[0] *
+              dcosdB.c[2]);
+      f2.c[2] = k1 *
+             (r12.c[1] * dcosdA.c[0] - r12.c[0] * dcosdA.c[1] + r34.c[0] * dcosdB.c[1] - r34.c[1] *
+              dcosdB.c[0]);
     } else {
       //  This angle is closer to 0 or 180 than it is to
       //  90, so use the cos version to avoid 1/sin terms
@@ -142,39 +142,39 @@ namespace ProtoMol {
 
       Real k1 = -dpotdphi / cosPhi;
 
-      f1.x = k1 *
-             ((r23.y * r23.y + r23.z *
-               r23.z) * dsindC.x - r23.x * r23.y * dsindC.y - r23.x * r23.z *
-              dsindC.z);
-      f1.y = k1 *
-             ((r23.z * r23.z + r23.x *
-               r23.x) * dsindC.y - r23.y * r23.z * dsindC.z - r23.y * r23.x *
-              dsindC.x);
-      f1.z = k1 *
-             ((r23.x * r23.x + r23.y *
-               r23.y) * dsindC.z - r23.z * r23.x * dsindC.x - r23.z * r23.y *
-              dsindC.y);
+      f1.c[0] = k1 *
+             ((r23.c[1] * r23.c[1] + r23.c[2] *
+               r23.c[2]) * dsindC.c[0] - r23.c[0] * r23.c[1] * dsindC.c[1] - r23.c[0] * r23.c[2] *
+              dsindC.c[2]);
+      f1.c[1] = k1 *
+             ((r23.c[2] * r23.c[2] + r23.c[0] *
+               r23.c[0]) * dsindC.c[1] - r23.c[1] * r23.c[2] * dsindC.c[2] - r23.c[1] * r23.c[0] *
+              dsindC.c[0]);
+      f1.c[2] = k1 *
+             ((r23.c[0] * r23.c[0] + r23.c[1] *
+               r23.c[1]) * dsindC.c[2] - r23.c[2] * r23.c[0] * dsindC.c[0] - r23.c[2] * r23.c[1] *
+              dsindC.c[1]);
 
       f3 = dsindB.cross(r23) * k1;
 
-      f2.x = k1 *
-             (-(r23.y * r12.y + r23.z *
-                r12.z) * dsindC.x +
-              (2.0 * r23.x * r12.y - r12.x * r23.y) * dsindC.y
-              + (2.0 * r23.x * r12.z - r12.x *
-                 r23.z) * dsindC.z + dsindB.z * r34.y - dsindB.y * r34.z);
-      f2.y = k1 *
-             (-(r23.z * r12.z + r23.x *
-                r12.x) * dsindC.y +
-              (2.0 * r23.y * r12.z - r12.y * r23.z) * dsindC.z
-              + (2.0 * r23.y * r12.x - r12.y *
-                 r23.x) * dsindC.x + dsindB.x * r34.z - dsindB.z * r34.x);
-      f2.z = k1 *
-             (-(r23.x * r12.x + r23.y *
-                r12.y) * dsindC.z +
-              (2.0 * r23.z * r12.x - r12.z * r23.x) * dsindC.x
-              + (2.0 * r23.z * r12.y - r12.z *
-                 r23.y) * dsindC.y + dsindB.y * r34.x - dsindB.x * r34.y);
+      f2.c[0] = k1 *
+             (-(r23.c[1] * r12.c[1] + r23.c[2] *
+                r12.c[2]) * dsindC.c[0] +
+              (2.0 * r23.c[0] * r12.c[1] - r12.c[0] * r23.c[1]) * dsindC.c[1]
+              + (2.0 * r23.c[0] * r12.c[2] - r12.c[0] *
+                 r23.c[2]) * dsindC.c[2] + dsindB.c[2] * r34.c[1] - dsindB.c[1] * r34.c[2]);
+      f2.c[1] = k1 *
+             (-(r23.c[2] * r12.c[2] + r23.c[0] *
+                r12.c[0]) * dsindC.c[1] +
+              (2.0 * r23.c[1] * r12.c[2] - r12.c[1] * r23.c[2]) * dsindC.c[2]
+              + (2.0 * r23.c[1] * r12.c[0] - r12.c[1] *
+                 r23.c[0]) * dsindC.c[0] + dsindB.c[0] * r34.c[2] - dsindB.c[2] * r34.c[0]);
+      f2.c[2] = k1 *
+             (-(r23.c[0] * r12.c[0] + r23.c[1] *
+                r12.c[1]) * dsindC.c[2] +
+              (2.0 * r23.c[2] * r12.c[0] - r12.c[2] * r23.c[0]) * dsindC.c[0]
+              + (2.0 * r23.c[2] * r12.c[1] - r12.c[2] *
+                 r23.c[1]) * dsindC.c[1] + dsindB.c[1] * r34.c[0] - dsindB.c[0] * r34.c[1]);
     }
     (*forces)[a1] += f1;
     (*forces)[a2] += f2 - f1;
@@ -183,22 +183,22 @@ namespace ProtoMol {
 
     // Add virial
     if (energies->virial()) {
-      Real xy = f1.x * r12.y + f2.x * r23.y + f3.x * r34.y;
-      Real xz = f1.x * r12.z + f2.x * r23.z + f3.x * r34.z;
-      Real yz = f1.y * r12.z + f2.y * r23.z + f3.y * r34.z;
+      Real xy = f1.c[0] * r12.c[1] + f2.c[0] * r23.c[1] + f3.c[0] * r34.c[1];
+      Real xz = f1.c[0] * r12.c[2] + f2.c[0] * r23.c[2] + f3.c[0] * r34.c[2];
+      Real yz = f1.c[1] * r12.c[2] + f2.c[1] * r23.c[2] + f3.c[1] * r34.c[2];
 
-      (*energies)[ScalarStructure::VIRIALXX] += f1.x * r12.x + f2.x * r23.x +
-                                                f3.x * r34.x;
+      (*energies)[ScalarStructure::VIRIALXX] += f1.c[0] * r12.c[0] + f2.c[0] * r23.c[0] +
+                                                f3.c[0] * r34.c[0];
       (*energies)[ScalarStructure::VIRIALXY] += xy;
       (*energies)[ScalarStructure::VIRIALXZ] += xz;
       (*energies)[ScalarStructure::VIRIALYX] += xy;
-      (*energies)[ScalarStructure::VIRIALYY] += f1.y * r12.y + f2.y * r23.y +
-                                                f3.y * r34.y;
+      (*energies)[ScalarStructure::VIRIALYY] += f1.c[1] * r12.c[1] + f2.c[1] * r23.c[1] +
+                                                f3.c[1] * r34.c[1];
       (*energies)[ScalarStructure::VIRIALYZ] += yz;
       (*energies)[ScalarStructure::VIRIALZX] += xz;
       (*energies)[ScalarStructure::VIRIALZY] += yz;
-      (*energies)[ScalarStructure::VIRIALZZ] += f1.z * r12.z + f2.z * r23.z +
-                                                f3.z * r34.z;
+      (*energies)[ScalarStructure::VIRIALZZ] += f1.c[2] * r12.c[2] + f2.c[2] * r23.c[2] +
+                                                f3.c[2] * r34.c[2];
     }
   }
 

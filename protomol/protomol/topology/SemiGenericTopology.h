@@ -49,7 +49,7 @@ namespace ProtoMol {
       if (v >= Constant::MAXREAL) {
         Vector3D a, b;
         positions.boundingbox(a, b);
-        v = (b.x - a.x) * (b.y - a.y) * (b.z - a.z);
+        v = (b.c[0] - a.c[0]) * (b.c[1] - a.c[1]) * (b.c[2] - a.c[2]);
       }
       return v;
     }
@@ -83,12 +83,12 @@ namespace ProtoMol {
       const unsigned int count = positions.size();
       for (unsigned int i = 1; i < count; ++i) {
         Vector3D pos(boundaryConditions.minimalPosition(positions[i]) + origin);
-        if (pos.x < minbb.x) minbb.x = pos.x;
-        else if (pos.x > maxbb.x) maxbb.x = pos.x;
-        if (pos.y < minbb.y) minbb.y = pos.y;
-        else if (pos.y > maxbb.y) maxbb.y = pos.y;
-        if (pos.z < minbb.z) minbb.z = pos.z;
-        else if (pos.z > maxbb.z) maxbb.z = pos.z;
+        if (pos.c[0] < minbb.c[0]) minbb.c[0] = pos.c[0];
+        else if (pos.c[0] > maxbb.c[0]) maxbb.c[0] = pos.c[0];
+        if (pos.c[1] < minbb.c[1]) minbb.c[1] = pos.c[1];
+        else if (pos.c[1] > maxbb.c[1]) maxbb.c[1] = pos.c[1];
+        if (pos.c[2] < minbb.c[2]) minbb.c[2] = pos.c[2];
+        else if (pos.c[2] > maxbb.c[2]) maxbb.c[2] = pos.c[2];
       }
     }
 

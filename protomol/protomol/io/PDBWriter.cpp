@@ -92,13 +92,13 @@ bool PDBWriter::write(const Vector3DBlock &coords,
                  getRightFill(a.insertionCode, PDB::Atom::L_I_CODE));
     line.replace(PDB::Atom::S_X + 1,
                  PDB::Atom::L_X - 1,
-                 getLeftFill(toString(c.x), PDB::Atom::L_X - 1));
+                 getLeftFill(toString(c.c[0]), PDB::Atom::L_X - 1));
     line.replace(PDB::Atom::S_Y + 1,
                  PDB::Atom::L_Y - 1,
-                 getLeftFill(toString(c.y), PDB::Atom::L_Y - 1));
+                 getLeftFill(toString(c.c[1]), PDB::Atom::L_Y - 1));
     line.replace(PDB::Atom::S_Z + 1,
                  PDB::Atom::L_Z - 1,
-                 getLeftFill(toString(c.z), PDB::Atom::L_Z - 1));
+                 getLeftFill(toString(c.c[2]), PDB::Atom::L_Z - 1));
     line.replace(PDB::Atom::S_OCCUP,
                  PDB::Atom::L_OCCUP,
                  getLeftFill(toString(a.occupancy), PDB::Atom::L_OCCUP));

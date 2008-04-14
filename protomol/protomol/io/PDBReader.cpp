@@ -71,7 +71,7 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
   coords.clear();
   atoms.clear();
   ters.clear();
-
+  std::vector<Vector3D> tmpdata;
   // Now we want to read data in until the record name is "END", then stop.
   int big = 0;
   int toBig = 0;
@@ -127,7 +127,7 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
           removeBeginEndBlanks(record.substr(PDB::Atom::S_CHARGE,
               PDB::Atom::L_CHARGE)),
           0));
-      coords.push_back(Vector3D(toReal(record.substr(PDB::Atom::S_X,
+      tmpdata.push_back(Vector3D(toReal(record.substr(PDB::Atom::S_X,
               PDB::Atom::L_X)),
           toReal(record.substr(PDB::Atom::S_Y, PDB::Atom::L_Y)),
           toReal(record.substr(PDB::Atom::S_Z, PDB::Atom::L_Z))));
@@ -164,13 +164,17 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
       removeBeginEndBlanks(record) << "\'." << endr;
   } while (!(file.eof()));
 
+  coords.resize(tmpdata.size());
+  for (unsigned int i = 0; i < tmpdata.size(); i++)
+    coords[i] = tmpdata[i];
+  //for (unsigned int i = 0; i < coords.size(); i++)
+  //  if (coords[i].mode) cout << coords[i].mode << endl;
   if (big > 0)
     report << hint << "[PDB::read] Found " << big <<
     " X-Plor residue number(s) starting with a character." << endr;
   if (toBig > 0)
     report << recoverable << "[PDB::read] Found " << toBig <<
     " non interger/X-Plor residue number(s)." << endr;
-
   close();
   return !file.fail();
 }

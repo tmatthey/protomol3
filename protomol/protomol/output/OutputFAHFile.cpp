@@ -29,9 +29,9 @@ void OutputFAHFile::doRun(int step) {
     for (unsigned int i = 0; i < app->positions.size(); i++) {
       str = String(i + 1) + '\t' +
         app->topology->atomTypes[app->topology->atoms[i].type].name + '\t' +
-        String(app->positions[i].x) + '\t' +
-        String(app->positions[i].y) + '\t' +
-        String(app->positions[i].z) + '\t' +
+        String(app->positions[i].c[0]) + '\t' +
+        String(app->positions[i].c[1]) + '\t' +
+        String(app->positions[i].c[2]) + '\t' +
         String(1) + "\n";
 
       file.write(str.c_str(), str.length());

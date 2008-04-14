@@ -16,9 +16,9 @@ ArrayCellListStructure::ArrayCellListStructure() :
 
 void ArrayCellListStructure::initialize(const Vector3D &max,
                                         Vector3D cellSize) {
-  int nx = std::max(1, (int)floor(max.x / cellSize.x + Constant::EPSILON));
-  int ny = std::max(1, (int)floor(max.y / cellSize.y + Constant::EPSILON));
-  int nz = std::max(1, (int)floor(max.z / cellSize.z + Constant::EPSILON));
+  int nx = std::max(1, (int)floor(max.c[0] / cellSize.c[0] + Constant::EPSILON));
+  int ny = std::max(1, (int)floor(max.c[1] / cellSize.c[1] + Constant::EPSILON));
+  int nz = std::max(1, (int)floor(max.c[2] / cellSize.c[2] + Constant::EPSILON));
 
   if (nx != myNX || ny != myNY || nz != myNZ || myCellSize != cellSize) {
 #ifdef DEBUG_ARRAYCELLLISTSTRUCTURE

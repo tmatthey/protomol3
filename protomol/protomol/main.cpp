@@ -14,24 +14,17 @@ extern void moduleInitFunction(ModuleManager *);
 int main(int argc, char *argv[]) {
   try {
     TimerStatistic::timer[TimerStatistic::WALL].start();
-
     ModuleManager modManager;
     moduleInitFunction(&modManager);
-
     ProtoMolApp app(&modManager);
-
     if (!app.configure(argc, argv)) return 0;
-
     app.splash(cout);
     app.build();
     if ((int)app.config[InputDebug::keyword]) app.print(cout);
-
     TimerStatistic::timer[TimerStatistic::RUN].start();
     while (app.step()) continue;
     TimerStatistic::timer[TimerStatistic::RUN].stop();
-
     app.finalize();
-
     TimerStatistic::timer[TimerStatistic::WALL].stop();
     return 0;
 

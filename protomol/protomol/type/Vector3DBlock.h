@@ -3,7 +3,8 @@
 #define VECTOR3DBLOCK_H
 
 #include <vector>
-
+#include <iostream>
+using namespace std;
 #include <protomol/type/Vector3D.h>
 #include <protomol/base/Proxy.h>
 
@@ -18,16 +19,16 @@ namespace ProtoMol {
     // Types & enum's
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    typedef std::vector<Vector3D>::value_type value_type;
-    typedef std::vector<Vector3D>::pointer pointer;
-    typedef std::vector<Vector3D>::reference reference;
-    typedef std::vector<Vector3D>::const_reference const_reference;
-    typedef std::vector<Vector3D>::size_type size_type;
-    typedef std::vector<Vector3D>::difference_type difference_type;
-    typedef std::vector<Vector3D>::iterator iterator;
-    typedef std::vector<Vector3D>::const_iterator const_iterator;
-    typedef std::vector<Vector3D>::reverse_iterator reverse_iterator;
-    typedef std::vector<Vector3D>::const_reverse_iterator
+    typedef std::vector<Vector3DB>::value_type value_type;
+    typedef std::vector<Vector3DB>::pointer pointer;
+    typedef std::vector<Vector3DB>::reference reference;
+    typedef std::vector<Vector3DB>::const_reference const_reference;
+    typedef std::vector<Vector3DB>::size_type size_type;
+    typedef std::vector<Vector3DB>::difference_type difference_type;
+    typedef std::vector<Vector3DB>::iterator iterator;
+    typedef std::vector<Vector3DB>::const_iterator const_iterator;
+    typedef std::vector<Vector3DB>::reverse_iterator reverse_iterator;
+    typedef std::vector<Vector3DB>::const_reverse_iterator
     const_reverse_iterator;
   private:
     enum {LIMIT = 30};
@@ -36,49 +37,100 @@ namespace ProtoMol {
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
+    /* No change */
     Vector3DBlock()  : Proxy(), vec() {}
-    explicit Vector3DBlock(size_type n) : Proxy(), vec(n) {}
-    Vector3DBlock(size_type n, const Vector3D &t) : Proxy(), vec(n, t) {}
-
+    
+    //explicit Vector3DBlock(size_type n) : Proxy(), vec(n) {}
+    explicit Vector3DBlock(size_type n) : Proxy() {
+      c = new Real[3*n];
+      for (unsigned int i = 0; i < n; i++)
+	vec.push_back(Vector3DB(c+3*i));
+    }
+    
+    //Vector3DBlock(size_type n, const Vector3D &t) : Proxy(), vec(n, t) {}
+    Vector3DBlock(size_type n, const Vector3D &t) : Proxy() {
+      c = new Real[3*n];
+      for (unsigned int i = 0; i < n; i++)
+	vec.push_back(Vector3DB(t, c+3*i));
+    }
+    
+    Vector3DBlock &operator=(const Vector3DBlock &rhs) {
+      this->intoAssign(rhs);
+      return *this;
+    }
+    // NOTE: A destructor is not needed here, because when vec is deleted
+    // each Vector3D will be deallocated?
+    ~Vector3DBlock() {
+      if (size() != 0) delete [] c;
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  New methods of class Vector3DBlock from std::vector
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    iterator begin() {return vec.begin();}
-    iterator end() {return vec.end();}
-    const_iterator begin() const {return vec.begin();}
-    const_iterator end() const {return vec.end();}
-    reverse_iterator rbegin() {return vec.rbegin();}
-    reverse_iterator rend() {return vec.rend();}
-    const_reverse_iterator rbegin() const {return vec.rbegin();}
-    const_reverse_iterator rend() const {return vec.rend();}
     size_type size() const {return vec.size();}
-    size_type max_size() const {return vec.max_size();}
-    size_type capacity() const {return vec.capacity();}
     bool empty() const {return vec.empty();}
     reference operator[](size_type n) {return vec[n];}
     const_reference operator[](size_type n) const {return vec[n];}
-    void reserve(size_t n) {vec.reserve(n);}
-    reference front() {return vec.front();}
-    const_reference front() const {return vec.front();}
-    reference back() {return vec.back();}
-    const_reference back() const {return vec.back();}
-    void push_back(const Vector3D &t) {return vec.push_back(t);}
-    void pop_back() {return vec.pop_back();}
-    void swap(Vector3DBlock &x) {vec.swap(x.vec);}
-    iterator insert(iterator pos, const Vector3D &x) {
-      return vec.insert(pos, x);
+    void push_back(const Vector3D &t) {
+      resize(size()+1, t);
+    } 
+    //void pop_back() {return vec.pop_back();}
+    void swap(Vector3DBlock &x) {
+      vec.swap(x.vec);
+      Real* tmp = c;
+      c = x.c;
+      x.c = tmp;
     }
-    void insert(iterator pos, size_type n, const Vector3D &x) {
-      vec.insert(pos, n, x);
-    }
-    iterator erase(iterator pos) {return vec.erase(pos);}
-    iterator erase(iterator first, iterator last) {
-      return vec.erase(first, last);
-    }
+
     void clear() {vec.clear();}
     void resize(size_type n, Vector3D t = Vector3D(0.0, 0.0, 0.0)) {
-      vec.resize(n, t);
+      // Three cases.
+      // Case 1: n is the same as the current size.
+      if (n == size()) {
+	// Do nothing.
+	return;
+      }
+      // Case 2: n is less than the current size (we're removing data)
+      else if (n < size()) {
+	// 1. Create a smaller array.
+	Real* newdata = new Real[n*3];
+	// 2. Copy data from c
+	for (unsigned int i = 0; i < 3*n; i++) {
+	  newdata[i] = c[i];
+	  // 2b. Also set internal vector3d pointers to new data
+	  if (i % 3 == 0)
+	    vec[i].c = newdata+3*i;
+	}
+	// 3. Delete old c
+	delete c;
+	// 4. Reset c to the new data
+	c = newdata;
+	// 5. Resize STL vector (will just remove entries at the end)
+	vec.resize(n);
+      }
+      // Case 3: n is greater than the current size (must add data)
+      else if (n > size()) {
+	// 1. Create a bigger array
+	Real* newdata = new Real[n*3];
+	// 2. Copy data from c
+	int currentsize = size();
+	for (unsigned int i = 0; i < currentsize*3; i++) {
+	  newdata[i] = c[i];
+	  // 2b. Also set internal vector3d pointers to new data
+	  if (i % 3 == 0) {
+	    vec[i].c = newdata+3*i;
+	  }
+	}
+	// 3. Resize STL vector (will just add entries to the end)
+	// 5. Delete old c
+	if (currentsize != 0) delete c;
+	// 6. Reset c to the new data
+	c = newdata;
+	// 4. Point internal vector3d pointers to new data	
+	for (unsigned int i = currentsize; i < n; i++) {
+	  vec.push_back(Vector3DB(t.c[0], t.c[1], t.c[2], c+3*i));
+	}
+      }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,62 +139,94 @@ namespace ProtoMol {
   public:
     /// Clear (set to zero) each element of the vector.
     void zero(int n = -1) {
-      if (n >= 0)
-        vec.resize(n);
-      const unsigned int count = vec.size();
-      for (unsigned int i = 0; i < count; ++i)
-        vec[i] = Vector3D(0, 0, 0);
+      for (unsigned int i = 0; i < size()*3; i++)
+	c[i] = 0;
+      if (n >= 0 && n != size())
+	resize(n, Vector3D(0,0,0));
     }
 
-    /// copy one Vector3DBlock to another one.
+
     Vector3DBlock &intoAssign(const Vector3DBlock &x) {
-      vec = x.vec;
+      if (size() != x.size()) resize(x.size());
+      for (unsigned int i = 0; i < 3*size(); i++)
+	c[i] = x.c[i];
       return *this;
     }
 
     /// Add another Vector3DBlock into this one.
     Vector3DBlock &intoAdd(const Vector3DBlock &x) {
-      const unsigned int count = vec.size();
+      const unsigned int count = 3*size();
       for (unsigned int i = 0; i < count; ++i)
-        vec[i] += x.vec[i];
-
+        c[i] += x.c[i];
       return *this;
+    }
+
+    Vector3DBlock& operator+=(const Vector3DBlock &x) {
+      return this->intoAdd(x);
     }
 
     /// Subtract another Vector3DBlock from this one.
     Vector3DBlock &intoSubtract(const Vector3DBlock &x) {
-      const unsigned int count = vec.size();
+      const unsigned int count = 3*size();
       for (unsigned int i = 0; i < count; ++i)
-        vec[i] -= x.vec[i];
-
+        c[i] -= x.c[i];
       return *this;
+    }
+
+    Vector3DBlock& operator-=(const Vector3DBlock &x) {
+      return this->intoSubtract(x);
     }
 
     /// Add a scalar multiple of another Vector3DBlock into this one.
     Vector3DBlock &intoWeightedAdd(Real weight, const Vector3DBlock &x) {
-      const unsigned int count = vec.size();
+      const unsigned int count = 3*size();
       for (unsigned int i = 0; i < count; ++i)
-        vec[i] += x.vec[i] * weight;
-
+        c[i] += x.c[i] * weight;
       return *this;
     }
 
     /// Assign a scalar multiple of another Vector3DBlock into this one.
     Vector3DBlock &intoWeighted(Real weight, const Vector3DBlock &x) {
-      const unsigned int count = vec.size();
+      const unsigned int count = 3*size();
       for (unsigned int i = 0; i < count; ++i)
-        vec[i] = x.vec[i] * weight;
-
+        c[i] = x.c[i] * weight;
       return *this;
     }
 
     /// Subtract a scalar multiple of another Vector3DBlock from this one.
     Vector3DBlock &intoWeightedSubtract(Real weight, const Vector3DBlock &x) {
-      const unsigned int count = vec.size();
+      const unsigned int count = 3*size();
       for (unsigned int i = 0; i < count; ++i)
-        vec[i] -= x.vec[i] * weight;
-
+        c[i] -= x.c[i] * weight;
       return *this;
+    }
+
+    Vector3DBlock operator+(const Vector3DBlock& rhs) {
+      Vector3DBlock retval(size());
+      for (unsigned int i = 0; i < 3*size(); ++i)
+        retval.c[i] = c[i] + rhs.c[i];
+      return retval;
+    }
+
+    Vector3DBlock operator-(const Vector3DBlock& rhs) {
+      Vector3DBlock retval(size());
+      for (unsigned int i = 0; i < 3*size(); ++i)
+        retval.c[i] = c[i] - rhs.c[i];
+      return retval;
+    }
+
+    Vector3DBlock operator*(Real scale) {
+      Vector3DBlock retval(size());
+      for (unsigned int i = 0; i < 3*size(); ++i)
+        retval.c[i] = c[i] * scale;
+      return retval;
+    }
+
+    Vector3DBlock operator/(Real scale) {
+      Vector3DBlock retval(size());
+      for (unsigned int i = 0; i < 3*size(); ++i)
+        retval.c[i] = c[i] / scale;
+      return retval;
     }
 
     /// Compute the boinding box over all elements
@@ -152,8 +236,6 @@ namespace ProtoMol {
     Vector3D sum() const;
 
     /// Compute regression plane by SVD
-    bool fitplane(Vector3D &normal, Real &d, Real &err, int limit =
-                    LIMIT) const;
 
   public:
     friend bool operator==(const Vector3DBlock &a, const Vector3DBlock &b);
@@ -162,19 +244,25 @@ namespace ProtoMol {
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    std::vector<Vector3D> vec;
+    std::vector<Vector3DB> vec;
+    Real* c;
   };
 
   inline bool operator==(const Vector3DBlock &a, const Vector3DBlock &b) {
-    return a.vec == b.vec;
+    if (a.size() != b.size()) return false;
+    for (unsigned int i = 0; i < 3*a.size(); i++)
+      if (a.c[i] != b.c[i]) return false;
+    return true;
   }
+
   inline bool operator<(const Vector3DBlock &a, const Vector3DBlock &b) {
-    return a.vec == b.vec;
-  }
+    if (a.size() > b.size()) return false;
+    for (unsigned int i = 0; i < 3*a.size(); i++)
+      if (a.c[i] < b.c[i]) return false;
+    return true;
+  } 
 }
 
-inline void swap(ProtoMol::Vector3DBlock &a, ProtoMol::Vector3DBlock &b) {
-  a.swap(b);
-}
+
 
 #endif /* VECTOR3DBLOCK_H */

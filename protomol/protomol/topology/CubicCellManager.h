@@ -39,14 +39,14 @@ namespace ProtoMol {
     Real getCellSize(void) const {return myCellSize;}
     Vector3D getRealCellSize(void) const {return myRealCellSize;}
     /// Get the volume of the cell.
-    Real getCellVolume(void) const {return myRealCellSize.x *
-                                           myRealCellSize.y * myRealCellSize.z;}
+    Real getCellVolume(void) const {return myRealCellSize.c[0] *
+                                           myRealCellSize.c[1] * myRealCellSize.c[2];}
 
     /// Find the cell that one atom belongs to.
     Cell findCell(const Vector3D &position) const {
-      return Cell((int)floor(position.x * myRealRCellSize.x),
-        (int)floor(position.y * myRealRCellSize.y),
-        (int)floor(position.z * myRealRCellSize.z));
+      return Cell((int)floor(position.c[0] * myRealRCellSize.c[0]),
+        (int)floor(position.c[1] * myRealRCellSize.c[1]),
+        (int)floor(position.c[2] * myRealRCellSize.c[2]));
     }
 
     void initialize(CellListStructure &cellList,

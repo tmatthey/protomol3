@@ -51,16 +51,16 @@ namespace ProtoMol {
 
         CubicCellManager::Cell zero(0, 0, 0);
         myDeltaList.clear();
-        int nx = (int)(cutoff / myCellSize.x + 1.0 + Constant::EPSILON);
-        int ny = (int)(cutoff / myCellSize.y + 1.0 + Constant::EPSILON);
-        int nz = (int)(cutoff / myCellSize.z + 1.0 + Constant::EPSILON);
+        int nx = (int)(cutoff / myCellSize.c[0] + 1.0 + Constant::EPSILON);
+        int ny = (int)(cutoff / myCellSize.c[1] + 1.0 + Constant::EPSILON);
+        int nz = (int)(cutoff / myCellSize.c[2] + 1.0 + Constant::EPSILON);
         // Do not consider deltas bigger than the dimesion of the simulation box
         int n0 = std::min(nx, topo->cellLists.getDimX() - 1);
         int n1 = std::min(ny, topo->cellLists.getDimY() - 1);
         int n2 = std::min(nz, topo->cellLists.getDimZ() - 1);
-        Real xx = myCellSize.x * myCellSize.x;
-        Real yy = myCellSize.y * myCellSize.y;
-        Real zz = myCellSize.z * myCellSize.z;
+        Real xx = myCellSize.c[0] * myCellSize.c[0];
+        Real yy = myCellSize.c[1] * myCellSize.c[1];
+        Real zz = myCellSize.c[2] * myCellSize.c[2];
         for (int k = -n0; k <= n0; k++) {
           int x = abs(k) - 1; if (x < 0) x = 0;
           Real d0 = x * x * xx;

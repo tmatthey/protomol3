@@ -63,10 +63,11 @@ void StandardIntegrator::doHalfKick() {
 
   updateBeta(h);
 
-  for (unsigned int i = 0; i < count; ++i)
-    app->velocities[i] +=
-      (*myForces)[i] * h / app->topology->atoms[i].scaledMass;
+  for (unsigned int i = 0; i < count; ++i) {
+     app->velocities[i] +=
+       (*myForces)[i] * h / app->topology->atoms[i].scaledMass;
 
+  }
   buildMolecularMomentum(&app->velocities, app->topology);
 }
 

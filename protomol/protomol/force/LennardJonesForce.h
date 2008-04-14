@@ -8,6 +8,8 @@
 #include <protomol/topology/ExclusionTable.h>
 #include <protomol/config/Parameter.h>
 #include <string>
+#include <protomol/base/Report.h>
+using namespace ProtoMol::Report;
 
 namespace ProtoMol {
   //____ LennardJonesForce

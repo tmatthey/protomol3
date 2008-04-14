@@ -24,12 +24,12 @@ void CubicCellManager::initialize(CellListStructure &cellList,
                                   bool pbc) const {
   if (pbc) {
     Vector3D d(max - min);
-    myRealCellSize = Vector3D(d.x / std::max(1.0, floor(d.x / myCellSize)),
-      d.y / std::max(1.0, floor(d.y / myCellSize)),
-      d.z / std::max(1.0, floor(d.z / myCellSize)));
-    myRealRCellSize.x = 1.0 / myRealCellSize.x;
-    myRealRCellSize.y = 1.0 / myRealCellSize.y;
-    myRealRCellSize.z = 1.0 / myRealCellSize.z;
+    myRealCellSize = Vector3D(d.c[0] / std::max(1.0, floor(d.c[0] / myCellSize)),
+      d.c[1] / std::max(1.0, floor(d.c[1] / myCellSize)),
+      d.c[2] / std::max(1.0, floor(d.c[2] / myCellSize)));
+    myRealRCellSize.c[0] = 1.0 / myRealCellSize.c[0];
+    myRealRCellSize.c[1] = 1.0 / myRealCellSize.c[1];
+    myRealRCellSize.c[2] = 1.0 / myRealCellSize.c[2];
     cellList.initialize(max - min, myRealCellSize);
   } else
     cellList.initialize(max - min + myRealCellSize, myRealCellSize);

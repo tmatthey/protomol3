@@ -5,189 +5,249 @@
 #include <protomol/base/MathUtilities.h>
 #include <protomol/base/Report.h>
 
+#include <iostream>
+using namespace std;
+
+
 namespace ProtoMol {
   //_________________________________________________________________ Vector3D
   /**
    * Container to hold 3D vector/coordinate
    */
-  struct Vector3D {
+
+    
+  template<class T>
+  struct Vector3DImpl {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 public:
-    Real x, y, z;
+    T c;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 public:
-    Vector3D() : x(0.0), y(0.0), z(0.0) {}
+    Vector3DImpl(Real* p) {c=p;c[0]=0;c[1]=0;c[2]=0;}
 
-    Vector3D(Real X, Real Y, Real Z) : x(X), y(Y), z(Z) {}
+    Vector3DImpl(Real X, Real Y, Real Z, Real* p) {c=p;c[0]=X;c[1]=Y;c[2]=Z;}
 
-    Vector3D(const Vector3D & c) {
-      x = c.x;
-      y = c.y;
-      z = c.z;
+    template<class U>
+    Vector3DImpl(const Vector3DImpl<U> & rhs, Real* p) {
+      c = p;
+      c[0]=rhs.c[0];
+      c[1]=rhs.c[1];
+      c[2]=rhs.c[2];
     }
 
-    Vector3D &operator=(const Vector3D &c) {
-      x = c.x;
-      y = c.y;
-      z = c.z;
-      return *this;
+
+    Vector3DImpl() {c[0]=0;c[1]=0;c[2]=0;}  
+    Vector3DImpl(Real X, Real Y, Real Z) {c[0]=X;c[1]=Y;c[2]=Z;}
+
+    template<class U>
+    Vector3DImpl(const Vector3DImpl<U> & rhs) {
+      c[0] = rhs.c[0];
+      c[1] = rhs.c[1];
+      c[2] = rhs.c[2];
     }
+
+
+    template<class U>
+    Vector3DImpl &operator=(const Vector3DImpl<U> &rhs) {
+      c[0] = rhs.c[0];
+      c[1] = rhs.c[1];
+      c[2] = rhs.c[2];
+    }
+
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // New methods of class Vector3D
+    // New methods of class Vector3DImpl
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 public:
     /// Index access
     Real operator[](int index) const {
       if (index < 0 || index > 2)
         Report::report << Report::error <<
-        "[Vector3D::operator[] const] index out of range" << Report::endr;
-      return index == 0 ? x : (index == 1 ? y : z);
+        "[Vector3DImpl::operator[] const] index out of range" << Report::endr;
+      return c[index];
+      //return index == 0 ? c[0] : (index == 1 ? c[1] : c[2]);
     }
+
     /// Index access
     Real &operator[](int index) {
       if (index < 0 || index > 2)
         Report::report << Report::error <<
-        "[Vector3D::operator[] const] index out of range" << Report::endr;
-      return index == 0 ? x : (index == 1 ? y : z);
+        "[Vector3DImpl::operator[] const] index out of range" << Report::endr;
+      return c[index];
+      //return index == 0 ? c[0] : (index == 1 ? c[1] : c[2]);
     }
 
+
     // Binary operators
-    Vector3D operator+(const Vector3D &b) const {
-      return Vector3D(x + b.x, y + b.y, z + b.z);
+    template<class U>
+    Vector3DImpl<Real[3]> operator+(const Vector3DImpl<U> &b) const {
+      return Vector3DImpl<Real[3]>(c[0] + b.c[0], c[1] + b.c[1], c[2] + b.c[2]);
     }
-    Vector3D add(const Vector3D &b) const {
+
+    /* No change */
+    template<class U>
+    Vector3DImpl<Real[3]> add(const Vector3DImpl<U> &b) const {
       return (*this) + b;
     }
 
-    Vector3D operator-(const Vector3D &b) const {
-      return Vector3D(x - b.x, y - b.y, z - b.z);
+    template<class U>
+    Vector3DImpl<Real[3]> operator-(const Vector3DImpl<U> &b) const {
+      return Vector3DImpl<Real[3]>(c[0] - b.c[0], c[1] - b.c[1], c[2] - b.c[2]);
     }
-    Vector3D subtract(const Vector3D &b) const {
+
+    /* No change */
+    template<class U>
+    Vector3DImpl<Real[3]> subtract(const Vector3DImpl<U> &b) const {
       return (*this) - b;
     }
 
     /// dot product
-    Real operator*(const Vector3D &b) const {
-      return x * b.x + y * b.y + z * b.z;
+    template<class U>
+    Real operator*(const Vector3DImpl<U> &b) const {
+      return c[0] * b.c[0] + c[1] * b.c[1] + c[2] * b.c[2];
     }
     /// dot product
-    Real dot(const Vector3D &b) const {
+    /* No change */
+    template<class U>
+    Real dot(const Vector3DImpl<U> &b) const {
       return (*this) * b;
     }
 
     /// cross product
-    Vector3D operator^(const Vector3D &b) const {
-      return Vector3D(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
+    template<class U>
+    Vector3DImpl<Real[3]> operator^(const Vector3DImpl<U> &b) const {
+      return Vector3DImpl<Real[3]>(c[1] * b.c[2] - c[2] * b.c[1], c[2] * b.c[0] - c[0] * b.c[2], c[0] * b.c[1] - c[1] * b.c[0]);
     }
     /// cross product
-    Vector3D cross(const Vector3D &b) const {
+    /* No change */
+    template<class U>
+    Vector3DImpl<Real[3]> cross(const Vector3DImpl<U> &b) const {
       return (*this) ^ b;
     }
 
 
-    Vector3D operator*(Real w) const {
-      return Vector3D(x * w, y * w, z * w);
+    Vector3DImpl<Real[3]> operator*(Real w) const {
+      return Vector3DImpl<Real[3]>(c[0] * w, c[1] * w, c[2] * w);
     }
-    Vector3D multiply(Real w) const {
+    /* No change */
+    Vector3DImpl<Real[3]> multiply(Real w) const {
       return (*this) * w;
     }
 
-    Vector3D operator/(Real w) const {
-      return Vector3D(x / w, y / w, z / w);
+    Vector3DImpl<Real[3]> operator/(Real w) const {
+      return Vector3DImpl<Real[3]>(c[0] / w, c[1] / w, c[2] / w);
     }
-    Vector3D divide(Real w) const {
+
+    /* No change */
+    Vector3DImpl<Real[3]> divide(Real w) const {
       return (*this) / w;
     }
 
 
     // Unary operators
-    Vector3D operator-() const {
-      return Vector3D(-x, -y, -z);
+    Vector3DImpl<Real[3]> operator-() const {
+      return Vector3DImpl<Real[3]>(-c[0], -c[1], -c[2]);
     }
 
 
     // Comparison
-    bool operator==(const Vector3D &b) const {
-      return x == b.x && y == b.y && z == b.z;
+    template<class U>
+    bool operator==(const Vector3DImpl<U> &b) const {
+      return c[0] == b.c[0] && c[1] == b.c[1] && c[2] == b.c[2];
     }
 
-    bool operator!=(const Vector3D &b) const {
-      return x != b.x || y != b.y || z != b.z;
+
+    template<class U>
+    bool operator!=(const Vector3DImpl<U> &b) const {
+      return c[0] != b.c[0] || c[1] != b.c[1] || c[2] != b.c[2];
     }
 
     // Assignment
-    Vector3D &operator+=(const Vector3D &b) {
-      x += b.x;
-      y += b.y;
-      z += b.z;
+    template<class U>
+    Vector3DImpl<T> &operator+=(const Vector3DImpl<U> &b) {
+      c[0] += b.c[0];
+      c[1] += b.c[1];
+      c[2] += b.c[2];
       return *this;
     }
-    Vector3D &intoAdd(const Vector3D &b) {
+
+    /* No change */
+    template<class U>
+    Vector3DImpl<T> &intoAdd(const Vector3DImpl<U> &b) {
       return (*this) += b;
     }
 
-    Vector3D &operator-=(const Vector3D &b) {
-      x -= b.x;
-      y -= b.y;
-      z -= b.z;
+    template<class U>
+    Vector3DImpl<T> &operator-=(const Vector3DImpl<U> &b) {
+      c[0] -= b.c[0];
+      c[1] -= b.c[1];
+      c[2] -= b.c[2];
       return *this;
     }
-    Vector3D &intoSubtract(const Vector3D &b) {
+
+    /* No change */
+    template<class U>
+    Vector3DImpl<T> &intoSubtract(const Vector3DImpl<U> &b) {
       return (*this) -= b;
     }
 
-    Vector3D &operator*=(Real w) {
-      x *= w;
-      y *= w;
-      z *= w;
+
+    Vector3DImpl<T> &operator*=(Real w) {
+      c[0] *= w;
+      c[1] *= w;
+      c[2] *= w;
       return *this;
     }
-    Vector3D &intoMultiply(Real w) {
+
+    /* No change */
+    Vector3DImpl<T> &intoMultiply(Real w) {
       return (*this) *= w;
     }
 
-    Vector3D &operator/=(Real w) {
-      x /= w;
-      y /= w;
-      z /= w;
+    Vector3DImpl<T> &operator/=(Real w) {
+      c[0] /= w;
+      c[1] /= w;
+      c[2] /= w;
       return *this;
     }
-    Vector3D &intoDivide(Real w) {
+
+    /* No change */
+    Vector3DImpl<T> &intoDivide(Real w) {
       return (*this) /= w;
     }
 
-
-    Vector3D &intoWeightedAdd(Real w, const Vector3D &b) {
-      x += w * b.x;
-      y += w * b.y;
-      z += w * b.z;
+    template<class U>
+    Vector3DImpl<T> &intoWeightedAdd(Real w, const Vector3DImpl<U> &b) {
+      c[0] += w * b.c[0];
+      c[1] += w * b.c[1];
+      c[2] += w * b.c[2];
       return *this;
     }
 
-    Vector3D &intoWeightedSubtract(Real w, const Vector3D &b) {
-      x -= w * b.x;
-      y -= w * b.y;
-      z -= w * b.z;
+    template<class U>
+    Vector3DImpl<T> &intoWeightedSubtract(Real w, const Vector3DImpl<U> &b) {
+      c[0] -= w * b.c[0];
+      c[1] -= w * b.c[1];
+      c[2] -= w * b.c[2];
       return *this;
     }
-
 
 
     Real normSquared() const {
-      return x * x + y * y + z * z;
+      return c[0] * c[0] + c[1] * c[1] + c[2] * c[2];
     }
 
     Real norm() const {
-      return sqrt(x * x + y * y + z * z);
+      return sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
     }
 
-    /// Normalize the Vector3D and return the original length.
+    /// Normalize the Vector3DImpl and return the original length.
     Real normalize() {
       Real len = norm();
 
@@ -195,39 +255,45 @@ public:
         return 0.0;
 
       Real d = 1 / len;
-      x *= d; y *= d; z *= d;
+      c[0] *= d; c[1] *= d; c[2] *= d;
       return len;
     }
 
-    /// Return a normalized Vector3D, leave the original Vector3D unchanged.
-    Vector3D normalized() const {
+
+    /// Return a normalized Vector3DImpl, leave the original Vector3DImpl unchanged.
+    Vector3DImpl<Real[3]> normalized() const {
       Real len = norm();
 
       if (len == 0.0) {
         Report::report << Report::recoverable <<
-        "[Vector3D::normalized] length is zero." << Report::endr;
-        return Vector3D(0.0, 0.0, 0.0);
+        "[Vector3DImpl::normalized] length is zero." << Report::endr;
+        return Vector3DImpl<Real[3]>(0.0, 0.0, 0.0);
       }
 
-      return Vector3D(*this / len);
+      return Vector3DImpl<Real[3]>(*this / len);
     }
 
-    friend std::ostream &operator<<(std::ostream &OS, const Vector3D &coords) {
-      OS << "(" << coords.x << "," << coords.y << "," << coords.z << ")";
+
+    friend std::ostream &operator<<(std::ostream &OS, const Vector3DImpl &coords) {
+      OS << "(" << coords.c[0] << "," << coords.c[1] << "," << coords.c[2] << ")";
       return OS;
     }
 
-    friend std::istream &operator>>(std::istream &OS, Vector3D &coords) {
-      OS >> coords.x >> coords.y >> coords.z;
+    friend std::istream &operator>>(std::istream &OS, Vector3DImpl &coords) {
+      OS >> coords.c[0] >> coords.c[1] >> coords.c[2];
       return OS;
     }
 
     friend Report::MyStreamer &operator<<(Report::MyStreamer &OS,
-                                          const Vector3D &coords) {
-      OS << "(" << coords.x << "," << coords.y << "," << coords.z << ")";
+                                          const Vector3DImpl &coords) {
+      OS << "(" << coords.c[0] << "," << coords.c[1] << "," << coords.c[2] << ")";
       return OS;
     }
   };
+
+
+  typedef Vector3DImpl<Real[3]> Vector3D;
+  typedef Vector3DImpl<Real*> Vector3DB;
 }
 
 #endif

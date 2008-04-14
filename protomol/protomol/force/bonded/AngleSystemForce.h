@@ -151,21 +151,21 @@ namespace ProtoMol {
 
     // Add virial
     if (energies->virial()) {
-      Real xy = force1.x * r12.y + force3.x * r32.y;
-      Real xz = force1.x * r12.z + force3.x * r32.z;
-      Real yz = force1.y * r12.z + force3.y * r32.z;
-      (*energies)[ScalarStructure::VIRIALXX] += force1.x * r12.x + force3.x *
-                                                r32.x;
+      Real xy = force1.c[0] * r12.c[1] + force3.c[0] * r32.c[1];
+      Real xz = force1.c[0] * r12.c[2] + force3.c[0] * r32.c[2];
+      Real yz = force1.c[1] * r12.c[2] + force3.c[1] * r32.c[2];
+      (*energies)[ScalarStructure::VIRIALXX] += force1.c[0] * r12.c[0] + force3.c[0] *
+                                                r32.c[0];
       (*energies)[ScalarStructure::VIRIALXY] += xy;
       (*energies)[ScalarStructure::VIRIALXZ] += xz;
       (*energies)[ScalarStructure::VIRIALYX] += xy;
-      (*energies)[ScalarStructure::VIRIALYY] += force1.y * r12.y + force3.y *
-                                                r32.y;
+      (*energies)[ScalarStructure::VIRIALYY] += force1.c[1] * r12.c[1] + force3.c[1] *
+                                                r32.c[1];
       (*energies)[ScalarStructure::VIRIALYZ] += yz;
       (*energies)[ScalarStructure::VIRIALZX] += xz;
       (*energies)[ScalarStructure::VIRIALZY] += yz;
-      (*energies)[ScalarStructure::VIRIALZZ] += force1.z * r12.z + force3.z *
-                                                r32.z;
+      (*energies)[ScalarStructure::VIRIALZZ] += force1.c[2] * r12.c[2] + force3.c[2] *
+                                                r32.c[2];
     }
   }
 

@@ -154,11 +154,11 @@ bool XYZTrajectoryWriter::write() {
     file << (myNames ? (*myNames)[i] : (*myAtomTypes)[(*myAtoms)[i].type].name)
          << "\t";
     file.width(24);
-    file << (*myCoords)[i].x;
+    file << (*myCoords)[i].c[0];
     file.width(24);
-    file << (*myCoords)[i].y;
+    file << (*myCoords)[i].c[1];
     file.width(24);
-    file << (*myCoords)[i].z;
+    file << (*myCoords)[i].c[2];
     file << endl;
   }
 

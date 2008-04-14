@@ -49,11 +49,11 @@ bool XYZWriter::write(const Vector3DBlock &coords,
   for (unsigned int i = 0; i < count; ++i) {
     file << names[i] << "\t";
     file.width(24);
-    file << coords[i].x;
+    file << coords[i].c[0];
     file.width(24);
-    file << coords[i].y;
+    file << coords[i].c[1];
     file.width(24);
-    file << coords[i].z;
+    file << coords[i].c[2];
     file << endl;
   }
 

@@ -44,8 +44,10 @@ void LeapfrogIntegrator::doHalfKickdoDrift() {
     for (unsigned int i = 0; i < count; ++i) {
       app->velocities[i] += (*myForces)[i] * h * 0.5 /
                             app->topology->atoms[i].scaledMass;
-      app->positions[i] += app->velocities[i] * h;
+      // app->positions[i] += app->velocities[i] * h;
     }
+    
+    app->positions += app->velocities*h;
 
     buildMolecularCenterOfMass(&app->positions, app->topology);
     buildMolecularMomentum(&app->velocities, app->topology);
@@ -73,8 +75,10 @@ void LeapfrogIntegrator::doKickdoDrift() {
     for (unsigned int i = 0; i < count; ++i) {
       app->velocities[i] +=
         (*myForces)[i] * h / app->topology->atoms[i].scaledMass;
-      app->positions[i] += app->velocities[i] * h;
+      //  app->positions[i] += app->velocities[i] * h;
     }
+
+    app->positions += app->velocities*h;
 
     buildMolecularCenterOfMass(&app->positions, app->topology);
     buildMolecularMomentum(&app->velocities, app->topology);
@@ -91,7 +95,7 @@ void LeapfrogIntegrator::run(int numTimesteps) {
   for (int i = 1; i < numTimesteps; i++) {
     doKickdoDrift();
     calculateForces();
-  }
+    }
 
   doHalfKick();
   postStepModify();

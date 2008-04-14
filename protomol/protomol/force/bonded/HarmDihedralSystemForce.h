@@ -247,22 +247,22 @@ namespace ProtoMol {
       Vector3D r23 = -rkj;
       Vector3D r34 = rkl;
 
-      Real xy = f1.x * r12.y + f2.x * r23.y + f3.x * r34.y;
-      Real xz = f1.x * r12.z + f2.x * r23.z + f3.x * r34.z;
-      Real yz = f1.y * r12.z + f2.y * r23.z + f3.y * r34.z;
+      Real xy = f1.c[0] * r12.c[1] + f2.c[0] * r23.c[1] + f3.c[0] * r34.c[1];
+      Real xz = f1.c[0] * r12.c[2] + f2.c[0] * r23.c[2] + f3.c[0] * r34.c[2];
+      Real yz = f1.c[1] * r12.c[2] + f2.c[1] * r23.c[2] + f3.c[1] * r34.c[2];
 
-      (*energies)[ScalarStructure::VIRIALXX] += f1.x * r12.x + f2.x * r23.x +
-                                                f3.x * r34.x;
+      (*energies)[ScalarStructure::VIRIALXX] += f1.c[0] * r12.c[0] + f2.c[0] * r23.c[0] +
+                                                f3.c[0] * r34.c[0];
       (*energies)[ScalarStructure::VIRIALXY] += xy;
       (*energies)[ScalarStructure::VIRIALXZ] += xz;
       (*energies)[ScalarStructure::VIRIALYX] += xy;
-      (*energies)[ScalarStructure::VIRIALYY] += f1.y * r12.y + f2.y * r23.y +
-                                                f3.y * r34.y;
+      (*energies)[ScalarStructure::VIRIALYY] += f1.c[1] * r12.c[1] + f2.c[1] * r23.c[1] +
+                                                f3.c[1] * r34.c[1];
       (*energies)[ScalarStructure::VIRIALYZ] += yz;
       (*energies)[ScalarStructure::VIRIALZX] += xz;
       (*energies)[ScalarStructure::VIRIALZY] += yz;
-      (*energies)[ScalarStructure::VIRIALZZ] += f1.z * r12.z + f2.z * r23.z +
-                                                f3.z * r34.z;
+      (*energies)[ScalarStructure::VIRIALZZ] += f1.c[2] * r12.c[2] + f2.c[2] * r23.c[2] +
+                                                f3.c[2] * r34.c[2];
     }
   }
 

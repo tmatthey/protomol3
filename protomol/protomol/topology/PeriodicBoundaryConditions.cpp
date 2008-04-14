@@ -46,9 +46,9 @@ void PeriodicBoundaryConditions::set(const Vector3D &e1, const Vector3D &e2,
     "[PeriodicBoundaryConditions::set] Infinite volume, aborting." << endr;
 
   myOrthogonal =
-    !(e1.y != 0.0 || e1.z != 0.0 || e2.x != 0.0 || e2.z != 0.0 || e3.x !=
+    !(e1.c[1] != 0.0 || e1.c[2] != 0.0 || e2.c[0] != 0.0 || e2.c[2] != 0.0 || e3.c[0] !=
       0.0 ||
-      e3.y != 0.0);
+      e3.c[1] != 0.0);
 
   Vector3D a1(e2.cross(e3));
   myE1r = a1 / e1.dot(a1);
@@ -59,16 +59,16 @@ void PeriodicBoundaryConditions::set(const Vector3D &e1, const Vector3D &e2,
 
   Vector3D a(origin - (e1 + e2 + e3) * 0.5);
   Vector3D b(origin + (e1 + e2 + e3) * 0.5);
-  myMin.x = min(a.x, b.x);
-  myMin.y = min(a.y, b.y);
-  myMin.z = min(a.z, b.z);
-  myMax.x = max(a.x, b.x);
-  myMax.y = max(a.y, b.y);
-  myMax.z = max(a.z, b.z);
+  myMin.c[0] = min(a.c[0], b.c[0]);
+  myMin.c[1] = min(a.c[1], b.c[1]);
+  myMin.c[2] = min(a.c[2], b.c[2]);
+  myMax.c[0] = max(a.c[0], b.c[0]);
+  myMax.c[1] = max(a.c[1], b.c[1]);
+  myMax.c[2] = max(a.c[2], b.c[2]);
 
-  myDX = power<2>(e1.x * 0.5);
-  myDY = power<2>(e2.y * 0.5);
-  myDZ = power<2>(e3.z * 0.5);
+  myDX = power<2>(e1.c[0] * 0.5);
+  myDY = power<2>(e2.c[1] * 0.5);
+  myDZ = power<2>(e3.c[2] * 0.5);
   myD = min(myDX, min(myDY, myDZ));
   myH = myMax - myMin;
   myH2 = myH * 0.5;
@@ -82,9 +82,9 @@ vector<Vector3D> PeriodicBoundaryConditions::
   if (myV >= Constant::REAL_INFINITY)
     return lattice;
   Vector3D a = myE1 + myE2 + myE3;
-  Real lx = fabs(a.x);
-  Real ly = fabs(a.y);
-  Real lz = fabs(a.z);
+  Real lx = fabs(a.c[0]);
+  Real ly = fabs(a.c[1]);
+  Real lz = fabs(a.c[2]);
   int boundK = (int)floor(cutoff / lx + 1.0);
   int boundL = (int)floor(cutoff / ly + 1.0);
   int boundM = (int)floor(cutoff / lz + 1.0);
@@ -144,11 +144,11 @@ vector<Parameter> PeriodicBoundaryConditions::
   Vector3D c(b - a);
   vector<Parameter> parameters;
   parameters.push_back(Parameter("cellBasisVector1",
-      Value(Vector3D(c.x, 0.0, 0.0), ConstraintValueType::NotZero())));
+      Value(Vector3D(c.c[0], 0.0, 0.0), ConstraintValueType::NotZero())));
   parameters.push_back(Parameter("cellBasisVector2",
-      Value(Vector3D(0.0, c.y, 0.0), ConstraintValueType::NotZero())));
+      Value(Vector3D(0.0, c.c[1], 0.0), ConstraintValueType::NotZero())));
   parameters.push_back(Parameter("cellBasisVector3",
-      Value(Vector3D(0.0, 0.0, c.z), ConstraintValueType::NotZero())));
+      Value(Vector3D(0.0, 0.0, c.c[2]), ConstraintValueType::NotZero())));
   parameters.push_back(Parameter("cellorigin", Value(Vector3D(a + c * 0.5))));
   return parameters;
 }

@@ -6,6 +6,9 @@
 #include <protomol/type/Vector3D.h>
 #include <protomol/base/PMConstants.h>
 
+#include <iostream>
+using namespace std;
+
 namespace ProtoMol {
   //____________________________________________________________ ScalarStructure
 

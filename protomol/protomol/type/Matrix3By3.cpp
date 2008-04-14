@@ -59,22 +59,22 @@ Matrix3By3::Matrix3By3(double mat[9]) {
 
 //____construct a matrix that is the outer products of two coordinates
 Matrix3By3::Matrix3By3(const Vector3D &a, const Vector3D &b) {
-  (*this)(a.x * b.x, a.x * b.y, a.x * b.z,
-          a.y * b.x, a.y * b.y, a.y * b.z,
-          a.z * b.x, a.z * b.y, a.z * b.z);
+  (*this)(a.c[0] * b.c[0], a.c[0] * b.c[1], a.c[0] * b.c[2],
+          a.c[1] * b.c[0], a.c[1] * b.c[1], a.c[1] * b.c[2],
+          a.c[2] * b.c[0], a.c[2] * b.c[1], a.c[2] * b.c[2]);
 }
 
 Matrix3By3::Matrix3By3(const Vector3D &v1, const Vector3D &v2,
                        const Vector3D &v3) {
-  m00 = v1.x;
-  m01 = v1.y;
-  m02 = v1.z;
-  m10 = v2.x;
-  m11 = v2.y;
-  m12 = v2.z;
-  m20 = v3.x;
-  m21 = v3.y;
-  m22 = v3.z;
+  m00 = v1.c[0];
+  m01 = v1.c[1];
+  m02 = v1.c[2];
+  m10 = v2.c[0];
+  m11 = v2.c[1];
+  m12 = v2.c[2];
+  m20 = v3.c[0];
+  m21 = v3.c[1];
+  m22 = v3.c[2];
 }
 
 void Matrix3By3::identity() {
@@ -282,9 +282,9 @@ Matrix3By3 Matrix3By3::operator *(const Matrix3By3 &tm) const {
 
 Vector3D Matrix3By3::operator *(const Vector3D &tm) const {
   Vector3D res;
-  res.x = m00 * tm.x + m01 * tm.y + m02 * tm.z;
-  res.y = m10 * tm.x + m11 * tm.y + m12 * tm.z;
-  res.z = m20 * tm.x + m21 * tm.y + m22 * tm.z;
+  res.c[0] = m00 * tm.c[0] + m01 * tm.c[1] + m02 * tm.c[2];
+  res.c[1] = m10 * tm.c[0] + m11 * tm.c[1] + m12 * tm.c[2];
+  res.c[2] = m20 * tm.c[0] + m21 * tm.c[1] + m22 * tm.c[2];
   return res;
 }
 
@@ -503,15 +503,15 @@ void Matrix3By3::scale(Real sx, Real sy, Real sz) {
 }
 
 void Matrix3By3::scale(const Vector3D &scaleFactor) {
-  m00 *= scaleFactor.x;
-  m01 *= scaleFactor.y;
-  m02 *= scaleFactor.z;
-  m10 *= scaleFactor.x;
-  m11 *= scaleFactor.y;
-  m12 *= scaleFactor.z;
-  m20 *= scaleFactor.x;
-  m21 *= scaleFactor.y;
-  m22 *= scaleFactor.z;
+  m00 *= scaleFactor.c[0];
+  m01 *= scaleFactor.c[1];
+  m02 *= scaleFactor.c[2];
+  m10 *= scaleFactor.c[0];
+  m11 *= scaleFactor.c[1];
+  m12 *= scaleFactor.c[2];
+  m20 *= scaleFactor.c[0];
+  m21 *= scaleFactor.c[1];
+  m22 *= scaleFactor.c[2];
 }
 
 void Matrix3By3::rotate(const Vector3D &axis, Real sinAlpha, Real cosAlpha) {
@@ -520,9 +520,9 @@ void Matrix3By3::rotate(const Vector3D &axis, Real sinAlpha, Real cosAlpha) {
 
     Vector3D n(axis.normalized());
 
-    n1 = n.x;
-    n2 = n.y;
-    n3 = n.z;
+    n1 = n.c[0];
+    n2 = n.c[1];
+    n3 = n.c[2];
 
     m00 = n1 * n1 + (1. - n1 * n1) * cosAlpha;
     m01 = n1 * n2 * (1. - cosAlpha) + n3 * sinAlpha;
@@ -556,9 +556,9 @@ void Matrix3By3::rotate(const Vector3D &from, const Vector3D &to) {
       identity();
     else if ((a + b).normSquared() < Constant::EPSILON) {
       // opposite direction
-      Real n1 = fabs(a.x);
-      Real n2 = fabs(a.y);
-      Real n3 = fabs(a.z);
+      Real n1 = fabs(a.c[0]);
+      Real n2 = fabs(a.c[1]);
+      Real n3 = fabs(a.c[2]);
       if (n1 >= max(n2, n3)) {
         m00 = -1.0;
         m01 = 0.0;
@@ -615,9 +615,9 @@ ostream &ProtoMol::operator<<(ostream &os, const Matrix3By3 &tm) {
 }
 
 Vector3D ProtoMol::operator*(const Vector3D &point, const Matrix3By3 &tm) {
-  return Vector3D(tm.m00 * point.x + tm.m10 * point.y + tm.m20 * point.z,
-    tm.m01 * point.x + tm.m11 * point.y + tm.m21 * point.z,
-    tm.m02 * point.x + tm.m12 * point.y + tm.m22 * point.z);
+  return Vector3D(tm.m00 * point.c[0] + tm.m10 * point.c[1] + tm.m20 * point.c[2],
+    tm.m01 * point.c[0] + tm.m11 * point.c[1] + tm.m21 * point.c[2],
+    tm.m02 * point.c[0] + tm.m12 * point.c[1] + tm.m22 * point.c[2]);
 }
 
 void ProtoMol::convert(const Matrix3By3 &from, float to[9]) {
