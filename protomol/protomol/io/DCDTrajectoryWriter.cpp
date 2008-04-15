@@ -62,7 +62,7 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
   file.clear();
   file.seekg(0, ios::end);
   ios::pos_type size = file.tellg();
-  if (file.fail()) return false;
+  if (file.fail()) {return false;}
 
   int32 nAtoms = static_cast<int32>(numAtoms);
   int32 numSets = 1;
@@ -94,14 +94,19 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
   }
 
   if (size > static_cast<ios::pos_type>(100)) {
+    close();
+    open(filename.c_str(), std::ios::binary | std::ios::in);
     // Ok, we have already written frames
     file.seekg(8, ios::beg);
     read((char *)&numSets, 4);
-
+    close();
+    
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
     ++numSets;
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
 
+    close();
+    open(filename.c_str(), std::ios::binary | std::ios::in | std::ios::out);
     file.seekp(8, ios::beg);
     //  8: Number of sets of coordinates, NAMD=0 ???
     file.write((char *)&numSets, 4);  
@@ -110,7 +115,8 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.write((char *)&numSets, 4);   
 
     file.seekg(0, ios::end);
-
+    close();
+    
   } else {
     // First time ...
     close();
@@ -161,14 +167,16 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.write((char *)&n4, 4);
     file.write((char *)&nAtoms, 4);
     file.write((char *)&n4, 4);
+    close();
   }
-
+  close();
+  open(filename.c_str(),std::ios::binary|std::ios::out|std::ios::app);
   return !file.fail();
 }
 
 bool DCDTrajectoryWriter::write(const Vector3DBlock &coords) {
   const unsigned int count = coords.size();
-  if (!reopen(count)) return false;
+  if (!reopen(count)) {return false;}
 
   myX.resize(count);
   myY.resize(count);
@@ -200,6 +208,7 @@ bool DCDTrajectoryWriter::write(const Vector3DBlock &coords) {
   file.write((char *)&(myZ[0]), count * sizeof(float4));
   file.write((char *)&nAtoms, sizeof(int32));
 
+  close();
   return !file.fail();
 }
 
