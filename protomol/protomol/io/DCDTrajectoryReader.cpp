@@ -73,7 +73,6 @@ bool DCDTrajectoryReader::read(vector<XYZ> &xyz) {
 void DCDTrajectoryReader::doRead(vector<XYZ> &xyz) {
   try {
     if (!is_open()) if (!open()) THROW("Open failed");
-
     // Check endian
     int32 n = 0;
     File::read((char *)&n, sizeof(int32));
@@ -147,6 +146,8 @@ void DCDTrajectoryReader::doRead(vector<XYZ> &xyz) {
     std::vector<float4> y(natoms);
     std::vector<float4> z(natoms);    
 
+    xyz.resize(header.frames);
+
     for (int i = 0; i < header.frames; i++) {
       fortranRead((char *)&x[0], natoms * 4, "X dimension");
       fortranRead((char *)&y[0], natoms * 4, "Y dimension");
@@ -154,7 +155,8 @@ void DCDTrajectoryReader::doRead(vector<XYZ> &xyz) {
 
 
       // Copy back to correct structure
-      xyz.push_back(XYZ(natoms));
+      xyz[i].resize(natoms);
+      //xyz.push_back(XYZ(natoms));
 
       for (int j = 0; j < natoms; j++) {
         if (swap) {
@@ -162,10 +164,9 @@ void DCDTrajectoryReader::doRead(vector<XYZ> &xyz) {
           swapBytes(y[j]);
           swapBytes(z[j]);
         }
-      
-        xyz[i].coords[j].c[0] = x[j];
-        xyz[i].coords[j].c[1] = y[j];
-        xyz[i].coords[j].c[2] = z[j];
+        xyz[i].coords.c[3*j] = x[j];
+        xyz[i].coords.c[3*j+1] = y[j];
+        xyz[i].coords.c[3*j+2] = z[j];
       }
     }
     
