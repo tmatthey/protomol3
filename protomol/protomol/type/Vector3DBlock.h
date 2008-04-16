@@ -53,7 +53,11 @@ namespace ProtoMol {
       for (unsigned int i = 0; i < n; i++)
 	vec.push_back(Vector3DB(t, c+3*i));
     }
-    
+
+    Vector3DBlock(const Vector3DBlock &rhs) {
+      this->intoAssign(rhs);
+    }
+
     Vector3DBlock &operator=(const Vector3DBlock &rhs) {
       this->intoAssign(rhs);
       return *this;
@@ -114,7 +118,7 @@ namespace ProtoMol {
 	Real* newdata = new Real[n*3];
 	// 2. Copy data from c
 	int currentsize = size();
-	for (unsigned int i = 0; i < currentsize*3; i++) {
+	for (int i = 0; i < currentsize*3; i++) {
 	  newdata[i] = c[i];
 	  // 2b. Also set internal vector3d pointers to new data
 	  if (i % 3 == 0) {
@@ -141,7 +145,7 @@ namespace ProtoMol {
     void zero(int n = -1) {
       for (unsigned int i = 0; i < size()*3; i++)
 	c[i] = 0;
-      if (n >= 0 && n != size())
+      if (n >= 0 && n != (int)size())
 	resize(n, Vector3D(0,0,0));
     }
 
@@ -243,7 +247,6 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private:
     std::vector<Vector3DB> vec;
     Real* c;
   };
