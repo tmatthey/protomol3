@@ -1,8 +1,6 @@
-ERROR no "data/HessianIntTest.xyz" file
 Frames:     1 Atoms:    22
 Frames:     1 Atoms:    22
-Files do not match
-  Tolerance         = 1e-06
-  Max diff          = 0.44178
-  Divergent vectors = 22
-  Divergent frame   = 1
+Files match
+Frames:     1 Atoms:    22
+Frames:     1 Atoms:    22
+Files match
