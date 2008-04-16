@@ -23,19 +23,19 @@ Real DataComparator::compare(const Real &data1, const Real &data2) {
   return RealAbs(data1 - data2);
 }
 
-Real DataComparator::compare(const Vector3D &data1, const Vector3D &data2) {
-  Real max = 0;
-  Real d;
+// Real DataComparator::compare(const Vector3D &data1, const Vector3D &data2) {
+//   Real max = 0;
+//   Real d;
 
-  d = compare(data1.x, data2.x);
-  if (d > max) max = d;
-  d = compare(data1.y, data2.y);
-  if (d > max) max = d;
-  d = compare(data1.z, data2.z);
-  if (d > max) max = d;
+//   d = compare(data1.c[0], data2.c[0]);
+//   if (d > max) max = d;
+//   d = compare(data1.c[1], data2.c[1]);
+//   if (d > max) max = d;
+//   d = compare(data1.c[2], data2.c[2]);
+//   if (d > max) max = d;
 
-  return max;
-}
+//   return max;
+// }
 
 Real DataComparator::compare(const Vector3DBlock &data1,
                              const Vector3DBlock &data2,
@@ -43,19 +43,17 @@ Real DataComparator::compare(const Vector3DBlock &data1,
   Real max = 0;
   Real d;
 
-  Vector3DBlock::const_iterator it1;
-  Vector3DBlock::const_iterator it2;
 
-  for (it1 = data1.begin(), it2 = data2.begin();
-       it1 != data1.end() && it2 != data2.end(); it1++, it2++) {
-    d = compare(*it1, *it2);
+  if (data1.size() != data2.size())
+    THROW("Vector3DBlock sizes don't match");
+
+  for (unsigned int i = 0; i < 3*data1.size(); i++) {
+    d = compare(data1.c[i], data2.c[i]);
+
     if (d > max) max = d;
 
     if (d > tolerance) count++;
   }    
-
-  if (it1 != data1.end() || it2 != data2.end())
-    THROW("Vector3DBlock sizes don't match");
 
   return max;  
 }
@@ -88,9 +86,23 @@ Real DataComparator::compare(const string &file1, const string &file2,
   vector<XYZ> data1;
   vector<XYZ> data2;
 
-  read(file1, data1);
-  read(file2, data2);
-
+  // Special case for energies file; no XYZ values
+  if (file1.substr(file1.size()-8, 8) == "energies") {
+    ifstream infile(file1.c_str(), ios::in);
+    ifstream origfile(file2.c_str(), ios::in);
+    Real d1, d2, c, max=0;
+    while (!infile.eof()) {
+      infile >> d1;
+      origfile >> d2;
+      c = compare(d1, d2);
+      if (c > max) max = c;
+    }
+    return max;
+  }
+  else {
+    read(file1, data1);
+    read(file2, data2);
+  }
   return compare(data1, data2, tolerance, count, divergeFrame);
 }
 
@@ -108,26 +120,30 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
     XYZReader reader(filename);
 
     try {
-      XYZ xyz;
-      reader >> xyz;
-      data.push_back(xyz);
+      data.clear();
+      //reader.close();
+      data.push_back(XYZ());
+      reader >> data[data.size()-1];
+      //XYZ xyz;
+      //reader >> xyz;
+      //data.push_back(xyz);
 
     } catch (const Exception &e2) {
       reader.close();
+      data.pop_back();
       DCDTrajectoryReader reader(filename);
 
       try {
         reader >> data;
-        
       } catch (const Exception &e3) {
 
           reader.close();
+	  data.clear();
           PDBReader reader(filename);
 
           try {
-              XYZ xyz;
-              reader >> xyz;
-              data.push_back(xyz);
+	    data.push_back(XYZ());
+	    reader >> data[data.size()-1];
           } catch(const Exception &e4) {
         THROWS("Unsupported file format '" << filename << "' due to errors:"
                << endl << e1 << endl << e2 << endl << e3 << endl);
@@ -141,6 +157,8 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
   if (data.size()) cout << " Atoms: " << setw(5) << data[0].size();
   cout << endl;
 #endif // DATA_COMPARATOR_STANDALONE
+
+  data.clear();
 }
 
 #ifdef DATA_COMPARATOR_STANDALONE
@@ -151,7 +169,7 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
 int main(int argc, char *argv[]) {
   Exception::enableStackTraces = true;
 #ifndef _WIN32
-  Debugger::initStackTrace(argv[0]);
+  //Debugger::initStackTrace(argv[0]);
 #endif
 
   bool result = true;
