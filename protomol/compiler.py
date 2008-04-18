@@ -94,7 +94,7 @@ def compiler_configure(c99_mode = 1):
     # Optimizations
     if optimize:
         if env['CC'] in ['icc', 'icpc']:
-            env.Append(CCFLAGS = '-O -finline-functions -funroll-loops')
+            env.Append(CCFLAGS = '-O -finline-functions')
         elif env['CC'] == 'gcc':
             env.Append(CCFLAGS =
                        '-O9 -ffast-math -finline-functions -funroll-loops')
