@@ -57,8 +57,8 @@ namespace ProtoMol {
         Vector3DBlock *nonSubspaceForce(Vector3DBlock * force, Vector3DBlock * iPforce);
         Vector3DBlock *nonSubspacePosition(Vector3DBlock * force, Vector3DBlock * iPforce);
         void subSpaceSift(Vector3DBlock *velocities, Vector3DBlock *forces);
-        double *vector3DBlockTOvect(Vector3DBlock* blkDat, double* vecDat);
-        Vector3DBlock *vectTOvector3DBlock(double* vecDat, Vector3DBlock* blkDat);
+      //double *vector3DBlockTOvect(Vector3DBlock* blkDat, double* vecDat);
+      //Vector3DBlock *vectTOvector3DBlock(double* vecDat, Vector3DBlock* blkDat);
         void initialize(int sz, GenericTopology *myTopo, Vector3DBlock *myForces, int nm_flags);
         virtual void forceProjection();
         void setIntegratorSetPointers(Integrator *integrator, EigenvectorInfo *eipt, bool eiValid);
@@ -81,7 +81,7 @@ namespace ProtoMol {
         //molecule constants
         int _N, _3N, _rfM;
         //linear arrays for blas
-        double *tmpFX, *tmpC;
+      double /**tmpFX,*/ *tmpC;
         //inputs for projection/integrator
         int firstMode;
         int numMode;

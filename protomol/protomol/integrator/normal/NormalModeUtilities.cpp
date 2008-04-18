@@ -18,18 +18,18 @@ namespace ProtoMol {
 
   //constructors
     NormalModeUtilities::NormalModeUtilities(): firstMode(1), numMode(-1), myGamma(-1), mySeed(-1), myTemp(-1)
-        {tmpFX=NULL; tmpC=NULL; invSqrtMass=NULL; sqrtMass=NULL;}
+    {/*tmpFX=NULL;*/ tmpC=NULL; invSqrtMass=NULL; sqrtMass=NULL;}
 
     NormalModeUtilities::NormalModeUtilities( int firstmode, int nummode, Real gamma, int seed, Real temperature):
         firstMode(firstmode), numMode(nummode), myGamma(gamma/ (1000 * Constant::INV_TIMEFACTOR)), mySeed(seed), myTemp(temperature)
   {
-            tmpFX=NULL; tmpC=NULL; invSqrtMass=NULL; sqrtMass=NULL;
+    /*tmpFX=NULL;*/ tmpC=NULL; invSqrtMass=NULL; sqrtMass=NULL;
   }
 
   NormalModeUtilities::~NormalModeUtilities() 
   {  
       //
-      if(tmpFX!=NULL) delete [] tmpFX;
+      //if(tmpFX!=NULL) delete [] tmpFX;
       if(tmpC!=NULL) delete [] tmpC;
       if(invSqrtMass!=NULL) delete [] invSqrtMass;
       if(sqrtMass!=NULL) delete [] sqrtMass;
@@ -70,7 +70,7 @@ namespace ProtoMol {
     //temporary mode space variable for intermediate calculations
     tmpC = new double[_3N];
     //define temporary position/force vector
-    tmpFX = new double[_3N];
+    //tmpFX = new double[_3N];
     //setup sqrt masses and their inverse 
     invSqrtMass = new double[_N];
     sqrtMass = new double[_N];
@@ -124,16 +124,16 @@ namespace ProtoMol {
   //****Routines to convert between Vector3DBlocks and linear arrays*********************
 
   //Convert Vector3DBlock formal to linear array for BLAS
-  double* NormalModeUtilities::vector3DBlockTOvect(Vector3DBlock* blkDat, double* vecDat){
-      for( int i=0; i<3*_N; i++) vecDat[i] = (*blkDat)[i/3][i%3];
-      return vecDat;
-  }
+//   double* NormalModeUtilities::vector3DBlockTOvect(Vector3DBlock* blkDat, double* vecDat){
+//       for( int i=0; i<3*_N; i++) vecDat[i] = (*blkDat)[i/3][i%3];
+//       return vecDat;
+//  }
 
   //Convert linear array from BLAS to Vector3DBlock 
-  Vector3DBlock* NormalModeUtilities::vectTOvector3DBlock(double* vecDat, Vector3DBlock* blkDat){
-      for( int i=0; i<3*_N; i++) (*blkDat)[i/3][i%3] = vecDat[i];
-      return blkDat;
-  }
+//   Vector3DBlock* NormalModeUtilities::vectTOvector3DBlock(double* vecDat, Vector3DBlock* blkDat){
+//       for( int i=0; i<3*_N; i++) (*blkDat)[i/3][i%3] = vecDat[i];
+//       return blkDat;
+//   }
 
   //*************************************************************************************
   //****Projectors for complement sub space and sub space********************************
@@ -142,22 +142,24 @@ namespace ProtoMol {
   //Find forces acting outside subspace
   Vector3DBlock* NormalModeUtilities::nonSubspaceForce(Vector3DBlock * force, Vector3DBlock * iPforce){
     //
-    vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
+    if (force != iPforce) // Different vectors
+      iPforce->intoAssign(*force);
+    //vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
     //calculate M^{1/2}(I-M^{1/2}\hat{Q}\hat{Q}^TM^{-1/2})M^{-1/2}f using BLAS
     //f'=M^{-1/2}*f
     for( int i=0; i < _3N; i++)
-            tmpFX[i] *= invSqrtMass[i/3];
+         iPforce->c[i] *= invSqrtMass[i/3];
     //c=hQ^T*M^{-1/2}*f
     char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transA, &m, &n, &alpha, (*Q), &m, tmpFX, &incxy, &beta, tmpC, &incxy);
+    dgemv_ (transA, &m, &n, &alpha, (*Q), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
     int len_transa = 1;							//length of transA
-    dgemv_ (*transA, m, n, alpha, (*Q), m, tmpFX, incxy, beta, tmpC, incxy, len_transa);
+    dgemv_ (*transA, m, n, alpha, (*Q), m, iPforce->c, incxy, beta, tmpC, incxy, len_transa);
 #endif
 #endif
     //
@@ -166,18 +168,18 @@ namespace ProtoMol {
     alpha = -1.0;	beta = 1.0;
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transB, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, tmpFX, &incxy);
+    dgemv_ (transB, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, iPforce->c, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
-    dgemv_ (*transB, m, n, alpha, (*Q), m, tmpC, incxy, beta, tmpFX, incxy, len_transa);
+    dgemv_ (*transB, m, n, alpha, (*Q), m, tmpC, incxy, beta, iPforce->c, incxy, len_transa);
 #endif
 #endif
     //
     //f'''=M^{1/2}*f''
     for( int i=0; i < _3N; i++)
-            tmpFX[i] *= sqrtMass[i/3];
+            iPforce->c[i] *= sqrtMass[i/3];
     //put back into vector3DBlocks
-    vectTOvector3DBlock(tmpFX, iPforce);
+    //vectTOvector3DBlock(tmpFX, iPforce);
     //delete temporary array
     return iPforce;
   }
@@ -185,22 +187,24 @@ namespace ProtoMol {
   //Find positions outside subspace
   Vector3DBlock* NormalModeUtilities::nonSubspacePosition(Vector3DBlock * force, Vector3DBlock * iPforce){
     //
-    vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
+    if (force != iPforce)
+      iPforce->intoAssign(*force);
+    //vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
     //calculate M^{1/2}(I-M^{1/2}\hat{Q}\hat{Q}^TM^{-1/2})M^{-1/2}f using BLAS
     //f'=M^{-1/2}*f
     for( int i=0; i < _3N; i++)
-            tmpFX[i] *= sqrtMass[i/3];
+            iPforce->c[i] *= sqrtMass[i/3];
     //c=hQ^T*M^{-1/2}*f
     char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transA, &m, &n, &alpha, (*Q), &m, tmpFX, &incxy, &beta, tmpC, &incxy);
+    dgemv_ (transA, &m, &n, &alpha, (*Q), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
     int len_transa = 1;							//length of transA
-    dgemv_ (*transA, m, n, alpha, (*Q), m, tmpFX, incxy, beta, tmpC, incxy, len_transa);
+    dgemv_ (*transA, m, n, alpha, (*Q), m, iPforce->c, incxy, beta, tmpC, incxy, len_transa);
 #endif
 #endif
     //
@@ -209,18 +213,18 @@ namespace ProtoMol {
     alpha = -1.0;	beta = 1.0;
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transB, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, tmpFX, &incxy);
+    dgemv_ (transB, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, iPforce->c, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
-    dgemv_ (*transB, m, n, alpha, (*Q), m, tmpC, incxy, beta, tmpFX, incxy, len_transa);
+    dgemv_ (*transB, m, n, alpha, (*Q), m, tmpC, incxy, beta, iPforce->c, incxy, len_transa);
 #endif
 #endif
     //
     //f'''=M^{1/2}*f''
     for( int i=0; i < _3N; i++)
-            tmpFX[i] *= invSqrtMass[i/3];
+            iPforce->c[i] *= invSqrtMass[i/3];
     //put back into vector3DBlocks
-    vectTOvector3DBlock(tmpFX, iPforce);
+    //vectTOvector3DBlock(tmpFX, iPforce);
     //delete temporary array
     return iPforce;
   }
@@ -228,11 +232,13 @@ namespace ProtoMol {
   //Find forces acting inside subspace
   Vector3DBlock* NormalModeUtilities::subspaceForce(Vector3DBlock * force, Vector3DBlock * iPforce){
     //
-    vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
+    if (force != iPforce)
+      iPforce->intoAssign(*force);
+    //vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
     //calculate M^{1/2}QQ^TM^{-1/2}f using BLAS
     //f'=M^{-1/2}*f
     for( int i=0; i < _3N; i++) {
-            tmpFX[i] *= invSqrtMass[i/3];
+            iPforce->c[i] *= invSqrtMass[i/3];
     }
     //c=Q^T*M^{-1/2}*f
     char *transA = "T";							// Transpose, LAPACK checks only first character N/V
@@ -240,11 +246,11 @@ namespace ProtoMol {
     double alpha = 1.0;	double beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transA, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, tmpFX, &incxy, &beta, tmpC, &incxy);
+    dgemv_ (transA, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
     int len_transa = 1;	
-    dgemv_ (*transA, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, tmpFX, incxy, beta, tmpC, incxy, len_transa);
+    dgemv_ (*transA, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, iPforce->c, incxy, beta, tmpC, incxy, len_transa);
 #endif
 #endif
     //
@@ -253,18 +259,18 @@ namespace ProtoMol {
     alpha = 1.0;	beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transB, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, tmpC, &incxy, &beta, tmpFX, &incxy);
+    dgemv_ (transB, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, tmpC, &incxy, &beta, iPforce->c, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
-    dgemv_ (*transB, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, tmpC, incxy, beta, tmpFX, incxy, len_transa);
+    dgemv_ (*transB, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, tmpC, incxy, beta, iPforce->c, incxy, len_transa);
 #endif
 #endif
     //f'''=M^{1/2}*f''
     for( int i=0; i < _3N; i++) {
-            tmpFX[i] *= sqrtMass[i/3];
+            iPforce->c[i] *= sqrtMass[i/3];
     }
     //put back into vector3DBlocks
-    vectTOvector3DBlock(tmpFX, iPforce);
+    //vectTOvector3DBlock(tmpFX, iPforce);
     //delete temporary array
     return iPforce;
   }
@@ -272,22 +278,24 @@ namespace ProtoMol {
   //Find velocities acting inside subspace
   Vector3DBlock* NormalModeUtilities::subspaceVelocity(Vector3DBlock * force, Vector3DBlock * iPforce){
     //
-    vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
+    if (force != iPforce)
+      iPforce->intoAssign(*force);
+    //vector3DBlockTOvect(force, tmpFX);	//put positions-x_0 into linear array
     //calculate M^{-1/2}QQ^TM^{1/2}f using BLAS
     //v'=M^{1/2}*v
     for( int i=0; i < _3N; i++)
-            tmpFX[i] *= sqrtMass[i/3];
+            iPforce->c[i] *= sqrtMass[i/3];
     //c=Q^T*M^{-1/2}*v
     char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transA, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, tmpFX, &incxy, &beta, tmpC, &incxy);
+    dgemv_ (transA, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
     int len_transa = 1;	
-    dgemv_ (*transA, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, tmpFX, incxy, beta, tmpC, incxy, len_transa);
+    dgemv_ (*transA, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, iPforce->c, incxy, beta, tmpC, incxy, len_transa);
 #endif
 #endif
     //
@@ -296,18 +304,18 @@ namespace ProtoMol {
     alpha = 1.0;	beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transB, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, tmpC, &incxy, &beta, tmpFX, &incxy);
+    dgemv_ (transB, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, tmpC, &incxy, &beta, iPforce->c, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
-    dgemv_ (*transB, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, tmpC, incxy, beta, tmpFX, incxy, len_transa);
+    dgemv_ (*transB, m, n, alpha, &((*Q)[_3N*(firstMode-1)]), m, tmpC, incxy, beta, iPforce->c, incxy, len_transa);
 #endif
 #endif
 
     //v'''=M^{-1/2}*v''
     for( int i=0; i < _3N; i++)
-            tmpFX[i] *= invSqrtMass[i/3];
+            iPforce->c[i] *= invSqrtMass[i/3];
     //put back into vector3DBlocks
-    vectTOvector3DBlock(tmpFX, iPforce);
+    //vectTOvector3DBlock(tmpFX, iPforce);
 
     //delete temporary array
     return iPforce;
@@ -335,18 +343,18 @@ namespace ProtoMol {
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
     //
 #if defined(HAVE_LAPACK)
-    dgemv_ (transA, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, tmpFX, &incxy);
+    dgemv_ (transA, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, iPos->c, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
     int len_transa = 1;							//length of transA
-    dgemv_ (*transA, m, n, alpha, (*Q), m, tmpC, incxy, beta, tmpFX, incxy, len_transa);
+    dgemv_ (*transA, m, n, alpha, (*Q), m, tmpC, incxy, beta, iPos->c, incxy, len_transa);
 #endif
 #endif
     //
     for( int i=0; i < _3N; i++)
-            tmpFX[i] /= sqrtMass[i/3];
+            iPos->c[i] /= sqrtMass[i/3];
     //put back into vector3DBlocks
-    vectTOvector3DBlock(tmpFX, iPos);
+    //vectTOvector3DBlock(tmpFX, iPos);
     //add ex0
     for( int i=0; i < _N; i++)
         (*iPos)[i] += (*ex0)[i];
@@ -359,22 +367,22 @@ namespace ProtoMol {
     //
     Vector3DBlock vPos = *iPos;
     for( int i=0; i < _N; i++) vPos[i] -= (*ex0)[i]; //subtract ex0
-    vector3DBlockTOvect(&vPos, tmpFX);	//put second positions-x_0 into linear array
+    //vector3DBlockTOvect(&vPos, tmpFX);	//put second positions-x_0 into linear array
     //calculate M^{-1/2}QQ^TM^{1/2}f using BLAS
     //v'=M^{1/2}*v
     for( int i=0; i < _3N; i++)
-        tmpFX[i] *= sqrtMass[i/3];
+        vPos.c[i] *= sqrtMass[i/3];
     //c=Q^T*M^{-1/2}*v
     char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
-            dgemv_ (transA, &m, &n, &alpha, (*Q), &m, tmpFX, &incxy, &beta, cPos, &incxy);
+            dgemv_ (transA, &m, &n, &alpha, (*Q), &m, vPos.c, &incxy, &beta, cPos, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
             int len_transa = 1;	
-            dgemv_ (*transA, m, n, alpha, (*Q), m, tmpFX, incxy, beta, cPos, incxy, len_transa);
+            dgemv_ (*transA, m, n, alpha, (*Q), m, vPos.c, incxy, beta, cPos, incxy, len_transa);
 #endif
 #endif
     //
