@@ -51,7 +51,7 @@ void StandardIntegrator::calculateForces() {
   if (!anyMediForceModify()) Parallel::reduce(&app->energies, myForces);
 
   postForceModify();
-
+  
   //  Compute my potentialEnergy as the difference before/after the call to
   //  calculateForces().
   myPotEnergy = app->energies.potentialEnergy() - myPotEnergy;

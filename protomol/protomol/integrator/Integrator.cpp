@@ -184,8 +184,9 @@ void Integrator::postForceModify() {
          << (app ? app->topology->time : 0.0) << endr;
 
   for (iterator i = myPostForceModifiers.begin();
-       i != myPostForceModifiers.end(); ++i)
+       i != myPostForceModifiers.end(); ++i) {
     (*i)->execute(this);
+  }
 }
 
 void Integrator::postStepModify() {

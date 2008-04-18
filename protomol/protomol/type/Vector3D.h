@@ -57,6 +57,7 @@ public:
       c[0] = rhs.c[0];
       c[1] = rhs.c[1];
       c[2] = rhs.c[2];
+      return *this;
     }
 
 

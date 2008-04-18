@@ -8,43 +8,41 @@
 #include <protomol/type/Vector3DBlock.h>
 
 namespace ProtoMol {
+
   class ScalarStructure;
   class ForceGroup;
 
-  //____ NormalModeRelax
+  //__________________________________________________ NormalModeRelax
   class NormalModeRelax : public MTSIntegrator, public NormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NormalModeRelax();
-    NormalModeRelax(int cycles, Real minimlim, bool rediag, bool simplemin,
-                    ForceGroup *overloadedForces,
-                    StandardIntegrator *nextIntegrator);
-    ~NormalModeRelax();
+    NormalModeRelax(int cycles, Real minimlim, bool rediag, bool simplemin, ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator);
+    ~NormalModeRelax(); 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class NormalModeRelax
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  protected:
+  protected:  
     void utilityCalculateForces();
-
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    virtual std::string getIdNoAlias() const {return keyword;}
-    virtual void getParameters(std::vector<Parameter> &parameters) const;
+    virtual std::string getIdNoAlias() const{return keyword;}
+    virtual unsigned int getParameterSize() const{return 4;}
+    virtual void getParameters(std::vector<Parameter>& parameters) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Integrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    virtual void initialize(ProtoMolApp *app);
+    virtual void initialize(ProtoMolApp* app);
     virtual void run(int numTimesteps);
-
   protected:
     //virtual void addModifierAfterInitialize();
 
@@ -52,10 +50,7 @@ namespace ProtoMol {
     // From class STSIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    virtual MTSIntegrator *doMake(const std::vector<Value> &values,
-                                  ForceGroup *fg,
-                                  StandardIntegrator *nextIntegrator) const;
-
+    virtual MTSIntegrator* doMake(const std::vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator)const;
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,8 +67,11 @@ namespace ProtoMol {
     Real lastLambda;
     bool reDiag, simpleMin;
     Real randStp;
+
   };
+
 }
 
 #endif
+
 

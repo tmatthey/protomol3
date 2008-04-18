@@ -9,28 +9,28 @@
 #include <protomol/type/Vector3DBlock.h>
 
 namespace ProtoMol {
+
   class ScalarStructure;
   class ForceGroup;
 
-  //____ NormalModeDiagonalize
-  class NormalModeDiagonalize : public MTSIntegrator,
-    public NormalModeUtilities {
+  //__________________________________________________ NormalModeDiagonalize
+  class NormalModeDiagonalize : public MTSIntegrator, public NormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NormalModeDiagonalize();
-    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, int rayf,
-                          int raya, int mins, Real minl,
-                          ForceGroup *overloadedForces,
-                          StandardIntegrator *nextIntegrator);
-    ~NormalModeDiagonalize();
+    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, bool fDiag, bool rRand,
+                                int mins, Real minl, ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator);
+    ~NormalModeDiagonalize(); 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class NormalModeDiagonalize
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   protected:
     void drift();
+    void VerletAverage();
+    void utilityCalculateForces();
 
   private:
   public:
@@ -39,8 +39,9 @@ namespace ProtoMol {
     // From class Makeable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    virtual std::string getIdNoAlias() const {return keyword;}
-    virtual void getParameters(std::vector<Parameter> &parameters) const;
+    virtual std::string getIdNoAlias() const{return keyword;}
+    virtual unsigned int getParameterSize() const{return 8;}
+    virtual void getParameters(std::vector<Parameter>& parameters) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Integrator
@@ -48,7 +49,6 @@ namespace ProtoMol {
   public:
     virtual void initialize(ProtoMolApp *app);
     virtual void run(int numTimesteps);
-
   protected:
     //virtual void addModifierAfterInitialize();
 
@@ -56,10 +56,7 @@ namespace ProtoMol {
     // From class STSIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    virtual MTSIntegrator *doMake(const std::vector<Value> &values,
-                                  ForceGroup *fg,
-                                  StandardIntegrator *nextIntegrator) const;
-
+    virtual MTSIntegrator* doMake(const std::vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator)const;
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,21 +68,23 @@ namespace ProtoMol {
   private:
     Vector3DBlock diagAt;
     Hessian hsn;
-    double *eigVec, *eigVal;
+    double *eigVal, *innerEigVec, *innerEigVal, *innerHess, *origEigVec;
     int *eigIndx;
-    bool eigAlloc;
+    bool eigAlloc, firstDiag, fullDiag, removeRand;
     int noAvStep;
     Real avStep;
-    int rediagCount, nextRediag, raylFrequ, raylAverage, nextRayl, raylAvCount;
-    bool raylDo;
+    int rediagCount, nextRediag;
     int minSteps;
     Real minLim;
     bool validMaxEigv;
-    NormalModeUtilities *myNextNormalMode;
+    NormalModeUtilities *myNextNormalMode, *myLastNormalMode;
     int forceCalc;
     Real lastLambda;
+
   };
+
 }
 
 #endif
+
 

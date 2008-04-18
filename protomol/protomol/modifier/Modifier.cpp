@@ -15,7 +15,6 @@ string Modifier::scope = "Modifier";
 void Modifier::execute(Integrator *i) {
   stringstream str;
   print(str);
-  
   report
     << debug(10) << "[Modifier::execute] " << str.str()
     << "(" << (long)(this) << ") (enable=" << myEnable << ") at "
