@@ -138,6 +138,10 @@ protomol-test/ConfigTests/data/NMLTest.return.expect -text
 protomol-test/ConfigTests/data/NMLTest.stderr.expect -text
 protomol-test/ConfigTests/data/NMLTest.stdout.expect -text
 protomol-test/ConfigTests/data/NMLTest.xyz.orig -text
+protomol-test/ConfigTests/data/NMMTest.conf -text
+protomol-test/ConfigTests/data/NMMTest.return.expect -text
+protomol-test/ConfigTests/data/NMMTest.stderr.expect -text
+protomol-test/ConfigTests/data/NMMTest.stdout.expect -text
 protomol-test/ConfigTests/data/PDBTest.conf -text
 protomol-test/ConfigTests/data/PDBTest.in.pdb -text
 protomol-test/ConfigTests/data/PDBTest.par -text
