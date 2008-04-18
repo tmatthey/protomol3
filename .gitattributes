@@ -22,6 +22,7 @@ protomol-test/ConfigTests/LangevinTest -text
 protomol-test/ConfigTests/LeapfrogTest -text
 protomol-test/ConfigTests/LeapfrogTruncatedShadowTest -text
 protomol-test/ConfigTests/NMLTest -text
+protomol-test/ConfigTests/NMMTest -text
 protomol-test/ConfigTests/PDBTest -text
 protomol-test/ConfigTests/ProtoMolCheck -text
 protomol-test/ConfigTests/RattleTest -text
