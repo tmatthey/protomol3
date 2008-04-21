@@ -2,7 +2,8 @@ def compiler_add_opts():
     opts.AddOptions(
         EnumOption('mode', 'Set build mode', 'debug',
                    allowed_values = ('debug', 'release')),
-        BoolOption('optimize', 'Set to 1 to force optimizations', 0),
+        BoolOption('optimize', 'Set to 1 to force optimizations', 1),
+        BoolOption('gui', 'Set to 1 if using the GUI', 0),
         BoolOption('debug', 'Set to 1 to force debug options', 0),
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
         BoolOption('depends', 'Set to 1 to output dependency files', 0),
@@ -25,6 +26,8 @@ def compiler_configure(c99_mode = 1):
     
     if env.has_key('debug'): debug = int(env['debug'])
     else: debug = mode == 'debug'
+
+    if env.has_key('gui'): gui = int(env['gui'])
     
     strict = int(env.get('strict', 1))
     depends = int(env.get('depends', 0))
@@ -102,6 +105,10 @@ def compiler_configure(c99_mode = 1):
         elif env['CC'] == 'cl':
             env.Append(CCFLAGS = '/Ox /GL')
 
+
+    # GUI
+    if gui:
+        env.Append(CCFLAGS = '-DHAVE_LIBGUI')
 
     # Dependency files
     if depends and env['CC'] == 'gcc':

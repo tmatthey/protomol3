@@ -1,4 +1,4 @@
-#ifdef HAVE_LIBFAH
+#ifdef HAVE_LIBGUI
 #include <protomol/output/OutputFAHGUI.h>
 #include <protomol/topology/TopologyUtilities.h>
 #include <protomol/module/MainModule.h>
@@ -93,16 +93,16 @@ void OutputFAHGUI::setCoords() {
   x = y = z = 0.0;
   sz = app->positions.size();
   for (unsigned int i = 0; i < app->positions.size(); i++) {
-    x += app->positions[i].x;
-    y += app->positions[i].y;
-    z += app->positions[i].z;
+    x += app->positions[i].c[0];
+    y += app->positions[i].c[1];
+    z += app->positions[i].c[2];
   }
 
   x /= sz; y /= sz; z /= sz;
   for (unsigned int i = 0; i < app->positions.size(); i++) {
-    server->xyz[i].x = app->positions[i].x - x;
-    server->xyz[i].y = app->positions[i].y - y;
-    server->xyz[i].z = app->positions[i].z - z;
+    server->xyz[i].c[0] = app->positions[i].c[0] - x;
+    server->xyz[i].c[1] = app->positions[i].c[1] - y;
+    server->xyz[i].c[2] = app->positions[i].c[2] - z;
   }
 }
 
@@ -167,4 +167,4 @@ void OutputFAHGUI::setAtoms() {
   }
 }
 
-#endif // HAVE_LIBFAH
+#endif // HAVE_LIBGUI

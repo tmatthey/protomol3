@@ -1,7 +1,7 @@
 /*  -*- c++ -*-  */
 #ifndef OUTPUT_FAH_GUI_H
 #define OUTPUT_FAH_GUI_H
-#ifdef HAVE_LIBFAH
+#ifdef HAVE_LIBGUI
 
 #include <protomol/output/Output.h>
 #include <string>
@@ -58,5 +58,5 @@ namespace ProtoMol {
   };
 }
 
-#endif // HAVE_LIBFAH
+#endif // HAVE_LIBGUI
 #endif
