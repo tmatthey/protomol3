@@ -74,7 +74,7 @@ def compiler_configure(c99_mode = 1):
 
     # Options
     if env['CC'] == 'cl':
-        env.Append(CCFLAGS = '-EHsc')
+        env.Append(CCFLAGS = '-EHsc /Zp1')
 
 
     # Debug flags
@@ -108,7 +108,7 @@ def compiler_configure(c99_mode = 1):
 
     # GUI
     if gui:
-        env.Append(CCFLAGS = '-DHAVE_LIBGUI')
+        env.Append(CCFLAGS = '-DHAVE_GUI')
 
     # Dependency files
     if depends and env['CC'] == 'gcc':
