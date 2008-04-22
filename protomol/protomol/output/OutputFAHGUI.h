@@ -1,14 +1,20 @@
 /*  -*- c++ -*-  */
 #ifndef OUTPUT_FAH_GUI_H
 #define OUTPUT_FAH_GUI_H
-#ifdef HAVE_LIBGUI
+
+//Updated for standalone GUI
+#if defined (HAVE_GUI) || defined (HAVE_LIBFAH)
 
 #include <protomol/output/Output.h>
 #include <string>
 
+#ifdef HAVE_LIBFAH
 namespace FAH {
   class GUIServer;
 }
+#else
+#include <protomol/output/GUIServer.h>
+#endif
 
 namespace ProtoMol {
   class Configuration;
@@ -20,7 +26,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     OutputFAHGUI();
-    OutputFAHGUI(const std::string &name, int freq);
+    OutputFAHGUI(const std::string &name, int freq, int port, int prange, const string &projn);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  From class Output
@@ -54,9 +60,15 @@ namespace ProtoMol {
     static const std::string keyword;
   private:
     std::string name;
+    int myPort, myPortRange;
+    std::string myProjName;
+#ifdef HAVE_LIBFAH
     FAH::GUIServer *server;
+#else
+    GUIServer *server;
+#endif
   };
 }
 
-#endif // HAVE_LIBGUI
+#endif // HAVE_GUI
 #endif

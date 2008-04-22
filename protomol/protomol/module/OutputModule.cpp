@@ -34,7 +34,7 @@ void OutputModule::init(ProtoMolApp *app) {
   f.registerExemplar(new OutputXYZTrajectoryPos());
   f.registerExemplar(new OutputXYZTrajectoryVel());
   f.registerExemplar(new OutputEnergies());
-#ifdef HAVE_LIBFAH
+#if defined (HAVE_GUI) || defined (HAVE_LIBFAH)
   f.registerExemplar(new OutputFAHGUI());
 #endif
   f.registerExemplar(new OutputFAHFile());
