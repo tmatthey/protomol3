@@ -98,6 +98,7 @@ namespace ProtoMol {
     void startUpdate();
     void endUpdate();
     request_t getRequest() {return request;}
+    void startServer();
 
   protected:
     int sends(SOCKET socket, char *data, int length);
@@ -112,7 +113,6 @@ namespace ProtoMol {
 #else
     static void *callServerThread(void *param);
 #endif
-    void startServer();
   };
 }
 

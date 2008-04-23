@@ -79,7 +79,7 @@ GUIServer::GUIServer(const char *name, int natoms, int nbonds, int port, int pra
   com_port = port;
   com_port_range = prange;
 
-  startServer();
+  //startServer();
 }
 
 GUIServer::~GUIServer() {

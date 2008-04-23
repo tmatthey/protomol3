@@ -156,6 +156,9 @@ void ProtoMolApp::build() {
   integrator =
     integratorFactory.make(config[InputIntegrator::keyword], &forceFactory);
 
+  // Setup run paramiters (used for GUI so required here)
+  currentStep = config[InputFirststep::keyword];
+  lastStep = currentStep + (int)config[InputNumsteps::keyword];
 
   // Create outputs
   // TODO if !Parallel::iAmMaster() turn off outputs
@@ -211,9 +214,9 @@ void ProtoMolApp::build() {
   forceFactory.unregisterAllExemplars();
   outputFactory.unregisterAllExemplars();
  
-  // Setup run
-  currentStep = config[InputFirststep::keyword];
-  lastStep = currentStep + (int)config[InputNumsteps::keyword];
+  // Setup run paramiters
+  //currentStep = config[InputFirststep::keyword];
+  //lastStep = currentStep + (int)config[InputNumsteps::keyword];
 
   TimerStatistic::timer[TimerStatistic::RUN].reset();
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].reset();

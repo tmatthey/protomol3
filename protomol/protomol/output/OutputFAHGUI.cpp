@@ -37,13 +37,15 @@ void OutputFAHGUI::doInitialize() {
 #else
   server = new GUIServer(myProjName.c_str(), app->topology->atoms.size(),
                           app->topology->bonds.size(),myPort,myPortRange);
-#endif
-  server->info.frames = 1000000;	//app->last/current step not set at this point
-  server->info.iterations = 1000000;
+  server->info.iterations = app->lastStep / 1000;
+  server->info.frames = app->lastStep;
   server->current.frames_done = 0;
   server->current.iterations_done = 0;
   setAtoms();
   setBonds();
+  //start server now initial data set
+  server->startServer();
+#endif
 }
 
 void OutputFAHGUI::doRun(int step) {
@@ -68,8 +70,6 @@ void OutputFAHGUI::doRun(int step) {
       server->current.energy = kineticEnergy(app->topology, &app->velocities);
       server->current.temperature =
         temperature(app->topology, &app->velocities);
-      server->info.iterations = app->lastStep / 1000;
-      server->info.frames = app->lastStep;
 
       setCoords();
     }
