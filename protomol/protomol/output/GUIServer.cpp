@@ -269,13 +269,22 @@ void GUIServer::serverThread() {
                 if(recv(connectlist[listnum], (char *)&recvrequest, 4, 0) == 4) {
                      // Switch on request
                      switch (recvrequest) {
-                          case 0:	if (shutdown) break; 
+                          case 0:	if (shutdown) break;	//send metadata
                                     if (sendMetadata(connectlist[listnum])){
                                         close_connection = 1;
                                         //printf("GUI Server meta close=1\n");
                                     }
                                     break;
-                          case 1:   if (shutdown) break;
+                          case 1:   if (shutdown) break;	//send data
+                                    lock();
+                                    request = GS_COORD_REQUEST;
+                                    if (sendCoordinates(connectlist[listnum])){
+                                        close_connection = 3;
+                                        //printf("GUI Server data close=1\n");
+                                    }
+                                    unlock();
+                                    break;
+                          case 2:   if (shutdown) break;	//send data if new available
                                     lock();
                                     if(request == GS_COORD_REQUEST){ //no new data?
                                         unlock();
