@@ -167,42 +167,25 @@ void OutputFAHGUI::setAtoms() {
   float radius = 0;
 
   for (unsigned int i = 0; i < (app->topology->atoms).size(); i++) {
-    // Determine element by mass
-    // This will not work with united atom models or with heavy hydrogens etc
-    element = 0; // unknown
-    mass = app->topology->atoms[i].scaledMass;
-
-    if (mass < 1.2 && mass >= 1.0) { // hydrogen
-      element = 1;
-      server->atoms[i].type[0] = 'H';
-      radius = 1.2;
-
-    } else if (mass > 11.8 && mass < 12.2) { // carbon
-      element = 6;
-      server->atoms[i].type[0] = 'C';
-      radius = 1.7;
-
-    } else if (mass > 14.0 && mass < 15) { // nitrogen
-      element = 7;
-      server->atoms[i].type[0] = 'N';
-      radius = 1.55;
-
-    } else if (mass > 15.5 && mass < 16.5) { // oxygen
-      element = 8;
-      server->atoms[i].type[0] = 'O';
-      radius = 1.52;
-
-    } else if (mass > 31.5 && mass < 32.5) { // sulphur
-      element = 16;
-      server->atoms[i].type[0] = 'S';
-      radius = 1.85;
-
-    } else if (mass > 29.5 && mass < 30.5) { // phosphorus
-      element = 15;
-      server->atoms[i].type[0] = 'P';
-      radius = 1.9;
+    // Determine diamiter
+    for(int j=0;j<4;j++) server->atoms[i].type[j] = (app->topology->atoms[i].name.c_str())[j];
+    switch(server->atoms[i].type[0]){
+        case 'H':	radius = 1.2;
+                    break;
+        case 'C':	radius = 1.7;
+                    break;
+        case 'N':	radius = 1.55;
+                    break;
+        case 'O':	radius = 1.52;
+                    break;
+        case 'S':	radius = 1.85;
+                    break;
+        case 'P':	radius = 1.9;
+                    break;
+        default:	radius = 1.9;
+                    break;
     }
-
+    //add charge
     server->atoms[i].charge = app->topology->atoms[i].scaledCharge;
     server->atoms[i].radius = radius / 2.0;
   }
