@@ -2,7 +2,7 @@
 #define GUI_SERVER_H
 
 #define COMM_MAGIC   0xF01DBAAD
-#define COMM_VERSION 1
+#define COMM_VERSION 2
 #define COMM_PORT    0xCE11
 #define COMM_NNCOORD 050363
 #define NUMCONN      5 
