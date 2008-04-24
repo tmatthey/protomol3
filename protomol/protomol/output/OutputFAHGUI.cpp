@@ -167,8 +167,9 @@ void OutputFAHGUI::setAtoms() {
   float radius = 0;
 
   for (unsigned int i = 0; i < (app->topology->atoms).size(); i++) {
-    // Determine diamiter
-    for(int j=0;j<4;j++) server->atoms[i].type[j] = (app->topology->atoms[i].name.c_str())[j];
+    // Determine diamiter/ set name
+    int atomNameLen = app->topology->atoms[i].name.length();
+    for(int j=0;j<4 && j<atomNameLen;j++) server->atoms[i].type[j] = (app->topology->atoms[i].name.c_str())[j];
     switch(server->atoms[i].type[0]){
         case 'H':	radius = 1.2;
                     break;
