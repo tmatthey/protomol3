@@ -19,7 +19,6 @@ namespace ProtoMol {
     EigenvectorReader();
     explicit EigenvectorReader(const std::string &filename);
     explicit EigenvectorReader(const char *filename);
-    EigenvectorReader(std::ios::openmode mode);
     virtual ~EigenvectorReader();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

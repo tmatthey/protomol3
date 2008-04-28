@@ -20,7 +20,6 @@ namespace ProtoMol {
     EigenvectorTextReader();
     explicit EigenvectorTextReader(const std::string &filename);
     explicit EigenvectorTextReader(const char *filename);
-    EigenvectorTextReader(std::ios::openmode mode);
     virtual ~EigenvectorTextReader();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
