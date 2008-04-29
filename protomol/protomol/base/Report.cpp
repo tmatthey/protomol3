@@ -51,6 +51,10 @@ namespace ProtoMol {
       myAbort = flag;
     }
 
+    void MyStreamer::setQuit(bool flag) {
+      myQuit = flag;
+    }
+
     void MyStreamer::setAllNodes(bool flag) {
       myAllNodes = flag;
     }
