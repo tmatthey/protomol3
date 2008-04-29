@@ -26,7 +26,6 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class EigenvectorInfo
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    void clear();
     void initializeEigenvectors() {
       //myEigenvectors = new Real[myEigenvectorLength*myNumEigenvectors];
       myEigenvectors = new Real[myEigenvectorLength * myNumEigenvectors * 3];
