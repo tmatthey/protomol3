@@ -80,6 +80,7 @@ namespace ProtoMol {
     request_t request;
     int shutdown;
     SOCKET connectlist[NUMCONN];
+    bool connectlist_sent_curr[NUMCONN];
     fd_set socks; 
     unsigned short com_port;
     unsigned int com_port_range;

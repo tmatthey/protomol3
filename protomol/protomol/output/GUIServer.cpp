@@ -188,8 +188,10 @@ void GUIServer::serverThread() {
 
   // Wait for a connection
   //initialize connection list
-  for(int listnum = 0; listnum < NUMCONN; listnum++)
+  for(int listnum = 0; listnum < NUMCONN; listnum++){
       connectlist[listnum] = INVALID_SOCKET;
+      connectlist_sent_curr[listnum] = true;	//don't send until real data
+  }
 
   //####Main server loop###################################################################
   // While not close connection
@@ -277,6 +279,9 @@ void GUIServer::serverThread() {
                                     break;
                           case 1:   if (shutdown) break;	//send data
                                     lock();
+                                    //Globally new daya? Required in case version 1 client in set
+                                    if(request != GS_COORD_REQUEST)
+                                        for(int clist=0;clist < NUMCONN;clist++) connectlist_sent_curr[clist] = false;	//set data available to all clients
                                     request = GS_COORD_REQUEST;
                                     if (sendCoordinates(connectlist[listnum])){
                                         close_connection = 3;
@@ -286,13 +291,18 @@ void GUIServer::serverThread() {
                                     break;
                           case 2:   if (shutdown) break;	//send data if new available
                                     lock();
-                                    if(request == GS_COORD_REQUEST){ //no new data?
+                                    if(request == GS_COORD_REQUEST && connectlist_sent_curr[listnum]){ //no new data? AND this connection has sent it
                                         unlock();
                                         if(sendNoNewCoord(connectlist[listnum])){
                                             close_connection = 2;
                                         }
                                     }else{
+                                        //Globally new daya, or just this client?
+                                        if(request != GS_COORD_REQUEST)	//global
+                                            for(int clist=0;clist < NUMCONN;clist++) connectlist_sent_curr[clist] = false;	//set data available to all clients
+                                        //service request
                                         request = GS_COORD_REQUEST;
+                                        connectlist_sent_curr[listnum] = true;	//flag this client has had new data
                                         if (sendCoordinates(connectlist[listnum])){
                                             close_connection = 3;
                                             //printf("GUI Server data close=1\n");
