@@ -160,8 +160,8 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Vector3DBlock coords;
-    std::vector<Atom> atoms;
-    std::vector<Ter> ters;
+    std::vector<PDB::Atom> atoms;
+    std::vector<PDB::Ter> ters;
   };
 
 

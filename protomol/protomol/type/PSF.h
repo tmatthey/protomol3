@@ -179,15 +179,15 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    std::vector<Atom> atoms;
-    std::vector<Bond> bonds;
-    std::vector<Angle> angles;
-    std::vector<Dihedral> dihedrals;
-    std::vector<Improper> impropers;
-    std::vector<Donor> donors;
-    std::vector<Acceptor> acceptors;
-    std::vector<Nonbonded> nonbondeds;
-    std::vector<Ngrp> ngrp;
+    std::vector<PSF::Atom> atoms;
+    std::vector<PSF::Bond> bonds;
+    std::vector<PSF::Angle> angles;
+    std::vector<PSF::Dihedral> dihedrals;
+    std::vector<PSF::Improper> impropers;
+    std::vector<PSF::Donor> donors;
+    std::vector<PSF::Acceptor> acceptors;
+    std::vector<PSF::Nonbonded> nonbondeds;
+    std::vector<PSF::Ngrp> ngrp;
   };
 }
 

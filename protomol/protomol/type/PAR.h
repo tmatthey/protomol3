@@ -242,13 +242,13 @@ namespace ProtoMol {
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // PAR container
-    std::vector<Bond> bonds;
-    std::vector<Angle> angles;
-    std::vector<Dihedral> dihedrals;
-    std::vector<Improper> impropers;
-    std::vector<Nonbonded> nonbondeds;
-    std::vector<Nbfix> nbfixs;
-    std::vector<Hbond> hbonds;
+    std::vector<PAR::Bond> bonds;
+    std::vector<PAR::Angle> angles;
+    std::vector<PAR::Dihedral> dihedrals;
+    std::vector<PAR::Improper> impropers;
+    std::vector<PAR::Nonbonded> nonbondeds;
+    std::vector<PAR::Nbfix> nbfixs;
+    std::vector<PAR::Hbond> hbonds;
   };
 }
 #endif /* PAR_H */
