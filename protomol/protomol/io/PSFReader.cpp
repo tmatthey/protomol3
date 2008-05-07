@@ -37,7 +37,6 @@ bool PSFReader::read() {
 }
 
 bool PSFReader::read(PSF &psf) {
-  cout << "STARTING PSF READING" << endl;
   if (!tryFormat())
     return false;
   if (!open())
@@ -282,7 +281,6 @@ bool PSFReader::read(PSF &psf) {
     report << recoverable << "[PSF::read] Record " << keyword << " with " <<
     numrecords << " entries not recognized." << endr;
   }
-  cout << "DONE PSF READING" << endl;
   close();
   return !file.fail();
 }
