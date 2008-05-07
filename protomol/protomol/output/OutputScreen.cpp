@@ -24,7 +24,7 @@ OutputScreen::OutputScreen(int freq) :
 
 void OutputScreen::doInitialize() {
   Real step = app->integrator->getTimestep() *
-    max(1, min(myOutputFreq, (int)app->config[InputNumsteps::keyword]));
+    max(1, myOutputFreq);
 
   if (step >= 1e13) {
     myUnit = "s";
