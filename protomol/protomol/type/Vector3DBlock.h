@@ -18,18 +18,6 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Types & enum's
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  public:
-    typedef std::vector<Vector3DB>::value_type value_type;
-    typedef std::vector<Vector3DB>::pointer pointer;
-    typedef std::vector<Vector3DB>::reference reference;
-    typedef std::vector<Vector3DB>::const_reference const_reference;
-    typedef std::vector<Vector3DB>::size_type size_type;
-    typedef std::vector<Vector3DB>::difference_type difference_type;
-    typedef std::vector<Vector3DB>::iterator iterator;
-    typedef std::vector<Vector3DB>::const_iterator const_iterator;
-    typedef std::vector<Vector3DB>::reverse_iterator reverse_iterator;
-    typedef std::vector<Vector3DB>::const_reverse_iterator
-    const_reverse_iterator;
   private:
     enum {LIMIT = 30};
 
@@ -40,15 +28,13 @@ namespace ProtoMol {
     /* No change */
     Vector3DBlock()  : Proxy(), vec() {}
     
-    //explicit Vector3DBlock(size_type n) : Proxy(), vec(n) {}
-    explicit Vector3DBlock(size_type n) : Proxy() {
+    explicit Vector3DBlock(unsigned int n) : Proxy() {
       c = new Real[3*n];
       for (unsigned int i = 0; i < n; i++)
 	vec.push_back(Vector3DB(c+3*i));
     }
     
-    //Vector3DBlock(size_type n, const Vector3D &t) : Proxy(), vec(n, t) {}
-    Vector3DBlock(size_type n, const Vector3D &t) : Proxy() {
+    Vector3DBlock(unsigned int n, const Vector3D &t) : Proxy() {
       c = new Real[3*n];
       for (unsigned int i = 0; i < n; i++)
 	vec.push_back(Vector3DB(t, c+3*i));
@@ -71,10 +57,10 @@ namespace ProtoMol {
     //  New methods of class Vector3DBlock from std::vector
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    size_type size() const {return vec.size();}
+    unsigned int size() const {return vec.size();}
     bool empty() const {return vec.empty();}
-    reference operator[](size_type n) {return vec[n];}
-    const_reference operator[](size_type n) const {return vec[n];}
+    Vector3DB& operator[](unsigned int n) {return vec[n];}
+    const Vector3DB& operator[](unsigned int n) const {return vec[n];}
     void push_back(const Vector3D &t) {
       resize(size()+1, t);
     } 
@@ -87,7 +73,7 @@ namespace ProtoMol {
     }
 
     void clear() {vec.clear();}
-    void resize(size_type n, Vector3D t = Vector3D(0.0, 0.0, 0.0)) {
+    void resize(unsigned int n, Vector3D t = Vector3D(0.0, 0.0, 0.0)) {
       // Three cases.
       // Case 1: n is the same as the current size.
       if (n == size()) {
@@ -242,8 +228,6 @@ namespace ProtoMol {
     /// Compute regression plane by SVD
 
   public:
-    friend bool operator==(const Vector3DBlock &a, const Vector3DBlock &b);
-    friend bool operator<(const Vector3DBlock &a, const Vector3DBlock &b);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,19 +235,6 @@ namespace ProtoMol {
     Real* c;
   };
 
-  inline bool operator==(const Vector3DBlock &a, const Vector3DBlock &b) {
-    if (a.size() != b.size()) return false;
-    for (unsigned int i = 0; i < 3*a.size(); i++)
-      if (a.c[i] != b.c[i]) return false;
-    return true;
-  }
-
-  inline bool operator<(const Vector3DBlock &a, const Vector3DBlock &b) {
-    if (a.size() > b.size()) return false;
-    for (unsigned int i = 0; i < 3*a.size(); i++)
-      if (a.c[i] < b.c[i]) return false;
-    return true;
-  } 
 }
 
 
