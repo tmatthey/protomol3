@@ -201,7 +201,7 @@ namespace ProtoMol {
     //________________________________________________________ Value
     struct Undefined {};
   public:
-    static const Undefined *undefined; ///< Undefined value
+    static const ProtoMol::Value::Undefined *undefined; ///< Undefined value
     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
@@ -299,7 +299,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     bool valid() const;
-    bool defined() const;
+    bool isDefined() const;
     bool clear();
     bool init();
     unsigned int size() const;
@@ -330,7 +330,7 @@ namespace ProtoMol {
     /// Sets the value, type and constraints are unchanged
     template<typename T>
     bool set(const T &value) {
-      if (defined()) myValue->set(value);
+      if (isDefined()) myValue->set(value);
       else {
         Value v(value);
         Value(v).swap(*this);
@@ -485,7 +485,7 @@ namespace ProtoMol {
     return myValue ? myValue->getType() : ValueType::UNDEFINED;
   }
 
-  inline bool Value::defined() const {
+  inline bool Value::isDefined() const {
     return getType() != ValueType::UNDEFINED;
   }
 

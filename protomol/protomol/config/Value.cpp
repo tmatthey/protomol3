@@ -157,7 +157,7 @@ string Value::getDefinitionTypeString() const {
 }
 
 bool Value::set(Value v) {
-  if (defined()) myValue->set(v);
+  if (isDefined()) myValue->set(v);
   else Value(v).swap(*this);
 
   return valid();
@@ -174,7 +174,7 @@ string Value::debug() const {
 }
 
 void Value::read(istream &is) {
-  if (defined()) myValue->read(is);
+  if (isDefined()) myValue->read(is);
   else {
     string str;
     is >> str;
@@ -269,7 +269,7 @@ namespace ProtoMol {
   }
 
   bool operator==(const Value &v1, const Value &v2) {
-    if (!v1.defined() && !v2.defined()) return true;
+    if (!v1.isDefined() && !v2.isDefined()) return true;
     if (v1.valid() != v2.valid()) return false;
     else if (!v1.valid()) return true;
 
@@ -288,7 +288,7 @@ namespace ProtoMol {
   }
 
   bool operator<(const Value &v1, const Value &v2) {
-    if (!v1.defined() && !v2.defined()) return true;
+    if (!v1.isDefined() && !v2.isDefined()) return true;
     if (v1.valid() != v2.valid()) return false;
     else if (!v1.valid()) return true;
 
@@ -307,7 +307,7 @@ namespace ProtoMol {
   }
 
   bool operator<=(const Value &v1, const Value &v2) {
-    if (!v1.defined() && !v2.defined()) return true;
+    if (!v1.isDefined() && !v2.isDefined()) return true;
     if (v1.valid() != v2.valid()) return false;
     else if (!v1.valid()) return true;
 
@@ -326,7 +326,7 @@ namespace ProtoMol {
   }
 
   bool operator>(const Value &v1, const Value &v2) {
-    if (!v1.defined() && !v2.defined()) return true;
+    if (!v1.isDefined() && !v2.isDefined()) return true;
     if (v1.valid() != v2.valid()) return false;
     else if (!v1.valid()) return true;
 
@@ -345,7 +345,7 @@ namespace ProtoMol {
   }
 
   bool operator>=(const Value &v1, const Value &v2) {
-    if (!v1.defined() && !v2.defined()) return true;
+    if (!v1.isDefined() && !v2.isDefined()) return true;
     if (v1.valid() != v2.valid()) return false;
     else if (!v1.valid()) return true;
 

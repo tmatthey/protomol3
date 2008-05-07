@@ -61,7 +61,7 @@ bool Configuration::empty(const string &keyword) const {
 bool Configuration::defined(const string &keyword) const {
   const_iterator i = find(keyword);
 
-  if (i != end()) return i->second.defined();
+  if (i != end()) return i->second.isDefined();
 
   return false;
 }

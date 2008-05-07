@@ -24,6 +24,7 @@ namespace ProtoMol {
     std::string name;
 
   public:
+    CommandLine() {}
     CommandLine(Configuration *config);
 
     void add(CommandLineOption *option);
