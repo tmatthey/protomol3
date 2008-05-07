@@ -10,7 +10,10 @@ namespace ProtoMol {
    * considered of at least the cutoff.
    */
 
+  struct CellPair {int first; int second;};
+
   template<class TBoundaryConditions, class TCellManager>
   class CellListEnumerator {};
+
 }
 #endif /* CELLLISTENUMERATOR_H */

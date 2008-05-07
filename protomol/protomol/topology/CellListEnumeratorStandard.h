@@ -19,9 +19,6 @@ namespace ProtoMol {
   template<>
   class CellListEnumerator<VacuumBoundaryConditions, CubicCellManager> {
   public:
-    struct CellPair {int first; int second;};
-
-  public:
     CellListEnumerator() : myCutoff(-1.0),
       myCellSize(Vector3D(-1.0, -1.0,
                           -1.0)), myMax(CubicCellManager::Cell(-1, -1, -1)) {}
