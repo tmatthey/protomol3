@@ -107,7 +107,7 @@ string HelpTextFactory::doSearch(const string &id) const {
     HelpText txt = i->second;
     res = id;
 
-    if (txt.defaultValue.defined() && txt.parameters.empty()) {
+    if (txt.defaultValue.isDefined() && txt.parameters.empty()) {
       res += " is " + txt.scope + ", ";
       if (txt.defaultValue.getConstraintType() >
           ConstraintValueType::NOCONSTRAINTS)
