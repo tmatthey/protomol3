@@ -87,6 +87,7 @@ namespace ProtoMol {
     void clearRestore() {myRestore = false;}
     bool restore() const {return myRestore;}
 
+    const ProtoMolApp * getApp() const {return app;}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

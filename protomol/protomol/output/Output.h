@@ -89,6 +89,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     static const std::string scope;
+    const ProtoMolApp *app;
 
   private:
     int myFirstStep;
@@ -98,7 +99,7 @@ namespace ProtoMol {
 
   protected:
     int myOutputFreq;       ///< Output freqeuncy
-    const ProtoMolApp *app;
+
   };
 }
 #endif
