@@ -20,7 +20,7 @@ namespace ProtoMol {
     typedef typename TOneAtomPair::BoundaryConditions BoundaryConditions;
     typedef Topology<BoundaryConditions, TCellManager> RealTopologyType;
     typedef typename RealTopologyType::Enumerator EnumeratorType;
-    typedef typename RealTopologyType::Enumerator::CellPair CellPairType;
+    typedef typename CellPair CellPairType;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,7 +41,8 @@ namespace ProtoMol {
                           const Vector3DBlock *positions,
                           Vector3DBlock *forces, ScalarStructure *energies) {
       const RealTopologyType *realTopo =
-        dynamic_cast<const RealTopologyType *>(topo);
+          (RealTopologyType*) topo;
+      //  dynamic_cast<const RealTopologyType *>(topo);
       this->myOneAtomPair.initialize(realTopo, positions, forces, energies);
       realTopo->updateCellLists(positions);
       this->enumerator.initialize(realTopo, this->myCutoff);

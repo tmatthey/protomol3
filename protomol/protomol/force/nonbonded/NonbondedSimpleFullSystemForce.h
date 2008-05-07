@@ -89,7 +89,6 @@ namespace ProtoMol {
     virtual Force *doMake(const std::vector<Value> &values) const {
       unsigned int blockSize;
       int n = values.size() - 1;
-
       values[n].get(blockSize);
       if (!(values[n].valid()) || blockSize == 0)
         THROW(getKeyword() + " algorithm: 0 < blocksize (=" +
@@ -110,7 +109,7 @@ namespace ProtoMol {
                     Vector3DBlock *forces, ScalarStructure *energies, int i0,
                     int i1, int j0, int j1) {
       const RealTopologyType *realTopo =
-        dynamic_cast<const RealTopologyType *>(topo);
+        (const RealTopologyType *)(topo);
       
       myOneAtomPair.initialize(realTopo, positions, forces, energies);
       

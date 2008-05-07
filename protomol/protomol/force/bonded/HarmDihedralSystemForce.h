@@ -117,7 +117,7 @@ namespace ProtoMol {
     const GenericTopology *topo, const Vector3DBlock *positions,
     Vector3DBlock *forces, ScalarStructure *energies) {
     const TBoundaryConditions &boundary =
-      (dynamic_cast<const SemiGenericTopology<TBoundaryConditions> &>(*topo)).
+      ((SemiGenericTopology<TBoundaryConditions> &)(*topo)).
         boundaryConditions;
 
     // Examine each dihedral

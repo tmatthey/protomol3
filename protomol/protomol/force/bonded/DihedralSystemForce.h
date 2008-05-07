@@ -68,7 +68,7 @@ namespace ProtoMol {
            Vector3DBlock *forces, ScalarStructure *energies) {
 
     const TBoundaryConditions &boundary =
-      (dynamic_cast<const SemiGenericTopology<TBoundaryConditions> &>(*topo)).
+      ((SemiGenericTopology<TBoundaryConditions> &)(*topo)).
         boundaryConditions;
     for (unsigned int i = 0; i < topo->dihedrals.size(); i++)
       calcTorsion(boundary, topo->dihedrals[i], positions, forces,
