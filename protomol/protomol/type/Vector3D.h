@@ -52,6 +52,8 @@ public:
     }
 
 
+    ~Vector3DImpl() {}
+
     template<class U>
     Vector3DImpl &operator=(const Vector3DImpl<U> &rhs) {
       c[0] = rhs.c[0];
