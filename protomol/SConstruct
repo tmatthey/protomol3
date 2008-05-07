@@ -1,5 +1,6 @@
 import os
 import sys
+from pyWrap import *
 execfile('compiler.py')
 
 
@@ -9,17 +10,22 @@ Export('opts')
 
 opts.AddOptions(
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
+    BoolOption('mdl', 'Set to 1 to build Python libraries for MDL', 0),
     BoolOption('lapack', 'Use LAPACK', 0),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
     )
+
+
 
 compiler_add_opts()
 
 # Create environment and import external PATH
 env = Environment(options = opts, ENV = os.environ)
+mdl = int(env.get('mdl', 0))
+
 Export('env')
 
-
+ 
 # Configure
 conf = Configure(env)
 Export('conf')
@@ -30,6 +36,7 @@ subsrc = SConscript('protomol/SConscript')
 
 # Get options
 fah = int(env.get('fah', 0))
+
 use_lapack = int(env.get('lapack', 0))
 use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
@@ -55,33 +62,33 @@ libs.append(libname)
 
 
 if not env.GetOption('clean'):
-  execfile('package_h.py')
-  execfile('config.py')
+    execfile('package_h.py')
+    execfile('config.py')
 
-  if (have_bzip2 and have_boost_iostreams and have_libfah):
-    env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
-    have_libfah=1
-
-
-  # Folding@Home library version
-  if fah:
-    if not (have_libfah and have_bzip2 and have_boost_iostreams):
-      print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
-      Exit(1)
-
-    env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
+    if (have_bzip2 and have_boost_iostreams and have_libfah):
+      env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+      have_libfah=1
 
 
-  env = conf.Finish()
+    # Folding@Home library version
+    if fah:
+      if not (have_libfah and have_bzip2 and have_boost_iostreams):
+        print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
+        Exit(1)
+
+      env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
+
+
+    env = conf.Finish()
 
 
 if fah:
-  libsrc.append('#/protomol/modules.cpp')
+    libsrc.append('#/protomol/modules.cpp')
 
 
 # Get source
 for s in subsrc:
-  libsrc.append('#/protomol/' + s)
+    libsrc.append('#/protomol/' + s)
 
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
@@ -92,7 +99,13 @@ env.Library(libname, libsrc)
 env.Append(LIBPATH = ['.'])
 env.Prepend(LIBS = [libname])
 protomol = env.Program('ProtoMol', src)
-Default(protomol)
+
+
+if (mdl):
+  pyWrap(env)
+  Default(protomol, '.')
+else:
+  Default(protomol)
 
 
 if env['PLATFORM'] == 'win32':
