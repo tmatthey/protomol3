@@ -29,26 +29,23 @@ void MakeableBase::assertParameters(const vector<Value> &values) const {
   string err;
   vector<Parameter> tmp;
   getParameters(tmp);
-
   if (tmp.size() != values.size())
     err += " Expected " + toString(tmp.size()) +
       " value(s), but got " + toString(values.size()) + ".";
-
   for (unsigned int i = 0; i < values.size(); ++i) {
-    if (!values[i].valid())
+
+    if (!values[i].valid()) 
       err += " Parameter " + toString(i) + " '" + tmp[i].keyword +
                 "' " + tmp[i].value.getDefinitionTypeString() +
                 " undefined/missing or with non-valid value '" +
-                values[i].getString() + "'.";
+	values[i].getString() + "'.";
 
-    if (!values[i].equalType(tmp[i].value))
+    if (!values[i].equalType(tmp[i].value)) 
       err += " Expected type " + tmp[i].value.getDefinitionTypeString() +
         " for parameter " + toString(i) + " '" + tmp[i].keyword +
         "', but got " + values[i].getDefinitionTypeString() + ".";
   }
-
   if (!err.empty()) THROW(getId() + ":" + err);
-
 }
 
 bool MakeableBase::checkParameterTypes(const vector<Value> &values) const {
@@ -58,7 +55,7 @@ bool MakeableBase::checkParameterTypes(const vector<Value> &values) const {
     return false;
 
   for (unsigned int i = 0; i < values.size(); ++i)
-    if (!values[i].equalType(tmp[i].value) && values[i].defined())
+    if (!values[i].equalType(tmp[i].value) && values[i].isDefined())
       return false;
 
   return true;
