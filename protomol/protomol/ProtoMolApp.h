@@ -53,6 +53,7 @@ namespace ProtoMol {
     int currentStep;
     int lastStep;
 
+    ProtoMolApp() {}
     ProtoMolApp(ModuleManager *modManager);
     ~ProtoMolApp();
 
