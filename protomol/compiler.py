@@ -7,7 +7,7 @@ def compiler_add_opts():
         BoolOption('debug', 'Set to 1 to force debug options', 0),
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
         BoolOption('depends', 'Set to 1 to output dependency files', 0),
-        EnumOption('compiler', 'Select compiler', 'intel',
+        EnumOption('compiler', 'Select compiler', 'default',
                    allowed_values = ('default', 'intel', 'gnu', 'mingw', 'msvc',
                                      'linux-mingw', 'aix', 'posix', 'hp', 'sgi',
                                      'sun')))
