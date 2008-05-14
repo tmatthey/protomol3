@@ -20,10 +20,6 @@ namespace ProtoMol {
       return stream;
     }
 
-    //
-    // Currently defaulting to cerr
-    MyStreamer report(&(cerr));
-
     // MyStreamer
     MyStreamer::MyStreamer(ostream *a) {
       setStream(a);

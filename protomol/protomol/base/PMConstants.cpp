@@ -55,10 +55,8 @@ namespace ProtoMol {
     const Real EPS_GOURAUD_THRESHOLD = 0.1;
     const Real EPS_SMOOTH_LINE_FACTOR = 0.06;
 
-    const string PROTOMOL_HR
-    ("=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="
-     "+=+=+=+");
-    const string PRINTINDENT("  ");
+    const char* PROTOMOL_HR = "=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+";
+    const char* PRINTINDENT = "  ";
     const unsigned int PRINTMAXWIDTH = 30;
 
     const int FASTDELTAMAX = 32;

@@ -199,8 +199,9 @@ namespace ProtoMol {
     };
 
     //________________________________________________________ Value
-    struct Undefined {};
+
   public:
+    struct Undefined {};
     static const ProtoMol::Value::Undefined *undefined; ///< Undefined value
     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

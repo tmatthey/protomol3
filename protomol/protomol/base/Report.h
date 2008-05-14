@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string>
+using std::cerr;
 
 namespace ProtoMol {
   //________________________________________________________ Report
@@ -196,7 +197,7 @@ private:
     MyStreamer &operator<<(MyStreamer &stream, const debug &d);
 
     // Our global streamer
-    extern MyStreamer report;
+    static MyStreamer report = &cerr;
   }
 }
 #endif /* REPORT_H */

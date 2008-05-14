@@ -92,20 +92,29 @@ for s in subsrc:
 
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
-# Build libprotomol
-env.Library(libname, libsrc)
+
 
 # Build Protomol
 env.Append(LIBPATH = ['.'])
 env.Prepend(LIBS = [libname])
-protomol = env.Program('ProtoMol', src)
 
 
 if (mdl):
+  libsrc2 = []
+  for s in subsrc:
+     # I am removing this file from the shared object
+     # compilation - it's only used if HAVE_MPI is true, which
+     # will never be true for MDL.
+     if (s != 'parallel/FFTComplex.cpp'):
+        libsrc2.append('#/protomol/'+s)
+  env.SharedLibrary(libname, libsrc2)
   from pyWrap import *
   pyWrap(env)
-  Default(protomol, '.')
+  Default('.')
 else:
+  # Build libprotomol
+  env.Library(libname, libsrc)
+  protomol = env.Program('ProtoMol', src)
   Default(protomol)
 
 

@@ -15,7 +15,7 @@ namespace ProtoMol {
    * Container to hold 3D vector/coordinate
    */
 
-    
+
   template<class T>
   struct Vector3DImpl {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

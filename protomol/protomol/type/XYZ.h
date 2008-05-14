@@ -20,7 +20,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class XYZ
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    void clear();
+    void clear() {coords.clear(); names.clear();}
     size_t size() const {return coords.size();}
     void resize(size_t n) {coords.resize(n), names.resize(n);}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

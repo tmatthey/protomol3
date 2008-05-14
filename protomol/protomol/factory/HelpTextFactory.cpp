@@ -121,11 +121,11 @@ string HelpTextFactory::doSearch(const string &id) const {
              ".";
       for (unsigned int i = 0; i < txt.parameters.size(); ++i) {
         if (!txt.parameters[i].keyword.empty())
-          res += "\n" + Constant::PRINTINDENT + getRightFill(
+          res += "\n" + std::string(Constant::PRINTINDENT) + getRightFill(
             txt.parameters[i].keyword,
             Constant::PRINTMAXWIDTH);
         else
-          res += "\n" + Constant::PRINTINDENT + getRightFill("",
+          res += "\n" + std::string(Constant::PRINTINDENT) + getRightFill("",
             Constant::PRINTMAXWIDTH);
         if (txt.parameters[i].value.getConstraintType() >
             ConstraintValueType::NOCONSTRAINTS)

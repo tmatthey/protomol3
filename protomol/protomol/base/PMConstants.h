@@ -10,8 +10,8 @@ namespace ProtoMol {
    * Repository namespace of constants.
    */
   namespace Constant {
-    extern const std::string PROTOMOL_HR;
-    extern const std::string PRINTINDENT;
+    extern const char* PROTOMOL_HR;
+    extern const char* PRINTINDENT;
     extern const unsigned int PRINTMAXWIDTH;
 
     extern const int FASTDELTAMAX;
