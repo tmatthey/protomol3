@@ -536,6 +536,7 @@ protomol/protomol/output/OutputFile.cpp -text
 protomol/protomol/output/OutputFile.h -text
 protomol/protomol/output/OutputFinalPDBPos.cpp -text
 protomol/protomol/output/OutputFinalPDBPos.h -text
+protomol/protomol/output/OutputFinalPDBPos.i -text
 protomol/protomol/output/OutputFinalXYZPos.cpp -text
 protomol/protomol/output/OutputFinalXYZPos.h -text
 protomol/protomol/output/OutputFinalXYZVel.cpp -text
