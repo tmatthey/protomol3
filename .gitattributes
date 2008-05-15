@@ -217,6 +217,7 @@ protomol/protomol/base/Makeable.h -text
 protomol/protomol/base/MakeableDefinition.h -text
 protomol/protomol/base/MathUtilities.cpp -text
 protomol/protomol/base/MathUtilities.h -text
+protomol/protomol/base/MathUtilities.i -text
 protomol/protomol/base/Module.h -text
 protomol/protomol/base/ModuleManager.cpp -text
 protomol/protomol/base/ModuleManager.h -text
