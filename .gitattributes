@@ -415,6 +415,7 @@ protomol/protomol/integrator/normal/NormalModeLangevin.cpp -text
 protomol/protomol/integrator/normal/NormalModeLangevin.h -text
 protomol/protomol/integrator/normal/NormalModeMinimizer.cpp -text
 protomol/protomol/integrator/normal/NormalModeMinimizer.h -text
+protomol/protomol/integrator/normal/NormalModeMinimizer.i -text
 protomol/protomol/integrator/normal/NormalModeMori.cpp -text
 protomol/protomol/integrator/normal/NormalModeMori.h -text
 protomol/protomol/integrator/normal/NormalModeRelax.cpp -text
