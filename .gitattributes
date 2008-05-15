@@ -615,6 +615,7 @@ protomol/protomol/topology/ExclusionType.cpp -text
 protomol/protomol/topology/ExclusionType.h -text
 protomol/protomol/topology/GenericTopology.cpp -text
 protomol/protomol/topology/GenericTopology.h -text
+protomol/protomol/topology/GenericTopology.i -text
 protomol/protomol/topology/LennardJonesParameterTable.cpp -text
 protomol/protomol/topology/LennardJonesParameterTable.h -text
 protomol/protomol/topology/LennardJonesParameters.h -text
