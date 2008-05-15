@@ -423,6 +423,7 @@ protomol/protomol/integrator/normal/NormalModeRelax.cpp -text
 protomol/protomol/integrator/normal/NormalModeRelax.h -text
 protomol/protomol/integrator/normal/NormalModeUtilities.cpp -text
 protomol/protomol/integrator/normal/NormalModeUtilities.h -text
+protomol/protomol/integrator/normal/NormalModeUtilities.i -text
 protomol/protomol/integrator/normal/SConscript -text
 protomol/protomol/io/ConfigurationReader.cpp -text
 protomol/protomol/io/ConfigurationReader.h -text
