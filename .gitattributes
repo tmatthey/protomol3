@@ -445,6 +445,7 @@ protomol/protomol/io/PDBWriter.h -text
 protomol/protomol/io/PDBWriter.i -text
 protomol/protomol/io/PSFReader.cpp -text
 protomol/protomol/io/PSFReader.h -text
+protomol/protomol/io/PSFReader.i -text
 protomol/protomol/io/PosVelReader.cpp -text
 protomol/protomol/io/PosVelReader.h -text
 protomol/protomol/io/PosVelReaderType.cpp -text
