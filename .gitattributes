@@ -284,6 +284,7 @@ protomol/protomol/force/Force.cpp -text
 protomol/protomol/force/Force.h -text
 protomol/protomol/force/ForceGroup.cpp -text
 protomol/protomol/force/ForceGroup.h -text
+protomol/protomol/force/ForceGroup.i -text
 protomol/protomol/force/LennardJonesForce.cpp -text
 protomol/protomol/force/LennardJonesForce.h -text
 protomol/protomol/force/MetaForce.cpp -text
