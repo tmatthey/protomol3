@@ -457,6 +457,7 @@ protomol/protomol/io/Writer.cpp -text
 protomol/protomol/io/Writer.h -text
 protomol/protomol/io/XYZBinReader.cpp -text
 protomol/protomol/io/XYZBinReader.h -text
+protomol/protomol/io/XYZBinReader.i -text
 protomol/protomol/io/XYZReader.cpp -text
 protomol/protomol/io/XYZReader.h -text
 protomol/protomol/io/XYZTrajectoryReader.cpp -text
