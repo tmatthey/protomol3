@@ -423,6 +423,7 @@ protomol/protomol/io/ConfigurationReader.cpp -text
 protomol/protomol/io/ConfigurationReader.h -text
 protomol/protomol/io/DCDTrajectoryReader.cpp -text
 protomol/protomol/io/DCDTrajectoryReader.h -text
+protomol/protomol/io/DCDTrajectoryReader.i -text
 protomol/protomol/io/DCDTrajectoryWriter.cpp -text
 protomol/protomol/io/DCDTrajectoryWriter.h -text
 protomol/protomol/io/EigenvectorReader.cpp -text
