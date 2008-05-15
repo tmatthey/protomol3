@@ -431,6 +431,7 @@ protomol/protomol/io/EigenvectorReader.h -text
 protomol/protomol/io/EigenvectorReader.i -text
 protomol/protomol/io/EigenvectorTextReader.cpp -text
 protomol/protomol/io/EigenvectorTextReader.h -text
+protomol/protomol/io/EigenvectorTextReader.i -text
 protomol/protomol/io/File.cpp -text
 protomol/protomol/io/File.h -text
 protomol/protomol/io/PARReader.cpp -text
