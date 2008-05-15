@@ -303,6 +303,7 @@ protomol/protomol/force/bonded/BondForce.i -text
 protomol/protomol/force/bonded/BondSystemForce.h -text
 protomol/protomol/force/bonded/DihedralSystemForce.h -text
 protomol/protomol/force/bonded/HarmDihedralSystemForce.h -text
+protomol/protomol/force/bonded/ImproperForce.i -text
 protomol/protomol/force/bonded/ImproperSystemForce.h -text
 protomol/protomol/force/bonded/MTorsionSystemForce.h -text
 protomol/protomol/force/bonded/SConscript -text
