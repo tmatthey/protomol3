@@ -469,6 +469,7 @@ protomol/protomol/io/XYZTrajectoryWriter.h -text
 protomol/protomol/io/XYZTrajectoryWriter.i -text
 protomol/protomol/io/XYZWriter.cpp -text
 protomol/protomol/io/XYZWriter.h -text
+protomol/protomol/io/XYZWriter.i -text
 protomol/protomol/main.cpp -text
 protomol/protomol/modifier/Modifier.cpp -text
 protomol/protomol/modifier/Modifier.h -text
