@@ -205,6 +205,7 @@ protomol/makeInterface.py -text
 protomol/package_h.py -text
 protomol/protomol/ProtoMolApp.cpp -text
 protomol/protomol/ProtoMolApp.h -text
+protomol/protomol/ProtoMolApp.i -text
 protomol/protomol/SConscript -text
 protomol/protomol/base/Counter.h -text
 protomol/protomol/base/Exception.cpp -text
