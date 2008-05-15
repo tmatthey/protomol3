@@ -201,6 +201,7 @@ protomol/doc/header.html -text
 protomol/doc/protomol.gif -text
 protomol/doc/protomol.html -text
 protomol/doc/protomol_icon.ico -text
+protomol/makeInterface.py -text
 protomol/package_h.py -text
 protomol/protomol/ProtoMolApp.cpp -text
 protomol/protomol/ProtoMolApp.h -text
@@ -621,6 +622,7 @@ protomol/protomol/type/Vector3D.h -text
 protomol/protomol/type/Vector3DBlock.cpp -text
 protomol/protomol/type/Vector3DBlock.h -text
 protomol/protomol/type/XYZ.h -text
+protomol/pyWrap.py -text
 protomol/scripts/ForceTemplateModule.cpp -text
 protomol/scripts/ForceTemplateModule.h -text
 protomol/scripts/TemplateModule.cpp -text
