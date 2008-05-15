@@ -463,6 +463,7 @@ protomol/protomol/io/XYZReader.h -text
 protomol/protomol/io/XYZReader.i -text
 protomol/protomol/io/XYZTrajectoryReader.cpp -text
 protomol/protomol/io/XYZTrajectoryReader.h -text
+protomol/protomol/io/XYZTrajectoryReader.i -text
 protomol/protomol/io/XYZTrajectoryWriter.cpp -text
 protomol/protomol/io/XYZTrajectoryWriter.h -text
 protomol/protomol/io/XYZWriter.cpp -text
