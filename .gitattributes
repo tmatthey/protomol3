@@ -341,6 +341,7 @@ protomol/protomol/force/hessian/ReducedHessLennardJones.cpp -text
 protomol/protomol/force/hessian/ReducedHessLennardJones.h -text
 protomol/protomol/force/hessian/SConscript -text
 protomol/protomol/force/nonbonded/Born.h -text
+protomol/protomol/force/nonbonded/CutoffForce.i -text
 protomol/protomol/force/nonbonded/NonbondedCutoffBornForce.h -text
 protomol/protomol/force/nonbonded/NonbondedCutoffForce.h -text
 protomol/protomol/force/nonbonded/NonbondedCutoffSystemForce.h -text
