@@ -299,6 +299,7 @@ protomol/protomol/force/TimeForce.cpp -text
 protomol/protomol/force/TimeForce.h -text
 protomol/protomol/force/bonded/AngleForce.i -text
 protomol/protomol/force/bonded/AngleSystemForce.h -text
+protomol/protomol/force/bonded/BondForce.i -text
 protomol/protomol/force/bonded/BondSystemForce.h -text
 protomol/protomol/force/bonded/DihedralSystemForce.h -text
 protomol/protomol/force/bonded/HarmDihedralSystemForce.h -text
