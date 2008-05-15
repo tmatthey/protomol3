@@ -621,6 +621,7 @@ protomol/protomol/type/Vector.h -text
 protomol/protomol/type/Vector3D.h -text
 protomol/protomol/type/Vector3DBlock.cpp -text
 protomol/protomol/type/Vector3DBlock.h -text
+protomol/protomol/type/Vector3DBlock.i -text
 protomol/protomol/type/XYZ.h -text
 protomol/pyWrap.py -text
 protomol/scripts/ForceTemplateModule.cpp -text
