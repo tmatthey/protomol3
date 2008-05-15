@@ -383,6 +383,7 @@ protomol/protomol/integrator/base/CGMinimizerIntegrator.cpp -text
 protomol/protomol/integrator/base/CGMinimizerIntegrator.h -text
 protomol/protomol/integrator/base/LangevinImpulseIntegrator.cpp -text
 protomol/protomol/integrator/base/LangevinImpulseIntegrator.h -text
+protomol/protomol/integrator/base/LangevinImpulseIntegrator.i -text
 protomol/protomol/integrator/base/NumericalDifferentiation.cpp -text
 protomol/protomol/integrator/base/NumericalDifferentiation.h -text
 protomol/protomol/integrator/base/SConscript -text
