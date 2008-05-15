@@ -626,6 +626,7 @@ protomol/protomol/topology/SemiGenericTopology.h -text
 protomol/protomol/topology/Topology.h -text
 protomol/protomol/topology/TopologyUtilities.cpp -text
 protomol/protomol/topology/TopologyUtilities.h -text
+protomol/protomol/topology/TopologyUtilities.i -text
 protomol/protomol/topology/Torsion.h -text
 protomol/protomol/topology/VacuumBoundaryConditions.cpp -text
 protomol/protomol/topology/VacuumBoundaryConditions.h -text
