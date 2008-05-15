@@ -612,6 +612,7 @@ protomol/protomol/type/Real.h -text
 protomol/protomol/type/SConscript -text
 protomol/protomol/type/ScalarStructure.cpp -text
 protomol/protomol/type/ScalarStructure.h -text
+protomol/protomol/type/ScalarStructure.i -text
 protomol/protomol/type/SimpleTypes.h -text
 protomol/protomol/type/Stack.h -text
 protomol/protomol/type/String.cpp -text
