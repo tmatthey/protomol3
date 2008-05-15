@@ -397,6 +397,7 @@ protomol/protomol/integrator/leapfrog/DMDLeapfrogIntegrator.cpp -text
 protomol/protomol/integrator/leapfrog/DMDLeapfrogIntegrator.h -text
 protomol/protomol/integrator/leapfrog/LeapfrogIntegrator.cpp -text
 protomol/protomol/integrator/leapfrog/LeapfrogIntegrator.h -text
+protomol/protomol/integrator/leapfrog/LeapfrogIntegrator.i -text
 protomol/protomol/integrator/leapfrog/LeapfrogTruncatedShadow.cpp -text
 protomol/protomol/integrator/leapfrog/LeapfrogTruncatedShadow.h -text
 protomol/protomol/integrator/leapfrog/ModifierFriction.h -text
