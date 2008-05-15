@@ -428,6 +428,7 @@ protomol/protomol/io/DCDTrajectoryWriter.cpp -text
 protomol/protomol/io/DCDTrajectoryWriter.h -text
 protomol/protomol/io/EigenvectorReader.cpp -text
 protomol/protomol/io/EigenvectorReader.h -text
+protomol/protomol/io/EigenvectorReader.i -text
 protomol/protomol/io/EigenvectorTextReader.cpp -text
 protomol/protomol/io/EigenvectorTextReader.h -text
 protomol/protomol/io/File.cpp -text
