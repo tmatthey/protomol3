@@ -29,7 +29,7 @@ namespace ProtoMol {
     virtual void doDrift();
   private:
     virtual STSIntegrator *doMake(const std::vector<Value> &values,
-      ForceGroup *fg) const {}
+				  ForceGroup *fg) const = 0;
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

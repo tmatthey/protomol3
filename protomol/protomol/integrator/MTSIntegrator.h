@@ -37,7 +37,7 @@ namespace ProtoMol {
   private:
     virtual MTSIntegrator *doMake(const std::vector<Value> &values,
                                   ForceGroup *fg,
-      StandardIntegrator *nextIntegrator) const {}
+				  StandardIntegrator *nextIntegrator) const = 0;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable
