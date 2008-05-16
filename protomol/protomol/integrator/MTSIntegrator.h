@@ -37,14 +37,14 @@ namespace ProtoMol {
   private:
     virtual MTSIntegrator *doMake(const std::vector<Value> &values,
                                   ForceGroup *fg,
-                                  StandardIntegrator *nextIntegrator) const = 0;
+      StandardIntegrator *nextIntegrator) const {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     virtual void getParameters(std::vector<Parameter> &parameter) const;
-
+    virtual std::string getIdNoAlias() const {return "MTSIntegrator";}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Integrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

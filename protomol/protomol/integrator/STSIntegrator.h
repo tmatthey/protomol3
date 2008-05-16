@@ -29,7 +29,7 @@ namespace ProtoMol {
     virtual void doDrift();
   private:
     virtual STSIntegrator *doMake(const std::vector<Value> &values,
-                                  ForceGroup *fg) const = 0;
+      ForceGroup *fg) const {}
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,7 +37,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     virtual void getParameters(std::vector<Parameter> &parameter) const;
-
+    virtual std::string getIdNoAlias() const {return "STSIntegrator";}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Integrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
