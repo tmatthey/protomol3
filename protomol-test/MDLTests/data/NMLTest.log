@@ -1,0 +1,9 @@
+Recoverable Error:  [PDB::read] Record unknown:'CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P 1           1'.
+Recoverable Error:  [PSF::read] Record !NUMLP with 0 entries not recognized.
+Hint:  Reduced fast delta max of ExclusionTable from 31 to 10.
+Hint:  Reduced fast delta max of ExclusionTable from 31 to 10.
+Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
+Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
+Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
+Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
+Hint:  [NormalModeMinimizer::~NormalModeMinmizer] Minimizer average iterations = 1.4, force average calcs = 2.4
