@@ -27,8 +27,7 @@ def compiler_configure(c99_mode = 1):
     if env.has_key('debug'): debug = int(env['debug'])
     else: debug = mode == 'debug'
 
-    if env.has_key('gui'): gui = int(env['gui'])
-    
+    gui = int(env.get('gui', 0))    
     strict = int(env.get('strict', 1))
     depends = int(env.get('depends', 0))
     compiler = env.get('compiler', 0)
