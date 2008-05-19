@@ -31,4 +31,4 @@ io.screen = 2
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate("Leapfrog", steps=1, dt=20.0, forcefield=ff)
+gamma = prop.propagate("Leapfrog", steps=200, dt=20.0, forcefield=ff)

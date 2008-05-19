@@ -537,6 +537,7 @@ protomol/mdl/data/water_648/water648.spce.psf -text
 protomol/mdl/data/water_648/water648.tip3.par -text
 protomol/mdl/data/water_648/water648.tip3.psf -text
 protomol/mdl/doc/userguide.tex -text
+protomol/mdl/simulations/DMDLeapfrog_Argon.py -text
 protomol/mdl/simulations/FTSM_ALA.py -text
 protomol/mdl/simulations/FTSM_ALA_ISM.py -text
 protomol/mdl/simulations/FTSM_ALA_SOLV.py -text
@@ -548,12 +549,9 @@ protomol/mdl/simulations/FTSM_Equilibrate.py -text
 protomol/mdl/simulations/Impulse_Butane_HD.py -text
 protomol/mdl/simulations/Impulse_Butane_Harm.py -text
 protomol/mdl/simulations/Impulse_Water.py -text
-protomol/mdl/simulations/LangevinFTSM_NEW_A.py -text
 protomol/mdl/simulations/LangevinImpulse_Butane.py -text
 protomol/mdl/simulations/Leapfrog_Argon.py -text
 protomol/mdl/simulations/Leapfrog_BPTI_PME.py -text
-protomol/mdl/simulations/NPTVerlet_Decalanine.py -text
-protomol/mdl/simulations/NVTVerlet_Decalanine.py -text
 protomol/mdl/simulations/NormalMode_ALA.py -text
 protomol/mdl/simulations/NormalMode_WW.py -text
 protomol/mdl/simulations/NoseHoover_Decalanine.py -text
@@ -564,7 +562,6 @@ protomol/mdl/simulations/PIT_ALA_ISM.py -text
 protomol/mdl/simulations/PositionVerlet_Butane.py -text
 protomol/mdl/simulations/RMT_Butane.py -text
 protomol/mdl/simulations/Restraint_Test.py -text
-protomol/mdl/simulations/SelfconsistentLeapfrog_Argon.py -text
 protomol/mdl/simulations/Umbrella_Butane.py -text
 protomol/mdl/simulations/lf_Argon.py -text
 protomol/mdl/simulations/svn-commit.2.tmp -text

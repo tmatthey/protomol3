@@ -32,5 +32,5 @@ io.screen = 2
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-prop.propagate(scheme="SelfconsistentLeapfrog", steps=200, dt=0.5, forcefield=ff)
+prop.propagate(scheme="DMDLeapfrog", steps=200, dt=0.5, forcefield=ff)
 
