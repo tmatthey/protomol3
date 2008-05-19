@@ -526,10 +526,6 @@ protomol/mdl/data/diAlanine/qsubScript.sh -text
 protomol/mdl/data/mydata/alan_mineq.psf -text
 protomol/mdl/data/mydata/minC7eq.pdb -text
 protomol/mdl/data/mydata/par_all27_prot_lipid.inp -text
-protomol/mdl/data/water40002/water40002.conf -text
-protomol/mdl/data/water40002/water40002.par -text
-protomol/mdl/data/water40002/water40002.pdb -text
-protomol/mdl/data/water40002/water40002.psf -text
 protomol/mdl/data/water_216/water216.conf -text
 protomol/mdl/data/water_216/water216.coor.pdb -text
 protomol/mdl/data/water_216/water216.new.pos.pdb -text
