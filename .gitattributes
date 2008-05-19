@@ -437,11 +437,6 @@ protomol/makeInterface.py -text
 protomol/mdl/MDLSetup.bash -text
 protomol/mdl/MDLSetup.tcsh -text
 protomol/mdl/README -text
-protomol/mdl/data/ALA/alan.nm.conf -text
-protomol/mdl/data/ALA/alan_mineq.psf -text
-protomol/mdl/data/ALA/eigVmC7eq -text
-protomol/mdl/data/ALA/minC7eq.pdb -text
-protomol/mdl/data/ALA/par_all27_prot_lipid.inp -text
 protomol/mdl/data/UA_butane/UA_butane.conf -text
 protomol/mdl/data/UA_butane/UA_butane.par -text
 protomol/mdl/data/UA_butane/UA_butane.pdb -text
@@ -465,6 +460,11 @@ protomol/mdl/data/alanDipeptideSol/par_all27_prot_lipid.inp -text
 protomol/mdl/data/alanDipeptideSol/solvate.pdb -text
 protomol/mdl/data/alanDipeptideSol/solvate.psf -text
 protomol/mdl/data/alanDipeptideSol/solvate_eq.pdb -text
+protomol/mdl/data/alanDipeptideVac/alan.nm.conf -text
+protomol/mdl/data/alanDipeptideVac/alan_mineq.psf -text
+protomol/mdl/data/alanDipeptideVac/eigVmC7eq -text
+protomol/mdl/data/alanDipeptideVac/minC7eq.pdb -text
+protomol/mdl/data/alanDipeptideVac/par_all27_prot_lipid.inp -text
 protomol/mdl/data/argon_280/argon.par -text
 protomol/mdl/data/argon_280/argon.psf -text
 protomol/mdl/data/argon_280/argon_eq.vel -text
