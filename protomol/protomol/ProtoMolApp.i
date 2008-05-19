@@ -3,7 +3,7 @@
 #include "ProtoMolApp.h"
 #include <protomol/type/Real.h>
 #include <protomol/ProtoMolApp.h>
-#include <protomol/integrator/STSIntegrator.h>
+#include <protomol/integrator/leapfrog/LeapfrogIntegrator.h>
 using namespace ProtoMol;
 %}
 
@@ -14,8 +14,8 @@ using namespace ProtoMol;
 
 %extend ProtoMol::ProtoMolApp {
 void makeApp(GenericTopology* topo,
-             ProtoMol::Vector3DBlock positions,
-             ProtoMol::Vector3DBlock velocities,
+             ProtoMol::Vector3DBlock& positions,
+             ProtoMol::Vector3DBlock& velocities,
              ScalarStructure energies,
              Real timestep) {
    self->topology = topo;
@@ -24,7 +24,7 @@ void makeApp(GenericTopology* topo,
    self->velocities.vec = velocities.vec;
    self->velocities.c = velocities.c;
    self->energies = energies;
-   self->integrator = new STSIntegrator(timestep, NULL);
+   self->integrator = new LeapfrogIntegrator(timestep, NULL);
    self->outputCache.initialize(self);
 }
 };
