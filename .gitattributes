@@ -530,10 +530,6 @@ protomol/mdl/data/water40002/water40002.conf -text
 protomol/mdl/data/water40002/water40002.par -text
 protomol/mdl/data/water40002/water40002.pdb -text
 protomol/mdl/data/water40002/water40002.psf -text
-protomol/mdl/data/water99999/water99999.conf -text
-protomol/mdl/data/water99999/water99999.par -text
-protomol/mdl/data/water99999/water99999.pdb -text
-protomol/mdl/data/water99999/water99999.psf -text
 protomol/mdl/data/water_216/water216.conf -text
 protomol/mdl/data/water_216/water216.coor.pdb -text
 protomol/mdl/data/water_216/water216.new.pos.pdb -text
