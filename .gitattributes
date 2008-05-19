@@ -557,7 +557,6 @@ protomol/mdl/simulations/PIT_ALA_2.py -text
 protomol/mdl/simulations/PIT_ALA_2_NEW.py -text
 protomol/mdl/simulations/PIT_ALA_ISM.py -text
 protomol/mdl/simulations/RMT_Butane.py -text
-protomol/mdl/simulations/Umbrella_Butane.py -text
 protomol/mdl/simulations/lf_Argon.py -text
 protomol/mdl/simulations/svn-commit.2.tmp -text
 protomol/mdl/simulations/svn-commit.tmp -text
