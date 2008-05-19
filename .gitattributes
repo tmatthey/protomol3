@@ -556,7 +556,6 @@ protomol/mdl/data/water_648/water648.spce.psf -text
 protomol/mdl/data/water_648/water648.tip3.par -text
 protomol/mdl/data/water_648/water648.tip3.psf -text
 protomol/mdl/doc/userguide.tex -text
-protomol/mdl/simulations/Diagnostic.py -text
 protomol/mdl/simulations/EquilibriumMolly_BPTI.py -text
 protomol/mdl/simulations/FTSM_ALA.py -text
 protomol/mdl/simulations/FTSM_ALA_ISM.py -text
@@ -590,11 +589,7 @@ protomol/mdl/simulations/SelfconsistentLeapfrog_Argon.py -text
 protomol/mdl/simulations/ShadowHMC_Butane.py -text
 protomol/mdl/simulations/Trevor_Butane.py -text
 protomol/mdl/simulations/Umbrella_Butane.py -text
-protomol/mdl/simulations/enefile -text
-protomol/mdl/simulations/freeenergy_map.py -text
 protomol/mdl/simulations/lf_Argon.py -text
-protomol/mdl/simulations/nm_string.py -text
-protomol/mdl/simulations/somefile -text
 protomol/mdl/simulations/string_start.py -text
 protomol/mdl/simulations/svn-commit.2.tmp -text
 protomol/mdl/simulations/svn-commit.tmp -text
