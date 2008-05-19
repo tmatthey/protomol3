@@ -137,7 +137,7 @@ class PropagatorFactory:
    return either a method handle or an instance of a propagator object.
    """
    def __init__(self):
-      self.objects = []  #: A list of propagator objects created.
+      #self.objects = []  #: A list of propagator objects created.
       
       self.registry = dict()  #: Maps propagator names to creation functions and parameters/defaults
       self.modifier_registry = dict()  #: Maps modifier names to method handles
@@ -221,6 +221,7 @@ class PropagatorFactory:
                   self.registerModifier(mod.modifiers[j][0],
                                         mod.modifiers[j][1],
                                         name)
+
 
    def query(self, name="None"):
       """
@@ -402,7 +403,7 @@ class PropagatorFactory:
                      obj.postrunmodifiers.append(entry['constructor'])
        return obj
            
-   def create(self, *args):
+   def create(self, level, *args):
       """
       Accept a Python tuple containing the propagator name,
       timestep, parameter values and force field.
@@ -417,6 +418,8 @@ class PropagatorFactory:
       @rtype: STS, MTS, or Python method handle
       @return: The propagator.
       """
+      global objects 
+      if (level == 1): objects = []
       if (not self.registry.has_key(args[0])):
          if (type(args[0]).__name__ == 'str'):
              print "[MDL] ERROR: UNRECOGNIZED PROPAGATOR: ",
@@ -424,10 +427,10 @@ class PropagatorFactory:
              return
          if (args.__len__() <= 2):
             print "[MDL] WARNING: USING LEAPFROG AS INNER PROPAGATOR"
-            return self.create("Leapfrog", args[0], args[1])
+            return self.create(level, "Leapfrog", args[0], args[1])
          else:
             print "[MDL] WARNING: USING LEAPFROG AS INNER PROPAGATOR"
-            return self.create("Leapfrog", args[0], args[1], args.__getslice__(2, args.__len__()))
+            return self.create(level, "Leapfrog", args[0], args[1], args.__getslice__(2, args.__len__()))
       regprop = self.registry[args[0]]
       if (regprop['type'] == "protomol"):
          arglist = (args[1],)  # Timestep or cyclelength
@@ -443,35 +446,39 @@ class PropagatorFactory:
 	    # Python referencing - we must save the object we create
 	    # in a temporary array; otherwise when it loses scope it gets
 	    # destroyed
-            self.objects.append(apply(self.create, args.__getslice__(4, len(args))))
+            objects.append(apply(self.create, (level+1,)+args.__getslice__(4, len(args))))
+	    objects[len(objects)-1].thisown=0
 	    # Now append to the list
-	    arglist += (self.objects[len(self.objects)-1],)
+	    arglist += (objects[len(objects)-1],)
 	 return apply(regprop['constructor'], arglist)
       elif (regprop['type'] == "object"):
          if (len(args) <= 4):
-            self.objects.append(apply(regprop['constructor'], (args[1], args[2])))
-	    self.objects[len(self.objects)-1].dt = args[1]*Constants.invTimeFactor()
+            objects.append(apply(regprop['constructor'], (args[1], args[2])))
+	    objects[len(objects)-1].thisown=0
+	    objects[len(objects)-1].dt = args[1]*Constants.invTimeFactor()
          else:
-            self.objects.append(apply(self.create, args.__getslice__(4, args.__len__())))
-            self.objects.append(apply(regprop['constructor'], (args[1], args[2], self.objects[self.objects.__len__()-1])))
-	    self.objects[len(self.objects)-1].cyclelength = args[1]
-            self.objects[self.objects.__len__()-1].next = self.objects[self.objects.__len__()-2]
-            if (hasattr(self.objects[self.objects.__len__()-1], "setMOLLYForceGroups")):
-                self.objects[self.objects.__len__()-1].setMOLLYForceGroups()
+            objects.append(apply(self.create, (level+1,)+args.__getslice__(4, args.__len__())))
+	    objects[len(objects)-1].thisown=0
+            objects.append(apply(regprop['constructor'], (args[1], args[2], objects[objects.__len__()-1])))
+	    objects[len(objects)-1].thisown=0
+	    objects[len(objects)-1].cyclelength = args[1]
+            objects[objects.__len__()-1].next = objects[objects.__len__()-2]
+            if (hasattr(objects[objects.__len__()-1], "setMOLLYForceGroups")):
+                objects[objects.__len__()-1].setMOLLYForceGroups()
          ii = 0
          while (ii < regprop['defaults'].__len__()):
             if (args[3].has_key(regprop['defaults'][ii])):
-                setattr(self.objects[self.objects.__len__()-1], regprop['defaults'][ii], args[3][regprop['defaults'][ii]])
+                setattr(objects[objects.__len__()-1], regprop['defaults'][ii], args[3][regprop['defaults'][ii]])
             else:
-                setattr(self.objects[self.objects.__len__()-1], regprop['defaults'][ii], regprop['defaults'][ii+1])
+                setattr(objects[objects.__len__()-1], regprop['defaults'][ii], regprop['defaults'][ii+1])
             ii += 2
-         self.objects[self.objects.__len__()-1].preinitmodifiers = list()
-         self.objects[self.objects.__len__()-1].postinitmodifiers = list()
-         self.objects[self.objects.__len__()-1].prerunmodifiers = list()
-         self.objects[self.objects.__len__()-1].preforcemodifiers = list()
-         self.objects[self.objects.__len__()-1].postforcemodifiers = list()
-         self.objects[self.objects.__len__()-1].postrunmodifiers = list()
-         return self.objects[self.objects.__len__()-1]
+         objects[objects.__len__()-1].preinitmodifiers = list()
+         objects[objects.__len__()-1].postinitmodifiers = list()
+         objects[objects.__len__()-1].prerunmodifiers = list()
+         objects[objects.__len__()-1].preforcemodifiers = list()
+         objects[objects.__len__()-1].postforcemodifiers = list()
+         objects[objects.__len__()-1].postrunmodifiers = list()
+         return objects[objects.__len__()-1]
       elif (regprop['type'] == "method"):
          tup = (args[1], args[2], args[3], args[4], args[5], args[6])
          ii = 0
@@ -497,8 +504,8 @@ class PropagatorFactory:
              tup += ourtup.__getslice__(i+1,i+3) # dt, ff
              ourtup = ourtup.__getslice__(i+4, len(ourtup))
              i = 4
-         self.objects.append(apply(regprop['constructor'], tup))
-         return self.objects[self.objects.__len__()-1]
+         objects.append(apply(regprop['constructor'], tup))
+         return objects[objects.__len__()-1]
                           
    def registerAllPM(self):
       """
@@ -584,3 +591,5 @@ class PropagatorFactory:
 
 
 propFactory = PropagatorFactory()    #: PropagatorFactory singleton object
+
+#objects = []
