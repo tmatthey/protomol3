@@ -546,9 +546,6 @@ protomol/mdl/simulations/FTSM_ALA_SOLV_VV.py -text
 protomol/mdl/simulations/FTSM_ALA_SOLV_VV_MPI.py -text
 protomol/mdl/simulations/FTSM_ALA_VAC.py -text
 protomol/mdl/simulations/FTSM_Equilibrate.py -text
-protomol/mdl/simulations/Impulse_Butane_HD.py -text
-protomol/mdl/simulations/Impulse_Butane_Harm.py -text
-protomol/mdl/simulations/Impulse_Water.py -text
 protomol/mdl/simulations/LangevinImpulse_Butane.py -text
 protomol/mdl/simulations/Leapfrog_Argon.py -text
 protomol/mdl/simulations/Leapfrog_BPTI_PME.py -text
