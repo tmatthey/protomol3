@@ -465,10 +465,6 @@ protomol/mdl/data/alanDipeptideSol/par_all27_prot_lipid.inp -text
 protomol/mdl/data/alanDipeptideSol/solvate.pdb -text
 protomol/mdl/data/alanDipeptideSol/solvate.psf -text
 protomol/mdl/data/alanDipeptideSol/solvate_eq.pdb -text
-protomol/mdl/data/alanSolStates/alanC7axial_wb5_min_eq.pdb -text
-protomol/mdl/data/alanSolStates/alanC7equat_wb5_min_eq.pdb -text
-protomol/mdl/data/alanSolStates/alan_wb5.psf -text
-protomol/mdl/data/alanSolStates/par_all27_prot_lipid.inp -text
 protomol/mdl/data/argon_280/argon.par -text
 protomol/mdl/data/argon_280/argon.psf -text
 protomol/mdl/data/argon_280/argon_eq.vel -text
