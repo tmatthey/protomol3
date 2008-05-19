@@ -5,7 +5,6 @@ from Propagator import *
 from IO import *
 from ForceField import *
 
-
 # PHYSICAL
 phys = Physical()
 io = IO()
@@ -32,4 +31,4 @@ io.screen = 2
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate("Leapfrog", steps=50, dt=20.0, forcefield=ff)
+gamma = prop.propagate("Leapfrog", steps=1, dt=20.0, forcefield=ff)

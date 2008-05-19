@@ -21,9 +21,9 @@ phys.temperature = 106
 forces = Forces()
 ff = forces.makeForceField(phys)
 ff.nonbondedForces("l")
-#ff.params['LennardJones'] = {'algorithm':'Cutoff',
-#                             'switching':'C1',
-#                             'cutoff':8.0}
+ff.params['LennardJones'] = {'algorithm':'Cutoff',
+                             'switching':'C1',
+                             'cutoff':8.0}
 
 # OUTPUT
 #io.pause=1
@@ -33,5 +33,5 @@ io.screen = 1
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate(scheme="takahashi", steps=100, dt=20.0, forcefield=ff)
+gamma = prop.propagate(scheme="takahashi", steps=20, dt=20.0, forcefield=ff)
 #print gamma

@@ -33,6 +33,8 @@ ff.nonbondedForces("lc")
 hd = HDForce(phys,forces,3.0,1,1)  # THIS IS A PYTHON-PROTOTYPED FORCE
 ff.addPythonForce(hd)
 
+io.pause = 1
+io.plots = {'temperature':2}
 io.screen = 1
 prop = Propagator(phys, forces, io)
 gamma = prop.propagate(scheme="Leapfrog", steps=40, dt=0.1, forcefield=ff)
