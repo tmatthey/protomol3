@@ -124,6 +124,8 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, CmpCnCn, LennardJonesForce,
           C1, CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, Cn, LennardJonesForce, C2,
+          CoulombSCPISMForce> >());
 
     // CutoffBorn CoulombSCPISMForce
     f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, C1, CoulombBornRadiiForce> >());
