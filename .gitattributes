@@ -784,6 +784,11 @@ protomol/protomol/integrator/STSIntegrator.h -text
 protomol/protomol/integrator/STSIntegrator.i -text
 protomol/protomol/integrator/StandardIntegrator.cpp -text
 protomol/protomol/integrator/StandardIntegrator.h -text
+protomol/protomol/integrator/autocorrelator/AutoCorrelatorInner.cpp -text
+protomol/protomol/integrator/autocorrelator/AutoCorrelatorInner.h -text
+protomol/protomol/integrator/autocorrelator/AutoCorrelatorOuter.cpp -text
+protomol/protomol/integrator/autocorrelator/AutoCorrelatorOuter.h -text
+protomol/protomol/integrator/autocorrelator/SConscript -text
 protomol/protomol/integrator/base/CGMinimizerIntegrator.cpp -text
 protomol/protomol/integrator/base/CGMinimizerIntegrator.h -text
 protomol/protomol/integrator/base/CGMinimizerIntegrator.i -text
