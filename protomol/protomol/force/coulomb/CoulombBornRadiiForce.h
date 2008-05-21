@@ -51,6 +51,14 @@ namespace ProtoMol {
                     Real distSquared, Real rDistSquared, const Vector3D &diff,
                     GenericTopology *topo,
                     int atom1, int atom2, ExclusionClass excl) {
+
+      // If either molecule belongs to a water, do nothing.
+      // Won't happen in most simulations, but could in the 
+      // case of comparing forces.
+      if (topo->molecules[topo->atoms[atom1].molecule].water ||
+	  topo->molecules[topo->atoms[atom2].molecule].water)
+	return;
+
       sw = topo->doSCPISM;
       Real q_i = topo->atoms[atom1].scaledCharge;
       Real q_j = topo->atoms[atom2].scaledCharge;

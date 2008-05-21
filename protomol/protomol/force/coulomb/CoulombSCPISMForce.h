@@ -40,6 +40,14 @@ namespace ProtoMol {
                     Real /*distSquared*/, Real rDistSquared, const Vector3D &,
                     const GenericTopology *topo,
                     int atom1, int atom2, ExclusionClass excl) const {
+
+      // If either molecule belongs to a water, do nothing.
+      // Won't happen in most simulations, but could in the 
+      // case of comparing forces.
+      if (topo->molecules[topo->atoms[atom1].molecule].water ||
+	  topo->molecules[topo->atoms[atom2].molecule].water)
+	return;
+
       //std::cout << "EPS: " << EPS << std::endl;
       //std::cout << "D: " << D << std::endl;
       //std::cout << "S: " << S << std::endl;
