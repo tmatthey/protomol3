@@ -77,6 +77,34 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           CmpCnCn, CoulombForce> >());
 
 
+    // SCPISM stuff
+    // NonbondedCutoffSystemForce CoulombSCPISMForce
+    f.reg(new CutoffSystem<CCM, OneAtomPair<PBC, C1, CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPair<PBC, C2, CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPair<PBC, Cn, CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPair<PBC, CmpCnCn,
+          CoulombSCPISMForce> >());
+
+    // OneAtomPairTwo
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, C2, LennardJonesForce, C1,
+          CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, C2, LennardJonesForce, C2,
+          CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, Cn, LennardJonesForce, Cn,
+          CoulombSCPISMForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, CmpCnCn, LennardJonesForce,
+          C1, CoulombSCPISMForce> >());
+
+    // CutoffBorn CoulombSCPISMForce
+    f.reg(new CutoffBorn<CCM, OneAtomPair<PBC, C1, CoulombBornRadiiForce> >());
+    f.reg(new CutoffBorn<CCM, OneAtomPair<PBC, C2, CoulombBornRadiiForce> >());
+    f.reg(new CutoffBorn<CCM, OneAtomPair<PBC, Cn, CoulombBornRadiiForce> >());
+    f.reg(new CutoffBorn<CCM, OneAtomPair<PBC, CmpCnCn,
+          CoulombBornRadiiForce> >());
+    f.reg(new CutoffBorn<CCM, OneAtomPair<PBC, Cutoff,
+          CoulombBornRadiiForce> >());
+
+
   } else if (equalNocase(boundConds, VacuumBoundaryConditions::keyword)) {
     // NonbondedCutoffSystemForce CoulombForce
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, C1, CoulombForce> >());
@@ -135,5 +163,8 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           CoulombBornRadiiForce> >());
     f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, Cutoff,
           CoulombBornRadiiForce> >());
+
+
+
   }
 }
