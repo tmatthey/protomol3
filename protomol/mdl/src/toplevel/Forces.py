@@ -48,7 +48,7 @@ class Forces:
    # TO SET DATA IN WRAPPERS 
    def __setattr__(self, name, val):
       if (name == 'force' and self.__dict__.has_key('force')):
-         self.__dict__['forcevec'].setData(val)
+         self.__dict__['forcevec'].setC(val)
       else:
          self.__dict__[name] = val
 
@@ -122,9 +122,9 @@ class Forces:
 
         ff = 0        
         while (ff < phys.numAtoms()*3):
-           retval[ff] = mathutilities.randomGaussianNumber(seed)
-           retval[ff+1] = mathutilities.randomGaussianNumber(seed)
-           retval[ff+2] = mathutilities.randomGaussianNumber(seed)
+           retval[ff] = MathUtilities.randomGaussianNumber(seed)
+           retval[ff+1] = MathUtilities.randomGaussianNumber(seed)
+           retval[ff+2] = MathUtilities.randomGaussianNumber(seed)
            #retval[ff:ff+3] = tmp*numpy.sqrt(phys.mass(ff/3+1))
            ff += 3
         return retval
