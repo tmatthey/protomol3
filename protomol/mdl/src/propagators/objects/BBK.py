@@ -5,7 +5,7 @@ import Constants
 import _TopologyUtilities
 import numpy
 
-class BBKMDL(STS):
+class BBK(STS):
     def init(self, phys, forces, prop):
        print self.gamma
        print Constants.invTimeFactor()
@@ -29,7 +29,7 @@ class BBKMDL(STS):
        #_topologyutilities.buildMolecularMomentum(phys.velvec,phys.myTop)
        #prop.calculateForces(forces)
 
-name="BBKMDL"  #: Name of propagation scheme
+name="BBK"  #: Name of propagation scheme
 parameters=("temp", 300,
             "gamma", 2,
             "seed", 1234) #: Parameter names and defaults

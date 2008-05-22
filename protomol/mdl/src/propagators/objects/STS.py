@@ -1,6 +1,6 @@
-import STSIntegrator
+import PySTSIntegrator
 
-class STS(STSIntegrator.STSIntegrator):
+class STS(PySTSIntegrator.PySTSIntegrator):
    def init(self, phys, forces, prop):
       """
       Finalize the propagator.

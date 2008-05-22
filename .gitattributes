@@ -582,7 +582,7 @@ protomol/mdl/src/propagators/methods/impulse.py -text
 protomol/mdl/src/propagators/methods/leapfrog.py -text
 protomol/mdl/src/propagators/methods/takahashi.py -text
 protomol/mdl/src/propagators/methods/velocityscale.py -text
-protomol/mdl/src/propagators/objects/BBKMDL.py -text
+protomol/mdl/src/propagators/objects/BBK.py -text
 protomol/mdl/src/propagators/objects/HMCMDL.py -text
 protomol/mdl/src/propagators/objects/ImpulseMDL.py -text
 protomol/mdl/src/propagators/objects/LeapfrogMDL.py -text

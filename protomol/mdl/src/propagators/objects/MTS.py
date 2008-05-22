@@ -1,8 +1,8 @@
-import MTSIntegrator
+import PyMTSIntegrator
 from ForceGroup import *
 import ScalarStructure
 
-class MTS(MTSIntegrator.MTSIntegrator):
+class MTS(PyMTSIntegrator.PyMTSIntegrator):
    """
    Parent class for all multiple time-stepping propagators.
    """
