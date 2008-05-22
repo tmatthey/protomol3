@@ -42,6 +42,7 @@ def takahashi(phys, forces, io, steps, timestep, fg):
    phys.positions.put(range(0, 3*phys.N()), auxpositions)
 
 
+
    step = 1
    # Run for the number of passed steps
    while (step < steps):

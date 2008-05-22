@@ -1,7 +1,7 @@
 from __future__ import generators
 from Vector3DBlock import *
 import math
-import topologyutilities
+import TopologyUtilities
 import numpy
 import sys
 

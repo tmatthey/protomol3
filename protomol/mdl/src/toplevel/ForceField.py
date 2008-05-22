@@ -9,7 +9,7 @@ class ForceField(ForceGroup):
       """
       Destructor.
       """
-      return
+      pass
 
    def setDefaults(self):
       """
@@ -302,7 +302,8 @@ class ForceField(ForceGroup):
       if (forces.forcevec.size() != phys.numAtoms()):
          forces.forcevec.resize(phys.numAtoms())
       forces.forcevec.zero()
-      forces.energies.clear()
+      phys.app.energies.clear()
+      phys.posvec.setC(phys.positions)
       self.evaluateSystemForces(phys.app, forces.forcevec)
       self.evaluateExtendedForces(phys.app, forces.forcevec)
    def calculateMollyForces(self, phys, forces):

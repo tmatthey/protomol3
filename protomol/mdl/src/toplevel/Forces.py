@@ -52,6 +52,9 @@ class Forces:
       else:
          self.__dict__[name] = val
 
+   def initializeEnergies(self, app):
+      self.energies = app.energies
+      
    # RESET SYSTEM STATE TO DEFAULTS
    def reset(self):
       """

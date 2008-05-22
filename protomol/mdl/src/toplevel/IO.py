@@ -38,6 +38,7 @@ from _Gnuplot import *
 import numpy
 
 class IO:
+   
    def __init__(self):
       #####################################################################################
       # USER-ACCESSIBLE STRUCTURES
@@ -668,7 +669,7 @@ class IO:
       @type step: int
       @param step: Simulation step number
       """
-      self.plotQuantity(step, forces.energies.potentialEnergy(), 'potentialenergy')
+      self.plotQuantity(step, forces.energies.potentialEnergy(phys), 'potentialenergy')
 
    def plotKinetic(self, phys, forces, step):
       """
@@ -713,6 +714,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
+      print TopologyUtilities.temperature(phys.myTop, phys.velvec)
       self.plotQuantity(step,
                         TopologyUtilities.temperature(phys.myTop, phys.velvec), 'temperature')
 
@@ -788,8 +790,8 @@ class IO:
 
       @type step: int
       @param step: Simulation step number      
-      """      
-      self.plotQuantity(step, forces.bondEnergy(), 'bondenergy')
+      """
+      self.plotQuantity(step, phys.app.energies.getTable(3), 'bondenergy')
 
    def plotAngleEnergy(self, phys, forces, step):
       """

@@ -302,22 +302,19 @@ class Propagator:
        if (propFactory.getType(outerscheme) == "method"):
           # Calculate the forces, store them in force.
           self.phys.app = ProtoMolApp.ProtoMolApp()
-          self.phys.app.makeApp(self.phys.myTop, self.phys.posvec, self.phys.velvec, self.forces.energies)
-          outerforcefield.calculateForces(self.phys, self.forces)
+          self.phys.app.makeApp(self.phys.myTop, self.phys.posvec, self.phys.velvec, self.forces.energies, dt)
           self.phys.updateCOM_Momenta()
-          print "RU"
+          outerforcefield.calculateForces(self.phys, self.forces)
           self.io.run(self.phys, self.forces, 0, outertime)
-          print "ZIG"
           self.io.myProp = self
           for ii in range(1, steps+1):
-             print "CREATING"
-             propFactory.create(outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
-             print "SS"
+             propFactory.create(1, outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
+             self.forces.energies.initialize(self.phys)
              self.phys.time = ii*outertime*Constants.invTimeFactor()
              self.io.run(self.phys, self.forces, ii, outertime)
              self.phys.updateCOM_Momenta()
        else: # Object
-          setPropagator(self, self.phys, self.forces, propFactory.applyModifiers(propFactory.create(outerscheme, outertime, outerforcefield, *chain), outerscheme))
+          setPropagator(self, self.phys, self.forces, propFactory.applyModifiers(propFactory.create(1, outerscheme, outertime, outerforcefield, *chain), outerscheme))
           shake = False
           if (params.has_key('shake') and params['shake'] == 'on'):
               shake = True

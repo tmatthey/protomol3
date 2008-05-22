@@ -25,9 +25,9 @@ for i in range(0, numpoints):
     x.append(Physical())
     y.append(Physical())
     force.append([Forces(), Forces()])
-    io.readPDBPos(x[i], "data/diAlanine/blockdialanine_eq.pdb")
-    io.readPSF(x[i], "data/diAlanine/blockdialanine.psf")
-    io.readPAR(x[i], "data/diAlanine/par_all27_prot_lipid.inp")
+    io.readPDBPos(x[i], "data/alanDipeptideBlock/blockdialanine_eq.pdb")
+    io.readPSF(x[i], "data/alanDipeptideBlock/blockdialanine.psf")
+    io.readPAR(x[i], "data/alanDipeptideBlock/par_all27_prot_lipid.inp")
     x[i].bc = "Vacuum"
     x[i].temperature = 300
     x[i].exclude = "scaled1-4"
@@ -84,10 +84,11 @@ ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
                                  'dihedralnum':[PHI-1, PSI-1],
                                  'angle':[z[0][0], z[0][1]]}
 
+print "HD"
 #io.initializePlot('string')
 #io.pause=1
 stringgraph=io.newGraph('Phi', 'Psi')
-
+print "GRAPH"
 # PRINT INITIAL STRING I0
 #print "\nI0: ",
 #print z
@@ -102,7 +103,7 @@ avg = []
 for f in range(0, numpoints):
    avg.append([0,0])
 
-
+print "ITER"
 for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
     for p in range(0, numpoints): # LOOPING OVER POINTS
         #if (iter >= 200):
@@ -117,16 +118,21 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
             kappa += (100.-40.)/90000.
 
         if (p != 0 or iter != 0):
+           print "RESTRAINT"
            FTSM.setConstraint(phi=z[p][0], psi=z[p][1], kappa=kappa, forcefield=ff)
         
         # UPDATE FREE SPACE
         # USE FIRST SYSTEM TO GET M
         # USE SECOND SYSTEM TO OBTAIN PHI AND PSI DIFFERENCES
         # FROM TARGETS
+        print "COMPUTING M"
+        print y[p].angle(PHI)
+        print y[p].angle(PSI)
+        print "TREVOR"
         zp0 = z[p][0]
         z[p][0] -= (kappa/gamma)*dt*(FTSM.M(x[p], PHI, PHI)*(z[p][0]-y[p].angle(PHI)) + FTSM.M(x[p], PHI, PSI)*(z[p][1] - y[p].angle(PSI)))
         z[p][1] -= (kappa/gamma)*dt*(FTSM.M(x[p], PSI, PHI)*(zp0-y[p].angle(PHI)) + FTSM.M(x[p], PSI, PSI)*(z[p][1] - y[p].angle(PSI)))
-
+        print "DONE"
             
         
         # My own function which sets phi and psi for individual force objects
@@ -139,10 +145,10 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
         # Dr. Izaguirre: I have checked and this constraint
         # is correct.  The energy is harmonic, but the force (the gradient)
         # is not harmonic.  In fact it is exactly what is in the paper.
-        
+        print "PROP"
         prop[p][0].propagate(scheme="velocityscale", steps=1, dt=dt, forcefield=ff, params={'T0':300})
         prop[p][1].propagate(scheme="velocityscale", steps=1, dt=dt, forcefield=ff, params={'T0':300})
-
+        print "YO"
 
         # My own function which sets phi and psi for individual force objects
         # Saves performance since I only change 'angle', I don't want to define

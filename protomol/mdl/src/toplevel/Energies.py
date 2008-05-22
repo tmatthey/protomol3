@@ -23,43 +23,9 @@ class Energies(ScalarStructure):
    - computeVirial()
    
    """
-   def __add__(self, rhs):
-      """
-      Overloads the '+' operator to add two energy structures
-      This simply adds corresponding energy terms for cumulative
-      bond energy, etc.
-
-      @type rhs: Energies
-      @param rhs: The second Energies object.
-
-      @rtype: Energies
-      @return: The sum of the two Energies objects.
-      """
-
-      # Invoke ScalarStructure's intoAdd()
-      retval = self
-      retval.intoAdd(rhs)
-      return retval
-
-
-   def __sub__(self, rhs):
-      """
-      Overloads the '-' operator to add two energy structures
-      This simply subtracts corresponding energy terms for cumulative
-      bond energy, etc.
-
-      @type rhs: Energies
-      @param rhs: The second Energies object.
-
-      @rtype: Energies
-      @return: The difference of the two Energies objects.
-      """
-      retval = self
-      # Invoke ScalarStructure's intoSubtract()
-      retval.intoSubtract(rhs)
-      return retval
-
-
+   def initialize(self, phys):
+      self.phys = phys
+      
    def computeMolecularVirial(self):
       """
       Tells the energies structure to include the molecular
@@ -70,7 +36,7 @@ class Energies(ScalarStructure):
       """
 
       # Invoke ScalarStructure's molecularVirial()
-      return self.molecularVirial(1)
+      return self.phys.app.energies.molecularVirial(1)
 
 
    def computeVirial(self):
@@ -83,7 +49,7 @@ class Energies(ScalarStructure):
       """
 
       # Invoke ScalarStructure's virial()
-      return self.virial(1)
+      return self.phys.app.energies.virial(1)
 
 
    def addBondEnergy(self, r):
@@ -94,7 +60,7 @@ class Energies(ScalarStructure):
       @param r: Quantity to accumulate.
       
       """
-      self.setTable(3, self.bondEnergy()+r)
+      self.phys.app.energies.setTable(3, self.bondEnergy()+r)
 
    def addAngleEnergy(self, r):
       """            
@@ -103,7 +69,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.setTable(4, self.angleEnergy()+r)
+      self.phys.app.energies.setTable(4, self.angleEnergy()+r)
       
    def addDihedralEnergy(self, r):
       """
@@ -112,7 +78,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.setTable(5, self.dihedralEnergy()+r)
+      self.phys.app.energies.setTable(5, self.dihedralEnergy()+r)
       #self.setTable(5, self.dihedralEnergy()+r)
 
    def addImproperEnergy(self, r):
@@ -122,7 +88,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.setTable(6, self.improperEnergy()+r)
+      self.phys.app.energies.setTable(6, self.improperEnergy()+r)
 
    def addShadowEnergy(self, r):
       """
@@ -131,7 +97,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.setTable(34, self.shadowEnergy()+r)
+      self.phys.app.energies.setTable(34, self.shadowEnergy()+r)
 
    def addCoulombEnergy(self, r):
       """
@@ -140,7 +106,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.setTable(1, self.coulombEnergy()+r)
+      self.phys.app.energies.setTable(1, self.coulombEnergy()+r)
       #self.setTable(1, 4)
 
    def addLJEnergy(self, r):
@@ -150,7 +116,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.      
       """
-      self.setTable(2, self.ljEnergy()+r)
+      self.phys.app.energies.setTable(2, self.ljEnergy()+r)
 
             
    def coulombEnergy(self):
@@ -160,7 +126,7 @@ class Energies(ScalarStructure):
       """
 
       # Coulomb energy is table index 1
-      return self.getTable(1)
+      return self.phys.app.energies.getTable(1)
    
    def ljEnergy(self):
       """
@@ -169,7 +135,7 @@ class Energies(ScalarStructure):
       """
 
       # LJ energy is table index 2
-      return self.getTable(2)
+      return self.phys.app.energies.getTable(2)
 
    def bondEnergy(self):
       """
@@ -178,7 +144,7 @@ class Energies(ScalarStructure):
       """
 
       # Bond energy is table index 3
-      return self.getTable(3)
+      return self.phys.app.energies.getTable(3)
 
    def angleEnergy(self):
       """
@@ -187,7 +153,7 @@ class Energies(ScalarStructure):
       """
 
       # Angle energy is table index 4
-      return self.getTable(4)
+      return self.phys.app.energies.getTable(4)
 
    def dihedralEnergy(self):
       """
@@ -196,7 +162,7 @@ class Energies(ScalarStructure):
       """
 
       # Dihedral energy is table index 5
-      return self.getTable(5)
+      return self.phys.app.energies.getTable(5)
    
    def improperEnergy(self):
       """
@@ -205,7 +171,7 @@ class Energies(ScalarStructure):
       """
 
       # Improper energy is table index 6
-      return self.getTable(6)
+      return self.phys.app.energies.getTable(6)
 
    def shadowEnergy(self):
       """
@@ -214,7 +180,7 @@ class Energies(ScalarStructure):
       """
 
       # Shadow energy is table index 4
-      return self.getTable(34)
+      return self.phys.app.energies.getTable(34)
 
    def kineticEnergy(self, phys):
       """
@@ -223,6 +189,13 @@ class Energies(ScalarStructure):
       """
       return TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec)
 
+   def potentialEnergy(self, phys):
+      """
+      @rtype: float
+      @return: Potential energy
+      """
+      return phys.app.energies.potentialEnergy()
+
    def totalEnergy(self, phys):
       """
       @rtype: float
@@ -230,5 +203,5 @@ class Energies(ScalarStructure):
       """
 
       # potentialEnergy() is a member function of ScalarStructure
-      return self.potentialEnergy()+TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec)
+      return self.phys.app.energies.potentialEnergy()+TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec)
    

@@ -98,6 +98,8 @@ class Physical:
    Defines a physical system: positions, velocities, temperature,
    boundary conditions, etc.
    """
+
+   
    def __init__(self):
       #####################################################################
       # USER-ACCESSIBLE STRUCTURES
@@ -160,9 +162,9 @@ class Physical:
       retval.remang = self.remang
       retval.defaultCBV = self.defaultCBV
       if (retval.bc == "Periodic"):
-         retval.myTop = Topology.T_Periodic()
+         retval.myTop = GenericTopology.T_Periodic()
       else:
-         retval.myTop = Topology.T_Vacuum()
+         retval.myTop = GenericTopology.T_Vacuum()
       retval.cB1 = self.cB1.copy()
       retval.cB2 = self.cB2.copy()
       retval.cB3 = self.cB3.copy()
@@ -270,7 +272,7 @@ class Physical:
       @rtype: float
       @return: System volume
       """
-      return self.myTop.getVolume(positions)
+      return self.myTop.getVolume(self.posvec)
 
 
    # SIZE OF THE SYSTEM
@@ -502,7 +504,7 @@ class Physical:
       @rtype: float
       @return: Kelvin temperature
       """
-      return topologyutilities.temperature(self.myTop, self.velvec)
+      return TopologyUtilities.temperature(self.myTop, self.velvec)
 
    def angle(self, index):
       """

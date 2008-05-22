@@ -39,6 +39,7 @@ def setPropagator(prop, phys, forces, obj, levelswitch=False):
 	   if (dir(obj).count('setIntegratorSetPointers') != 0):
 		   obj.setIntegratorSetPointers(obj, phys.myEig, 1)
 	   phys.app = obj.appInit(phys.myTop,phys.posvec,phys.velvec,forces.energies)
+	   phys.app.energies = self.forces.energies
            #obj.initialize(phys.myTop,phys.posvec,phys.velvec,forces.energies)
 	# Performs garbage collection if we are setting our propagator
 	# to something else, and aren't simply changing levels in the hierarchy
@@ -454,11 +455,9 @@ class PropagatorFactory:
       elif (regprop['type'] == "object"):
          if (len(args) <= 4):
             objects.append(apply(regprop['constructor'], (args[1], args[2])))
-	    objects[len(objects)-1].thisown=0
 	    objects[len(objects)-1].dt = args[1]*Constants.invTimeFactor()
          else:
             objects.append(apply(self.create, (level+1,)+args.__getslice__(4, args.__len__())))
-	    objects[len(objects)-1].thisown=0
             objects.append(apply(regprop['constructor'], (args[1], args[2], objects[objects.__len__()-1])))
 	    objects[len(objects)-1].thisown=0
 	    objects[len(objects)-1].cyclelength = args[1]
