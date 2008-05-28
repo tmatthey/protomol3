@@ -909,6 +909,8 @@ protomol/protomol/modifier/ModifierRattle.cpp -text
 protomol/protomol/modifier/ModifierRattle.h -text
 protomol/protomol/modifier/ModifierRemoveAngularMomentum.h -text
 protomol/protomol/modifier/ModifierRemoveLinearMomentum.h -text
+protomol/protomol/modifier/ModifierShadow.cpp -text
+protomol/protomol/modifier/ModifierShadow.h -text
 protomol/protomol/modifier/ModifierShake.cpp -text
 protomol/protomol/modifier/ModifierShake.h -text
 protomol/protomol/modifier/SConscript -text
