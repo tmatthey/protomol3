@@ -203,5 +203,5 @@ class Energies(ScalarStructure):
       """
 
       # potentialEnergy() is a member function of ScalarStructure
-      return self.phys.app.energies.potentialEnergy()+TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec)
+      return phys.app.energies.potentialEnergy()+TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec)
    

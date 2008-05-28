@@ -39,7 +39,7 @@ def setPropagator(prop, phys, forces, obj, levelswitch=False):
 	   if (dir(obj).count('setIntegratorSetPointers') != 0):
 		   obj.setIntegratorSetPointers(obj, phys.myEig, 1)
 	   phys.app = obj.appInit(phys.myTop,phys.posvec,phys.velvec,forces.energies)
-	   phys.app.energies = self.forces.energies
+	   phys.app.energies = forces.energies
            #obj.initialize(phys.myTop,phys.posvec,phys.velvec,forces.energies)
 	# Performs garbage collection if we are setting our propagator
 	# to something else, and aren't simply changing levels in the hierarchy
@@ -78,17 +78,12 @@ def executePropagator(prop, phys, forces, io, numsteps):
       ii = 0
 
       while (ii < numsteps):
-           if (io.pmvMODE == 0): # STOP CODE
-               return
-           elif (io.pmvMODE != 2):  # RUN CODE
               if (prop.isMDL(prop.myPropagator)):
                  prop.myPropagator.run(phys, forces, prop)
                  phys.myTop.time = prop.myStep*prop.myPropagator.getTimestep()*Constants.invTimeFactor()
 		 phys.updateCOM_Momenta()		 
               else:
                  prop.myPropagator.run(1)
-	      if (io.doPmv):
-                 io.pmvPlot()
               ii = ii + 1
               if (prop.myLevel == 0):
                  prop.myStep += 1
@@ -98,8 +93,6 @@ def executePropagator(prop, phys, forces, io, numsteps):
                  TopologyUtilities.removeLinearMomentum(phys.velvec, phys.myTop).disown()
               if (phys.remang >= 0):
 	         TopologyUtilities.removeAngularMomentum(phys.posvec, phys.velvec, phys.myTop).disown()
-           else: # PAUSE CODE
-              io.pmvPlot()
       if (prop.isMDL(prop.myPropagator)):
            prop.runModifiers(prop.myPropagator.postrunmodifiers, phys, forces, prop, prop.myPropagator)
            prop.myPropagator.finish(phys, forces, prop)
@@ -352,6 +345,9 @@ class PropagatorFactory:
       @rtype: string
       @return: Type of the propagator
       """
+      if (not self.registry.has_key(name)):
+	      print "[MDL] ERROR: NO PROPAGATOR NAMED", name
+              sys.exit(1)
       return self.registry[name]['type']
 
    def findArg(self, name, pars):

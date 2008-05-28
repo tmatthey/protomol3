@@ -23,18 +23,6 @@ class Forces:
       #self.force = 0  #: Atomic force vector.
       #########################################################
 
-      
-   def dirty(self):
-      """
-      Checks if any of the force fields created is dirty.
-
-      @rtype: boolean
-      @return: True if any of the force fields has been modified since the last propagation; false otherwise.
-      """
-      for ff in self.myForceFields:
-         if (ff.dirty == 1):
-            return True
-      return False
          
    # SPECIAL ACCESSOR FOR self.forces
    # TO GET DATA FROM WRAPPERS   
@@ -86,7 +74,7 @@ class Forces:
       if (args.__len__() > 0):
          ff.charmm = 1
       ff.theforces = self
-      self.phys = phys
+      self.phys = ff.phys = phys
       ff.bc = phys.bc
       ff.setDefaults()
       self.myForceFields.append(ff)
@@ -128,83 +116,6 @@ class Forces:
            retval[ff] = MathUtilities.randomGaussianNumber(seed)
            retval[ff+1] = MathUtilities.randomGaussianNumber(seed)
            retval[ff+2] = MathUtilities.randomGaussianNumber(seed)
-           #retval[ff:ff+3] = tmp*numpy.sqrt(phys.mass(ff/3+1))
            ff += 3
         return retval
 
-
-   def build(self):
-    """
-    Using an MDL force factory, instantiate all force objects stored in the forcetypes data member of each force field.  These will be SWIG-wrapped objects and are appended to the forcearray data member of each force field.
-    """
-    # TMC 1-13-08: I think this can be improved.  Future:
-    # 1. Have a build() member of the ForceField class.
-    # 2. Make the ForceFactory a singleton.
-    # 3. Give the ForceFactory a method which maps force characters to creation functions.  In this way there are multiple mapping levels.
-
- 
-    for forcefield in self.myForceFields:
-      #forcefield.clear()
-      forcefield.forceFactory.hd = 0
-
-      if (forcefield.params['LennardJones'] !=
-          forcefield.params['Coulomb']):
-            forcefield.breakLennardJonesCoulombForce()
-      forcefield.dirty = 0
-
-      forcefield.forcearray = []
-
-      for forcetype in forcefield.forcetypes:
-          if (forcetype == 'b'):
-              forcefield.forcearray.append(forcefield.forceFactory.createBondForce(forcefield.bc))
-          elif (forcetype == 'a'):
-              forcefield.forcearray.append(forcefield.forceFactory.createAngleForce(forcefield.bc))
-          elif (forcetype == 'd'):
-              forcefield.forcearray.append(forcefield.forceFactory.createDihedralForce(forcefield.bc))
-          elif (forcetype == 'i'):
-              forcefield.forcearray.append(forcefield.forceFactory.createImproperForce(forcefield.bc))
-          elif (forcetype == 'l'):
-              forcefield.forcearray.append(forcefield.forceFactory.createLennardJonesForce(forcefield.bc, forcefield.params['LennardJones']))
-          elif (forcetype == 'c'):
-              if (forcefield.params['Coulomb']['algorithm'] == 'SCPISM'):
-                 if (forcefield.params['Coulomb'].has_key('bornswitch')):
-                    self.phys.myTop.doSCPISM = forcefield.params['Coulomb']['bornswitch']
-                 else:
-                    self.phys.myTop.doSCPISM = 1
-                 self.phys.build()
-                 if (not forcefield.params['Coulomb'].has_key('NoBorn')):
-                    forcefield.forcearray.append(forcefield.forceFactory.createBornForce(forcefield.bc, forcefield.params['Coulomb']))
-              if (not forcefield.params['Coulomb'].has_key('OnlyBorn')):      
-                 forcefield.forcearray.append(forcefield.forceFactory.createCoulombForce(forcefield.bc, forcefield.params['Coulomb'], forcefield.fastelectro))
-          elif (forcetype == 'e'):
-              forcefield.forcearray.append(forcefield.forceFactory.createCoulombDiElecForce(forcefield.bc, forcefield.params['CoulombDiElec']))
-          elif (forcetype == 'lc'):
-              if (not forcefield.params['LennardJonesCoulomb'].has_key('type') or
-                  forcefield.params['LennardJonesCoulomb']['type'] == 'original'):
-                  forcefield.forcearray.append(forcefield.forceFactory.createLennardJonesCoulombForce(forcefield.bc, forcefield.params['LennardJonesCoulomb']))
-              elif (forcefield.params['LennardJonesCoulomb']['type'] == 'EwaldReal'):
-                  forcefield.forcearray.append(forcefield.forceFactory.createLennardJonesCoulombERForce(forcefield.bc, forcefield.params['LennardJonesCoulomb']))
-              elif (forcefield.params['LennardJonesCoulomb']['type'] == 'EwaldRealTable'):
-                  forcefield.forcearray.append(forcefield.forceFactory.createLennardJonesCoulombERTForce(forcefield.bc, forcefield.params['LennardJonesCoulomb']))
-              elif (forcefield.params['LennardJonesCoulomb']['type'] == 'MagneticDipole'):
-                  forcefield.forcearray.append(forcefield.forceFactory.createLennardJonesCoulombMGDForce(forcefield.bc, forcefield.params['LennardJonesCoulomb']))
-              elif (forcefield.params['LennardJonesCoulomb']['type'] == 'MagneticDipoleTable'):
-                  forcefield.forcearray.append(forcefield.forceFactory.createLennardJonesCoulombMGDTForce(forcefield.bc, forcefield.params['LennardJonesCoulomb']))
-          elif (forcetype == 'mb'):
-              forcefield.forcearray.append(forcefield.forceFactory.createMollyBondForce(forcefield.bc))
-          elif (forcetype == 'ma'):
-              forcefield.forcearray.append(forcefield.forceFactory.createMollyAngleForce(forcefield.bc))
-          elif (forcetype == 'h'):
-              forcefield.forcearray.append(forcefield.forceFactory.createHarmDihedralForce(forcefield.bc, forcefield.params['HarmonicDihedral']))
-          elif (forcetype == 'm'):
-              forcefield.forcearray.append(forcefield.forceFactory.createMagneticDipoleForce(forcefield.bc))
-
-          # ADD TO THE BACK END
-          if (forcetype == 'ma' or
-              forcetype == 'mb'): # MOLLY FORCE
-             forcefield.addMetaForce(forcefield.forcearray[forcefield.forcearray.__len__()-1])
-          else: # SYSTEM FORCE
-             forcefield.addForce(forcefield.forcearray[forcefield.forcearray.__len__()-1])
-      for pyforce in forcefield.pythonforces:
-         forcefield.forcearray.append(PySystemForce(pyforce))
-         forcefield.addSystemForce(forcefield.forcearray[forcefield.forcearray.__len__()-1])

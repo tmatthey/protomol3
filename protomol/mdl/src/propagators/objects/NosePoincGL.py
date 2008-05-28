@@ -36,7 +36,7 @@ class NosePoincGL(STS):
       self.gkT = 3.0*(phys.numAtoms()-1.0)*Constants.boltzmann()*self.temp #: Product of degrees of freedom, boltzmann constant and Kelvin temperature
       self.KEtoT = 2.0 / (3.0*(phys.numAtoms()-1.0)*Constants.boltzmann()) #: Kinetic to temp. conversion
       prop.calculateForces(forces)
-      self.Potnl = forces.energies.potentialEnergy()  #: Potential energy
+      self.Potnl = forces.energies.potentialEnergy(phys)  #: Potential energy
       self.h0 = self.Potnl + forces.energies.kineticEnergy(phys)  #: Initial 'internal' Hamiltonian value so that total Hamiltonian allways 0
       self.stepsdone = 0 #: Number of steps completed
       self.avTemp = 0 #: Average Kelvin temperature
@@ -144,7 +144,7 @@ class NosePoincGL(STS):
       self.half1UpdtbathM(phys, forces, prop)
       self.UpdtPosBathP(phys, prop)
       prop.calculateForces(forces)
-      self.Potnl = forces.energies.potentialEnergy()
+      self.Potnl = forces.energies.potentialEnergy(phys)
       self.half2UpdtbathM(phys, forces, prop)
       self.half2UpdtMom(phys, forces, prop)
       self.avTemp += forces.energies.kineticEnergy(phys)*self.KEtoT
@@ -165,7 +165,7 @@ class NosePoincGL(STS):
       @param prop: MDL Propagator object.
       """
       self.tempers.append([self.stepsdone,self.avTemp/self.stepsdone])
-      self.Hamiltonian.append([self.stepsdone,self.bathP*(forces.energies.kineticEnergy(phys)+forces.energies.potentialEnergy()+0.5*self.bathM*self.bathM/self.Q+self.gkT*numpy.log(self.bathP)-self.h0)])
+      self.Hamiltonian.append([self.stepsdone,self.bathP*(forces.energies.kineticEnergy(phys)+forces.energies.potentialEnergy(phys)+0.5*self.bathM*self.bathM/self.Q+self.gkT*numpy.log(self.bathP)-self.h0)])
       
       
 name="NosePoincGL"             #: Name of propagation scheme.

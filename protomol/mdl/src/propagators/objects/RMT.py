@@ -33,7 +33,7 @@ class RMT(STS):
       @param prop: MDL Propagator object.
       """
       prop.calculateForces(forces)
-      self.Potnl = forces.energies.potentialEnergy() #: Potential energy
+      self.Potnl = forces.energies.potentialEnergy(phys) #: Potential energy
       self.gkT = 3.0*(phys.numAtoms()-1.0)*Constants.boltzmann()*self.temp #: Number of Dof*kT, momentum conserved so number of atoms * 3D - 3 
       self.KEtoT = 2.0 / (3.0*(phys.numAtoms()-1.0)*Constants.boltzmann()) #: Convertion of kinetic energy to temperature
       self.Nf = 3.0*(phys.numAtoms()-1.0)   #: number of Dof
@@ -245,7 +245,7 @@ class RMT(STS):
          self.halfUpdtH3j(0, prop)
          self.UpdtH1(phys, forces, prop)
          prop.calculateForces(forces)
-         self.Potnl = forces.energies.potentialEnergy()
+         self.Potnl = forces.energies.potentialEnergy(phys)
          self.halfUpdtH3j(1, prop)
          self.halfUpdtH31(prop)
          self.halfUpdtH2(1, phys, forces, prop)

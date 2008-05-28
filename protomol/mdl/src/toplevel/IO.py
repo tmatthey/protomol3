@@ -7,22 +7,14 @@ import XYZReader
 import XYZBinReader
 import DCDTrajectoryReader
 import EigenvectorReader
-#import PSFWriter
-#import PARWriter
 import PDBWriter
 import XYZWriter
-#import XYZBinWriter
 
 
 import OutputCache
-#import OutputTemperatures
 import OutputEnergies
-#import OutputMomentum
-#import OutputDihedrals
 import OutputDCDTrajectory
 import OutputDCDTrajectoryVel
-#import OutputDiffusion
-#import OutputPDBFramePos
 import OutputScreen
 import OutputXYZTrajectoryForce
 import OutputXYZTrajectoryPos
@@ -65,15 +57,6 @@ class IO:
       self.mplFigCount = 0           #: NUMBER OF MATPLOTLIB OBJECT AT THE FRONT
       ############################################################################
 
-      ############################################################################
-      # THESE ARE ONLY USED WITH PMV
-      ############################################################################
-      self.doPmv = False             #: ARE WE USING PMV?  (DEFAULT False = NO)
-      self.pmvobj = 0                #: PMV PYTHON OBJECT, REFERENCING GUI
-      self.cmdlog = []               #: ARRAY OF EXECUTED PYTHON COMMANDS
-      self.pmvMODE = 1               #: PMV MODE (0=STOP, 1=GO, 2=PAUSE)
-      #####################################################################################
-
       #####################################################################################
       # USER SHOULD NOT TOUCH THIS!  
       #####################################################################################
@@ -111,6 +94,20 @@ class IO:
                     'xyztrajpos':('',-1),
                     'xyztrajvel':('',-1)}  #: Map of file output names to (filename freq), default is ('', -1) - no file, never
 
+      self.plotFunctions = {'totalenergy':self.plotTotal,
+                            'kineticenergy':self.plotKinetic,
+                            'potentialenergy':self.plotPotential,
+                            'temperature':self.plotTemperature,
+                            'pressure':self.plotPressure,
+                            'volume':self.plotVolume,
+                            'bondenergy':self.plotBondEnergy,
+                            'angleenergy':self.plotAngleEnergy,
+                            'dihedralenergy':self.plotDihedralEnergy,
+                            'improperenergy':self.plotImproperEnergy,
+                            'ljenergy':self.plotLJEnergy,
+                            'coulombenergy':self.plotCoulombEnergy,
+                            'shadowenergy':self.plotShadowEnergy}
+
       self.dirty = 1        #: Dirty bit, set to 1 if data members have been modified since the last propagation
 
    def __setattr__(self, att, val):
@@ -135,10 +132,6 @@ class IO:
          self.graphs[i] = Gnuplot(debug=0)
          self.figures[i] = 0
       self.mplFigCount = 0
-      self.doPmv = False
-      self.pmvobj = 0
-      self.cmdlog = []
-      self.pmvMODE = 1
 
 
 
@@ -158,6 +151,9 @@ class IO:
       """
       if (not os.path.exists(filename)):
          filename = os.getenv('MDLROOT')+'/'+filename
+      if (not os.path.exists(filename)):
+         print "[MDL] ERROR, FILE", filename, "DOES NOT EXIST."
+         sys.exit(1)
       return filename
    
    def readPSF(self,phys,psfname):
@@ -251,10 +247,6 @@ class IO:
         @param xyzname: XYZ file name.
         """
         XYZBinReader.XYZBinReader(self.checkPath(xyzname)).read(phys.posvec)
-        #for ii in range(0, phys.myXYZ.coords.size()*3, 3):
-        #   phys.positions[ii] = phys.myXYZ.coords[ii]
-        #   phys.positions[ii+1] = phys.myXYZ.coords[ii+1]
-        #   phys.positions[ii+2] = phys.myXYZ.coords[ii+2]
 
    def readXYZVel(self,phys,xyzname):
         """
@@ -283,10 +275,6 @@ class IO:
         @param xyzname: XYZ file name.
         """
         XYZBinReader.XYZBinReader(self.checkPath(xyzname)).read(phys.velvec)
-        #for ii in range(0, phys.myXYZ.coords.size()*3, 3):
-        #   phys.velocities[ii] = phys.myXYZ.coords[ii]
-        #   phys.velocities[ii+1] = phys.myXYZ.coords[ii+1]
-        #   phys.velocities[ii+2] = phys.myXYZ.coords[ii+2]          
 
    def readDCDTrajectoryPos(self,phys,dcdname):
         """
@@ -353,30 +341,6 @@ class IO:
         """
         EigenvectorReader.EigenvectorReader(self.checkPath(eigname)).read(phys.myEig)
 
-   #def writePSF(self,phys,psfname):
-   #   """
-   #   Write atomic positions to a PSF file.
-   #   
-   #   @type phys: Physical
-   #   @param phys: The physical system.
-   #   
-   #   @type psfname: string
-   #   @param psfname: PSF file name.
-   #   """
-   #   PSFWriter.PSFWriter(psfname).write(phys.myPSF) 
-
-   #def writePAR(self,phys,parname):
-   #   """
-   #   Write a CHARMM parameter file.
-   #   
-   #   @type phys: Physical
-   #   @param phys: The physical system.
-   #   
-   #   @type parname: string
-   #   @param parname: CHARMM parameter file name.
-   #   """
-   #   PARWriter.PARWriter(parname,2).write(phys.myPAR)
-
    def writePDBPos(self,phys,pdbname):
       """
       Write atomic positions to a PDB file.
@@ -425,30 +389,7 @@ class IO:
       """
       XYZWriter.XYZWriter(xyzname).write(phys.velvec, phys.myTop.atoms, phys.myTop.atomTypes)
 
-   #def writeXYZBinPos(self,phys,xyzname):
-   #   """
-   #   Write atomic positions to a binary XYZ file.
-   #   
-   #   @type phys: Physical
-   #   @param phys: The physical system.
-   #   
-   #   @type pdbname: string
-   #   @param pdbname: XYZ file name.
-   #   """
-   #   XYZBinWriter.XYZBinWriter(xyzname).write(phys.posvec)
 
-   #def writeXYZBinVel(self,phys,xyzname):
-   #   """
-   #   Write atomic velocities to a binary XYZ file.
-   #   
-   #   @type phys: Physical
-   #   @param phys: The physical system.
-   #   
-   #   @type pdbname: string
-   #   @param pdbname: XYZ file name.
-   #   """
-   #   XYZBinWriter.XYZBinWriter(xyzname).write(phys.velvec)
-   #####################################################################################
 
    # RUN ALL NON-INSTANTANEOUS FILE OUTPUT
    def runOutput(self, phys, forces, step, ts, *args):
@@ -478,18 +419,6 @@ class IO:
          # RUN THE OUTPUT
          output.run(step)
    #####################################################################################
-
-   # RUN OUTPUT THROUGH THE PMV GUI, ON THE PASSED GUI OBJECT
-   def setPMV(self, pmvobj):
-      """
-      Only invoked if Pmv is being used, accepts an object for
-      the molecular viewer.
-
-      @type pmvobj: ViewerFramework
-      @param pmvobj: Pmv ViewerFramework object
-      """
-      self.doPmv = True
-      self.pmvobj = pmvobj
 
       
    # CREATE A NEW GNUPLOT OR MATPLOTLIB GRAPH OBJECT AND RETURN IT.
@@ -699,7 +628,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, forces.energies.potentialEnergy()+TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec), 'totalenergy')
+      self.plotQuantity(step, forces.energies.potentialEnergy(phys)+TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec), 'totalenergy')
 
    def plotTemperature(self, phys, forces, step):
       """
@@ -852,37 +781,6 @@ class IO:
       @param step: Simulation step number      
       """
       self.plotQuantity(step, forces.shadowEnergy(), 'shadowenergy')
-   #####################################################################################
-
-   # DISPLAY ATOMIC DATA IN PMV.
-   #def pmvPlot(self):
-   #   if (self.doPmv):
-   #     for jj in range(0, phys.numAtoms()):
-   #        self.pmvobj.Mols[len(self.pmvobj.Mols)-1].allAtoms[jj].coords[0] = state.position()[jj][0]
-   #        self.pmvobj.Mols[len(self.pmvobj.Mols)-1].allAtoms[jj].coords[1] = state.position()[jj][1]
-   #        self.pmvobj.Mols[len(self.pmvobj.Mols)-1].allAtoms[jj].coords[2] = state.position()[jj][2]
-   #     self.pmvobj.displaySticksAndBalls(self.pmvobj.Mols[len(self.pmvobj.Mols)-1].name, log=0, cquality=5, bquality=5, cradius=0.05, only=False, noballs=0, bRad=0.4, negate=False, bScale=0.0)
-   #     self.pmvobj.displayLines(self.pmvobj.Mols[len(self.pmvobj.Mols)-1].name, negate=True, displayBO=False, only=False, log=0, lineWidth=2)
-
-   # DISPLAY ATOMIC DATA IN VMD (WILL ONLY WORK FROM VMD COMMAND SHELL)
-   #def vmdPlot(self, pos):
-   #   from AtomSel import AtomSel
-   #   from Molecule import *
-   #   bU = Molecule()
-   #   bU.load(self.pdbname) # Future make this a parameter
-   #   vv = MoleculeRep(style='CPK')
-   #   bU.addRep(vv)
-   #   update()
-   #   raw_input()
-   #   while jj < numpy.length(pos)/3:
-   #      selectionstring = 'index %(#)i' % {"#": jj}
-   #      sel = AtomSel(selectionstring, 0, 0)
-   #      sel.set('x', pos[jj*3])
-   #      sel.set('y', pos[jj*3+1])
-   #      sel.set('z', pos[jj*3+2])
-   #      jj = jj + 3
-   #   update()
-   #   raw_input()
 
 
    # RUN ALL PLOTS
@@ -923,26 +821,12 @@ class IO:
          if (params[1] != -1):
             filename = params[0]
             freq = params[1]
-            #if (output == 'temperature'):
-            #   self.myOutputs.append(OutputTemperatures.OutputTemperatures(filename, freq, 1, 0, 1.0, 0))
             if (output == 'energies'):
                self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0,0))
-            #elif (output == 'momentum'):
-            #   self.myOutputs.append(OutputMomentum.OutputMomentum(filename, freq, 1, 0, 1.0))
-            #elif (output == 'dihedrals'):
-            #   dihedralnum = 0
-            #   if (len(params) > 2):
-            ##      dihedralnum = params[2]
-            #   self.myOutputs.append(OutputDihedrals.OutputDihedrals(filename, freq, 0, 0, 0, 1, dihedralnum, 0, ""))
             elif (output == 'dcdtrajpos'):
                self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1))
             elif (output == 'dcdtrajvel'):
                self.myOutputs.append(OutputDCDTrajectoryVel.OutputDCDTrajectoryVel(filename, freq, 1))
-            #elif (output == 'diffusion'):
-            #   self.myOutputs.append(OutputDiffusion.OutputDiffusion(filename, freq, 1, 0, 1.0))
-            #elif (output == 'pdbframe'):
-            #   self.myOutputCache.addPDB(self.phys.myPDB)
-            #   self.myOutputs.append(OutputPDBFramePos.OutputPDBFramePos(filename, freq, 0))
             elif (output == 'xyztrajforce'):
                self.myOutputs.append(OutputXYZTrajectoryForce.OutputXYZTrajectoryForce(filename, freq))
             elif (output == 'xyztrajpos'):
@@ -970,32 +854,8 @@ class IO:
 
             # Add the function to plot the data,
             # and the frequency at which to execute it
-            if (plot == 'totalenergy'):
-               self.myPlots.append([self.plotTotal, freq])
-            elif (plot == 'kineticenergy'):
-               self.myPlots.append([self.plotKinetic, freq])
-            elif (plot == 'potentialenergy'):
-               self.myPlots.append([self.plotPotential, freq])
-            elif (plot == 'temperature'):
-               self.myPlots.append([self.plotTemperature, freq])
-            elif (plot == 'pressure'):
-               self.myPlots.append([self.plotPressure, freq])
-            elif (plot == 'volume'):
-               self.myPlots.append([self.plotVolume, freq])
-            elif (plot == 'bondenergy'):
-               self.myPlots.append([self.plotBondEnergy, freq])
-            elif (plot == 'angleenergy'):
-               self.myPlots.append([self.plotAngleEnergy, freq])
-            elif (plot == 'dihedralenergy'):
-               self.myPlots.append([self.plotDihedralEnergy, freq])
-            elif (plot == 'improperenergy'):
-               self.myPlots.append([self.plotImproperEnergy, freq])
-            elif (plot == 'ljenergy'):
-               self.myPlots.append([self.plotLJEnergy, freq])
-            elif (plot == 'coulombenergy'):
-               self.myPlots.append([self.plotCoulombEnergy, freq])
-            elif (plot == 'shadowenergy'):
-               self.myPlots.append([self.plotShadowEnergy, freq])
+            self.myPlots.append([self.plotFunctions[plot], freq])
+
 
    def recache(self, phys):
        """

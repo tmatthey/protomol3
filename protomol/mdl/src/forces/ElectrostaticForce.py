@@ -1,6 +1,6 @@
 import numpy
 import math
-from Potential import *
+#from Potential import *
 import sys
 import Constants
 def norm(v3d):

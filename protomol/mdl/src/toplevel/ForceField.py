@@ -37,10 +37,6 @@ class ForceField(ForceGroup):
                         'switching':'Universal',
                         'cutoff':-1},
 
-       'MagneticDipole':{'algorithm':'Cutoff',
-                         'switching':'C1',
-                         'cutoff':0},
-
        # Harmonic Dihedral forces are an exception, in that
        # there can be more than one per force evaluation.
        # i.e., the user may wish to constrain different dihedrals.
@@ -49,40 +45,6 @@ class ForceField(ForceGroup):
                            'dihedralnum':[],    # dihedral index
                            'angle':[]}          # constraint angle in radians
        } #: Mapping from parameter names to default values for bonded and nonbonded forces, except fast electrostatics
-
-
-
-      # Only used if the user chooses a fast electrostatic algorithm
-      # for Coulombic forces.
-      self.fastelectro = {'Ewald':{'real':True,                     # real term
-                                   'reciprocal':True,               # reciprocal term
-                                   'correction':True,               # correction term
-                                   'alpha':'optimal',               # splitting parameter
-                                   'accuracy':0.00001,              # accuracy
-                                   'expansion':3.0},                # expansion factor
-
-                          'PME':{'real':True,                       # real term
-                                 'reciprocal':True,                 # reciprocal term
-                                 'correction':True,                 # correction term
-                                 'alpha':'optimal',                 # splitting parameter
-                                 'accuracy':0.00001,                # accuracy
-                                 'cutoff':6.0,
-                                 'expansion':3.0,                   # expansion factor
-                                 'interpolation':'BSpline',         # BSpline or Hermite
-                                 'gridsize':5},                     # grid dimensions
-                          
-                          'MultiGrid':{'direct':True,               # direct term
-                                       'correction':True,           # correction term
-                                       'smooth':True,               # smoothing term
-                                       'interpolation':'Hermite',   # BSpline or Hermite
-                                       'levels':2,                  # inter/anterpolation levels
-                                       's':10,                      # softening distance
-                                       'order':6,                   # interpolation order
-                                       'ratio':2,                   # fine-to-coarse ratio
-                                       'coarsegridsize':8,          # size of toplevel grid
-                                       'finegridsize':3,            # size of finest grid (VBC)
-                                       'finegridorigin':[0,0,0]}    # origin of finest grid (VBC)
-                          } #: Mapping from parameter names to default values for fast electrostatics
 
 
       # A dirty bit.  If this is set, on a call to propagate()
@@ -101,9 +63,7 @@ class ForceField(ForceGroup):
       # b - BOND, a - ANGLE, d - DIHEDRAL, i - IMPROPER
       # l - LENNARDJONES, c - COULOMB
       # lc - LENNARDJONES/COULOMB TOGETHER PAIRWISE EVALUATION (Default)
-      # m - MAGNETICDIPOLE
-      # mb - MOLLY BOND, ma - MOLLY ANGLE
-      self.forcetypes = [] #: List of force types, can contain 'b' (bond), 'a' (angle), 'd' (dihedral), 'i' (improper), 'h' (harmonic dihedral), 'l' (van der Waals), 'c' (electrostatic), 'e' (implicit solvation dielectric scaling), 'lc' (coupled vdW and electrostatic), 'm' (magnetic dipole), 'mb' (mollified bond) and 'ma' (mollified angle)
+      self.forcetypes = [] #: List of force types, can contain 'b' (bond), 'a' (angle), 'd' (dihedral), 'i' (improper), 'h' (harmonic dihedral), 'l' (van der Waals), 'c' (electrostatic), 'e' (implicit solvation dielectric scaling), 'lc' (coupled vdW and electrostatic)
       self.pythonforces = []
       ################################################################### 
       
@@ -116,7 +76,7 @@ class ForceField(ForceGroup):
       ###################################################################   
 
    def __setattr__(self, s, t):
-      if (s == 'params' or s == 'fastelectro'):   # IF WE CHANGE params or fastelectro, it's dirty
+      if (s == 'params'):   # IF WE CHANGE params or fastelectro, it's dirty
          self.dirty = 1
       self.__dict__[s] = t
       
@@ -126,57 +86,23 @@ class ForceField(ForceGroup):
       Remove all bonded (bond, angle, dihedral, improper, harmonic dihedral)
       forces from the force field.
       """
-      pos = self.findForce('b')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('a')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('d')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('i')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = 0
-      while (pos != -1):
-         pos = self.findForce('h')
-         if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
+      if (self.findForce('b') != -1): self.forcetypes.remove('b')
+      if (self.findForce('a') != -1): self.forcetypes.remove('a')
+      if (self.findForce('d') != -1): self.forcetypes.remove('d')
+      if (self.findForce('i') != -1): self.forcetypes.remove('i')
+      if (self.findForce('h') != -1):  # Can be multiple harmonic dihedral forces
+         while (self.forcetypes.count('h') != 0): self.forcetypes.remove('h')
+
 
    # REMOVE ALL NONBONDED FORCES FROM THE EVALUATION
    def removeNonbondedForces(self):
       """
       Remove all nonbonded forces (van der Waals, electrostatic, magnetic dipole) from the force field.
       """
-      pos = self.findForce('l')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('c')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('lc')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('m')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('e')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-
-
-   # REMOVE ALL MOLLY FORCES FROM THE EVALUATION
-   def removeMollyForces(self):
-      """
-      Remove all mollified forces from the force field.
-      """
-      pos = self.findForce('mb')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
-      pos = self.findForce('ma')
-      if (pos != -1):
-          self.forcetypes.__delslice__(pos, pos+1)
+      if (self.findForce('l') != -1): self.forcetypes.remove('l')
+      if (self.findForce('c') != -1): self.forcetypes.remove('c')
+      if (self.findForce('lc') != -1): self.forcetypes.remove('lc')
+      if (self.findForce('e') != -1): self.forcetypes.remove('e')
 
       
    # ADD BONDED FORCES ACCORDING TO THE PASSED STRING
@@ -190,19 +116,13 @@ class ForceField(ForceGroup):
       @param inputstring: Contains the characters representing the bonded forces to instantiate
       """
       self.removeBondedForces()
-      if (inputstring.find('b') != -1):
-          self.forcetypes.append('b')
-      if (inputstring.find('a') != -1):
-          self.forcetypes.append('a')
-      if (inputstring.find('d') != -1):
-          self.forcetypes.append('d')
-      if (inputstring.find('i') != -1):
-          self.forcetypes.append('i')
+      if (inputstring.find('b') != -1): self.forcetypes.append('b')
+      if (inputstring.find('a') != -1): self.forcetypes.append('a')
+      if (inputstring.find('d') != -1): self.forcetypes.append('d')
+      if (inputstring.find('i') != -1): self.forcetypes.append('i')
       if (inputstring.count('h') != 0):
-          for i in range(0, inputstring.count('h')):
-            self.forcetypes.append('h')
-      #SystemFactory.buildForces(self.theforces)
-
+          for i in range(0, inputstring.count('h')): self.forcetypes.append('h')
+      self.dirty = 1
 
    # ADD NONBONDED FORCES ACCORDING TO THE PASSED STRING
    # l=LENNARDJONES, c=COULOMB, m=MAGNETIC DIPOLE
@@ -216,36 +136,12 @@ class ForceField(ForceGroup):
       """
       self.removeNonbondedForces()
       if (inputstring.find('l') != -1 and
-          inputstring.find('c') != -1):
-          self.forcetypes.append('lc')
+          inputstring.find('c') != -1): self.forcetypes.append('lc')
       else:
-          if (inputstring.find('l') != -1):
-              self.forcetypes.append('l')
-          if (inputstring.find('c') != -1):
-              self.forcetypes.append('c')
-      if (inputstring.find('m') != -1):
-          self.forcetypes.append('m')
-      if (inputstring.find('e') != -1):
-          self.forcetypes.append('e')
-      #SystemFactory.buildForces(self.theforces)
-
-
-   # ADD MOLLY FORCES ACCORDING TO THE PASSED STRING
-   # b=BOND, a=ANGLE, d=DIHEDRAL, i=IMPROPER
-   # EXAMPLE INVOCATION: mollyForces("ba")  
-   def mollyForces(self, inputstring):
-      """
-      Add mollified forces contained in the input string, ('b' or 'a') are available.
-
-      @type inputstring: string
-      @param inputstring: Contains the characters representing the mollified forces to instantiate
-      """
-      self.removeMollyForces()
-      if (inputstring.find('b') != -1):
-          self.forcetypes.append('mb')
-      if (inputstring.find('a') != -1):
-          self.forcetypes.append('ma')
-
+          if (inputstring.find('l') != -1): self.forcetypes.append('l')
+          if (inputstring.find('c') != -1): self.forcetypes.append('c')
+      if (inputstring.find('e') != -1): self.forcetypes.append('e')
+      self.dirty = 1
 
    # FIND A FORCE AND RETURN ITS INDEX
    # IF NOT FOUND, RETURN -1.
@@ -254,22 +150,19 @@ class ForceField(ForceGroup):
       Search for a force in the array of force types.
 
       @type t: char
-      @param t: Type of force ('b', 'a', etc. see above).  Force can be bonded, nonbonded, or molly.
+      @param t: Type of force ('b', 'a', etc. see above).  Force can be bonded or nonbonded.
 
       @rtype: int
       @return: Index of this type of force in the types array; -1 if not found.
       """
-      ii = 0
-      while (ii < self.forcetypes.__len__()):
-          if (self.forcetypes[ii] == t):
-              return ii
-          ii += 1
+      for ii in range(0, len(self.forcetypes)):
+          if (self.forcetypes[ii] == t): return ii
       return -1
 
 
    def addPythonForce(self, pyforce):
       self.pythonforces.append(pyforce)
-      #self.addSystemForce(PySystemForce(pyforce))
+
 
    # BREAK THE LENNARDJONES/COULOMB EVALUATION OF THE PAIRS
    # TO SEPARATE COMPUTATIONS.  IF THEY ARE ALREADY SEPARATE
@@ -280,7 +173,7 @@ class ForceField(ForceGroup):
       """
       pos = self.findForce('lc')
       if (pos != -1):
-         self.forcetypes.remove(self.forcetypes[pos])
+         self.forcetypes.remove('lc')
          self.forcetypes.append('l')
          self.forcetypes.append('c')
 
@@ -305,16 +198,60 @@ class ForceField(ForceGroup):
       phys.app.energies.clear()
       phys.posvec.setC(phys.positions)
       self.evaluateSystemForces(phys.app, forces.forcevec)
-      self.evaluateExtendedForces(phys.app, forces.forcevec)
-   def calculateMollyForces(self, phys, forces):
-      """
-      Similar to calculateForces, but for mollified forces.
 
-      @type phys: Physical
-      @param phys: The Physical system.
 
-      @type forces: Forces
-      @param forces: MDL Forces object.
-      """
-      self.evaluateMollyForces(phys.myTop, phys.positions, forces.force, forces.energies)
+   def build(self):
+    """
+    Using an MDL force factory, instantiate all force objects stored in the forcetypes data member of each force field.  These will be SWIG-wrapped objects and are appended to the forcearray data member of each force field.
+    """
+    # TMC 1-13-08: I think this can be improved.  Future:
+    # 1. Have a build() member of the ForceField class.
+    # 2. Make the ForceFactory a singleton.
+    # 3. Give the ForceFactory a method which maps force characters to creation functions.  In this way there are multiple mapping levels.
 
+ 
+    self.forceFactory.hd = 0
+
+    if (self.params['LennardJones'] !=
+        self.params['Coulomb']):
+            self.breakLennardJonesCoulombForce()
+    self.dirty = 0
+
+    self.forcearray = []
+
+    bornflag=-1
+    for forcetype in self.forcetypes:
+          if (forcetype == 'b'):
+              self.forcearray.append(self.forceFactory.createBondForce(self.bc))
+          elif (forcetype == 'a'):
+              self.forcearray.append(self.forceFactory.createAngleForce(self.bc))
+          elif (forcetype == 'd'):
+              self.forcearray.append(self.forceFactory.createDihedralForce(self.bc))
+          elif (forcetype == 'i'):
+              self.forcearray.append(self.forceFactory.createImproperForce(self.bc))
+          elif (forcetype == 'l'):
+              self.forcearray.append(self.forceFactory.createLennardJonesForce(self.bc, self.params['LennardJones']))
+          elif (forcetype == 'c'):
+              if (self.params['Coulomb']['algorithm'] == 'SCPISM'):
+                 if (self.params['Coulomb'].has_key('bornswitch')):
+                    self.phys.myTop.doSCPISM = self.params['Coulomb']['bornswitch']
+                 else:
+                    self.phys.myTop.doSCPISM = 1
+                 self.phys.build()
+                 if (not self.params['Coulomb'].has_key('NoBorn')):
+                    self.forcearray.append(self.forceFactory.createBornForce(self.bc, self.params['Coulomb']))
+                    bornflag = len(self.forcearray)-1
+              if (not self.params['Coulomb'].has_key('OnlyBorn')):      
+                 self.forcearray.append(self.forceFactory.createCoulombForce(self.bc, self.params['Coulomb']))
+          elif (forcetype == 'e'):
+              self.forcearray.append(self.forceFactory.createCoulombDiElecForce(self.bc, self.params['CoulombDiElec']))
+          elif (forcetype == 'lc'):
+             self.forcearray.append(self.forceFactory.createLennardJonesCoulombForce(self.bc, self.params['LennardJonesCoulomb']))
+          elif (forcetype == 'h'):
+              self.forcearray.append(self.forceFactory.createHarmDihedralForce(self.bc, self.params['HarmonicDihedral']))
+
+          self.addForce(self.forcearray[len(self.forcearray)-1])
+    if (bornflag != -1): self.forcetypes.insert(bornflag, 'c')
+    for pyforce in self.pythonforces:
+         self.forcearray.append(PySystemForce(pyforce))
+         self.addSystemForce(self.forcearray[len(self.forcearray)-1])

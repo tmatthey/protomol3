@@ -2,16 +2,10 @@ import sys
 import BondForce
 import AngleForce
 import DihedralForce
-#import DihedralIIIForce
 import HarmDihedralForce
 import ImproperForce
-#import WrapperMetaForce
 import SimpleFullForce
-#import FullForce
 import CutoffForce
-#import FullEwaldForce
-#import PMEwaldForce
-#import MultiGridForce
 
     
 class ForceFactory:
@@ -25,8 +19,8 @@ class ForceFactory:
     self.bondForces = {'Vacuum':BondForce.BSF_Vacuum,
                        'Periodic':BondForce.BSF_Periodic} #: Mapping from boundary conditions to two-atom bond force object constructors
 
-    self.angleForces = {'Vacuum':AngleForce.ASF_VBC,
-                        'Periodic':AngleForce.ASF_PBC} #: Mapping from boundary conditions to three-atom angle force object constructors
+    self.angleForces = {'Vacuum':AngleForce.ASF_Vacuum,
+                        'Periodic':AngleForce.ASF_Periodic} #: Mapping from boundary conditions to three-atom angle force object constructors
 
     self.dihedralForces = {'Vacuum':DihedralForce.DSF_Vacuum,
                            'Periodic':DihedralForce.DSF_Periodic} #: Mapping from boundary conditions to four-atom dihedral force object constructors
@@ -125,12 +119,7 @@ class ForceFactory:
                             } #: Maps boundary conditions, algorithm and switching function pair to a unifed van der Waals and electrostatic force object constructor.  This saves performance by determining atom pairs just once for both types of pairwise forces.
 
 
-    #########################################
-    # WRAPPERS
-    #########################################
-    #self.mollify = WrapperMetaForce.WrapperMetaForce #: Wrapper function for MOLLY forces.  Wraps either a bond or angle force object.
-
-   
+               
   def createBondForce(self,bc):
     """
     Return a bond force object.
@@ -198,30 +187,6 @@ class ForceFactory:
     else:
       return self.harmDihedralForces[bc](params['kbias'], params['dihedralnum'], params['angle'], 0)      
 
-  def createMollyBondForce(self, bc):
-    """
-    Return a mollified bond force object.
-
-    @type bc: string
-    @param bc: Boundary conditions (Periodic or Vacuum)
-
-    @rtype: Force
-    @return: SWIG-wrapped mollified bond force object.
-    """
-    return self.mollify("MollyBond",1,self.bondForces[bc](),"MollyBond")
-
-  def createMollyAngleForce(self, bc):
-    """
-    Return a mollified angle force object.
-
-    @type bc: string
-    @param bc: Boundary conditions (Periodic or Vacuum)
-
-    @rtype: Force
-    @return: SWIG-wrapped mollified angle force object.
-    """
-    return self.mollify("MollyAngle",1,self.angleForces[bc](),"MollyAngle")
-
   def createLennardJonesForce(self, bc, params):
       """
       Return a van der Waals force object.
@@ -236,8 +201,8 @@ class ForceFactory:
       @return: SWIG-wrapped van der Waals force object.
       """
       alg = self.getParameter(params, 'algorithm', "SimpleFull")
-      switch = self.getParameter(params, 'switching', "Universal")        
-      newforce = self.ljForces[bc][alg][switch]()
+      switch = self.getParameter(params, 'switching', "Universal")
+      newforce = self.lookup(self.ljForces, 'LennardJones', bc, alg, switch)
       return self.applyParameters(newforce, bc, alg, switch, params)
 
   def createCoulombDiElecForce(self, bc, params):
@@ -254,11 +219,11 @@ class ForceFactory:
       @return: SWIG-wrapped coulomb dielectric force object.
       """
       alg = self.getParameter(params, 'algorithm', "SimpleFull")
-      switch = self.getParameter(params, 'switching', "Universal") 
-      newforce = self.cdeForces[bc][alg][switch]()
+      switch = self.getParameter(params, 'switching', "Universal")
+      newforce = self.lookup(self.cdeForces, 'CoulombDiElec', bc, alg, switch)
       return self.applyParameters(newforce, bc, alg, switch, params)
        	
-  def createCoulombForce(self, bc, params, fastelectro):
+  def createCoulombForce(self, bc, params):
       """
       Return an electrostatic force object.
       
@@ -273,42 +238,14 @@ class ForceFactory:
       """
       alg = self.getParameter(params, 'algorithm', "SimpleFull")
       switch = self.getParameter(params, 'switching', "Universal")
-         
-      if (alg == "Ewald"):
-         real = self.getParameter(fastelectro['Ewald'], 'real', True)
-         reciprocal = self.getParameter(fastelectro['Ewald'], 'reciprocal', True)
-         correction = self.getParameter(fastelectro['Ewald'], 'correction', True)
-         terms = str(real)[0].lower()+str(reciprocal)[0].lower()+str(correction)[0].lower()
-         newforce = self.coulombForces[bc][alg][switch][terms]()
-      elif (alg == "PME"):
-         real = self.getParameter(fastelectro['PME'], 'real', True)
-         reciprocal = self.getParameter(fastelectro['PME'], 'reciprocal', True)
-         correction = self.getParameter(fastelectro['PME'], 'correction', True)
-         interp = self.getParameter(fastelectro['PME'], 'interpolation', "BSpline")
-         terms = str(real)[0].lower()+str(reciprocal)[0].lower()+str(correction)[0].lower()         
-         newforce = self.coulombForces[bc][alg][switch][interp][terms]()
-      elif (alg == "MultiGrid"):
-         direct = self.getParameter(fastelectro['MultiGrid'], 'direct', True)
-         correction = self.getParameter(fastelectro['MultiGrid'], 'correction', True)
-         smooth = self.getParameter(fastelectro['MultiGrid'], 'smooth', True)
-         interp = self.getParameter(fastelectro['MultiGrid'], 'interpolation', "BSpline")
-         terms = str(direct)[0].lower()+str(correction)[0].lower()+str(smooth)[0].lower()
-         newforce = self.coulombForces[bc][alg][switch][interp][terms]()
-      else:
-        newforce = self.coulombForces[bc][alg][switch]()
-      return self.applyParameters(newforce, bc, alg, switch, params, fastelectro)
+      newforce = self.lookup(self.coulombForces, 'Coulomb', bc, alg, switch)
+      return self.applyParameters(newforce, bc, alg, switch, params)
 
   def createBornForce(self, bc, params):
       alg = "Cutoff"
       switch = self.getParameter(params, 'switching', "Universal")
       newforce = self.bornForces[bc][alg][switch]()
       return self.applyParameters(newforce, bc, alg, switch, params)
-  #def createLennardJonesTableForce(self, bc, params):
-  #    alg = "Cutoff"  # Must be the case
-  #    switch = self.switchingFunctions(params, 2)
-  #    newforce = ljTableForces[bc][alg][switch]
-  #    if (params.has_key('cutoff') and params['cutoff'] != -1):
-  #             newforce.setCutoff(params['cutoff'])
 
   def createLennardJonesCoulombForce(self, bc, params):
       """
@@ -329,45 +266,6 @@ class ForceFactory:
       switch = self.switchingFunctions(params, 2)
       newforce = self.ljCoulombForces[bc][alg][switch]()
       return self.applyParameters(newforce, bc, alg, switch, params)
-      
-  #def createLennardJonesCoulombERForce(self, bc, params):
-  #    alg = "Cutoff"  # Must be the case
-  #    switch = self.switchingFunctions(params, 2)        
-  #    newforce = self.ljCoulombERForces[bc][alg][switch]()      
-  #    return self.applyParameters(newforce, bc, alg, switch, params)
-
-      
-  #def createLennardJonesCoulombERTForce(self, bc, params):
-  #    alg = "Cutoff"  # Must be the case
-  #    switch = self.switchingFunctions(params, 2)   
-  #    newforce = self.ljCoulombERTForces[bc][alg][switch]()
-  #    return self.applyParameters(newforce, bc, alg, switch, params)
-  
-  #def createLennardJonesCoulombMGDForce(self, bc, params):
-  #    alg = "Cutoff"  # Different default here
-  #    switch = self.switchingFunctions(params, 3) 
-  #    newforce = self.ljCoulombMGDForces[bc][alg][switch]()
-  #    return self.applyParameters(newforce, bc, alg, switch, params)
-       
-  #def createLennardJonesCoulombMGDTForce(self, bc, params):
-  #    alg = "Cutoff"  # Must be the case
-  #    switch = self.switchingFunctions(params, 3) 
-  #    newforce = self.ljCoulombMGDTForces[bc][alg][switch]()
-  #    return self.applyParameters(newforce, bc, alg, switch, params)
-
-  def createMagneticDipoleForce(self, bc):
-      """
-      Return a magnetic dipole force object.
-      
-      @type bc: string
-      @param bc: Boundary conditions (Periodic or Vacuum)
-
-      @rtype: Force
-      @return: SWIG-wrapped magnetic dipole force object.
-      """
-      newforce = self.magneticDipoleForces[bc]()
-      return newforce
-
 
   def switchingFunctions(self, params, number):
       """
@@ -400,6 +298,56 @@ class ForceFactory:
                fxns += (params['switching'],)  # Just add the first
       return fxns
 
+
+  def lookup(self, table, forcename, bc, alg, switch):
+    """
+    Helper function, looks up the passed boundary conditions, algorithm
+    and switching function in the passed table.  If it exists, return the
+    corresponding force object instance.  Otherwise, output a helpful error
+    message for the user.
+
+    @type table: dict
+    @param table: Mapping from parameters to force constructor.
+
+    @type forcename: string
+    @param forcename: Name of force
+    
+    @type bc: string
+    @param bc: Boundary conditions
+
+    @type alg: string
+    @param alg: Nonbonded calculation algorithm.
+
+    @type switch: string or tuple of strings
+    @param switch: Switching function(s).
+    """
+
+    if (not table.has_key(bc)):
+      print "[MDL] ERROR: UNRECOGNIZED BOUNDARY CONDITIONS: ", bc, " FOR FORCE ", forcename
+      print "POSSIBILITIES INCLUDE: ",
+      for i in table.iterkeys():
+        print i
+    else:
+      if (not table[bc].has_key(alg)):
+        print "[MDL] ERROR: UNRECOGNIZED ALGORITHM: ", alg,
+        print " FOR FORCE ", forcename, " WITH ", bc, " BOUNDARY CONDITIONS."
+        print "POSSIBILITIES INCLUDE: ",
+        for i in table[bc].iterkeys():
+          print i
+      else:
+        if (not table[bc][alg].has_key(switch)):
+          print "[MDL] ERROR: UNRECOGNIZED SWITCHING FUNCTION(S): ", switch,
+          print " FOR FORCE ", forcename, " WITH ", bc, "BOUNDARY CONDITIONS",
+          print " AND ", alg, " ALGORITHM."
+          print "POSSIBILITIES INCLUDE: ",
+          for i in table[bc].iterkeys():
+            print i
+        else:
+          return table[bc][alg][switch]()
+
+    
+    
+    
   # Return the parameter if it exists, otherwise return the provided default value
   def getParameter(self, params, name, defaultval=0):
     """
@@ -449,37 +397,48 @@ class ForceFactory:
     @return: Pairwise force object with instantiated parameters.
     """
 
-    if (str(newforce).find('CoulombForceDiElec') != -1): # Dielectric forces have extra params
-      eps = self.getParameter(params, 'epsilon', 1)
-      d = self.getParameter(params, 'd', 78)
-      s = self.getParameter(params, 's', 0.3)
-      if (alg == "SimpleFull"):
-        newforce = newforce.makeNewDiElec(self.getParameter(params, 'blocksize', 32), eps, d, s)
-      elif (alg == "Cutoff"):
-        if (switch == "C1"):
-          newforce = newforce.makeNewDiElec(self.getParameter(params, 'cutoff'), eps, d, s)
-        elif (switch == "C2"):
-          newforce = newforce.makeNewDiElec(self.getParameter(params, 'cutoff'),
-                                            eps, d, s,
-                                            self.getParameter(params, 'switchon'))
-        else:
-          newforce = newforce.makeNewDiElec(self.getParameter(params, 'cutoff'),
-                                            eps, d, s,
-                                            self.getParameter(params, 'switchon'),
-                                            self.getParameter(params, 'switchoff'),
-                                            self.getParameter(params, 'order', 2))      
+    if (str(newforce).find('OneAtomPairTwo') != -1): # WE HAVE A LJ_COU PAIR
+      if (alg == "Cutoff"):
+        newforce = newforce.makeNewPair(switch[0], switch[1],
+                                        self.getParameter(params,'cutoff'),
+                                        self.getParameter(params,'switchon',0),
+                                        self.getParameter(params,'switchoff',self.getParameter(params,'cutoff')),
+                                        self.getParameter(params,'order',2))
+      else:
+        newforce = newforce.makeNewPair(self.getParameter(params, 'blocksize', 32))
+                                        
     else:
-      if (alg == "SimpleFull"):
-        newforce = newforce.makeNew(self.getParameter(params, 'blocksize', 32))
-      elif (alg == "Cutoff"):
-        if (switch == "C1" or switch == "Cutoff"):
-          newforce = newforce.makeNew(self.getParameter(params, 'cutoff'))
-        elif (switch == "C2"):
-          newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
-                                      self.getParameter(params, 'switchon'))
-        else:
-          newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
-                                      self.getParameter(params, 'switchon'),
-                                      self.getParameter(params, 'switchoff'),
-                                      self.getParameter(params, 'order', 2))
+      if (str(newforce).find('CoulombForceDiElec') != -1): # Dielectric forces have extra params
+        eps = self.getParameter(params, 'epsilon', 1)
+        d = self.getParameter(params, 'd', 78)
+        s = self.getParameter(params, 's', 0.3)
+        if (alg == "SimpleFull"):
+          newforce = newforce.makeNewDiElec(self.getParameter(params, 'blocksize', 32), eps, d, s)
+        elif (alg == "Cutoff"):
+          if (switch == "C1"):
+            newforce = newforce.makeNewDiElec(self.getParameter(params, 'cutoff'), eps, d, s)
+          elif (switch == "C2"):
+            newforce = newforce.makeNewDiElec(self.getParameter(params, 'cutoff'),
+                                              eps, d, s,
+                                              self.getParameter(params, 'switchon'))
+          else:
+            newforce = newforce.makeNewDiElec(self.getParameter(params, 'cutoff'),
+                                              eps, d, s,
+                                              self.getParameter(params, 'switchon'),
+                                              self.getParameter(params, 'switchoff'),
+                                              self.getParameter(params, 'order', 2))      
+      else:
+        if (alg == "SimpleFull"):
+          newforce = newforce.makeNew(self.getParameter(params, 'blocksize', 32))
+        elif (alg == "Cutoff"):
+          if (switch == "C1" or switch == "Cutoff"):
+            newforce = newforce.makeNew(self.getParameter(params, 'cutoff'))
+          elif (switch == "C2"):
+            newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
+                                        self.getParameter(params, 'switchon'))
+          else:
+            newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
+                                        self.getParameter(params, 'switchon'),
+                                        self.getParameter(params, 'switchoff'),
+                                        self.getParameter(params, 'order', 2))
     return newforce

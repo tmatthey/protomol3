@@ -8,20 +8,20 @@ from ForceField import *
 
 phys = Physical()
 io = IO()
-io.readPDBPos(phys, "data/ALA/minC7eq.pdb")
-io.readPSF(phys, "data/ALA/alan_mineq.psf")
-io.readPAR(phys, "data/ALA/par_all27_prot_lipid.inp")
-io.readEigenvectors(phys, "data/ALA/eigVmC7eq")
+io.readPDBPos(phys, "data/alanDipeptideVac/minC7eq.pdb")
+io.readPSF(phys, "data/alanDipeptideVac/alan_mineq.psf")
+io.readPAR(phys, "data/alanDipeptideVac/par_all27_prot_lipid.inp")
+io.readEigenvectors(phys, "data/alanDipeptideVac/eigVmC7eq")
 phys.bc = "Vacuum"
 phys.temperature = 300
 phys.cellsize = 5.0
 phys.exclude = "scaled1-4"
 phys.seed = 1234
 
+
+
 forces = Forces()
-ff = forces.makeForceField(phys)
-ff.bondedForces("badi")
-ff.nonbondedForces("lc")
+ff = forces.makeForceField(phys, "charmm")
 ff.params['LennardJones'] = {'algorithm':'Cutoff',
                              'switching':'C2',
                              'cutoff':12,
@@ -29,35 +29,50 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
 ff.params['Coulomb'] = {'algorithm':'SCPISM',
                         'switching':'Cutoff',
                         'cutoff':12}
-#ff.params['CoulombDiElec'] = ff.params['LennardJones'].copy()  # SAME AS LJ
 
-ff2 = forces.makeForceField(phys)
-ff2.bondedForces("badi")
-ff2.nonbondedForces("lc")
 
+ff2 = forces.makeForceField(phys, "charmm")
 ff2.params['LennardJones'] = {'algorithm':'Cutoff',
-                              'switching':'C2',
-                              'cutoff':5.5,
-                              'switchon':4.5}
-
-ff.params['Coulomb'] = {'algorithm':'SCPISM',
+                             'switching':'C2',
+                             'cutoff':12,
+                             'switchon':9}
+ff2.params['Coulomb'] = {'algorithm':'SCPISM',
                         'switching':'Cutoff',
-                        'cutoff':5.5,
-                        'bornswitch':1}
+                        'cutoff':12}
 
 
-#ff2.params['CoulombDiElec'] = ff2.params['LennardJones'].copy()  # SAME AS LJ
+ff3 = forces.makeForceField(phys, "charmm")
+ff3.params['LennardJones'] = {'algorithm':'Cutoff',
+                             'switching':'C2',
+                             'cutoff':12,
+                             'switchon':9}
+ff3.params['Coulomb'] = {'algorithm':'SCPISM',
+                        'switching':'Cutoff',
+                        'cutoff':12}
 
-#io.plots = {'pressure':4,
-#            'kineticenergy':1,
-#            'temperature':1}
 io.screen = 1
 
 prop = Propagator(phys, forces, io)
-prop.propagate(scheme=["NormModeInt", "NormModeMin"], 
-	       steps=50, cyclelength=1, dt=4.0, forcefield=[ff, ff2], 
-	       params={'NormModeInt':{'fixmodes':40,'gamma':91,'fdof':0},
-		       'NormModeMin':{'avModeMass':30}}
-              )
+
+prop.propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalModeMinimizer'],
+                       steps=20,
+                       cyclelength=[1,1],
+                       dt=4.0,
+                       forcefield=[ff, ff2, ff3],
+                       params={'NormalModeDiagonalize':{'reDiagFrequency':100,
+                                                        'minSteps':20,
+                                                        'minLim':0.1,
+                                                        'removeRand':1},
+                               'NormalModeLangevin':{'firstmode':1,
+                                                     'numbermodes':22,
+                                                     'gamma':80,
+                                                     'seed':1234,
+                                                     'gencompnoise':0,
+                                                     'temperature':300},
+                               'NormalModeMinimizer':{'minimlim':0.5,
+                                                      'rediag':0,
+                                                      'randforce':1,
+                                                      'simplemin':1,
+                                                      'euFactor':0.5}})
 
 

@@ -14,9 +14,9 @@ start = time.time()
 # PHYSICAL SYSTEM
 phys = Physical()
 io = IO()
-io.readPDBPos(phys, "data/diAlanine/alanC7axial.pdb")
-io.readPSF(phys, "data/diAlanine/blockdialanine.psf")
-io.readPAR(phys, "data/diAlanine/par_all27_prot_lipid.inp")
+io.readPDBPos(phys, "data/alanDipeptideBlock/alanC7axial.pdb")
+io.readPSF(phys, "data/alanDipeptideBlock/blockdialanine.psf")
+io.readPAR(phys, "data/alanDipeptideBlock/par_all27_prot_lipid.inp")
 phys.bc = "Vacuum"
 phys.temperature = 300
 phys.exclude = "scaled1-4"
@@ -26,28 +26,13 @@ phys.cellsize = 226.5
 # FORCES
 forces = Forces()
 ff = forces.makeForceField(phys, "charmm")
-#ff.bondedForces("badi")
-#ff.nonbonedForces("l")
-#ff.bondedForces("badi")
-#ff.nonbondedForces("lc")
-#ff.nonbondedForces("l")
-#ff.breakLennardJonesCoulombForce()
-
-#cf = ElectrostaticForce(phys, forces)
-#ff.addPythonForce(cf)
-#hd = HDForce(phys,forces,2,11,10*numpy.pi/180)  # THIS IS A PYTHON-PROTOTYPED FORCE
-#ff.addPythonForce(hd)
-
-#ff.params['HarmonicDihedral'] = {'kbias':2,
-#                                 'dihedralnum':11,
-#                                 'angle':10*numpy.pi/180}
 
 # IO
 io.screen = 1
 io.plots = {'kineticenergy':2}
 # EXECUTE
 prop = Propagator(phys, forces, io)
-prop.propagate(scheme="LangevinImpulseIntegrator", steps=1000, dt=1.0, forcefield=ff)
+prop.propagate(scheme="LangevinImpulse", steps=1000, dt=1.0, forcefield=ff)
     
 stop=time.time()
 print "TOTAL TIME: ", stop-start

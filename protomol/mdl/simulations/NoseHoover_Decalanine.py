@@ -29,4 +29,4 @@ io.screen = 2
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-prop.propagate(scheme="NoseHoover", steps=2000, dt=0.5, forcefield=ff)    
+prop.propagate(scheme="NoseNVTLeapfrog", steps=2000, dt=0.5, forcefield=ff)    

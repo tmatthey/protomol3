@@ -6,7 +6,7 @@ from Propagator import *
 from IO import *
 from ForceField import *
 from numpy import * # to generate random numbers
-from pylab import semilogy,clf # to use matplotlib
+#from pylab import semilogy,clf # to use matplotlib
 
 def converge(xf,xc,no,i,n):
 	#STRONG CONVERGENCE CRITERION TEST - TRAJECTORY DIFFERENCE
@@ -72,12 +72,6 @@ temp2v =numpy.ndarray(dof)
 ff = forceary[0].makeForceField(xc0[0])
 ff.bondedForces("badi")
 ff.nonbondedForces("le")
-ff.params = {'LennardJones':{'algorithm':'cutoff',
-			     'switching':'C2',
-			     'cutoff':12,
-			     'switchon':9},
-	     'CoulombDiElec':{
-	
 ff.setSwitching("LennardJones", "C2")
 ff.setAlgorithm("LennardJones", "Cutoff")
 ff.setCutoff("LennardJones", 12);

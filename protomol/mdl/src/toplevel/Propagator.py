@@ -295,8 +295,14 @@ class Propagator:
           outerscheme = scheme
           outerforcefield = forcefield
           chain += (params,)
-       if (self.forces.dirty()):
-          self.forces.build()
+       # Build force fields.
+       # Tricky, because we could be dealing with
+       # a single object or list.
+       if ((str(type(forcefield)))[7:len(str(type(forcefield)))-2] == 'list'):
+          for ff in forcefield:
+             if (ff.dirty): ff.build()
+       else:
+          forcefield.build()
        if (self.io.dirty):
           self.io.build()
        if (propFactory.getType(outerscheme) == "method"):
