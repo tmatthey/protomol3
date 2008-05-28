@@ -550,7 +550,6 @@ protomol/mdl/simulations/LangevinImpulse_Butane.py -text
 protomol/mdl/simulations/Leapfrog_Argon.py -text
 protomol/mdl/simulations/Leapfrog_BPTI_PME.py -text
 protomol/mdl/simulations/NormalMode_ALA.py -text
-protomol/mdl/simulations/NormalMode_WW.py -text
 protomol/mdl/simulations/NoseHoover_Decalanine.py -text
 protomol/mdl/simulations/NosePoincGL_Butane.py -text
 protomol/mdl/simulations/PIT_ALA_2.py -text
