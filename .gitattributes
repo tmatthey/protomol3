@@ -558,8 +558,6 @@ protomol/mdl/simulations/PIT_ALA_ISM.py -text
 protomol/mdl/simulations/PLeapfrog.py -text
 protomol/mdl/simulations/RMT_Butane.py -text
 protomol/mdl/simulations/lf_Argon.py -text
-protomol/mdl/simulations/svn-commit.2.tmp -text
-protomol/mdl/simulations/svn-commit.tmp -text
 protomol/mdl/simulations/takahashi_Argon.py -text
 protomol/mdl/src/__init__.py -text
 protomol/mdl/src/factories/ForceFactory.py -text
