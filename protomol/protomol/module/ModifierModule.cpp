@@ -3,6 +3,7 @@
 #include <protomol/modifier/ModifierIncrementTimestep.h>
 #include <protomol/modifier/ModifierRattle.h>
 #include <protomol/modifier/ModifierShake.h>
+#include <protomol/modifier/ModifierShadow.h>
 #include <protomol/modifier/ModifierRemoveAngularMomentum.h>
 #include <protomol/modifier/ModifierRemoveLinearMomentum.h>
 
@@ -28,6 +29,9 @@ defineInputValue(InputShakeMaxIter, "shakeMaxIter");
 defineInputValue(InputRattle, "rattle");
 defineInputValue(InputRattleEpsilon, "rattleEpsilon");
 defineInputValue(InputRattleMaxIter, "rattleMaxIter");
+defineInputValue(InputShadow, "shadow");
+defineInputValue(InputShadowOrder, "shadoworder");
+defineInputValue(InputShadowFreq, "shadowfreq");
 
 void ModifierModule::init(ProtoMolApp *app) {
   InputRemoveLinearMomentum::registerConfiguration(&app->config, -1);
@@ -38,6 +42,9 @@ void ModifierModule::init(ProtoMolApp *app) {
   InputRattle::registerConfiguration(&app->config, false);
   InputRattleEpsilon::registerConfiguration(&app->config, 1e-5);
   InputRattleMaxIter::registerConfiguration(&app->config, 30);
+  InputShadow::registerConfiguration(&app->config, false);
+  InputShadowOrder::registerConfiguration(&app->config, 2);
+  InputShadowFreq::registerConfiguration(&app->config, 1);
 }
 
 void ModifierModule::postBuild(ProtoMolApp *app) {
@@ -114,5 +121,19 @@ void ModifierModule::addModifiers(ProtoMolApp *app) {
 
     report << plain << "Rattle with epsilon " << rattleEpsilon <<", max "
            << rattleMaxIter << " iteration(s)." << endr;
+  }
+
+  // Shadow
+  bool shadow = app->config[InputShadow::keyword];
+  int shadowOrder = app->config[InputShadowOrder::keyword];
+  int shadowFreq = app->config[InputShadowFreq::keyword];
+  
+  if (shadow) {
+    modifier = new ModifierShadow(shadowOrder, shadowFreq, app->integrator);
+    app->integrator->bottom()->adoptPostStepModifier(modifier);
+    report << plain << "Calculating shadow energy with order 2k = "
+             << shadowOrder << ", and frequency = "
+             << shadowFreq << "."
+             << endr;
   }
 }

@@ -17,6 +17,9 @@ namespace ProtoMol {
   declareInputValue(InputShake, BOOL, NOCONSTRAINTS);
   declareInputValue(InputShakeEpsilon, REAL, NOTNEGATIVE);
   declareInputValue(InputShakeMaxIter, INT, NOTNEGATIVE);
+  declareInputValue(InputShadow, BOOL, NOCONSTRAINTS);
+  declareInputValue(InputShadowOrder, INT, NOTNEGATIVE);
+  declareInputValue(InputShadowFreq, INT, NOTNEGATIVE);
 
   class ModifierModule : public Module {
   public:
