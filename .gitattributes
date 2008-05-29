@@ -540,7 +540,6 @@ protomol/mdl/doc/userguide.tex -text
 protomol/mdl/simulations/DMDLeapfrog_Argon.py -text
 protomol/mdl/simulations/FTSM_ALA_ISM.py -text
 protomol/mdl/simulations/FTSM_ALA_SOLV.py -text
-protomol/mdl/simulations/FTSM_ALA_SOLV_NH.py -text
 protomol/mdl/simulations/FTSM_ALA_SOLV_VV.py -text
 protomol/mdl/simulations/FTSM_ALA_SOLV_VV_MPI.py -text
 protomol/mdl/simulations/FTSM_ALA_VAC.py -text
