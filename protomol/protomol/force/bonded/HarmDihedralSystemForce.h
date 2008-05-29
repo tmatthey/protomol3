@@ -28,7 +28,7 @@ namespace ProtoMol {
     // Constructor with parameters
     HarmDihedralSystemForce(Real kbias, int dihedral, Real dihedralReference,
                             bool other) : k(kbias), myDihedral(dihedral),
-      myDihedralReference(dtor(dihedralReference)), computeOthers(other) {}
+      myDihedralReference(dihedralReference), computeOthers(other) {}
 
     virtual ~HarmDihedralSystemForce() {}
 
@@ -89,11 +89,11 @@ namespace ProtoMol {
                    Value(computeOthers, ConstraintValueType::NoConstraints())));
     }
 
-  private:
-    virtual void doSetParameters(std::string &, std::vector<Value> values) {
+  public:
+    virtual void doSetParameters(std::vector<Value> values) {
       k = values[0];
       myDihedral = values[1];
-      myDihedralReference = dtor((Real)values[2]);
+      myDihedralReference = values[2];
       computeOthers = values[3];
     }
 
