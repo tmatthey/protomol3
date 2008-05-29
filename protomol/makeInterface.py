@@ -1,7 +1,7 @@
 # These modules should not have interface files generated
 # i.e, there are special 'rules' applied (for example for template
 # instantiatations.
-excluded_modules = ['GenericTopology', 'PARReader', 'PSFReader', 'PDBReader', 'XYZReader', 'XYZBinReader', 'EigenvectorReader', 'EigenvectorTextReader', 'Vector3DBlock', 'TopologyUtilities', 'ForceGroup', 'OutputCache', 'PDBWriter', 'XYZWriter', 'ScalarStructure']
+excluded_modules = ['GenericTopology', 'PARReader', 'PSFReader', 'PDBReader', 'XYZReader', 'XYZBinReader', 'EigenvectorReader', 'EigenvectorTextReader', 'Vector3DBlock', 'TopologyUtilities', 'ForceGroup', 'OutputCache', 'PDBWriter', 'XYZWriter', 'ScalarStructure', 'PyMTSIntegrator', 'PySTSIntegrator']
 
 def exclude(module):
     return excluded_modules.count(module)
@@ -15,7 +15,7 @@ def makeInterface(dir, module):
     FILE.writelines('#include <protomol/type/Real.h>\n')
     FILE.writelines('#include <protomol/ProtoMolApp.h>\n')
     if (module == 'ProtoMolApp'):
-       FILE.writelines('#include <protomol/integrator/STSIntegrator.h>\n')
+       FILE.writelines('#include <protomol/integrator/leapfrog/LeapfrogIntegrator.h>\n')
     if (dir.find('integrator/') != -1):
        FILE.writelines('#include <protomol/integrator/Integrator.h>\n')
        FILE.writelines('#include <protomol/integrator/StandardIntegrator.h>\n')
@@ -62,7 +62,7 @@ def makeInterface(dir, module):
        FILE.writelines('%include \"std_string.i\"\n')
     elif (module == 'ProtoMolApp'):
        FILE.writelines('%include <protomol/type/Vector3DBlock.i>\n')
-       FILE.writelines('%include <protomol/type/ScalarStructure.h>\n')
+       FILE.writelines('%include <protomol/type/ScalarStructure.i>\n')
     FILE.writelines('%include \"'+module+'.h\"\n')
     if (dir.find('integrator/') != -1 and module != 'NormalModeUtilities'):
        FILE.writelines('\n')
@@ -96,8 +96,8 @@ def makeInterface(dir, module):
        FILE.writelines('\n')
        FILE.writelines('%extend ProtoMol::'+module+' {\n')
        FILE.writelines('void makeApp(GenericTopology* topo,\n')
-       FILE.writelines('             ProtoMol::Vector3DBlock positions,\n')
-       FILE.writelines('             ProtoMol::Vector3DBlock velocities,\n')
+       FILE.writelines('             ProtoMol::Vector3DBlock& positions,\n')
+       FILE.writelines('             ProtoMol::Vector3DBlock& velocities,\n')
        FILE.writelines('             ScalarStructure energies,\n')
        FILE.writelines('             Real timestep) {\n')
        FILE.writelines('   self->topology = topo;\n')
@@ -107,7 +107,7 @@ def makeInterface(dir, module):
        FILE.writelines('   self->velocities.c = velocities.c;\n')
        FILE.writelines('   self->energies = energies;\n')
        #FILE.writelines('   self->initialize(app);\n')
-       FILE.writelines('   self->integrator = new STSIntegrator(timestep, NULL);\n')
+       FILE.writelines('   self->integrator = new LeapfrogIntegrator(timestep, NULL);\n')
        FILE.writelines('   self->outputCache.initialize(self);\n')
        FILE.writelines('}\n')
        FILE.writelines('};\n')       

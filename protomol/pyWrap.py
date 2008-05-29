@@ -9,7 +9,7 @@ from makeInterface import *
 # The module names will correspond to prefixes for the interface
 # file, source file and shared object.
 mdlmodules = {'protomol/integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator'],
-              'protomol/integrator/':['STSIntegrator', 'MTSIntegrator'],
+              'protomol/integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
 	      'protomol/integrator/base':['LangevinImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
               'protomol/type':['Vector3DBlock', 'ScalarStructure'],
 	      'protomol/integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax'],
