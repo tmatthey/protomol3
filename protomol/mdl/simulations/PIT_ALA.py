@@ -135,7 +135,6 @@ propary.append(Propagator(xf[i], forceary[1], io))
 
 
 
-print "FINE"
 propary[1].propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalModeMinimizer'],
                        steps=coarse2fine*100,
                        cyclelength=[1,1],
@@ -157,7 +156,6 @@ propary[1].propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'Nor
                                                       'simplemin':1,
                                                       'euFactor':0.5}})
 
-print "DONE FINE"
 for ii in range(0,dof):
 	xc0[0].positions[ii]=xf[0].positions[ii]
 	xc0[0].velocities[ii]=xf[0].velocities[ii]
@@ -178,7 +176,6 @@ for i in range(0,numpoints):
 		tempv[ii]=xc0[i].velocities[ii]
 	forceary[0].forcevec.clear()
 	propary[0].phys = xc0[i]
-	print "COARSE"
 	propary[0].propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalModeMinimizer'],
                        steps=1,
                        cyclelength=[1,1],
@@ -199,7 +196,6 @@ for i in range(0,numpoints):
                                                       'randforce':1,
                                                       'simplemin':1,
                                                       'euFactor':0.5}})
-        print "DONE COARSE"
 
 	for ii in range(0, dof):
 		xc0[i+1].positions[ii] = xc0[i].positions[ii]
@@ -213,7 +209,6 @@ for i in range(0,numpoints):
 #line 5 in pseudocode
 	forceary[1].forcevec.clear()
 	propary[1].phys = xf[i]
-	print "FINE"
 	propary[1].propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalModeMinimizer'],
                        steps=coarse2fine*100,
                        cyclelength=[1,1],
@@ -235,7 +230,6 @@ for i in range(0,numpoints):
                                                       'simplemin':1,
                                                       'euFactor':0.5}})
 
-        print "DONE FINE"
 
 
    	for ii in range(0, dof):
