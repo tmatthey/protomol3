@@ -1,6 +1,6 @@
 import sys
 import os
-from makeInterface import *
+#from makeInterface import *
 
 
 # List of Python modules which should be generated.
@@ -15,7 +15,7 @@ mdlmodules = {'protomol/integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTru
 	      'protomol/integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax'],
               'protomol/integrator/hessian':['HessianInt'],
               'protomol/io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
-              'protomol/output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
+              'protomol/output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
               'protomol/base':['MathUtilities'],
 	      'protomol/topology':['TopologyUtilities', 'GenericTopology'],
 	      'protomol/force/bonded':['BondForce','AngleForce','DihedralForce','HarmDihedralForce','ImproperForce'],
@@ -45,10 +45,12 @@ def pyWrap(env):
   env.Append(SHLINKFLAGS=' -Wl,-E')
   env.Append(_LIBDIRFLAGS="-L.")
 
+  if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
+    env.Append(SWIGFLAGS='-DHAVE_GUI')
   for dir in mdlmodules.iterkeys():
     modulelist = mdlmodules[dir]
     for i in range(0, len(modulelist)):
        module = modulelist[i]
-       if (dir.find('force/') == -1 and excluded_modules.count(module) == 0):
-          makeInterface(dir, module)
+       #if (dir.find('force/') == -1 and excluded_modules.count(module) == 0):
+       #   makeInterface(dir, module)
        env.SharedLibrary(target=dir+'/_'+module+'.so', source=[dir+'/'+module+'.i'], SHLIBPREFIX="")

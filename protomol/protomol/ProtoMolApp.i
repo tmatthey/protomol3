@@ -9,10 +9,13 @@ using namespace ProtoMol;
 
 %include <protomol/type/Real.h>
 %include <protomol/type/Vector3DBlock.i>
-%include <protomol/type/ScalarStructure.h>
+%include <protomol/type/ScalarStructure.i>
 %include "ProtoMolApp.h"
 
 %extend ProtoMol::ProtoMolApp {
+void uncache() {
+   self->outputCache.uncache();
+}
 void makeApp(GenericTopology* topo,
              ProtoMol::Vector3DBlock& positions,
              ProtoMol::Vector3DBlock& velocities,
