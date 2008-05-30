@@ -433,7 +433,6 @@ protomol/doc/header.html -text
 protomol/doc/protomol.gif -text
 protomol/doc/protomol.html -text
 protomol/doc/protomol_icon.ico -text
-protomol/makeInterface.py -text
 protomol/mdl/MDLSetup.bash -text
 protomol/mdl/MDLSetup.tcsh -text
 protomol/mdl/README -text
