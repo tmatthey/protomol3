@@ -15,6 +15,7 @@ import OutputCache
 import OutputEnergies
 import OutputDCDTrajectory
 import OutputDCDTrajectoryVel
+import OutputFAHGUI
 import OutputScreen
 import OutputXYZTrajectoryForce
 import OutputXYZTrajectoryPos
@@ -414,8 +415,8 @@ class IO:
        # LOOP OVER ALL OUTPUTS
        for output in self.myOutputs:
          # USING THE FACTORY, UPDATE THIS OUTPUT WITH SYSTEM DATA
-         output.uncache(phys.app)
-         output.initialize(phys.app)
+         if (step == 0): output.initialize(phys.app)
+         else: phys.app.uncache()
          # RUN THE OUTPUT
          output.run(step)
    #####################################################################################
@@ -833,6 +834,8 @@ class IO:
                self.myOutputs.append(OutputXYZTrajectoryPos.OutputXYZTrajectoryPos(filename, freq))
             elif (output == 'xyztrajvel'):
                self.myOutputs.append(OutputXYZTrajectoryVel.OutputXYZTrajectoryVel(filename, freq))
+            elif (output == 'fahgui'):
+               self.myOutputs.append(OutputFAHGUI.OutputFAHGUI(filename, freq, 52753, 1, 'ProtoMol_3.0'))
 
       if (self.screen != -1):
          self.myOutputs.append(OutputScreen.OutputScreen(self.screen))
