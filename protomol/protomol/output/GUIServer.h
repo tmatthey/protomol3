@@ -26,18 +26,30 @@ namespace ProtoMol {
     uint8_t type[4];
     float charge;
     float radius;
+#if defined _WIN32
   };
+#else
+  } __attribute__((packed));
+#endif
   
   struct FAH_BOND {
     uint32_t a; /* rule: a < b */
     uint32_t b;
+#if defined _WIN32
   };
+#else
+  } __attribute__((packed));
+#endif
   
   struct FAH_XYZ{
     float x;
     float y;
     float z;
+#if defined _WIN32
   };
+#else
+  } __attribute__((packed));
+#endif
 
   struct FAH_INFO{
     uint32_t magic;
@@ -48,7 +60,11 @@ namespace ProtoMol {
     uint32_t frames;
     uint32_t atom_count;
     uint32_t bond_count;
+#if defined _WIN32
   };
+#else
+  } __attribute__((packed));
+#endif
 
   struct FAH_CURRENT{
     uint32_t magic;
@@ -58,7 +74,11 @@ namespace ProtoMol {
     uint32_t frames_done;
     float    energy;
     float    temperature;
+#if defined _WIN32
   };
+#else
+  } __attribute__((packed));
+#endif
 
   class GUIServer {
   public:
