@@ -59,7 +59,7 @@ namespace ProtoMol {
 	  topo->molecules[topo->atoms[atom2].molecule].water)
 	return;
 
-      sw = topo->doSCPISM;
+      sw = 3; // Always quartic now  6/1/2008
       Real q_i = topo->atoms[atom1].scaledCharge;
       Real q_j = topo->atoms[atom2].scaledCharge;
 
