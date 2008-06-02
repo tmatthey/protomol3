@@ -17,14 +17,13 @@ using namespace ProtoMol;
 const string OutputEnergies::keyword("allEnergiesFile");
 
 OutputEnergies::OutputEnergies() :
-  OutputFile(), myDoMolecularTemperature(false), myDoShadow(false) {}
+  OutputFile(), myDoMolecularTemperature(false) {}
 
 OutputEnergies::OutputEnergies(const string &filename, int freq,
                                int cacheFreq, int cacheSize, Real closeTime,
-                               bool doMolTemp, bool doShadow) :
+                               bool doMolTemp) :
   OutputFile(filename, freq, cacheFreq, cacheSize,
-             closeTime), myDoMolecularTemperature(doMolTemp),
-  myDoShadow(doShadow) {}
+             closeTime), myDoMolecularTemperature(doMolTemp) {}
 
 void OutputEnergies::doInitialize() {
 #ifdef BUILD_FOR_FAH
@@ -63,8 +62,7 @@ void OutputEnergies::doInitialize() {
   if (myDoMolecularTemperature)
     allEnergiesHeaderFile
       << " " << setw(14) << "Mol_Temp(K)";
-  if (myDoShadow)
-    allEnergiesHeaderFile
+  allEnergiesHeaderFile
       << " " << setw(20) << "E_shadow";
 
   allEnergiesHeaderFile << endl;
@@ -117,7 +115,6 @@ void OutputEnergies::doRunCached(int) {
   if (myDoMolecularTemperature)
     myBuffer << " " << setw(14)
              << app->outputCache.molecularTemperature();
-  if (myDoShadow)
     myBuffer << " " << setw(20)
              << setprecision(16)    //  High precision needed.
              << app->energies[ScalarStructure::SHADOW];
@@ -135,5 +132,4 @@ void OutputEnergies::getParameters(vector<Parameter> &parameter) const {
   OutputFile::getParameters(parameter);
   parameter.push_back(Parameter("molecularTemperature",
                                 Value(myDoMolecularTemperature), false));
-  parameter.push_back(Parameter("shadowEnergy", Value(myDoShadow), false));
 }

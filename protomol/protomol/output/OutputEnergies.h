@@ -13,8 +13,7 @@ namespace ProtoMol {
   public:
     OutputEnergies();
     OutputEnergies(const std::string &filename, int freq, int cacheFreq,
-                   int cacheSize, Real closeTime, bool doMolTemp,
-                   bool doShadow);
+                   int cacheSize, Real closeTime, bool doMolTemp);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class OutputEnergies
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,7 +46,6 @@ namespace ProtoMol {
     static const std::string keyword;
   private:
     bool myDoMolecularTemperature;
-    bool myDoShadow;
   };
 }
 #endif
