@@ -124,8 +124,7 @@ void OutputEnergies::doRunCached(int) {
 
 Output *OutputEnergies::doMake(const vector<Value> &values) const {
   return new OutputEnergies(values[0], values[1], values[2], values[3],
-                            values[4], values[5],
-                            values[6]);
+                            values[4], values[5]);
 }
 
 void OutputEnergies::getParameters(vector<Parameter> &parameter) const {
