@@ -2,6 +2,7 @@
 #define MODIFIERSHADOW_H
 
 #include <protomol/modifier/Modifier.h>
+#include <protomol/type/Vector3DBlock.h>
 
 namespace ProtoMol {
 
