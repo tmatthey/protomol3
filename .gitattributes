@@ -535,6 +535,7 @@ protomol/mdl/data/water_648/water648.spce.par -text
 protomol/mdl/data/water_648/water648.spce.psf -text
 protomol/mdl/data/water_648/water648.tip3.par -text
 protomol/mdl/data/water_648/water648.tip3.psf -text
+protomol/mdl/doc/matplotlib2.eps -text
 protomol/mdl/doc/userguide.tex -text
 protomol/mdl/simulations/DMDLeapfrog_Argon.py -text
 protomol/mdl/simulations/FTSM_ALA_ISM.py -text
