@@ -12,13 +12,13 @@ using namespace ProtoMol;
 const string Output::scope("Output");
 
 Output::Output() :
-  myFirstStep(0), myNextStep(0), myLastStep(0), myFirst(true),
-  myOutputFreq(0), app(0)
+  app(0), myFirstStep(0), myNextStep(0), myLastStep(0), myFirst(true),
+  myOutputFreq(0)
 {}
 
 Output::Output(int freq) :
-  myFirstStep(0), myNextStep(0), myLastStep(0), myFirst(true),
-  myOutputFreq(freq), app(0)
+  app(0), myFirstStep(0), myNextStep(0), myLastStep(0), myFirst(true),
+  myOutputFreq(freq)
 {}
 
 void Output::initialize(const ProtoMolApp *app) {
