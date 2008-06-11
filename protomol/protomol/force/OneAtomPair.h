@@ -79,7 +79,7 @@ namespace ProtoMol {
         return;
 
       // Calculate the force and energy.
-      Real energy, force;
+      Real energy = 0, force = 0;
       Real rDistSquared = (TNonbondedForce::DIST_R2 ? 1.0 / distSquared : 1.0);
       nonbondedForceFunction(energy, force, distSquared, rDistSquared, diff,
                              realTopo, i, j, excl);

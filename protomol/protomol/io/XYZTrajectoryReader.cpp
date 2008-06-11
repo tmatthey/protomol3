@@ -46,11 +46,8 @@ void XYZTrajectoryReader::doRead(Vector3DBlock &xyz) {
   vector<string> tokens;
 
   // Number of frames
-  if (first) {
+  if (first)
     if (getLineTokens(tokens) != 1) THROW("Invalid frame count");
-    unsigned int n = String::parseUInteger(tokens[0]);
-  }
-  //xyz.resize(n);
 
   try {
     // Read frames
@@ -64,6 +61,7 @@ void XYZTrajectoryReader::doRead(Vector3DBlock &xyz) {
     xyz.clear();
     throw e;
   }
+
   first = false;
 }
 

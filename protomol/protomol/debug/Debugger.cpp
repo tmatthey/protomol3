@@ -82,7 +82,7 @@ bool Debugger::_getStackTrace(trace_t &trace) {
 
   // Spawn gdb process
   int argc = 0;
-  char *argv[5];
+  const char *argv[5];
 
   argv[argc++] = "gdb";
   argv[argc++] = (char *)executableName.c_str();
@@ -102,7 +102,7 @@ bool Debugger::_getStackTrace(trace_t &trace) {
     write(inPipe->getInFD(), debugCmd.c_str(), debugCmd.length());
 
     // Execute debugger process
-    debugProc.exec(argv);
+    debugProc.exec((char **)argv);
 
     // Read output
     FILE *out = fdopen(outPipe->getOutFD(), "r");
@@ -159,7 +159,7 @@ bool Debugger::_getStackTrace(trace_t &trace) {
     }
 
     return true;
-  } catch (Exception &e) {
+  } catch (const Exception &e) {
     trace.push_back(string("Stack Trace Error: ") + e.getMessage());
   }
 
@@ -199,7 +199,7 @@ void b(int x) {
 void a(char *x) {
   try {
     b(10);
-  } catch (Exception &e) {
+  } catch (const Exception &e) {
     THROWC("Test exception!", e);
   }
 }
@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
 
   try {
     a("test");
-  } catch (Exception &e) {
+  } catch (const Exception &e) {
     cerr << "Exception: " << e << endl;
   }
 

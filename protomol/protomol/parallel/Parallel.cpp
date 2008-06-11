@@ -382,9 +382,8 @@ void Parallel::setMode(ParallelType mode) {
     mode == ParallelType::MASTERSLAVE ? myMasterId : -1);
 #endif
 #ifdef DEBUG_PARALLEL
-  report << allnodesserial << "ParallelMode (" << getId << ") :
-   " <<
-  getMode().getString() << endr;
+  report << allnodesserial << "ParallelMode (" << getId << ") : "
+         << getMode().getString() << endr;
 #endif
 }
 
@@ -968,10 +967,9 @@ bool Parallel::next() {
   }
 
 #ifdef DEBUG_PARALLEL
-  report << allnodes << plain << "Next (" << getId() << ") :
-   " <<
-  (bool)doNext << ", " << myWorkState << ", " << oldNext << ", [" <<
-  myNextRange[0] << "," << myNextRange[1] << "]" << endr;
+  report << allnodes << plain << "Next (" << getId() << ") : "
+         << (bool)doNext << ", " << myWorkState << ", " << oldNext << ", ["
+         << myNextRange[0] << "," << myNextRange[1] << "]" << endr;
 #endif
   return doNext;
 }

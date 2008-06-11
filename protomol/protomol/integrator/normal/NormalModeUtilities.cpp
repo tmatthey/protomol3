@@ -150,8 +150,10 @@ namespace ProtoMol {
     for( int i=0; i < _3N; i++)
          iPforce->c[i] *= invSqrtMass[i/3];
     //c=hQ^T*M^{-1/2}*f
-    char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
+#endif
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
     //
 #if defined(HAVE_LAPACK)
@@ -164,7 +166,9 @@ namespace ProtoMol {
 #endif
     //
     //calculate f''=M^{-1/2}*f'-hQc using BLAS
-    char *transB = "N"; 
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transB = "N"; 
+#endif
     alpha = -1.0;	beta = 1.0;
     //
 #if defined(HAVE_LAPACK)
@@ -195,8 +199,10 @@ namespace ProtoMol {
     for( int i=0; i < _3N; i++)
             iPforce->c[i] *= sqrtMass[i/3];
     //c=hQ^T*M^{-1/2}*f
-    char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
+#endif
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
     //
 #if defined(HAVE_LAPACK)
@@ -209,7 +215,9 @@ namespace ProtoMol {
 #endif
     //
     //calculate f''=M^{-1/2}*f'-hQc using BLAS
-    char *transB = "N"; 
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transB = "N"; 
+#endif
     alpha = -1.0;	beta = 1.0;
     //
 #if defined(HAVE_LAPACK)
@@ -241,8 +249,10 @@ namespace ProtoMol {
             iPforce->c[i] *= invSqrtMass[i/3];
     }
     //c=Q^T*M^{-1/2}*f
-    char *transA = "T";							// Transpose, LAPACK checks only first character N/V
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "T";							// Transpose, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
+#endif
     double alpha = 1.0;	double beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
@@ -255,7 +265,9 @@ namespace ProtoMol {
 #endif
     //
     //f''=Qc
-    char *transB = "N"; /* LAPACK checks only first character N/V */
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transB = "N"; /* LAPACK checks only first character N/V */
+#endif
     alpha = 1.0;	beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
@@ -286,8 +298,10 @@ namespace ProtoMol {
     for( int i=0; i < _3N; i++)
             iPforce->c[i] *= sqrtMass[i/3];
     //c=Q^T*M^{-1/2}*v
-    char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
+#endif
     double alpha = 1.0;	double beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
@@ -300,7 +314,9 @@ namespace ProtoMol {
 #endif
     //
     //v''=Qc
-    char *transB = "N"; /* LAPACK checks only first character N/V */
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transB = "N"; /* LAPACK checks only first character N/V */
+#endif
     alpha = 1.0;	beta = 0.0;
     //
 #if defined(HAVE_LAPACK)
@@ -338,9 +354,11 @@ namespace ProtoMol {
   //Project from mode subspace to 3D space
   Vector3DBlock* NormalModeUtilities::cartSpaceProj(double *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0){
     //
-    char *transA = "N";							// Transpose Q, LAPACK checks only first character N/V
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "N";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
+#endif
     //
 #if defined(HAVE_LAPACK)
     dgemv_ (transA, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, iPos->c, &incxy);
@@ -373,9 +391,11 @@ namespace ProtoMol {
     for( int i=0; i < _3N; i++)
         vPos.c[i] *= sqrtMass[i/3];
     //c=Q^T*M^{-1/2}*v
-    char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;
+#endif
     //
 #if defined(HAVE_LAPACK)
             dgemv_ (transA, &m, &n, &alpha, (*Q), &m, vPos.c, &incxy, &beta, cPos, &incxy);
@@ -483,10 +503,10 @@ namespace ProtoMol {
    isuppz = new int[2*dim];
    iwork = new int[10*dim];
    //Diagonalize
-    char *jobz = "V"; char *range = "A"; char *uplo = "U"; /* LAPACK checks only first character N/V */
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *jobz = "V"; const char *range = "A"; const char *uplo = "U"; /* LAPACK checks only first character N/V */
     int n = dim;             /* order of coefficient matrix a  */
     int lda = dim;           /* leading dimension of a array*/
-    int info;				/* output 0=success */
     double vl = 1.0;
     double vu = 1.0; 
     int il = 1;
@@ -496,6 +516,8 @@ namespace ProtoMol {
     int liwork = 10*dim;						/* dimension of int work array*/
     //Recomended abstol for max precision
     char *cmach = "safe min";
+#endif
+    int info = 0;				/* output 0=success */
     //call LAPACK 
     //	
 #if defined( HAVE_LAPACK )
@@ -575,10 +597,12 @@ namespace ProtoMol {
 
   //find Hessian projected into mxm 'inner' space
   void NormalModeUtilities::getInnerHess(double *eigVec, double *hess, double *innerHess){
-    char *transA = "T"; char *transB = "N";
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "T"; const char *transB = "N";
     int m = _rfM; int n = _3N; int k = _3N;
     int lda = _3N; int ldb = _3N; int ldc = _rfM;
     double alpha = 1.0;	double beta = 0.0;
+#endif
     double *tempMat = new double[_rfM*_3N];
 
     //
@@ -602,10 +626,12 @@ namespace ProtoMol {
 
   //product of eigenvectors and diagonalized 'inner' hessian
   void NormalModeUtilities::getNewEigs(double *eigVec, double *origEigVec, double *innerEigVec){
-    char *transA = "N"; char *transB = "N";
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "N"; const char *transB = "N";
     int m = _3N; int n = _rfM; int k = _rfM;
     int lda = _3N; int ldb = _rfM; int ldc = _3N;
     double alpha = 1.0;	double beta = 0.0;
+#endif
     //double *tempMat = new double[_rfM*_3N];
 
     //
@@ -631,10 +657,12 @@ namespace ProtoMol {
     //Get current Hessian
     for(int i=0 ; i<_3N*_3N ; i++) hsnhessM[i] /= raylAverage;	//divide sum of Hessians
     //set BLAS variables
-    char *transA = "N";	
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "N";	
     int m = _3N; int n = _3N; 
     int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;
+#endif
     //calculate Rayleigh Quo/bound
     //double rQ, boundRq;
     //define temporary position/force vector

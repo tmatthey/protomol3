@@ -31,18 +31,20 @@ namespace ProtoMol {
     explicit Vector3DBlock(unsigned int n) : Proxy() {
       c = new Real[3*n];
       for (unsigned int i = 0; i < n; i++)
-	vec.push_back(Vector3DB(c+3*i));
+        vec.push_back(Vector3DB(c+3*i));
     }
     
     Vector3DBlock(unsigned int n, const Vector3D &t) : Proxy() {
       c = new Real[3*n];
       for (unsigned int i = 0; i < n; i++)
-	vec.push_back(Vector3DB(t, c+3*i));
+        vec.push_back(Vector3DB(t, c+3*i));
     }
 
     Vector3DBlock(const Vector3DBlock &rhs) {
       this->intoAssign(rhs);
     }
+
+    //Vector3DBlock(const std::vector<>) {
 
     Vector3DBlock &operator=(const Vector3DBlock &rhs) {
       this->intoAssign(rhs);
@@ -77,49 +79,49 @@ namespace ProtoMol {
       // Three cases.
       // Case 1: n is the same as the current size.
       if (n == size()) {
-	// Do nothing.
-	return;
+        // Do nothing.
+        return;
       }
       // Case 2: n is less than the current size (we're removing data)
       else if (n < size()) {
-	// 1. Create a smaller array.
-	Real* newdata = new Real[n*3];
-	// 2. Copy data from c
-	for (unsigned int i = 0; i < 3*n; i++) {
-	  newdata[i] = c[i];
-	  // 2b. Also set internal vector3d pointers to new data
-	  if (i % 3 == 0)
-	    vec[i].c = newdata+3*i;
-	}
-	// 3. Delete old c
-	delete c;
-	// 4. Reset c to the new data
-	c = newdata;
-	// 5. Resize STL vector (will just remove entries at the end)
-	vec.resize(n);
+        // 1. Create a smaller array.
+        Real* newdata = new Real[n*3];
+        // 2. Copy data from c
+        for (unsigned int i = 0; i < 3*n; i++) {
+          newdata[i] = c[i];
+          // 2b. Also set internal vector3d pointers to new data
+          if (i % 3 == 0)
+            vec[i].c = newdata+3*i;
+        }
+        // 3. Delete old c
+        delete c;
+        // 4. Reset c to the new data
+        c = newdata;
+        // 5. Resize STL vector (will just remove entries at the end)
+        vec.resize(n);
       }
       // Case 3: n is greater than the current size (must add data)
       else if (n > size()) {
-	// 1. Create a bigger array
-	Real* newdata = new Real[n*3];
-	// 2. Copy data from c
-	int currentsize = size();
-	for (int i = 0; i < currentsize*3; i++) {
-	  newdata[i] = c[i];
-	  // 2b. Also set internal vector3d pointers to new data
-	  if (i % 3 == 0) {
-	    vec[i].c = newdata+3*i;
-	  }
-	}
-	// 3. Resize STL vector (will just add entries to the end)
-	// 5. Delete old c
-	if (currentsize != 0) delete c;
-	// 6. Reset c to the new data
-	c = newdata;
-	// 4. Point internal vector3d pointers to new data	
-	for (unsigned int i = currentsize; i < n; i++) {
-	  vec.push_back(Vector3DB(t.c[0], t.c[1], t.c[2], c+3*i));
-	}
+        // 1. Create a bigger array
+        Real* newdata = new Real[n*3];
+        // 2. Copy data from c
+        int currentsize = size();
+        for (int i = 0; i < currentsize*3; i++) {
+          newdata[i] = c[i];
+          // 2b. Also set internal vector3d pointers to new data
+          if (i % 3 == 0) {
+            vec[i].c = newdata+3*i;
+          }
+        }
+        // 3. Resize STL vector (will just add entries to the end)
+        // 5. Delete old c
+        if (currentsize != 0) delete c;
+        // 6. Reset c to the new data
+        c = newdata;
+        // 4. Point internal vector3d pointers to new data	
+        for (unsigned int i = currentsize; i < n; i++) {
+          vec.push_back(Vector3DB(t.c[0], t.c[1], t.c[2], c+3*i));
+        }
       }
     }
 
@@ -130,16 +132,16 @@ namespace ProtoMol {
     /// Clear (set to zero) each element of the vector.
     void zero(int n = -1) {
       for (unsigned int i = 0; i < size()*3; i++)
-	c[i] = 0;
+        c[i] = 0;
       if (n >= 0 && n != (int)size())
-	resize(n, Vector3D(0,0,0));
+        resize(n, Vector3D(0,0,0));
     }
 
 
     Vector3DBlock &intoAssign(const Vector3DBlock &x) {
       if (size() != x.size()) resize(x.size());
       for (unsigned int i = 0; i < 3*size(); i++)
-	c[i] = x.c[i];
+        c[i] = x.c[i];
       return *this;
     }
 

@@ -83,7 +83,7 @@ namespace ProtoMol {
       Real rDistSquared =
         ((TNonbondedForceFirst::DIST_R2 ||
           TNonbondedForceSecond::DIST_R2) ? 1.0 / distSquared : 1.0);
-      Real energy1, force1, energy2, force2;
+      Real energy1, force1, energy2 = 0, force2 = 0;
       nonbondedForceFunctionFirst(energy1, force1, distSquared, rDistSquared,
                                   diff, realTopo, i, j, excl);
       nonbondedForceFunctionSecond(energy2, force2, distSquared, rDistSquared,

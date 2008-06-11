@@ -110,7 +110,7 @@ GUIServer::~GUIServer() {
 
 int GUIServer::sends(SOCKET socket, char *data, int length) {
   int sendRet;
-  unsigned numSent = 0;
+  int numSent = 0;
   //non-blocking so wait for buffer
   while(numSent < length){ 
     sendRet = ::send(socket, &data[numSent], length-numSent, 0);
