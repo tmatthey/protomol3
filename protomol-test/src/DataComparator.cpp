@@ -113,7 +113,13 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
   data.clear();
 
   try {
-    reader >> data;
+    data.push_back(XYZ());
+    reader >> data[0].coords; // Will throw exception if it breaks
+    Vector3DBlock coords;
+    while (reader.read(coords)) {
+      data.push_back(XYZ());
+      data[data.size()-1].coords = coords;
+    }
 
   } catch (const Exception &e1) {
     reader.close();
@@ -121,20 +127,22 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
 
     try {
       data.clear();
-      //reader.close();
       data.push_back(XYZ());
       reader >> data[data.size()-1];
-      //XYZ xyz;
-      //reader >> xyz;
-      //data.push_back(xyz);
-
     } catch (const Exception &e2) {
       reader.close();
       data.pop_back();
       DCDTrajectoryReader reader(filename);
 
       try {
-        reader >> data;
+	data.push_back(XYZ());
+	reader >> data[0].coords; // Will throw exception if it breaks
+	Vector3DBlock coords;
+	while (reader.read(coords)) {
+	  data.push_back(XYZ());
+	  data[data.size()-1].coords = coords;
+	}
+	//        reader >> data.coords;
       } catch (const Exception &e3) {
 
           reader.close();
