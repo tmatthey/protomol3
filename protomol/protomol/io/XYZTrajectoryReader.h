@@ -26,19 +26,21 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class XYZTrajectoryReader
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    bool read(std::vector<XYZ> &xyz);
-    void doRead(std::vector<XYZ> &xyz);
+    bool read(Vector3DBlock &xyz);
+    void doRead(Vector3DBlock &xyz);
 
-    std::vector<XYZ> *orphanXYZ();
+    Vector3DBlock *orphanXYZ();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Friends
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     friend XYZTrajectoryReader &operator>>(XYZTrajectoryReader &reader,
-                                           std::vector<XYZ> &xyz);
+                                           Vector3DBlock &xyz);
 
   private:
-    std::vector<XYZ> *xyz;
+    Vector3DBlock* xyz;
+    bool first;
+    //std::vector<XYZ> *xyz;
   };
 }
 #endif /* XYZTRAJECTORYREADER_H */

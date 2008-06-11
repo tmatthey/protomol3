@@ -42,10 +42,10 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
 
-    bool read(std::vector<XYZ> &coords);
-    void doRead(std::vector<XYZ> &coords);
+    bool read(Vector3DBlock &coords);
+    void doRead(Vector3DBlock &coords);
 
-    std::vector<XYZ> *orphanXYZ();
+    Vector3DBlock *orphanXYZ();
 
   private:
     void fortranRead(char *data, unsigned int size,
@@ -58,14 +58,25 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     friend DCDTrajectoryReader &operator>>(DCDTrajectoryReader &reader,
-                                           std::vector<XYZ> &xyz);
+                                           Vector3DBlock &xyz);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Vector3DBlock* xyz;
+    //std::vector<XYZ> *xyz;
   private:
-    std::vector<XYZ> *xyz;
     bool swap;
+    bool first;
+    int32 natoms;
+    // Read header
+    struct {
+      char cord[4];
+      int32 frames;
+      char ignore1[28];
+      int32 freeIndexes;
+      char ignore2[44];
+    } header;
   };
 }
 #endif /* DCDTRAJECTORYREADER_H */
