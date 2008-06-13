@@ -823,6 +823,8 @@ protomol/protomol/integrator/normal/ModifierForceProjection.h -text
 protomol/protomol/integrator/normal/NormalModeBrownian.cpp -text
 protomol/protomol/integrator/normal/NormalModeBrownian.h -text
 protomol/protomol/integrator/normal/NormalModeBrownian.i -text
+protomol/protomol/integrator/normal/NormalModeDamping.cpp -text
+protomol/protomol/integrator/normal/NormalModeDamping.h -text
 protomol/protomol/integrator/normal/NormalModeDiagonalize.cpp -text
 protomol/protomol/integrator/normal/NormalModeDiagonalize.h -text
 protomol/protomol/integrator/normal/NormalModeDiagonalize.i -text

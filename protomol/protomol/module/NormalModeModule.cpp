@@ -13,6 +13,7 @@
 #include <protomol/integrator/normal/NormalModeMori.h>
 #include <protomol/integrator/normal/NormalModeRelax.h>
 #include <protomol/integrator/normal/NormalModeBrownian.h>
+#include <protomol/integrator/normal/NormalModeDamping.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -31,6 +32,7 @@ void NormalModeModule::init(ProtoMolApp *app) {
   app->integratorFactory.registerExemplar(new NormalModeMori());
   app->integratorFactory.registerExemplar(new NormalModeRelax());
   app->integratorFactory.registerExemplar(new NormalModeBrownian());
+  app->integratorFactory.registerExemplar(new NormalModeDamping());
 }
 
 void NormalModeModule::read(ProtoMolApp *app) {
