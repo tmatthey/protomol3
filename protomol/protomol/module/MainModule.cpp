@@ -58,7 +58,7 @@ void MainModule::configure(ProtoMolApp *app) {
   Configuration &config = app->config;
 
   //  Set report level
-  report << reportlevel((int)config[InputDebug::keyword]);
+  report << debug((int)config[InputDebug::keyword]);
 
   // Set random seed
   int seed = config[InputSeed::keyword];
