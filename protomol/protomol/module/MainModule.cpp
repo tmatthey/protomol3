@@ -37,12 +37,7 @@ void MainModule::init(ProtoMolApp *app) {
   InputSeed::registerConfiguration(config, getTimerSeed());
   InputFirststep::registerConfiguration(config, 0);
   InputNumsteps::registerConfiguration(config);
-#ifdef DEBUG
   InputDebug::registerConfiguration(config, 1);
-#else
-  InputDebug::registerConfiguration(config, 0);
-#endif
-
   InputIntegrator::registerConfiguration(config);
   InputReducedImage::registerConfiguration(config);
   InputTemperature::registerConfiguration(config);
@@ -58,7 +53,7 @@ void MainModule::configure(ProtoMolApp *app) {
   Configuration &config = app->config;
 
   //  Set report level
-  report << debug((int)config[InputDebug::keyword]);
+  report << reportlevel((int)config[InputDebug::keyword]);
 
   // Set random seed
   int seed = config[InputSeed::keyword];
