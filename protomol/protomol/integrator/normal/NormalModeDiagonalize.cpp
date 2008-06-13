@@ -230,7 +230,7 @@ namespace ProtoMol {
     double traceThreshold, lambdaMax = 0, lambdaMax2, lambdaMin, spdOffs;
     int iter;
     //Blas variables
-    const char *transA, *transB;
+    char *transA, *transB;
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
     const char *transC, *transD;
     int nrhs;
@@ -459,7 +459,7 @@ namespace ProtoMol {
   //product of eigenvectors and diagonalized 'inner' hessian
   void NormalModeDiagonalize::getNewEigs(double *eigVec, double *innerEigVec, int rfM){
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "N"; const char *transB = "N";
+    char *transA = "N"; char *transB = "N";
     int m = _3N; int n = rfM; int k = rfM;
     int lda = _3N; int ldb = rfM; int ldc = _3N;
     double alpha = 1.0;	double beta = 0.0;
