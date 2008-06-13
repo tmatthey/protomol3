@@ -551,6 +551,10 @@ protomol/mdl/simulations/NosePoincGL_Butane.py -text
 protomol/mdl/simulations/PIT_ALA.py -text
 protomol/mdl/simulations/PLeapfrog.py -text
 protomol/mdl/simulations/RMT_Butane.py -text
+protomol/mdl/simulations/contour_dielec.py -text
+protomol/mdl/simulations/contour_dielec56.py -text
+protomol/mdl/simulations/contour_scpism.py -text
+protomol/mdl/simulations/extractDihedrals.py -text
 protomol/mdl/simulations/lf_Argon.py -text
 protomol/mdl/simulations/takahashi_Argon.py -text
 protomol/mdl/src/__init__.py -text
