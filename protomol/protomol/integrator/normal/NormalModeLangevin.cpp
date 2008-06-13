@@ -62,7 +62,7 @@ namespace ProtoMol {
   //*************************************************************************************
 
   void NormalModeLangevin::run(int numTimesteps) {
-    Real h = getTimestep() * Constant::INV_TIMEFACTOR;
+    //Real h = getTimestep() * Constant::INV_TIMEFACTOR;
     Real actTime;
 
     if( numTimesteps < 1 )
@@ -121,7 +121,7 @@ namespace ProtoMol {
     const Real ndt = sqrt( ( 1.0 + exp( -myGamma * dt ) ) / (2.0 * myGamma) ); //was sqrt( fdt );
     const Real sqrtFCoverM = sqrt( 2.0 * Constant::BOLTZMANN * myTemp * myGamma );
 
-    for( unsigned int i = 0; i < _N; i++ ) {
+    for( int i = 0; i < _N; i++ ) {
         // semi-update velocities
         app->velocities[i] = app->velocities[i]*vdt
                                 +(*myForces)[i] * fdt / app->topology->atoms[i].scaledMass

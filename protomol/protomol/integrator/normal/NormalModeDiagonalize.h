@@ -16,15 +16,18 @@ namespace ProtoMol {
   class ForceGroup;
 
   //__________________________________________________ NormalModeDiagonalize
-  class NormalModeDiagonalize : public MTSIntegrator, public NormalModeUtilities {
+  class NormalModeDiagonalize :
+    public MTSIntegrator, public NormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NormalModeDiagonalize();
-    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, bool fDiag, bool rRand, 
-                                int mins, Real minl, Real redn, Real redhy, Real spd, int maxi, bool rBond,
-                                    ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator);
+    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, bool fDiag,
+                          bool rRand, int mins, Real minl, Real redn,
+                          Real redhy, Real spd, int maxi, bool rBond,
+                          ForceGroup *overloadedForces,
+                          StandardIntegrator *nextIntegrator);
     ~NormalModeDiagonalize(); 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,7 +63,9 @@ namespace ProtoMol {
     // From class STSIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    virtual MTSIntegrator* doMake(const std::vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator)const;
+    virtual MTSIntegrator* doMake(const std::vector<Value>& values,
+                                  ForceGroup *fg,
+                                  StandardIntegrator *nextIntegrator) const;
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,9 +106,7 @@ namespace ProtoMol {
     int hessianCounter, rediagCounter, rediagIters;
     //Trace enhancements
     bool removeBondedEigs;
-
   };
-
 }
 
 #endif

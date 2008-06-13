@@ -41,8 +41,8 @@ namespace ProtoMol {
   NormalModeDiagonalize::NormalModeDiagonalize(int cycles, int avs,  Real avss, int redi, bool fDiag, bool rRand, 
                                                     int mins, Real minl, Real redn, Real redhy, Real spd, int maxi, bool rBond,
                                                         ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator) 
-    : MTSIntegrator(cycles, overloadedForces, nextIntegrator), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0), noAvStep(avs), 
-        avStep(avss), rediagCount(redi), fullDiag(fDiag), removeRand(rRand), minSteps(mins), minLim(minl), 
+    : MTSIntegrator(cycles, overloadedForces, nextIntegrator), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0), fullDiag(fDiag), removeRand(rRand), noAvStep(avs), 
+        avStep(avss), rediagCount(redi), minSteps(mins), minLim(minl), 
             rediagThresh(redn), rediagHyst(redhy), spdOff(spd), maxIterations(maxi), removeBondedEigs(rBond)   //
   {
         eigVal=NULL;eigIndx=NULL;innerEigVec=NULL;innerEigVal=NULL;innerHess=NULL;eigAlloc=false;
@@ -227,13 +227,17 @@ namespace ProtoMol {
 //********************************************************************************************************************************************
 
   int NormalModeDiagonalize::traceReDiagonalize(int maxIter, double spd, int idM, bool remBondEig){
-    double traceThreshold, lambdaMax, lambdaMax2, lambdaMin, spdOffs;
+    double traceThreshold, lambdaMax = 0, lambdaMax2, lambdaMin, spdOffs;
     int iter;
     //Blas variables
-    char *transA, *transB, *transC, *transD;
-    int m, n, k, lda, ldb, ldc, nrhs;
-    double alpha, beta, norm;
+    const char *transA, *transB;
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transC, *transD;
+    int nrhs;
     int info;
+#endif
+    int m, n, k, lda, ldb, ldc;
+    double alpha, beta, norm = 0;
 
     //Set threshold for e-diag
     traceThreshold = rediagThresh;
@@ -297,7 +301,10 @@ namespace ProtoMol {
         getNewEigs(mhQu, innerEigVec, idM);
         //Normalize
         for(int j=0;j<idM;j++){	//NORM
-            int incxy = 1; n = _3N;
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+            int incxy = 1;
+#endif
+            n = _3N;
 #if defined(HAVE_LAPACK) 
             norm = dnrm2_(&n, &mhQu[j*_3N], &incxy);
 #else
@@ -305,7 +312,7 @@ namespace ProtoMol {
             norm = dnrm2_(n, &mhQu[j*_3N], incxy);
 #endif
 #endif
-            if(norm == 0.0) report << error << "[NormalModeDiagonalize] Vector with zero norm."<<endr;
+            if (norm == 0.0) report << error << "[NormalModeDiagonalize] Vector with zero norm."<<endr;
             w[j] = 1.0 / norm;	//re-use w to fix HQ without N^2*m re-calc
             for(int i=0;i<_3N;i++) mhQu[i + j*_3N] /= norm;	//TRY FIXING HQ FOR THE DIAG MMATRIX OF NORMS OR JUST DO \bar{Q}H\bar{Q} (BUT MORE EXPENSIVE)
         }
@@ -396,7 +403,7 @@ namespace ProtoMol {
     Vector3D aDiff;
     Real dotProd;
 
-    for (int i=0; i<app->topology->bonds.size(); i++){
+    for (unsigned int i=0; i<app->topology->bonds.size(); i++){
         //find position vectors and find the normed difference
         a1 = app->topology->bonds[i].atom1; a2 = app->topology->bonds[i].atom2;
         if((app->topology->atoms[a1].name.c_str())[0] == 'H' || (app->topology->atoms[a2].name.c_str())[0] == 'H'){
@@ -432,9 +439,11 @@ namespace ProtoMol {
     }
     //Normalize the resulting Q
     for(int j=0;j<_idM;j++){
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
         int incxy = 1;
         int n = _3N;
-        double norm;
+#endif
+        double norm = 0;
 #if defined(HAVE_LAPACK)   
         norm = dnrm2_(&n, &mhQu[j*_3N], &incxy);
 #else
@@ -449,10 +458,12 @@ namespace ProtoMol {
 
   //product of eigenvectors and diagonalized 'inner' hessian
   void NormalModeDiagonalize::getNewEigs(double *eigVec, double *innerEigVec, int rfM){
-    char *transA = "N"; char *transB = "N";
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+    const char *transA = "N"; const char *transB = "N";
     int m = _3N; int n = rfM; int k = rfM;
     int lda = _3N; int ldb = rfM; int ldc = _3N;
     double alpha = 1.0;	double beta = 0.0;
+#endif
     double *tempMat = new double[rfM*_3N];
 
     //
@@ -483,7 +494,7 @@ namespace ProtoMol {
     //Verlet prop.
     for(int nos=1;nos<noAvStep;nos++){
         report <<debug(5)<<"[NormalModeDiagonalize::run] averaging step = "<<nos<<" step size = "<<avStep<<endr;
-        for( unsigned int i = 0; i < _N; ++i ) {
+        for (int i = 0; i < _N; ++i ) {
           app->velocities[i] += 
             (*myForces)[i] * 0.5 * h / app->topology->atoms[i].scaledMass;
           app->positions[i] += app->velocities[i] * h;
@@ -492,7 +503,7 @@ namespace ProtoMol {
         numAveragePos++;
         //hsn.evaluate(myPositions, myTopo, true);	//true for mass re-weight;
         calculateForces();
-        for( unsigned int i = 0; i < _N; ++i ) {
+        for (int i = 0; i < _N; ++i ) {
           app->velocities[i] += 
             (*myForces)[i] * 0.5 * h / app->topology->atoms[i].scaledMass;
         } 

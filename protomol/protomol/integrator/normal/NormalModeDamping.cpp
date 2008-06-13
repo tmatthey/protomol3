@@ -41,8 +41,8 @@ namespace ProtoMol {
     NormalModeDamping::NormalModeDamping(Real timestep, int firstmode, int nummode, //Real gamma, int seed, Real temperature,  
         std::string dcdf, std::string modeff, std::string atomff, Real temp,
         ForceGroup *overloadedForces) 
-        : STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, 91.0, 1234, 300.0), 
-        myDCDFile(dcdf), modeForceFile(modeff), atomForceFile(atomff), myTemperature(temp)
+      : STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, 91.0, 1234, 300.0), myTemperature(temp),
+        myDCDFile(dcdf), modeForceFile(modeff), atomForceFile(atomff)
     {
         myWriter = NULL;
         waterForces = NULL;
@@ -180,9 +180,11 @@ namespace ProtoMol {
                         temp2V3DBlk.c[i] *= sqrtMass[i/3];
         }
         //c=hQ^T*M^{-1/2}*f
-        char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
+        const char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
         int m = _3N; int n = _rfM; int incxy = 1;	//sizes
         double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
+#endif
         //
 #if defined(HAVE_LAPACK)
         dgemv_ (transA, &m, &n, &alpha, (*Q), &m, temp2V3DBlk.c, &incxy, &beta, tmpc, &incxy);
