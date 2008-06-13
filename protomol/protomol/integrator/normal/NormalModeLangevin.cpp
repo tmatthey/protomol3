@@ -79,9 +79,11 @@ namespace ProtoMol {
     for( int i = 0; i < numTimesteps; i++ ) {
       //****main loop*************************************
       preStepModify();
+      genProjGauss(&gaussRandCoord1, app->topology);
       doHalfKick();
       //
-      nmlDrift(&app->positions, &app->velocities, h, app->topology);
+      //nmlDrift(&app->positions, &app->velocities, h, app->topology);
+      doDrift();
       //constraints?
       app->energies.clear();
       //run minimizer if any remaining modes
@@ -96,6 +98,7 @@ namespace ProtoMol {
       app->energies.clear();
       calculateForces();
       //
+      genProjGauss(&gaussRandCoord1, app->topology);
       doHalfKick();
       //
       postStepModify();
@@ -104,6 +107,29 @@ namespace ProtoMol {
     app->topology->time = actTime;
     //
   }  
+
+  void NormalModeLangevin::doDrift() {
+      const Real h = getTimestep() * Constant::INV_TIMEFACTOR;
+      app->positions.intoWeightedAdd(h, app->velocities);
+      buildMolecularCenterOfMass(&app->positions, app->topology);
+  }
+
+  void NormalModeLangevin::doHalfKick() {
+    const Real dt = getTimestep() * Constant::INV_TIMEFACTOR; // in fs
+    const Real fdt = ( 1.0 - exp( -0.5 * myGamma * dt ) ) / myGamma;
+    const Real vdt = exp(-0.5*myGamma*dt);
+    const Real ndt = sqrt( ( 1.0 + exp( -myGamma * dt ) ) / (2.0 * myGamma) ); //was sqrt( fdt );
+    const Real sqrtFCoverM = sqrt( 2.0 * Constant::BOLTZMANN * myTemp * myGamma );
+
+    for( unsigned int i = 0; i < _N; i++ ) {
+        // semi-update velocities
+        app->velocities[i] = app->velocities[i]*vdt
+                                +(*myForces)[i] * fdt / app->topology->atoms[i].scaledMass
+                                    +gaussRandCoord1[i]*sqrtFCoverM*ndt;
+    }
+    subspaceVelocity(&app->velocities, &app->velocities);
+    buildMolecularMomentum(&app->velocities, app->topology);
+  }
 
   //*************************************************************************************
   //****Output int paramiters************************************************************

@@ -27,7 +27,10 @@ namespace ProtoMol {
     // New methods of class NormalModeLangevin
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   protected:
-    void drift();
+    void drift();  
+    void doDrift();  
+    void doHalfKick();
+
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
