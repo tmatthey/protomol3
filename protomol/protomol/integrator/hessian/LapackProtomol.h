@@ -186,4 +186,328 @@ extern "C" double ddot_(int *n, double *x, int *incx, double *y, int *incy);
 */
 extern "C" double dnrm2_(int *n, double *x, int *incx);
 
+/***************************************************************************************
+      SUBROUTINE DPOTRI( UPLO, N, A, LDA, INFO )
+*  -- LAPACK routine (version 3.1) --
+*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd..
+*     November 2006
+*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDA, N
+*     .. Array Arguments ..
+      DOUBLE PRECISION   A( LDA, * )
+*  Purpose
+*  =======
+*  DPOTRI computes the inverse of a real symmetric positive definite
+*  matrix A using the Cholesky factorization A = U**T*U or A = L*L**T
+*  computed by DPOTRF.
+*  Arguments
+*  =========
+*  UPLO    (input) CHARACTER*1
+*          = 'U':  Upper triangle of A is stored;
+*          = 'L':  Lower triangle of A is stored.
+*  N       (input) INTEGER
+*          The order of the matrix A.  N >= 0.
+*  A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+*          On entry, the triangular factor U or L from the Cholesky
+*          factorization A = U**T*U or A = L*L**T, as computed by
+*          DPOTRF.
+*          On exit, the upper or lower triangle of the (symmetric)
+*          inverse of A, overwriting the input factor U or L.
+*  LDA     (input) INTEGER
+*          The leading dimension of the array A.  LDA >= max(1,N).
+*  INFO    (output) INTEGER
+*          = 0:  successful exit
+*          < 0:  if INFO = -i, the i-th argument had an illegal value
+*          > 0:  if INFO = i, the (i,i) element of the factor U or L is
+*                zero, and the inverse could not be computed.
+*/
+extern "C" void dpotri_(char *transA, int *n, double *A, int *lda, int *info);
+
+/***************************************************************************************
+     SUBROUTINE DPOTRF( UPLO, N, A, LDA, INFO )
+*  -- LAPACK routine (version 3.1) --
+*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd..
+*     November 2006
+*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDA, N
+*     ..
+*     .. Array Arguments ..
+      DOUBLE PRECISION   A( LDA, * )
+*     ..
+*  Purpose
+*  =======
+*  DPOTRF computes the Cholesky factorization of a real symmetric
+*  positive definite matrix A.
+*  The factorization has the form
+*     A = U**T * U,  if UPLO = 'U', or
+*     A = L  * L**T,  if UPLO = 'L',
+*  where U is an upper triangular matrix and L is lower triangular.
+*  This is the block version of the algorithm, calling Level 3 BLAS.
+*  Arguments
+*  =========
+*  UPLO    (input) CHARACTER*1
+*          = 'U':  Upper triangle of A is stored;
+*          = 'L':  Lower triangle of A is stored.
+*  N       (input) INTEGER
+*          The order of the matrix A.  N >= 0.
+*  A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+*          On entry, the symmetric matrix A.  If UPLO = 'U', the leading
+*          N-by-N upper triangular part of A contains the upper
+*          triangular part of the matrix A, and the strictly lower
+*          triangular part of A is not referenced.  If UPLO = 'L', the
+*          leading N-by-N lower triangular part of A contains the lower
+*          triangular part of the matrix A, and the strictly upper
+*          triangular part of A is not referenced.
+*
+*          On exit, if INFO = 0, the factor U or L from the Cholesky
+*          factorization A = U**T*U or A = L*L**T.
+*  LDA     (input) INTEGER
+*          The leading dimension of the array A.  LDA >= max(1,N).
+*  INFO    (output) INTEGER
+*          = 0:  successful exit
+*          < 0:  if INFO = -i, the i-th argument had an illegal value
+*          > 0:  if INFO = i, the leading minor of order i is not
+*                positive definite, and the factorization could not be
+*                completed.
+*/
+extern "C" void dpotrf_(char *transA, int *n, double *A, int *lda, int *info);
+
+/***************************************************************************************
+      SUBROUTINE DPOSV( UPLO, N, NRHS, A, LDA, B, LDB, INFO )
+*  -- LAPACK driver routine (version 3.1) --
+*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd..
+*     November 2006
+*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDA, LDB, N, NRHS
+*     ..
+*     .. Array Arguments ..
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * )
+*     ..
+*  Purpose
+*  =======
+*  DPOSV computes the solution to a real system of linear equations
+*     A * X = B,
+*  where A is an N-by-N symmetric positive definite matrix and X and B
+*  are N-by-NRHS matrices.
+*  The Cholesky decomposition is used to factor A as
+*     A = U**T* U,  if UPLO = 'U', or
+*     A = L * L**T,  if UPLO = 'L',
+*  where U is an upper triangular matrix and L is a lower triangular
+*  matrix.  The factored form of A is then used to solve the system of
+*  equations A * X = B.
+*  Arguments
+*  =========
+*  UPLO    (input) CHARACTER*1
+*          = 'U':  Upper triangle of A is stored;
+*          = 'L':  Lower triangle of A is stored.
+*  N       (input) INTEGER
+*          The number of linear equations, i.e., the order of the
+*          matrix A.  N >= 0.
+*  NRHS    (input) INTEGER
+*          The number of right hand sides, i.e., the number of columns
+*          of the matrix B.  NRHS >= 0.
+*  A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+*          On entry, the symmetric matrix A.  If UPLO = 'U', the leading
+*          N-by-N upper triangular part of A contains the upper
+*          triangular part of the matrix A, and the strictly lower
+*          triangular part of A is not referenced.  If UPLO = 'L', the
+*          leading N-by-N lower triangular part of A contains the lower
+*          triangular part of the matrix A, and the strictly upper
+*          triangular part of A is not referenced.
+*
+*          On exit, if INFO = 0, the factor U or L from the Cholesky
+*          factorization A = U**T*U or A = L*L**T.
+*  LDA     (input) INTEGER
+*          The leading dimension of the array A.  LDA >= max(1,N).
+*  B       (input/output) DOUBLE PRECISION array, dimension (LDB,NRHS)
+*          On entry, the N-by-NRHS right hand side matrix B.
+*          On exit, if INFO = 0, the N-by-NRHS solution matrix X.
+*  LDB     (input) INTEGER
+*          The leading dimension of the array B.  LDB >= max(1,N).
+*  INFO    (output) INTEGER
+*          = 0:  successful exit
+*          < 0:  if INFO = -i, the i-th argument had an illegal value
+*          > 0:  if INFO = i, the leading minor of order i of A is not
+*                positive definite, so the factorization could not be
+*                completed, and the solution has not been computed.
+*/
+extern "C" void dposv_(char *transA, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb,int *info);
+
+/***************************************************************************************
+      SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
+*     .. Scalar Arguments ..
+      DOUBLE PRECISION ALPHA
+      INTEGER LDA,LDB,M,N
+      CHARACTER DIAG,SIDE,TRANSA,UPLO
+*     ..
+*     .. Array Arguments ..
+      DOUBLE PRECISION A(LDA,*),B(LDB,*)
+*     ..
+*  Purpose
+*  =======
+*  DTRMM  performs one of the matrix-matrix operations
+*     B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
+*  where  alpha  is a scalar,  B  is an m by n matrix,  A  is a unit, or
+*  non-unit,  upper or lower triangular matrix  and  op( A )  is one  of
+*     op( A ) = A   or   op( A ) = A'.
+*  Arguments
+*  ==========
+*  SIDE   - CHARACTER*1.
+*           On entry,  SIDE specifies whether  op( A ) multiplies B from
+*           the left or right as follows:
+*              SIDE = 'L' or 'l'   B := alpha*op( A )*B.
+*              SIDE = 'R' or 'r'   B := alpha*B*op( A ).
+*           Unchanged on exit.
+*  UPLO   - CHARACTER*1.
+*           On entry, UPLO specifies whether the matrix A is an upper or
+*           lower triangular matrix as follows:
+*              UPLO = 'U' or 'u'   A is an upper triangular matrix.
+*              UPLO = 'L' or 'l'   A is a lower triangular matrix.
+*           Unchanged on exit.
+*  TRANSA - CHARACTER*1.
+*           On entry, TRANSA specifies the form of op( A ) to be used in
+*           the matrix multiplication as follows:
+*              TRANSA = 'N' or 'n'   op( A ) = A.
+*              TRANSA = 'T' or 't'   op( A ) = A'.
+*              TRANSA = 'C' or 'c'   op( A ) = A'.
+*           Unchanged on exit.
+*  DIAG   - CHARACTER*1.
+*           On entry, DIAG specifies whether or not A is unit triangular
+*           as follows:
+*              DIAG = 'U' or 'u'   A is assumed to be unit triangular.
+*              DIAG = 'N' or 'n'   A is not assumed to be unit
+*                                  triangular.
+*           Unchanged on exit.
+*  M      - INTEGER.
+*           On entry, M specifies the number of rows of B. M must be at
+*           least zero.
+*           Unchanged on exit.
+*  N      - INTEGER.
+*           On entry, N specifies the number of columns of B.  N must be
+*           at least zero.
+*           Unchanged on exit.
+*  ALPHA  - DOUBLE PRECISION.
+*           On entry,  ALPHA specifies the scalar  alpha. When  alpha is
+*           zero then  A is not referenced and  B need not be set before
+*           entry.
+*           Unchanged on exit.
+*  A      - DOUBLE PRECISION array of DIMENSION ( LDA, k ), where k is m
+*           when  SIDE = 'L' or 'l'  and is  n  when  SIDE = 'R' or 'r'.
+*           Before entry  with  UPLO = 'U' or 'u',  the  leading  k by k
+*           upper triangular part of the array  A must contain the upper
+*           triangular matrix  and the strictly lower triangular part of
+*           A is not referenced.
+*           Before entry  with  UPLO = 'L' or 'l',  the  leading  k by k
+*           lower triangular part of the array  A must contain the lower
+*           triangular matrix  and the strictly upper triangular part of
+*           A is not referenced.
+*           Note that when  DIAG = 'U' or 'u',  the diagonal elements of
+*           A  are not referenced either,  but are assumed to be  unity.
+*           Unchanged on exit.
+*  LDA    - INTEGER.
+*           On entry, LDA specifies the first dimension of A as declared
+*           in the calling (sub) program.  When  SIDE = 'L' or 'l'  then
+*           LDA  must be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
+*           then LDA must be at least max( 1, n ).
+*           Unchanged on exit.
+*  B      - DOUBLE PRECISION array of DIMENSION ( LDB, n ).
+*           Before entry,  the leading  m by n part of the array  B must
+*           contain the matrix  B,  and  on exit  is overwritten  by the
+*           transformed matrix.
+*  LDB    - INTEGER.
+*           On entry, LDB specifies the first dimension of B as declared
+*           in  the  calling  (sub)  program.   LDB  must  be  at  least
+*           max( 1, m ).
+*           Unchanged on exit.
+*/
+extern "C" void dtrmm_(char *sideA, char *ulA, char *transA, char *diagA, int *m, int *n, double *alpha, double *A, int *lda, double *B, int *ldb);
+
+/***************************************************************************************
+*	  SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
+*     .. Scalar Arguments DOUBLE PRECISION ALPHA    INTEGER LDA,LDB,M,N    CHARACTER DIAG,SIDE,TRANSA,UPLO
+*     .. Array Arguments  DOUBLE PRECISION A(LDA,*),B(LDB,*)
+*  Purpose
+*  =======
+*  DTRSM  solves one of the matrix equations
+*     op( A )*X = alpha*B,   or   X*op( A ) = alpha*B,
+*  where alpha is a scalar, X and B are m by n matrices, A is a unit, or
+*  non-unit,  upper or lower triangular matrix  and  op( A )  is one  of
+*     op( A ) = A   or   op( A ) = A'.
+*  The matrix X is overwritten on B.
+*  Arguments
+*  ==========
+*  SIDE   - CHARACTER*1.
+*           On entry, SIDE specifies whether op( A ) appears on the left
+*           or right of X as follows:
+*              SIDE = 'L' or 'l'   op( A )*X = alpha*B.
+*              SIDE = 'R' or 'r'   X*op( A ) = alpha*B.
+*           Unchanged on exit.
+*  UPLO   - CHARACTER*1.
+*           On entry, UPLO specifies whether the matrix A is an upper or
+*           lower triangular matrix as follows:
+*              UPLO = 'U' or 'u'   A is an upper triangular matrix.
+*              UPLO = 'L' or 'l'   A is a lower triangular matrix.
+*           Unchanged on exit.
+*  TRANSA - CHARACTER*1.
+*           On entry, TRANSA specifies the form of op( A ) to be used in
+*           the matrix multiplication as follows:
+*              TRANSA = 'N' or 'n'   op( A ) = A.
+*              TRANSA = 'T' or 't'   op( A ) = A'.
+*              TRANSA = 'C' or 'c'   op( A ) = A'.
+*           Unchanged on exit.
+*  DIAG   - CHARACTER*1.
+*           On entry, DIAG specifies whether or not A is unit triangular
+*           as follows:
+*              DIAG = 'U' or 'u'   A is assumed to be unit triangular.
+*              DIAG = 'N' or 'n'   A is not assumed to be unit
+*                                  triangular.
+*           Unchanged on exit.
+*  M      - INTEGER.
+*           On entry, M specifies the number of rows of B. M must be at
+*           least zero.
+*           Unchanged on exit.
+*  N      - INTEGER.
+*           On entry, N specifies the number of columns of B.  N must be
+*           at least zero.
+*           Unchanged on exit.
+*  ALPHA  - DOUBLE PRECISION.
+*           On entry,  ALPHA specifies the scalar  alpha. When  alpha is
+*           zero then  A is not referenced and  B need not be set before
+*           entry.
+*           Unchanged on exit.
+*  A      - DOUBLE PRECISION array of DIMENSION ( LDA, k ), where k is m
+*           when  SIDE = 'L' or 'l'  and is  n  when  SIDE = 'R' or 'r'.
+*           Before entry  with  UPLO = 'U' or 'u',  the  leading  k by k
+*           upper triangular part of the array  A must contain the upper
+*           triangular matrix  and the strictly lower triangular part of
+*           A is not referenced.
+*           Before entry  with  UPLO = 'L' or 'l',  the  leading  k by k
+*           lower triangular part of the array  A must contain the lower
+*           triangular matrix  and the strictly upper triangular part of
+*           A is not referenced.
+*           Note that when  DIAG = 'U' or 'u',  the diagonal elements of
+*           A  are not referenced either,  but are assumed to be  unity.
+*           Unchanged on exit.
+*  LDA    - INTEGER.
+*           On entry, LDA specifies the first dimension of A as declared
+*           in the calling (sub) program.  When  SIDE = 'L' or 'l'  then
+*           LDA  must be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
+*           then LDA must be at least max( 1, n ).
+*           Unchanged on exit.
+*  B      - DOUBLE PRECISION array of DIMENSION ( LDB, n ).
+*           Before entry,  the leading  m by n part of the array  B must
+*           contain  the  right-hand  side  matrix  B,  and  on exit  is
+*           overwritten by the solution matrix  X.
+*  LDB    - INTEGER.
+*           On entry, LDB specifies the first dimension of B as declared
+*           in  the  calling  (sub)  program.   LDB  must  be  at  least
+*           max( 1, m ).
+*           Unchanged on exit.
+*/
+extern "C" void dtrsm_(char *sideA, char *ulA, char *transA, char *diagA, int *m, int *n, double *alpha, double *A, int *lda, double *B, int *ldb);
+
+
 #endif /* LAPACKPROTOMOL_H */

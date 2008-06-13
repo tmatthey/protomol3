@@ -42,7 +42,7 @@ namespace ProtoMol {
         void genProjGaussC(Vector3DBlock *gaussRandCoord, Vector3DBlock *gaussRandCoordm, GenericTopology *myTopo);
         void nmlDrift(Vector3DBlock *myPositions, Vector3DBlock *myVelocities, Real dt, GenericTopology *myTopo);
         bool testRemainingModes();
-        int diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim);
+        int diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim, int &numFound);
         void absSort(double *eigVec, double *eigVal, int *eigIndx, int dim);
         double calcRayleigh(double *rQ, double *boundRq, double *hsnhessM, int numv, double raylAverage);
         int minimizer(Real peLim, int numloop, bool simpM, bool reDiag, bool nonSubspace, int *forceCalc, Real *lastLambda, 

@@ -151,7 +151,7 @@ namespace ProtoMol {
          iPforce->c[i] *= invSqrtMass[i/3];
     //c=hQ^T*M^{-1/2}*f
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
+    char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
 #endif
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
@@ -167,7 +167,7 @@ namespace ProtoMol {
     //
     //calculate f''=M^{-1/2}*f'-hQc using BLAS
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transB = "N"; 
+    char *transB = "N"; 
 #endif
     alpha = -1.0;	beta = 1.0;
     //
@@ -200,7 +200,7 @@ namespace ProtoMol {
             iPforce->c[i] *= sqrtMass[i/3];
     //c=hQ^T*M^{-1/2}*f
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
+    char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
 #endif
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
@@ -216,7 +216,7 @@ namespace ProtoMol {
     //
     //calculate f''=M^{-1/2}*f'-hQc using BLAS
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transB = "N"; 
+    char *transB = "N"; 
 #endif
     alpha = -1.0;	beta = 1.0;
     //
@@ -250,7 +250,7 @@ namespace ProtoMol {
     }
     //c=Q^T*M^{-1/2}*f
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "T";							// Transpose, LAPACK checks only first character N/V
+    char *transA = "T";							// Transpose, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
 #endif
     double alpha = 1.0;	double beta = 0.0;
@@ -266,7 +266,7 @@ namespace ProtoMol {
     //
     //f''=Qc
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transB = "N"; /* LAPACK checks only first character N/V */
+    char *transB = "N"; /* LAPACK checks only first character N/V */
 #endif
     alpha = 1.0;	beta = 0.0;
     //
@@ -299,7 +299,7 @@ namespace ProtoMol {
             iPforce->c[i] *= sqrtMass[i/3];
     //c=Q^T*M^{-1/2}*v
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
+    char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
 #endif
     double alpha = 1.0;	double beta = 0.0;
@@ -315,7 +315,7 @@ namespace ProtoMol {
     //
     //v''=Qc
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transB = "N"; /* LAPACK checks only first character N/V */
+    char *transB = "N"; /* LAPACK checks only first character N/V */
 #endif
     alpha = 1.0;	beta = 0.0;
     //
@@ -355,7 +355,7 @@ namespace ProtoMol {
   Vector3DBlock* NormalModeUtilities::cartSpaceProj(double *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0){
     //
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "N";							// Transpose Q, LAPACK checks only first character N/V
+    char *transA = "N";							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
 #endif
@@ -392,7 +392,7 @@ namespace ProtoMol {
         vPos.c[i] *= sqrtMass[i/3];
     //c=Q^T*M^{-1/2}*v
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
+    char *transA = "T";							//Transpose, LAPACK checks only first character N/V 
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;
 #endif
@@ -495,7 +495,7 @@ namespace ProtoMol {
   //*************************************************************************************
 
   //Diagonalize hessian******************************************************************//
-  int NormalModeUtilities::diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim){
+  int NormalModeUtilities::diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim, int &numFound){
    double *wrkSp;
    int *isuppz, *iwork;
 
@@ -504,7 +504,7 @@ namespace ProtoMol {
    iwork = new int[10*dim];
    //Diagonalize
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *jobz = "V"; const char *range = "A"; const char *uplo = "U"; /* LAPACK checks only first character N/V */
+    char *jobz = "V"; char *range = "A"; char *uplo = "U"; /* LAPACK checks only first character N/V */
     int n = dim;             /* order of coefficient matrix a  */
     int lda = dim;           /* leading dimension of a array*/
     double vl = 1.0;
@@ -512,12 +512,13 @@ namespace ProtoMol {
     int il = 1;
     int iu = 1;
     double abstol = 0;
-    int m; int ldz = dim; int lwork = 26*dim; /* dimension of work array*/
+    int ldz = dim; int lwork = 26*dim; /* dimension of work array*///int m; 
     int liwork = 10*dim;						/* dimension of int work array*/
     //Recomended abstol for max precision
     char *cmach = "safe min";
 #endif
     int info = 0;				/* output 0=success */
+	int m = 0;
     //call LAPACK 
     //	
 #if defined( HAVE_LAPACK )
@@ -534,7 +535,8 @@ namespace ProtoMol {
     dsyevr_( *jobz, *range, *uplo, n, hsnhessM, lda, &vl, &vu, &il, &iu, &abstol, m, eigValO, eigVecO, ldz, isuppz, 
                 wrkSp, lwork, iwork, &liwork, info, len_jobz, len_range, len_uplo);
 #endif
-#endif
+#endif    
+	numFound = m;
     //delete arrays
     delete [] iwork;
     delete [] isuppz;
@@ -598,7 +600,7 @@ namespace ProtoMol {
   //find Hessian projected into mxm 'inner' space
   void NormalModeUtilities::getInnerHess(double *eigVec, double *hess, double *innerHess){
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "T"; const char *transB = "N";
+    char *transA = "T"; char *transB = "N";
     int m = _rfM; int n = _3N; int k = _3N;
     int lda = _3N; int ldb = _3N; int ldc = _rfM;
     double alpha = 1.0;	double beta = 0.0;
@@ -627,7 +629,7 @@ namespace ProtoMol {
   //product of eigenvectors and diagonalized 'inner' hessian
   void NormalModeUtilities::getNewEigs(double *eigVec, double *origEigVec, double *innerEigVec){
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "N"; const char *transB = "N";
+    char *transA = "N"; char *transB = "N";
     int m = _3N; int n = _rfM; int k = _rfM;
     int lda = _3N; int ldb = _rfM; int ldc = _3N;
     double alpha = 1.0;	double beta = 0.0;
@@ -658,7 +660,7 @@ namespace ProtoMol {
     for(int i=0 ; i<_3N*_3N ; i++) hsnhessM[i] /= raylAverage;	//divide sum of Hessians
     //set BLAS variables
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    const char *transA = "N";	
+    char *transA = "N";	
     int m = _3N; int n = _3N; 
     int incxy = 1;	//sizes
     double alpha = 1.0;	double beta = 0.0;

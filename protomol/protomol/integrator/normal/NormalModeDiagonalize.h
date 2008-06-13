@@ -8,6 +8,8 @@
 
 #include <protomol/type/Vector3DBlock.h>
 
+#include <protomol/base/TimerStatistic.h>
+
 namespace ProtoMol {
 
   class ScalarStructure;
@@ -20,8 +22,9 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NormalModeDiagonalize();
-    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, bool fDiag, bool rRand,
-                                int mins, Real minl, ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator);
+    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, bool fDiag, bool rRand, 
+                                int mins, Real minl, Real redn, Real redhy, Real spd, int maxi, bool rBond,
+                                    ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator);
     ~NormalModeDiagonalize(); 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +34,8 @@ namespace ProtoMol {
     void drift();
     void VerletAverage();
     void utilityCalculateForces();
-
+    void removeBondEig();
+     
   private:
   public:
 
@@ -40,7 +44,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     virtual std::string getIdNoAlias() const{return keyword;}
-    virtual unsigned int getParameterSize() const{return 8;}
+    virtual unsigned int getParameterSize() const{return 13;}
     virtual void getParameters(std::vector<Parameter>& parameters) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,15 +64,24 @@ namespace ProtoMol {
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // New methods of class NormalModeUtilities
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  protected:  
+    int traceReDiagonalize(int maxIter, double spd, int idM, bool remEigs);
+    void getNewEigs(double *eigVec, double *innerEigVec, int rfM);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     static const std::string keyword;
 
   private:
-    Vector3DBlock diagAt;
+    Vector3DBlock diagAt, myAveragePos;
+    int numAveragePos;
     Hessian hsn;
-    double *eigVal, *innerEigVec, *innerEigVal, *innerHess, *origEigVec;
+    double *eigVal, *innerEigVec, *innerEigVal, *innerHess;
+    double *T1, *HQ, *tempMxM, *temp3NxM, *w;
     int *eigIndx;
     bool eigAlloc, firstDiag, fullDiag, removeRand;
     int noAvStep;
@@ -80,6 +93,14 @@ namespace ProtoMol {
     NormalModeUtilities *myNextNormalMode, *myLastNormalMode;
     int forceCalc;
     Real lastLambda;
+    Real rediagThresh, rediagHyst, spdOff;
+    int maxIterations;
+    int _idM;
+    //Diagnostic data
+    Timer rediagTime, hessianTime;
+    int hessianCounter, rediagCounter, rediagIters;
+    //Trace enhancements
+    bool removeBondedEigs;
 
   };
 
