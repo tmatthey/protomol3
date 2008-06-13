@@ -805,6 +805,8 @@ protomol/protomol/integrator/hessian/SConscript -text
 protomol/protomol/integrator/leapfrog/DMDLeapfrogIntegrator.cpp -text
 protomol/protomol/integrator/leapfrog/DMDLeapfrogIntegrator.h -text
 protomol/protomol/integrator/leapfrog/DMDLeapfrogIntegrator.i -text
+protomol/protomol/integrator/leapfrog/LeapfrogDataAcquisition.cpp -text
+protomol/protomol/integrator/leapfrog/LeapfrogDataAcquisition.h -text
 protomol/protomol/integrator/leapfrog/LeapfrogIntegrator.cpp -text
 protomol/protomol/integrator/leapfrog/LeapfrogIntegrator.h -text
 protomol/protomol/integrator/leapfrog/LeapfrogIntegrator.i -text
