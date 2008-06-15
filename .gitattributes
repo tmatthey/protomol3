@@ -594,6 +594,7 @@ protomol/mdl/interface/output/OutputScreen.i -text
 protomol/mdl/interface/output/OutputXYZTrajectoryForce.i -text
 protomol/mdl/interface/output/OutputXYZTrajectoryPos.i -text
 protomol/mdl/interface/output/OutputXYZTrajectoryVel.i -text
+protomol/mdl/interface/pyWrap.py -text
 protomol/mdl/interface/topology/GenericTopology.i -text
 protomol/mdl/interface/topology/TopologyUtilities.i -text
 protomol/mdl/interface/type/ScalarStructure.i -text
