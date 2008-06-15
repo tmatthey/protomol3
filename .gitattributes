@@ -809,7 +809,6 @@ protomol/protomol/force/nonbonded/NonbondedSimpleFullBornForce.h -text
 protomol/protomol/force/nonbonded/NonbondedSimpleFullSystemForce.h -text
 protomol/protomol/force/nonbonded/SConscript -text
 protomol/protomol/force/nonbonded/SimpleFullForce.i -text
-protomol/protomol/force/system/PySystemForce.h -text
 protomol/protomol/force/system/SConscript -text
 protomol/protomol/force/system/SystemCompareForce.cpp -text
 protomol/protomol/force/system/SystemCompareForce.h -text
