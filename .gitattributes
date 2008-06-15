@@ -549,9 +549,12 @@ protomol/mdl/interface/force/bonded/ImproperForce.i -text
 protomol/mdl/interface/force/nonbonded/CutoffForce.i -text
 protomol/mdl/interface/force/nonbonded/FullForce.i -text
 protomol/mdl/interface/force/nonbonded/SimpleFullForce.i -text
+protomol/mdl/interface/force/system/PySystemForce.h -text
 protomol/mdl/interface/force/system/PySystemForce.i -text
 protomol/mdl/interface/integrator/MTSIntegrator.i -text
+protomol/mdl/interface/integrator/PyMTSIntegrator.h -text
 protomol/mdl/interface/integrator/PyMTSIntegrator.i -text
+protomol/mdl/interface/integrator/PySTSIntegrator.h -text
 protomol/mdl/interface/integrator/PySTSIntegrator.i -text
 protomol/mdl/interface/integrator/STSIntegrator.i -text
 protomol/mdl/interface/integrator/base/CGMinimizerIntegrator.i -text

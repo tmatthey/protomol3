@@ -32,7 +32,7 @@ using namespace ProtoMol;
 %include <protomol/config/Value.h>
 %include <protomol/config/Parameter.h>
 %include <protomol/type/Vector3D.h>
-%include <protomol/type/Vector3DBlock.i>
+%include <interface/type/Vector3DBlock.i>
 %include <protomol/topology/Angle.h>
 %include <protomol/topology/Atom.h>
 %include <protomol/topology/AtomType.h>

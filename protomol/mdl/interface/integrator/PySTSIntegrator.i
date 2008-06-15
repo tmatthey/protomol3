@@ -5,7 +5,7 @@
 #include <protomol/integrator/Integrator.h>
 #include <protomol/integrator/StandardIntegrator.h>
 #include <protomol/integrator/STSIntegrator.h>
-#include <protomol/integrator/PySTSIntegrator.h>
+#include <interface/integrator/PySTSIntegrator.h>
 #include "ndarrayobject.h"
 using namespace ProtoMol;
 %}
@@ -17,7 +17,7 @@ using namespace ProtoMol;
 %include <protomol/integrator/Integrator.h>
 %include <protomol/integrator/StandardIntegrator.h>
 %include <protomol/integrator/STSIntegrator.h>
-%include <protomol/integrator/PySTSIntegrator.h>
+%include <interface/integrator/PySTSIntegrator.h>
 
 
 %extend ProtoMol::STSIntegrator {

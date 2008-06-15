@@ -8,8 +8,8 @@ using namespace ProtoMol;
 %}
 
 %include <protomol/type/Real.h>
-%include <protomol/type/Vector3DBlock.i>
-%include <protomol/type/ScalarStructure.i>
+%include <interface/type/Vector3DBlock.i>
+%include <interface/type/ScalarStructure.i>
 %include <protomol/ProtoMolApp.h>
 
 %extend ProtoMol::ProtoMolApp {

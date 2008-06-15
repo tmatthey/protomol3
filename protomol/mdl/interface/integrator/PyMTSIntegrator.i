@@ -6,7 +6,7 @@
 #include <protomol/integrator/StandardIntegrator.h>
 #include <protomol/integrator/STSIntegrator.h>
 #include <protomol/integrator/MTSIntegrator.h>
-#include <protomol/integrator/PyMTSIntegrator.h>
+#include <interface/integrator/PyMTSIntegrator.h>
 #include "ndarrayobject.h"
 using namespace ProtoMol;
 %}
@@ -18,7 +18,7 @@ using namespace ProtoMol;
 %include <protomol/integrator/StandardIntegrator.h>
 %include <protomol/integrator/STSIntegrator.h>
 %include <protomol/integrator/MTSIntegrator.h>
-%include <protomol/integrator/PyMTSIntegrator.h>
+%include <interface/integrator/PyMTSIntegrator.h>
 
 
 

@@ -13,7 +13,7 @@ using namespace ProtoMol;
 %template() std::vector<ProtoMol::Atom>;
 %template() std::vector<ProtoMol::AtomType>;
 %include <protomol/type/XYZ.h>
-%include <protomol/type/Vector3DBlock.i>
+%include <interface/type/Vector3DBlock.i>
 %include <protomol/topology/Atom.h>
 %include <protomol/topology/AtomType.h>
 %include <protomol/io/File.h>
