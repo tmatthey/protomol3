@@ -197,7 +197,8 @@ private:
     MyStreamer &operator<<(MyStreamer &stream, const debug &d);
 
     // Our global streamer
-    static MyStreamer report = &cerr;
+    extern MyStreamer report;
+    //static MyStreamer report = &cerr;
   }
 }
 #endif /* REPORT_H */

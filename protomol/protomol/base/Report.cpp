@@ -19,6 +19,9 @@ namespace ProtoMol {
       stream.setReportLevel(myReportlevel);
       return stream;
     }
+    //___________________________________________________________ 
+    // Currently defaulting to std::cerr
+    MyStreamer report(&(std::cerr));
 
     // MyStreamer
     MyStreamer::MyStreamer(ostream *a) {
@@ -231,6 +234,7 @@ namespace ProtoMol {
     }
 
     // Our Output Levels
+
     MyStreamer &plain(MyStreamer &stream) {
       stream.myLevel = -4;
       return stream;
@@ -267,12 +271,11 @@ namespace ProtoMol {
       return stream;
     }
 
-
     MyStreamer &operator<<(MyStreamer &stream, const reportlevel &rl) {
       return rl(stream);
     }
 
-    MyStreamer &operator<<(MyStreamer &stream, const debug &d) {
+    MyStreamer &operator<<(MyStreamer &stream, const debug &d) {      
       return d(stream);
     }
 
