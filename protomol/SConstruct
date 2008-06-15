@@ -10,7 +10,6 @@ Export('opts')
 
 opts.AddOptions(
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
-    BoolOption('mdl', 'Set to 1 to build Python libraries for MDL', 0),
     BoolOption('lapack', 'Use LAPACK', 0),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
     )
@@ -21,7 +20,6 @@ compiler_add_opts()
 
 # Create environment and import external PATH
 env = Environment(options = opts, ENV = os.environ)
-mdl = int(env.get('mdl', 0))
 
 Export('env')
 
@@ -96,26 +94,13 @@ src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
 # Build Protomol
 env.Append(LIBPATH = ['.'])
+
+
+# Build libprotomol
 env.Prepend(LIBS = [libname])
-
-
-if (mdl):
-  libsrc2 = []
-  for s in subsrc:
-     # I am removing this file from the shared object
-     # compilation - it's only used if HAVE_MPI is true, which
-     # will never be true for MDL.
-     if (s != 'parallel/FFTComplex.cpp'):
-        libsrc2.append('#/protomol/'+s)
-  env.SharedLibrary(libname, libsrc2)
-  from pyWrap import *
-  pyWrap(env)
-  Default('.')
-else:
-  # Build libprotomol
-  env.Library(libname, libsrc)
-  protomol = env.Program('ProtoMol', src)
-  Default(protomol)
+env.Library(libname, libsrc)
+protomol = env.Program('ProtoMol', src)
+Default(protomol)
 
 
 if env['PLATFORM'] == 'win32':
