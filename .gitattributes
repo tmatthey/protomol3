@@ -828,8 +828,6 @@ protomol/protomol/integrator/MTSIntegrator.cpp -text
 protomol/protomol/integrator/MTSIntegrator.h -text
 protomol/protomol/integrator/NonStandardIntegrator.cpp -text
 protomol/protomol/integrator/NonStandardIntegrator.h -text
-protomol/protomol/integrator/PyMTSIntegrator.h -text
-protomol/protomol/integrator/PySTSIntegrator.h -text
 protomol/protomol/integrator/SConscript -text
 protomol/protomol/integrator/STSIntegrator.cpp -text
 protomol/protomol/integrator/STSIntegrator.h -text
