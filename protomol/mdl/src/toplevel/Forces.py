@@ -77,6 +77,7 @@ class Forces:
       self.phys = ff.phys = phys
       ff.bc = phys.bc
       ff.setDefaults()
+      #ff.thisown = 0
       self.myForceFields.append(ff)
       return self.myForceFields[self.myForceFields.__len__()-1]
 

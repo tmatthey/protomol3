@@ -36,6 +36,10 @@ def velocityscale(phys, forces, io, steps, timestep, fg, t0):
    # Calculate new forces with updated position/velocity
    fg.calculateForces(phys, forces)
 
+   #print phys.velocities
+   #print phys.positions
+   #print forces.force
+   #sys.exit(1)
    step = 1
    # Run for the number of passed steps
    while (step < steps):
@@ -58,7 +62,6 @@ def velocityscale(phys, forces, io, steps, timestep, fg, t0):
    # Scale
    phys.velocities *= math.sqrt(t0/phys.getTemperature())
    # Return positions and velocities as an array of arrays.
-   return [phys.positions, phys.velocities]
 
 
 name="velocityscale"   #: Propagator name for the factory

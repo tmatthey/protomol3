@@ -196,9 +196,12 @@ class ForceField(ForceGroup):
          forces.forcevec.resize(phys.numAtoms())
       forces.forcevec.zero()
       phys.app.energies.clear()
-      phys.posvec.setC(phys.positions)
+      #phys.posvec.setC(phys.positions)
+      #print "FORCES A: ", forces.force
       self.evaluateSystemForces(phys.app, forces.forcevec)
-
+      #print "FORCES B: ", forces.force
+      #sys.exit(1)
+      self.evaluateExtendedForces(phys.app, forces.forcevec)
 
    def build(self):
     """
@@ -233,10 +236,7 @@ class ForceField(ForceGroup):
               self.forcearray.append(self.forceFactory.createLennardJonesForce(self.bc, self.params['LennardJones']))
           elif (forcetype == 'c'):
               if (self.params['Coulomb']['algorithm'] == 'SCPISM'):
-                 if (self.params['Coulomb'].has_key('bornswitch')):
-                    self.phys.myTop.doSCPISM = self.params['Coulomb']['bornswitch']
-                 else:
-                    self.phys.myTop.doSCPISM = 1
+                 self.phys.myTop.doSCPISM = 1
                  self.phys.build()
                  if (not self.params['Coulomb'].has_key('NoBorn')):
                     self.forcearray.append(self.forceFactory.createBornForce(self.bc, self.params['Coulomb']))
@@ -249,8 +249,8 @@ class ForceField(ForceGroup):
              self.forcearray.append(self.forceFactory.createLennardJonesCoulombForce(self.bc, self.params['LennardJonesCoulomb']))
           elif (forcetype == 'h'):
               self.forcearray.append(self.forceFactory.createHarmDihedralForce(self.bc, self.params['HarmonicDihedral']))
-
           self.addForce(self.forcearray[len(self.forcearray)-1])
+
     if (bornflag != -1): self.forcetypes.insert(bornflag, 'c')
     for pyforce in self.pythonforces:
          self.forcearray.append(PySystemForce(pyforce))

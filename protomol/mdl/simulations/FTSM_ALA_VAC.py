@@ -25,9 +25,9 @@ for i in range(0, numpoints):
     x.append(Physical())
     y.append(Physical())
     force.append([Forces(), Forces()])
-    io.readPDBPos(x[i], "data/alanDipeptideBlock/blockdialanine_eq.pdb")
-    io.readPSF(x[i], "data/alanDipeptideBlock/blockdialanine.psf")
-    io.readPAR(x[i], "data/alanDipeptideBlock/par_all27_prot_lipid.inp")
+    io.readPDBPos(x[i], "data/alanDipeptideVac/minC7eq.pdb")
+    io.readPSF(x[i], "data/alanDipeptideVac/alan_mineq.psf")
+    io.readPAR(x[i], "data/alanDipeptideVac/par_all27_prot_lipid.inp")
     x[i].bc = "Vacuum"
     x[i].temperature = 300
     x[i].exclude = "scaled1-4"
@@ -42,9 +42,9 @@ gamma = float(2000)
 
 ff = force[0][0].makeForceField(x[0])
 
-ff.bondedForces("hh")
-#ff.bondedForces("badihh")
-#ff.nonbondedForces("lc")
+#ff.bondedForces("hh")
+ff.bondedForces("badihh")
+ff.nonbondedForces("lc")
 
 
 ###################################################################

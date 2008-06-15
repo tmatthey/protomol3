@@ -34,17 +34,17 @@ def setPropagator(prop, phys, forces, obj, levelswitch=False):
 	@param levelswitch: True if we are changing levels in the hierarchy.  Default false.
 	"""
         if (prop.myLevel == 0):
-	   #obj.setMHQ(phys.myEig.this)
 	   forces.forcevec = obj.getForces()
 	   if (dir(obj).count('setIntegratorSetPointers') != 0):
 		   obj.setIntegratorSetPointers(obj, phys.myEig, 1)
 	   phys.app = obj.appInit(phys.myTop,phys.posvec,phys.velvec,forces.energies)
 	   phys.app.energies = forces.energies
            #obj.initialize(phys.myTop,phys.posvec,phys.velvec,forces.energies)
-	# Performs garbage collection if we are setting our propagator
+	# Do not perform garbage collection if we are setting our propagator
 	# to something else, and aren't simply changing levels in the hierarchy
 	if (prop.myPropagator != 0 and (not levelswitch)):
-	   prop.myPropagator.destroyAll()
+	    prop.myPropagator.thisown = 0
+	#   del(prop.myPropagator)
 	   
 	prop.myPropagator = obj
         if (prop.isMDL(prop.myPropagator)):

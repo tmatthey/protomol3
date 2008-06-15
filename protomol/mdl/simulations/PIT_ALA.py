@@ -125,7 +125,7 @@ io.screen = 1
 #END DEBUG
 
 
-
+io.files = {'gui':('MDL',1)}
 
 #equilibrate
 xf[i].seed=int(round(numpy.random.uniform(0,100000)))

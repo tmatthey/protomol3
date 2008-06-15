@@ -61,7 +61,7 @@ class IO:
       #####################################################################################
       # USER SHOULD NOT TOUCH THIS!  
       #####################################################################################
-      self.dcdfiles = []             #: Array of DCD filenames
+      self.dcdfiles = {}             #: Array of DCD filenames
       self.myOutputCache = OutputCache.OutputCache() # Cache of output data
 
       self.screen = -1               #: Frequency to perform screen output
@@ -84,16 +84,13 @@ class IO:
 
       # Types of file output to (filename, freq)
       # Default is ('', -1) - no file, never
-      self.files = {'temperature':('',-1),
-                    'energies':('',-1),
-                    'momentum':('',-1),
-                    'dihedrals':('',-1,0),
-                    'dcdtraj':('',-1),
-                    'diffusion':('', -1),
-                    'pdbframepos':('',-1),
-                    'xyztrajforce':('',-1,0),
+      self.files = {'energies':('',-1),
+                    'dcdtrajpos':('',-1),
+                    'dcdtrajvel':('',-1),
+                    'xyztrajforce':('', -1),
                     'xyztrajpos':('',-1),
-                    'xyztrajvel':('',-1)}  #: Map of file output names to (filename freq), default is ('', -1) - no file, never
+                    'xyztrajvel':('',-1),
+                    'gui':('',-1)}  #: Map of file output names to (filename freq), default is ('', -1) - no file, never
 
       self.plotFunctions = {'totalenergy':self.plotTotal,
                             'kineticenergy':self.plotKinetic,
@@ -290,20 +287,22 @@ class IO:
         @param dcdname: DCD trajectory file name.
         """
         dcdname = self.checkPath(dcdname)
-        if (self.dcdfiles.count(dcdname) == 0):
+        if (not self.dcdfiles.has_key(dcdname)):
            self.myDCDTrajectoryReader=DCDTrajectoryReader.DCDTrajectoryReader(dcdname)
-        self.dcdfiles.append(dcdname)
+           self.dcdfiles[dcdname] = 0
+        else:
+           self.dcdfiles[dcdname] += 1
         succeed = self.myDCDTrajectoryReader.read()
         if (succeed == 0):
               print "[MDL] ERROR: DCD TRAJECTORY READING FAILURE ON FILE ",
               print dcdname
-        for ii in range(0, self.myDCDTrajectoryReader.myCoords*3, 3):
-               phys.positions[ii] = self.myDCDTrajectoryReader.myCoords[ii]
-               phys.positions[ii+1] = self.myDCDTrajectoryReader.myCoords[ii+1]
-               phys.positions[ii+2] = self.myDCDTrajectoryReader.myCoords[ii+2]
-        return succeed
+        for ii in range(0, self.myDCDTrajectoryReader.size()):
+               phys.positions[ii*3] = self.myDCDTrajectoryReader.getElement(ii, 0)
+               phys.positions[ii*3+1] = self.myDCDTrajectoryReader.getElement(ii, 1)
+               phys.positions[ii*3+2] = self.myDCDTrajectoryReader.getElement(ii, 2)
+        #return succeed
 
-   def readDCDTrajectoryPos(self,phys,dcdname):
+   def readDCDTrajectoryVel(self,phys,dcdname):
         """
         Read a DCD trajectory file and populate atomic positions.
         This routine saves state, so that upon the next invocation
@@ -413,12 +412,16 @@ class IO:
        """
        
        # LOOP OVER ALL OUTPUTS
+       i = 0
        for output in self.myOutputs:
          # USING THE FACTORY, UPDATE THIS OUTPUT WITH SYSTEM DATA
-         if (step == 0): output.initialize(phys.app)
-         else: phys.app.uncache()
+         if (not hasattr(output, 'initflag')):
+            output.initialize(phys.app)
+            output.initflag = True
+         elif (i == 0): phys.app.uncache()
          # RUN THE OUTPUT
          output.run(step)
+         i += 1
    #####################################################################################
 
       
@@ -823,7 +826,7 @@ class IO:
             filename = params[0]
             freq = params[1]
             if (output == 'energies'):
-               self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0,0))
+               self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0))
             elif (output == 'dcdtrajpos'):
                self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1))
             elif (output == 'dcdtrajvel'):
@@ -834,8 +837,8 @@ class IO:
                self.myOutputs.append(OutputXYZTrajectoryPos.OutputXYZTrajectoryPos(filename, freq))
             elif (output == 'xyztrajvel'):
                self.myOutputs.append(OutputXYZTrajectoryVel.OutputXYZTrajectoryVel(filename, freq))
-            elif (output == 'fahgui'):
-               self.myOutputs.append(OutputFAHGUI.OutputFAHGUI(filename, freq, 52753, 1, 'ProtoMol_3.0'))
+            elif (output == 'gui'):
+               self.myOutputs.append(OutputFAHGUI.OutputFAHGUI(filename, freq, 52753, 1, 'MDL_3.0'))
 
       if (self.screen != -1):
          self.myOutputs.append(OutputScreen.OutputScreen(self.screen))

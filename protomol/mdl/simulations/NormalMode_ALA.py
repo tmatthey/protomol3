@@ -51,11 +51,12 @@ ff3.params['Coulomb'] = {'algorithm':'SCPISM',
                         'cutoff':12}
 
 io.screen = 1
+io.files = {'gui':('MDL', 1)}
 
 prop = Propagator(phys, forces, io)
 
 prop.propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalModeMinimizer'],
-                       steps=20,
+                       steps=2000,
                        cyclelength=[1,1],
                        dt=4.0,
                        forcefield=[ff, ff2, ff3],

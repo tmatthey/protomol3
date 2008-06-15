@@ -1,0 +1,152 @@
+import os
+import sys
+
+pwd = os.getenv('PWD')
+pmhome=os.getenv('PROTOMOL_HOME')
+execfile(pmhome+'/compiler.py')
+
+
+# Command Line Options
+opts = Options(pmhome+'/options.py')
+Export('opts')
+
+opts.AddOptions(
+    BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
+    BoolOption('mdl', 'Set to 1 to build Python libraries for MDL', 1),
+    BoolOption('lapack', 'Use LAPACK', 1),
+    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
+    )
+
+
+
+compiler_add_opts()
+
+# Create environment and import external PATH
+env = Environment(options = opts, ENV = os.environ)
+mdl = int(env.get('mdl', 0))
+
+Export('env')
+
+ 
+# Configure
+conf = Configure(env)
+Export('conf')
+
+
+# Import subdir build files
+subsrc = SConscript(pmhome+'/protomol/SConscript')
+
+# Get options
+fah = int(env.get('fah', 0))
+
+use_lapack = int(env.get('lapack', 0))
+use_simtk_lapack = int(env.get('simtk_lapack', 0))
+
+
+# Configure compiler
+compiler_configure()
+
+
+# Include protomol
+env.Append(CPPPATH = '#')
+
+
+# Generate Help
+Help(opts.GenerateHelpText(env))
+
+
+# libprotomol
+libname = 'protomol'
+if fah: libname = libname + '-fah'
+libsrc = []
+libs = []
+libs.append(libname)
+
+
+if not env.GetOption('clean'):
+    os.chdir(pmhome)
+    execfile(pmhome+'/package_h.py')
+    execfile(pmhome+'/config.py')
+
+    if (have_bzip2 and have_boost_iostreams and have_libfah):
+      env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+      have_libfah=1
+
+
+    # Folding@Home library version
+    if fah:
+      if not (have_libfah and have_bzip2 and have_boost_iostreams):
+        print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
+        Exit(1)
+
+      env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
+
+
+    env = conf.Finish()
+
+
+if fah:
+    libsrc.append(pmhome+'/protomol/modules.cpp')
+
+
+# Get source
+for s in subsrc:
+    libsrc.append('#/protomol/' + s)
+
+src = [pmhome+'protomol/main.cpp', pmhome+'protomol/modules.cpp']
+
+
+
+# Build Protomol
+env.Append(LIBPATH = ['.'])
+
+
+if (mdl):
+  libsrc2 = []
+  for s in subsrc:
+     # I am removing this file from the shared object
+     # compilation - it's only used if HAVE_MPI is true, which
+     # will never be true for MDL.
+     if (s != 'parallel/FFTComplex.cpp'):
+        libsrc2.append(pmhome+'/protomol/'+s)
+  libname2 = 'mdl'
+  env.Prepend(LIBS = [libname2])
+  env.SharedLibrary(libname2, libsrc2)
+  os.chdir(pwd)
+  from pyWrap import *
+  pyWrap(env, pmhome)
+  Default('.')
+else:
+  # Build libprotomol
+  env.Prepend(LIBS = [libname])
+  env.Library(libname, libsrc)
+  protomol = env.Program('ProtoMol', src)
+  Default(protomol)
+
+
+if env['PLATFORM'] == 'win32':
+  if debug: variant = 'Debug'
+  else: variant = 'Release'
+
+  src = []
+  def add_hdrs(arg, dir, files):
+    global src
+    for file in files:
+      if file.endswith(arg):
+        src += [dir + os.sep + file]
+
+  os.path.walk('protomol', add_hdrs, '.h')
+  inc = src
+  src = []
+  os.path.walk('protomol', add_hdrs, '.cpp')
+
+  env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
+                  srcs = src, incs = inc,
+                  auto_build_solution = 0,
+                  variant = ['Debug', 'Release'],
+                  buildtarget = ['debug=1', 'debug=0'])
+
+
+# Tidy
+env.Command('tidy', '', 'rm -f config.log $$(find . -name \*~ -o -name \#*)')
+

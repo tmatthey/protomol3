@@ -396,7 +396,6 @@ class ForceFactory:
     @rtype: Force
     @return: Pairwise force object with instantiated parameters.
     """
-
     if (str(newforce).find('OneAtomPairTwo') != -1): # WE HAVE A LJ_COU PAIR
       if (alg == "Cutoff"):
         newforce = newforce.makeNewPair(switch[0], switch[1],
@@ -406,7 +405,7 @@ class ForceFactory:
                                         self.getParameter(params,'order',2))
       else:
         newforce = newforce.makeNewPair(self.getParameter(params, 'blocksize', 32))
-                                        
+        print "MAKE NEW: ", newforce                                        
     else:
       if (str(newforce).find('CoulombForceDiElec') != -1): # Dielectric forces have extra params
         eps = self.getParameter(params, 'epsilon', 1)
@@ -431,14 +430,17 @@ class ForceFactory:
         if (alg == "SimpleFull"):
           newforce = newforce.makeNew(self.getParameter(params, 'blocksize', 32))
         elif (alg == "Cutoff"):
-          if (switch == "C1" or switch == "Cutoff"):
-            newforce = newforce.makeNew(self.getParameter(params, 'cutoff'))
-          elif (switch == "C2"):
-            newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
-                                        self.getParameter(params, 'switchon'))
+          if (str(newforce).find('Born') != -1):
+            newforce = newforce.makeNew(self.getParameter(params, 'borncutoff'))
           else:
-            newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
-                                        self.getParameter(params, 'switchon'),
-                                        self.getParameter(params, 'switchoff'),
-                                        self.getParameter(params, 'order', 2))
+            if (switch == "C1" or switch == "Cutoff"):
+               newforce = newforce.makeNew(self.getParameter(params, 'cutoff'))
+            elif (switch == "C2"):
+              newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
+                                          self.getParameter(params, 'switchon'))
+            else:
+              newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
+                                          self.getParameter(params, 'switchon'),
+                                          self.getParameter(params, 'switchoff'),
+                                          self.getParameter(params, 'order', 2))            
     return newforce

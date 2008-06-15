@@ -324,7 +324,7 @@ def extractPsi(phipsi):
          retval.append(phipsi[ii][1])
       return retval
 
-def setConstraint(phi, psi, kappa, forcefield):
+def setConstraint(angle1, angle2, phi, psi, kappa, forcefield):
     """
     Find the harmonic dihedral forces, and set their reference dihedrals
 
@@ -341,12 +341,10 @@ def setConstraint(phi, psi, kappa, forcefield):
     for i in range(0, forcefield.forcetypes.__len__()):
         if (forcefield.forcetypes[i] == 'h'):
             if (not flag):
-               forcefield.forcearray[i].setReferenceDihedral(phi)
-	       forcefield.forcearray[i].setKappa(kappa)
+	       forcefield.forcearray[i].setPars(kappa, angle1-1, phi)
                flag = True
             else:
-               forcefield.forcearray[i].setReferenceDihedral(psi)
-	       forcefield.forcearray[i].setKappa(kappa)
+	       forcefield.forcearray[i].setPars(kappa, angle2-1, psi)
 
 
 def switchPhiPsi(S):
@@ -433,13 +431,6 @@ def M(phys, alpha, beta):
     @rtype: float
     @return: Value for M
     """
-    #    Vector3D m = rij.cross(rkj);
-    #Vector3D n = rkj.cross(rkl);
-    #Vector3D fi = m * (-dVdPhi * rkj_norm / m_normsq);
-    #    Vector3D fl = n * (dVdPhi * rkj_norm / n_normsq);
-    #    Vector3D fj = fi * (-1 + rij_dot_rkj/rkj_normsq) - fl * (rkl_dot_rkj/rkj_normsq);
-    #    Vector3D fk = - (fi + fj + fl);
-    
     if (alpha == beta):
        # alpha and beta are the same dihedral, so we have four
        # terms in the sum for M
@@ -454,14 +445,14 @@ def M(phys, alpha, beta):
        dphidxL = -numpy.cross(rkj,rkl)*norm(rkj)/norm2(numpy.cross(rkj,rkl))
        dphidxJ = dphidxI*(-1+numpy.vdot(rij,rkj)/norm2(rkj)) - dphidxL*(numpy.vdot(rkl,rkj)/norm2(rkj))
        dphidxK = -(dphidxI + dphidxJ + dphidxL)
-       
+
        retval = (1.0 / phys.mass(atomI+1)) * numpy.vdot(dphidxI,dphidxI)
        retval += (1.0 / phys.mass(atomJ+1)) * numpy.vdot(dphidxJ,dphidxJ)
        retval += (1.0 / phys.mass(atomK+1)) * numpy.vdot(dphidxK,dphidxK)
        retval += (1.0 / phys.mass(atomL+1)) * numpy.vdot(dphidxL,dphidxL)
        return retval
     else:
-       # alpha and beta are in neighboring dihedras, so we have three
+       # alpha and beta are in neighboring dihedrals, so we have three
        # atoms overlapping and three terms in the sum for M
        if (alpha > beta):  # SWAP
 	       tmp = alpha

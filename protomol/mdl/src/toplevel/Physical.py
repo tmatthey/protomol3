@@ -365,14 +365,14 @@ class Physical:
       @rtype: Atom
       @return: The atom at the passed index.
       """
-      return Atom(self.myPSF.getAttributeInt("atom", index, "number"),
-                  self.myPSF.getAttributeString("atom", index, "seg_id"),
-                  self.myPSF.getAttributeInt("atom", index, "residue_sequence"),
-                  self.myPSF.getAttributeString("atom", index, "residue_name"),
-                  self.myPSF.getAttributeString("atom", index, "atom_name"),
-                  self.myPSF.getAttributeString("atom", index, "atom_type"),
-                  self.myPSF.getAttributeReal("atom", index, "charge"),
-                  self.myPSF.getAttributeReal("atom", indexm, "mass"))
+      return Atom(self.myPSF.getAttributeInt("atom", index-1, "number"),
+                  self.myPSF.getAttributeString("atom", index-1, "seg_id"),
+                  self.myPSF.getAttributeInt("atom", index-1, "residue_sequence"),
+                  self.myPSF.getAttributeString("atom", index-1, "residue_name"),
+                  self.myPSF.getAttributeString("atom", index-1, "atom_name"),
+                  self.myPSF.getAttributeString("atom", index-1, "atom_type"),
+                  self.myPSF.getAttributeReal("atom", index-1, "charge"),
+                  self.myPSF.getAttributeReal("atom", index-1, "mass"))
 
 
    # GET BOND #(index)
@@ -386,9 +386,9 @@ class Physical:
       @rtype: Bond
       @return: The bond at the passed index.
       """
-      return Bond(self.myPSF.getAttributeInt("bond", index, "number"),
-                  self.myPSF.getAttributeInt("bond", index, "atom1"),
-                  self.myPSF.getAttributeInt("bond", index, "atom2"))
+      return Bond(self.myPSF.getAttributeInt("bond", index-1, "number"),
+                  self.myPSF.getAttributeInt("bond", index-1, "atom1"),
+                  self.myPSF.getAttributeInt("bond", index-1, "atom2"))
 
    # GET ANGLE #(index)
    def ang(self, index):
@@ -401,10 +401,10 @@ class Physical:
       @rtype: Angle
       @return: The angle at the passed index.
       """
-      return Angle(self.myPSF.getAttributeInt("angle", index, "number"),
-                   self.myPSF.getAttributeInt("angle", index, "atom1"),
-                   self.myPSF.getAttributeInt("angle", index, "atom2"),
-                   self.myPSF.getAttributeInt("angle", index, "atom3"))
+      return Angle(self.myPSF.getAttributeInt("angle", index-1, "number"),
+                   self.myPSF.getAttributeInt("angle", index-1, "atom1"),
+                   self.myPSF.getAttributeInt("angle", index-1, "atom2"),
+                   self.myPSF.getAttributeInt("angle", index-1, "atom3"))
 
    # GET DIHEDRAL #(index)
    def dihedral(self, index):
@@ -417,11 +417,11 @@ class Physical:
       @rtype: Dihedral
       @return: The dihedral at the passed index.
       """
-      return Dihedral(self.myPSF.getAttributeInt("dihedral", index, "number"),
-                      self.myPSF.getAttributeInt("dihedral", index, "atom1"),
-                      self.myPSF.getAttributeInt("dihedral", index, "atom2"),
-                      self.myPSF.getAttributeInt("dihedral", index, "atom3"),
-                      self.myPSF.getAttributeInt("dihedral", index, "atom4"))
+      return Dihedral(self.myPSF.getAttributeInt("dihedral", index-1, "number"),
+                      self.myPSF.getAttributeInt("dihedral", index-1, "atom1"),
+                      self.myPSF.getAttributeInt("dihedral", index-1, "atom2"),
+                      self.myPSF.getAttributeInt("dihedral", index-1, "atom3"),
+                      self.myPSF.getAttributeInt("dihedral", index-1, "atom4"))
 
    # GET IMPROPER #(index)
    def improper(self, index):
@@ -434,11 +434,11 @@ class Physical:
       @rtype: Improper
       @return: The improper at the passed index.
       """
-      return Improper(self.myPSF.getAttributeInt("improper", index, "number"),
-                      self.myPSF.getAttributeInt("improper", index, "atom1"),
-                      self.myPSF.getAttributeInt("improper", index, "atom2"),
-                      self.myPSF.getAttributeInt("improper", index, "atom3"),
-                      self.myPSF.getAttributeInt("improper", index, "atom4"))
+      return Improper(self.myPSF.getAttributeInt("improper", index-1, "number"),
+                      self.myPSF.getAttributeInt("improper", index-1, "atom1"),
+                      self.myPSF.getAttributeInt("improper", index-1, "atom2"),
+                      self.myPSF.getAttributeInt("improper", index-1, "atom3"),
+                      self.myPSF.getAttributeInt("improper", index-1, "atom4"))
 
 
    # GET DONOR #(index)
@@ -452,9 +452,9 @@ class Physical:
       @rtype: HDonor
       @return: The H+ donor at the passed index.
       """
-      return HDonor(self.myPSF.getAttributeInt("donor", index, "number"),
-                    self.myPSF.getAttributeInt("donor", index, "atom1"),
-                    self.myPSF.getAttributeInt("donor", index, "atom2"))
+      return HDonor(self.myPSF.getAttributeInt("donor", index-1, "number"),
+                    self.myPSF.getAttributeInt("donor", index-1, "atom1"),
+                    self.myPSF.getAttributeInt("donor", index-1, "atom2"))
 
    # GET ACCEPTOR #(index)
    def acceptor(self, index):
@@ -467,9 +467,9 @@ class Physical:
       @rtype: HAcceptor
       @return: The H+ acceptor at the passed index.
       """
-      return HAcceptor(self.myPSF.getAttributeInt("acceptor", index, "number"),
-                       self.myPSF.getAttributeInt("acceptor", index, "atom1"),
-                       self.myPSF.getAttributeInt("acceptor", index, "atom2"))
+      return HAcceptor(self.myPSF.getAttributeInt("acceptor", index-1, "number"),
+                       self.myPSF.getAttributeInt("acceptor", index-1, "atom1"),
+                       self.myPSF.getAttributeInt("acceptor", index-1, "atom2"))
 
    # GET THE MASS (AMU) OF A SPECIFIC ATOM
    def mass(self, atom):
@@ -482,7 +482,7 @@ class Physical:
       @rtype: float
       @return: Atom mass [amu]
       """
-      return self.myPSF.getAttributeReal("atom", index, "mass")
+      return self.myPSF.getAttributeReal("atom", atom-1, "mass")
 
    def charge(self, atom):
       """
@@ -494,7 +494,7 @@ class Physical:
       @rtype: float
       @return: Atom mass [amu]
       """
-      return self.myPSF.getAttributeReal("atom", index, "charge")
+      return self.myPSF.getAttributeReal("atom", atom-1, "charge")
 
    # SYSTEM TEMPERATURE.
    def getTemperature(self):

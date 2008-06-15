@@ -302,13 +302,14 @@ class Propagator:
           for ff in forcefield:
              if (ff.dirty): ff.build()
        else:
-          forcefield.build()
+          if (forcefield.dirty): forcefield.build()
        if (self.io.dirty):
           self.io.build()
        if (propFactory.getType(outerscheme) == "method"):
           # Calculate the forces, store them in force.
-          self.phys.app = ProtoMolApp.ProtoMolApp()
-          self.phys.app.makeApp(self.phys.myTop, self.phys.posvec, self.phys.velvec, self.forces.energies, dt)
+          if (not hasattr(self.phys, 'app')):
+             self.phys.app = ProtoMolApp.ProtoMolApp()
+             self.phys.app.makeApp(self.phys.myTop, self.phys.posvec, self.phys.velvec, self.forces.energies, dt)
           self.phys.updateCOM_Momenta()
           outerforcefield.calculateForces(self.phys, self.forces)
           self.io.run(self.phys, self.forces, 0, outertime)

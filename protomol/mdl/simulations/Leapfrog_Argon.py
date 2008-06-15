@@ -26,9 +26,10 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
                              'cutoff':8.0}
 
 # OUTPUT
-io.plots = {'potentialenergy':2}
+io.files = {'energies':('leapfrog.energies',1),
+            'gui':('MDL', 1)}
 io.screen = 2
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate("Leapfrog", steps=200, dt=20.0, forcefield=ff)
+gamma = prop.propagate("Leapfrog", steps=4000, dt=20.0, forcefield=ff)
