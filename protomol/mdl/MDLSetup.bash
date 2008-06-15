@@ -1,23 +1,21 @@
 #! /bin/bash
 
-# USER: CHANGE THESE ACCORDINGLY
+# USER: CHANGE THIS ACCORDINGLY
 export PYTHONDIR=/afs/nd.edu/user25/tcickovs/Research/PYTHON2.5
-export LAPACKDIR=/afs/nd.edu/user25/tcickovs/Research/LAPACK
-export NUMPYDIR=/afs/nd.edu/user25/tcickovs/Research/PYTHON2.5
-export GNUPLOTDIR=/afs/nd.edu/user25/tcickovs/Research/PYTHON2.5
-export PYVERSION=python2.5
 
-export TMPPATH=${PWD}:${PWD}/../protomol/integrator/base/:${PWD}/../protomol/integrator/hessian/:${PWD}/../protomol/integrator/normal:${PWD}/../protomol/integrator/leapfrog:${PWD}/../protomol/topology:${PWD}/../protomol/io/:${PWD}/../protomol/output:${PWD}/../protomol/force:${PWD}/../protomol/force/system:${PWD}/../protomol/force/bonded:${PWD}/../protomol/force/nonbonded:${PWD}/../protomol/type:${PWD}/../protomol/base:${PWD}/src:${PWD}/src/factories:${PWD}/src/modifiers:${PWD}/src/propagators:${PWD}/src/propagators/objects:${PWD}/src/toplevel:${GNUPLOTDIR}/lib/${PYVERSION}/site-packages/Gnuplot:${NUMPYDIR}/lib/${PYVERSION}/site-packages/:${NUMPYDIR}/lib/${PYVERSION}/site-packages/numpy/
+
+export NUMPYDIR=${PYTHONDIR}
+export GNUPLOTDIR=${PYTHONDIR}
+export PYVERSION=python2.5
+export TMPPATH=${PWD}:${PWD}/interface/:${PWD}/interface/integrator:${PWD}/interface/integrator/base/:${PWD}/interface/integrator/hessian/:${PWD}/interface/integrator/normal:${PWD}/interface/integrator/leapfrog:${PWD}/interface/topology:${PWD}/interface/io/:${PWD}/interface/output:${PWD}/interface/force:${PWD}/interface/force/system:${PWD}/interface/force/bonded:${PWD}/interface/force/nonbonded:${PWD}/interface/type:${PWD}/interface/base:${PWD}/src/:${PWD}/src/factories:${PWD}/src/modifiers:${PWD}/src/propagators:${PWD}/src/propagators/objects:${PWD}/src/toplevel:${GNUPLOTDIR}/lib/${PYVERSION}/site-packages/Gnuplot:${NUMPYDIR}/lib/${PYVERSION}/site-packages/:${NUMPYDIR}/lib/${PYVERSION}/site-packages/numpy/
 
 if [[ "$PYTHONPATH" != "" ]] 
-then export PYTHONPATH=${TMPPATH}:${PYTHONPATH}
-else export PYTHONPATH=${TMPPATH}
+then export PYTHONPATH=${PYTHONDIR}/lib/${PYVERSION}:${TMPPATH}:${PYTHONPATH}
+else export PYTHONPATH=${PYTHONDIR}/lib/${PYVERSION}:${TMPPATH}
 fi 
  
 export MDLROOT=${PWD}
 export PATH=${PYTHONDIR}/bin:${PATH}
-export LD_LIBRARY_PATH=${PYTHONDIR}/lib/${PYVERSION}:${LD_LIBRARY_PATH}
-export PYTHONPATH=${PYTHONDIR}/lib/${PYVERSION}:${PYTHONPATH}
-export LD_LIBRARY_PATH=${PWD}/../:${LAPACKDIR}/lib:${LD_LIBRARY_PATH}
-export PYTHONPATH=${LAPACKDIR}/lib:${PYTHONPATH}
+export LD_LIBRARY_PATH=${PWD}/interface/:${PYTHONDIR}/lib/${PYVERSION}:${LD_LIBRARY_PATH}
+export PROTOMOL_HOME=${PWD}/../
 
