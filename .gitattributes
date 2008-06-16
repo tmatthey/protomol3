@@ -874,6 +874,8 @@ protomol/protomol/integrator/normal/NormalModeDamping.cpp -text
 protomol/protomol/integrator/normal/NormalModeDamping.h -text
 protomol/protomol/integrator/normal/NormalModeDiagonalize.cpp -text
 protomol/protomol/integrator/normal/NormalModeDiagonalize.h -text
+protomol/protomol/integrator/normal/NormalModeLangLf.cpp -text
+protomol/protomol/integrator/normal/NormalModeLangLf.h -text
 protomol/protomol/integrator/normal/NormalModeLangevin.cpp -text
 protomol/protomol/integrator/normal/NormalModeLangevin.h -text
 protomol/protomol/integrator/normal/NormalModeMinimizer.cpp -text

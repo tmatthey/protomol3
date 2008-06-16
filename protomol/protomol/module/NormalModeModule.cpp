@@ -8,6 +8,7 @@
 #include <protomol/io/EigenvectorTextReader.h>
 
 #include <protomol/integrator/normal/NormalModeLangevin.h>
+#include <protomol/integrator/normal/NormalModeLangLf.h>
 #include <protomol/integrator/normal/NormalModeMinimizer.h>
 #include <protomol/integrator/normal/NormalModeDiagonalize.h>
 #include <protomol/integrator/normal/NormalModeMori.h>
@@ -27,6 +28,7 @@ void NormalModeModule::init(ProtoMolApp *app) {
   InputEigTextFile::registerConfiguration(&app->config);
 
   app->integratorFactory.registerExemplar(new NormalModeLangevin());
+  app->integratorFactory.registerExemplar(new NormalModeLangLf());
   app->integratorFactory.registerExemplar(new NormalModeMinimizer());
   app->integratorFactory.registerExemplar(new NormalModeDiagonalize());
   app->integratorFactory.registerExemplar(new NormalModeMori());
