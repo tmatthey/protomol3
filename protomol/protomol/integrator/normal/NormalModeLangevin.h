@@ -8,28 +8,27 @@
 #include <protomol/type/Vector3DBlock.h>
 
 namespace ProtoMol {
-
   class ScalarStructure;
   class ForceGroup;
 
-  //__________________________________________________ NormalModeLangevin
+  //____ NormalModeLangevin
   class NormalModeLangevin : public MTSIntegrator, public NormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NormalModeLangevin();
-    NormalModeLangevin(int cycles, int firstmode, int nummode, Real gamma, int seed, Real temperature, bool gencn,
-                            ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator);
-    ~NormalModeLangevin(); 
+    NormalModeLangevin(int cycles, int firstmode, int nummode, Real gamma,
+                       int seed, Real temperature, bool gencn,
+                       ForceGroup *overloadedForces,
+                       StandardIntegrator *nextIntegrator);
+    ~NormalModeLangevin();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class NormalModeLangevin
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   protected:
-    void drift();  
-    void doDrift();  
-    void doHalfKick();
+    void drift();
 
   public:
 
@@ -37,16 +36,16 @@ namespace ProtoMol {
     // From class Makeable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    virtual std::string getIdNoAlias() const{return keyword;}
-    virtual unsigned int getParameterSize() const{return 7;}
-    virtual void getParameters(std::vector<Parameter>& parameters) const;
+    virtual std::string getIdNoAlias() const {return keyword;}
+    virtual void getParameters(std::vector<Parameter> &parameters) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Integrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    virtual void initialize(ProtoMolApp* app);
+    virtual void initialize(ProtoMolApp *app);
     virtual void run(int numTimesteps);
+
   protected:
     virtual void addModifierAfterInitialize();
 
@@ -54,7 +53,10 @@ namespace ProtoMol {
     // From class STSIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    virtual MTSIntegrator* doMake(const std::vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator)const;
+    virtual MTSIntegrator *doMake(const std::vector<Value> &values,
+                                  ForceGroup *fg,
+                                  StandardIntegrator *nextIntegrator) const;
+
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,11 +67,8 @@ namespace ProtoMol {
 
   private:
     bool genCompNoise;
-
   };
-
 }
 
 #endif
-
 
