@@ -1,9 +1,5 @@
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 # PHYSICAL
 phys = Physical()
@@ -24,6 +20,12 @@ forces = Forces()
 ff = forces.makeForceField(phys)
 ff.bondedForces("badi")
 ff.nonbondedForces("le")
+ff2 = forces.makeForceField(phys)
+ff3 = forces.makeForceField(phys)
+ff2.bondedForces("badi")
+ff2.nonbondedForces("le")
+ff3.bondedForces("badi")
+ff3.nonbondedForces("le")
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
@@ -31,7 +33,7 @@ gamma = prop.propagate(scheme=['NormalModeMori', 'NormalModeRelax', 'NormalModeB
                        steps=20,
                        cyclelength=[1,1],
                        dt=4.0,
-                       forcefield=[ff, ff, ff],
+                       forcefield=[ff, ff2, ff3],
                        params={'NormalModeMori':{'firstmode':1,
                                                  'numbermodes':10,
                                                  'gamma':80,

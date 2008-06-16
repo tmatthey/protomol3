@@ -1,9 +1,5 @@
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 # PHYSICAL
 phys = Physical()
@@ -23,5 +19,5 @@ ff = forces.makeForceField(phys, "charmm")
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate("Leapfrog", steps=20, dt=0.5, forcefield=ff)
+prop.propagate("Leapfrog", steps=20, dt=0.5, forcefield=ff)
 io.writeXYZPos(phys, 'data/LeapfrogTest.xyz')

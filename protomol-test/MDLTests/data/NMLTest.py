@@ -1,9 +1,5 @@
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 
 
@@ -26,6 +22,13 @@ forces = Forces()
 ff = forces.makeForceField(phys)
 ff.bondedForces("badi")
 ff.nonbondedForces("le")
+ff2 = forces.makeForceField(phys)
+ff3 = forces.makeForceField(phys)
+ff2.bondedForces("badi")
+ff2.nonbondedForces("le")
+ff3.bondedForces("badi")
+ff3.nonbondedForces("le")
+
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
@@ -33,7 +36,7 @@ gamma = prop.propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'N
                        steps=20,
                        cyclelength=[1,1],
                        dt=4.0,
-                       forcefield=[ff, ff, ff],
+                       forcefield=[ff, ff2, ff3],
                        params={'NormalModeDiagonalize':{'reDiagFrequency':100,
                                                         'minSteps':20,
                                                         'minLim':0.1,
@@ -49,5 +52,4 @@ gamma = prop.propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'N
                                                       'randforce':1,
                                                       'simplemin':1,
                                                       'euFactor':0.5}})
-print "WRITING XYZ..."
 io.writeXYZPos(phys, 'data/NMLTest.xyz')

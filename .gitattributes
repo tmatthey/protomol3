@@ -370,6 +370,7 @@ protomol-test/MDLTests/data/PDBTest.py -text
 protomol-test/MDLTests/data/PDBTest.return.expect -text
 protomol-test/MDLTests/data/PDBTest.stderr.expect -text
 protomol-test/MDLTests/data/PDBTest.stdout.expect -text
+protomol-test/MDLTests/data/PyLeapfrogTest.py -text
 protomol-test/MDLTests/data/RattleTest.log -text
 protomol-test/MDLTests/data/RattleTest.py -text
 protomol-test/MDLTests/data/RattleTest.return.expect -text
