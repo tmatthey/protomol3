@@ -20,7 +20,9 @@ if not os.path.exists(comparator):
 
 
 # Run the test
-stdout = stderr = open(log, 'w')
+#stdout = stderr = open(log, 'w')
+stdout = open(log, 'w')
+stderr = sys.stderr
 p = subprocess.Popen(cmd, shell = True, stdout = stdout, stderr = stderr)
 p.wait()
 
