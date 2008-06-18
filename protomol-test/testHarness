@@ -112,12 +112,18 @@ def compare(file1, file2):
         lines2 = open(file2)
 
         while True:
-            try: line1 = lines1.next()
+            try:
+                line1 = lines1.next()
+                while (file1.endswith(ERR) and not line1.startswith('DEBUG')):
+                    line1 = lines1.next()
             except: line1 = None
-            try: line2 = lines2.next()
+            try:
+                line2 = lines2.next()
+                while (file1.endswith(ERR) and not line2.startswith('DEBUG')):
+                    line2 = lines2.next()
             except: line2 = None
 
-            if line1 != line2: return False
+            if (line1 != line2): return False
             if line1 == None: break
 
         return True
