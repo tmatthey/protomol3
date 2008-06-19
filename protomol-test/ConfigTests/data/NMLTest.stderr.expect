@@ -15,7 +15,7 @@ Hint:  [HessianInt::Find Hessian] sz=66
 Hint:  [HessianInt::Find Hessian] Hessian found!
 Hint:  [HessianInt::run] diagonalizing Hessian.
 Hint:  [HessianInt::run] diagonalized! Number of negative eigenvalues = 6.
-Timing: wall: 0.18377[s] real, 0.16497[s] user, 0.00300[s] sys, run: 0.02726[s], integration: 0.02721[s], forces: 0.00227[s].
+Timing: wall: 0.25994[s] real, 0.23496[s] user, 0.00900[s] sys, run: 0.03994[s], integration: 0.03989[s], forces: 0.00326[s].
 Recoverable Error:  [PDB::read] Record unknown:'CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P 1           1'.
 Using PDB posfile 'alanine.pdb' (22).
 Using temperature 300K for the velocities  (22).
@@ -31,7 +31,5 @@ Using new Normal Mode integrator.
 Actual start temperature : 450.203K
 Virial tensor : false
 Molecular virial tensor : false
-DEBUG:  [NormalModeDiagonalize::run] Finding diagonalized Hessian.
-DEBUG:  [NormalModeDiagonalize::run] Inner diagonalized. Neg. eigenvalues = 2 Maximum eigenvalue = 36.81666594
 Hint:  [NormalModeMinimizer::~NormalModeMinmizer] Minimizer average iterations = 1.4, force average calcs = 2.4
-Timing: wall: 0.15839[s] real, 0.14998[s] user, 0.00400[s] sys, run: 0.01693[s], integration: 0.01690[s], forces: 0.00974[s].
+Timing: wall: 0.22409[s] real, 0.21397[s] user, 0.00700[s] sys, run: 0.02391[s], integration: 0.02388[s], forces: 0.01398[s].
