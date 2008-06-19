@@ -130,6 +130,7 @@ const {
 
 void OutputFAHGUI::setCoords() {
   Real x, y, z, sz; 
+  Vector3D posMi;
 
   x = y = z = 0.0;
   sz = app->positions.size();
@@ -141,9 +142,13 @@ void OutputFAHGUI::setCoords() {
 
   x /= sz; y /= sz; z /= sz;
   for (unsigned int i = 0; i < app->positions.size(); i++) {
-    server->xyz[i].x = app->positions[i].c[0] - x;
-    server->xyz[i].y = app->positions[i].c[1] - y;
-    server->xyz[i].z = app->positions[i].c[2] - z;
+    posMi = app->topology->minimalPosition(app->positions[i]);
+    //server->xyz[i].x = app->positions[i].c[0] - x;
+    //server->xyz[i].y = app->positions[i].c[1] - y;
+    //server->xyz[i].z = app->positions[i].c[2] - z;
+    server->xyz[i].x = posMi.c[0] - x;
+    server->xyz[i].y = posMi.c[1] - y;
+    server->xyz[i].z = posMi.c[2] - z;
   }
 }
 
