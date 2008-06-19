@@ -9,6 +9,7 @@
 #include <protomol/integrator/leapfrog/NoseNVTLeapfrogIntegrator.h>
 
 #include <protomol/integrator/leapfrog/LeapfrogDataAcquisition.h>
+#include <protomol/integrator/leapfrog/GPU.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -20,4 +21,5 @@ void LeapfrogModule::init(ProtoMolApp *app) {
   app->integratorFactory.registerExemplar(new PLeapfrogIntegrator());
   app->integratorFactory.registerExemplar(new NoseNVTLeapfrogIntegrator());
   app->integratorFactory.registerExemplar(new LeapfrogDataAcquisition());
+  app->integratorFactory.registerExemplar(new GPU());
 }
