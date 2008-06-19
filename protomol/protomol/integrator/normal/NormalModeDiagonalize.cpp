@@ -56,9 +56,11 @@ namespace ProtoMol {
   {   
     //output stats
     report.precision(5);
-    if(rediagCounter) rediagIters /= rediagCounter;
-    report <<plain<<"NML Timing: Hessian: "<<(hessianTime.getTime()).getRealTime()
-        <<"[s] ("<<hessianCounter<<"), diagonalize: "<<(rediagTime.getTime()).getRealTime()<<"[s] ("<<rediagCounter<<", "<<rediagIters<<")."<<endl;
+    if(rediagCounter && hessianCounter){
+        rediagIters /= rediagCounter;
+        report <<plain<<"NML Timing: Hessian: "<<(hessianTime.getTime()).getRealTime()
+            <<"[s] ("<<hessianCounter<<"), diagonalize: "<<(rediagTime.getTime()).getRealTime()<<"[s] ("<<rediagCounter<<", "<<rediagIters<<")."<<endl;
+    }
     //de-allocate
     if(mhQu!=NULL && eigAlloc) delete [] mhQu;
     if(eigVal!=NULL) delete [] eigVal;

@@ -65,8 +65,10 @@ GPU::GPU(Real timestep, bool emu, int diag, ForceGroup *overloadedForces) :
 
 GPU::~GPU() {
     //output stats
-    report.precision(5);
-    report <<plain<<"GPU Timing: "<<(gpuTime.getTime()).getRealTime()<<"[s]."<<endl;
+    if((gpuTime.getTime()).getRealTime()>0.0){
+        report.precision(5);
+        report <<plain<<"GPU Timing: "<<(gpuTime.getTime()).getRealTime()<<"[s]."<<endl;
+    }
     //Clean up
     if(pbcCell != NULL) delete [] pbcCell; 
     if(hPbcCell != NULL) delete [] hPbcCell; 
