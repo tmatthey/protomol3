@@ -34,6 +34,7 @@ def pyWrap(env, pmhome):
   env['ARFLAGS'] = "rcS"
   env.Append(CPPPATH = '#')
   env.Append(LINKFLAGS=' -Wl,-E')
+  env.Prepend(LIBS = [libname2])
   if (env['PLATFORM'] == 'win32'):
      env.Append(CXXFLAGS='-I\"'+pmhome+'\"')
      env.Append(SHCXXFLAGS=' -I\"'+numpypath+'\"')
@@ -42,13 +43,12 @@ def pyWrap(env, pmhome):
      env.Append(CPPPATH='C:\Python25\include')
      #env.Append(SHCXXFLAGS='mdl.dll')
      env['LIBSUFFIX'] = '.dll'
-     env.Prepend(LIBS = [libname2])
   else:
      env.Append(CXXFLAGS=' -fPIC')
      env.Append(CXXFLAGS='-I'+pmhome)
      env.Append(SHCXXFLAGS=' -I'+numpypath)
      env.Append(SHCXXFLAGS='-I'+pmhome)
-  env.Append(SHLINKFLAGS=' -Wl,-E')
+  #env.Append(SHLINKFLAGS=' -Wl,-E')
   env.Append(_LIBDIRFLAGS="-L.")
 
   if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
@@ -179,8 +179,7 @@ for s in subsrc:
         libsrc2.append(pmhome+'/protomol/'+s)
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32'):
-   env.Prepend(LIBS = [libname2])
-   sl = env.SharedLibrary(libname2, libsrc2)
+   sl = env.SharedLibrary(libname2, libsrc2, LIBS=env['LIBS'])
 else:
    sl = env.SharedLibrary(libname2, libsrc2, LIBSUFFIX=env['LIBSUFFIX'], LIBS=env['LIBS'])
 os.chdir(pwd)
