@@ -113,7 +113,7 @@ void GPU::initialize(ProtoMolApp *app) {
     }
     //Switch initialize
     if(lSwitch == 3){
-        ordIdx = lOrder - 2;
+        ordIdx = (int)lOrder - 2;
         myIRange[0] = pow(lSwitchon - lCutoff, -(lOrder + 1));
         for (int i = 1; i < lOrder + 1; i++)
             myIRange[i] = myIRange[i - 1] / (lSwitchon - lCutoff);
