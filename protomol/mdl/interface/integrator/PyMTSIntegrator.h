@@ -2,7 +2,7 @@
 #define PYMTSINTEGRATOR_H
 
 
-#include "MTSIntegrator.h"
+#include <protomol/integrator/MTSIntegrator.h>
 
 namespace ProtoMol {
 

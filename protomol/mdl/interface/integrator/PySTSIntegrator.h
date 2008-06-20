@@ -1,7 +1,7 @@
 #ifndef PYSTSINTEGRATOR_H
 #define PYSTSINTEGRATOR_H
 
-#include "STSIntegrator.h"
+#include <protomol/integrator/STSIntegrator.h>
 
 namespace ProtoMol {
 
