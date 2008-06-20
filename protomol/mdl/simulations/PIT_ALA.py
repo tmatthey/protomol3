@@ -1,10 +1,6 @@
 # A DRAFT OF A SIMULATION OF BLOCKED ALANINE DIPEPTIDE
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 from numpy import * # to generate random numbers
 #from pylab import semilogy,clf # to use matplotlib
 

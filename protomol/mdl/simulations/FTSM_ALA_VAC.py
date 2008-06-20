@@ -1,20 +1,35 @@
 # A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 import FTSM
 
+
+        
 io = IO()
 PHI = 11
 PSI = 18
 
 # DEFINE THE NUMBER OF POINTS ON THE STRING 
 numpoints = 20
-numsteps = 200000
+#numsteps = 200000
+numsteps = 50000
+
+# HELPER FUNCTIONS
+def copy(string1):
+    retval = []
+    for i in range(0, len(string1)):
+       retval.append([string1[i][0], string1[i][1]])
+    return retval
+
+def rmsd(string1, string2):
+    sum = 0
+    for i in range(0, len(string1)):        
+        sum += (numpy.sqrt((string1[i][0]-string2[i][0])**2+
+                           (string1[i][1]-string2[i][1])**2))**2
+    result = numpy.sqrt(sum)/numpoints
+    return result
+
 
 # PHYSICAL SYSTEMS
 x = []
@@ -83,13 +98,15 @@ ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
                                  'dihedralnum':[PHI-1, PSI-1],
                                  'angle':[z[0][0], z[0][1]]}
 
+#rmsd_vals = []
+#rmsdgraph = io.newGraph('step', 'rmsd')
 #io.initializePlot('string')
 #io.pause=1
-stringgraph=io.newGraph('Phi', 'Psi')
+#stringgraph=io.newGraph('Phi', 'Psi')
 # PRINT INITIAL STRING I0
 #print "\nI0: ",
 #print z
-io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
+#io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
 
 
 dt = 1.0
@@ -100,10 +117,18 @@ avg = []
 for f in range(0, numpoints):
    avg.append([0,0])
 
+#converged = False
+#d = 40000
+#initial = copy(z)
+
+convergedPhis = []
+convergedPsis = []
+matlabfile = open("formatlab.txt", "w")
+
 for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
     for p in range(0, numpoints): # LOOPING OVER POINTS
 
-        if (iter >= 10000 and iter <= 100000):
+        if (iter >= 15000):# and iter <= 100000):
             kappa += (100.-40.)/90000.
 
         if (p != 0 or iter != 0):
@@ -136,19 +161,44 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
 
     z = FTSM.reparamTrevor(z)
 
+    #if (not converged):
+    #   tmpD = d
+    #   d = rmsd(initial, z)
+    #   if (tmpD < d):
+    #       converged = True
+    #       print "CONVERGED AT STEP ", iter, " ", d, " ", tmpD
+    #if (iter % 10 == 0):
+    #   rmsd_vals.append([iter, rmsd(initial,z)])
+    
+    #print rmsd(initial, z)
+    if (iter >= 15000):
+       # Write to the file of points to plot in Matlab
+       for bb in range(0, len(z)):
+          convergedPhis.append(z[bb][0])
+          convergedPsis.append(z[bb][1])
+        
     ### AVERAGING CODE ###########################
-    if (iter >= 110000):
+    #if (iter >= 110000):
+    if (iter >= 15000):
        for g in range(0, numpoints):
           for h in range(0, 2):
              avg[g][h] += z[g][h]
     #print "\nI"+str(iter+1)+": ",z
-    if (iter+1 == 200000):
+    #if (iter+1 == 200000):
+    if (iter+1 == 50000):
        for g in range(0, numpoints):
           for h in range(0, 2):
-             avg[g][h] /= 90000.
+             #avg[g][h] /= 90000.
+             avg[g][h] /= 35000.
        print "\nAVG: ", avg
     ##############################################
 
-    print "\nI"+str(iter+1)+": ",z
-    io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
+    if (iter % 100 == 0):
+       print "\nI"+str(iter+1)+": ",z
+    #if (iter % 10 == 0):
+    #   io.plotVector(prop[0][0],rmsdgraph,rmsd_vals)
+    #io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
 
+matlabfile.write(str(convergedPhis))
+matlabfile.write('\n')
+matlabfile.write(str(convergedPsis))

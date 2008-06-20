@@ -1,8 +1,4 @@
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 import sys
 myPhys=Physical()

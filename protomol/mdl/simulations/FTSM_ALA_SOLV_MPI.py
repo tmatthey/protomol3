@@ -1,10 +1,6 @@
 # A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 import FTSM
 import mpi
@@ -50,12 +46,10 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
                              'switching':'Cutoff',
                              'cutoff':9}
 
-ff.params['Coulomb'] = {'algorithm':'PME',
+ff.params['Coulomb'] = {'algorithm':'Cutoff',
                         'switching':'Cutoff',
-                        'interpolation':'BSpline',
-                        'gridsize':32,
-                        'order':4,
                         'cutoff':9}
+
 
 ###################################################################
 # STEP 1: OBTAIN THE INITIAL STRING
@@ -113,7 +107,10 @@ for iter in range(0, 200000): # NUMBER OF FTSM ITERATIONS
     #for workpt in range(0, numpoints): # LOOPING OVER POINTS
         if (iter >= 10001 and iter <= 110000):
             kappa += kappaincr
-        
+
+
+        if (iter != 0):
+           FTSM.setConstraint(PHI, PSI, phi=z_p[0], psi=z_p[1], kappa=kappa, forcefield=ff)       
         # UPDATE FREE SPACE
         # USE FIRST SYSTEM TO GET M
         # USE SECOND SYSTEM TO OBTAIN PHI AND PSI DIFFERENCES
@@ -128,16 +125,10 @@ for iter in range(0, 200000): # NUMBER OF FTSM ITERATIONS
         # is not harmonic.  In fact it is exactly what is in the paper.        
         prop[0].propagate(scheme="velocityscale", steps=1, dt=dt, forcefield=ff, params={'T0':300})
         prop[1].propagate(scheme="velocityscale", steps=1, dt=dt, forcefield=ff, params={'T0':300})
-        #prop[0].propagate(scheme="Leapfrog", steps=1, dt=dt, forcefield=ff, params={'shake':'on'})
-        #prop[1].propagate(scheme="Leapfrog", steps=1, dt=dt, forcefield=ff, params={'shake':'on'})
-        # Scale
-        #x.velocities *= math.sqrt(temperature/x.getTemperature())
-        #y.velocities *= math.sqrt(temperature/y.getTemperature())
 
         mpi.barrier()
         z = mpi.gather([z_p])
-        #z_p = [z_p]
-        #z = mpi.allgather(z_p)
+
         if (mpi.rank == 0):
             z = FTSM.reparamTrevor(z)
             if (iter >= 110000):
@@ -155,8 +146,5 @@ for iter in range(0, 200000): # NUMBER OF FTSM ITERATIONS
 
         z_p = mpi.scatter(z)[0]
         mpi.barrier()
-        #z = mpi.bcast(z)
-        #z_p = z[mpi.rank]
 
-	FTSM.setConstraint(phi=z_p[0], psi=z_p[1], kappa=kappa, forcefield=ff)
 

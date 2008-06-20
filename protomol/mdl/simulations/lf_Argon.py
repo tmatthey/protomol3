@@ -1,9 +1,5 @@
 # USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 #from propagators.examplesP.leapfrog import *
 

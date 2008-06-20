@@ -1,11 +1,7 @@
 # A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
 # USING THE NEW STRUCTURE
 
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 # PHYSICAL SYSTEM
 phys = Physical()
