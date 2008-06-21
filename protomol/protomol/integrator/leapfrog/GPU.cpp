@@ -103,11 +103,14 @@ void GPU::initialize(ProtoMolApp *app) {
         if((ei[0].c[1] != 0.0 || ei[0].c[2] != 0.0 || ei[1].c[0] != 0.0 || ei[1].c[2] != 0.0 || ei[2].c[0] != 0.0 || ei[2].c[1] != 0.0))
             report << error << "PBC basis not orthogonal."<<endr;
         //into variables
+		pbcMin2 = fabs(ei[0].c[0]) * 0.5;
         for(int i=0;i<3;i++){
             pbcCell[i] = ei[i].c[i];
             hPbcCell[i] = pbcCell[i] * 0.5;
+			if(fabs(hPbcCell[i]) > pbcMin2) pbcMin2 = fabs(hPbcCell[i]);
             pbcOrig[i] = origin.c[i];
         }
+		pbcMin2 *= pbcMin2;
         delete [] ei;
     }else{
         myPeriodic = false;
@@ -213,6 +216,8 @@ void GPU::gpuCalculateForces(){
                             value = 1.0;
                         }
                     }
+					//save for diagnostics
+					Real old_force = force; Real old_energy = energy;
                     //accumulate to forces and energies
                     force = force * value - energy * deriv;
                     energy = energy * value;
@@ -221,7 +226,7 @@ void GPU::gpuCalculateForces(){
                         myForces->c[i*3+k] -= mDiff[k] * force;
                         myForces->c[j*3+k] += mDiff[k] * force;
                     }
-                    if(diagnostics == 1) outputDiagnostics(force, energy, value, deriv, distSquared, i, j);
+                    if(diagnostics == 1) outputDiagnostics(old_force, old_energy, value, deriv, distSquared, i, j);
                 }
             }
         }
@@ -232,16 +237,24 @@ void GPU::gpuCalculateForces(){
 }
 
 Real GPU::minimalDist(Real *p1, Real *p2, Real *pbcCell, Real * pbcOrig, Real *mDiff){
-    Real xyz[] = {p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2]};
-    Real norm2 = 0.0;
-    for(int i=0;i<3;i++){
-        if(myPeriodic){
-            if(xyz[i] > hPbcCell[i]) xyz[i] -= pbcCell[i];
-            if(xyz[i] < -hPbcCell[i]) xyz[i] += pbcCell[i];
-        }
-        mDiff[i] = xyz[i];
-        norm2 += xyz[i]*xyz[i];
-    }
+
+	Real norm2 = 0.0;
+	for(int i=0;i<3;i++){
+		mDiff[i] = p2[i]-p1[i];
+		norm2 += mDiff[i]*mDiff[i];
+	}
+	//
+	if(!myPeriodic) return norm2;
+	else{
+		if(norm2 > pbcMin2){
+			norm2 = 0.0;
+			for(int i=0;i<3;i++){
+				while(mDiff[i] > hPbcCell[i]) mDiff[i] -= pbcCell[i];
+				while(mDiff[i] < -hPbcCell[i]) mDiff[i] += pbcCell[i];
+				norm2 += mDiff[i]*mDiff[i];
+			}
+		}
+	}
     return norm2;
 }
 

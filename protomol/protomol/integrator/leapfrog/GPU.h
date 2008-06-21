@@ -95,7 +95,7 @@ namespace ProtoMol {
     int ordIdx;
     Real myIRange[MAXEQNN];
     //PBC
-    Real *pbcCell, *hPbcCell, *pbcOrig, *mDiff;
+    Real *pbcCell, *hPbcCell, *pbcOrig, *mDiff, pbcMin2;
     bool myPeriodic;
 
   };
