@@ -14,7 +14,7 @@ class PyMTSIntegrator : public MTSIntegrator {
     MTSIntegrator(cycles, overloadedForces, nextIntegrator) {}
  private:
     virtual MTSIntegrator *doMake(const std::vector<Value> &values,
-				    ForceGroup *fg, StandardIntegrator *nextIntegrator) const {}
+				    ForceGroup *fg, StandardIntegrator *nextIntegrator) const {return NULL;}
 
 
 };

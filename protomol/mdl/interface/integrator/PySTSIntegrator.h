@@ -13,7 +13,7 @@ namespace ProtoMol {
       STSIntegrator(timestep, overloadedForces) {}
   private:
     virtual STSIntegrator *doMake(const std::vector<Value> &values,
-				  ForceGroup *fg) const {}
+				  ForceGroup *fg) const {return NULL;}
     
     
   };
