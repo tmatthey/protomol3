@@ -26,7 +26,7 @@ import os
 
 
 from _Gnuplot import *
-#from pylab import *
+from pylab import *
 
 import numpy
 
@@ -438,7 +438,7 @@ class IO:
         """
         if (not self.doMPL):
            newGraph = Gnuplot(debug=0)
-	   newGraph('set data style linespoints')
+	   #newGraph('set data style linespoints')
 	   newGraph.set_label('xlabel', xlab)
 	   newGraph.set_label('ylabel', ylab)
            return newGraph
@@ -572,12 +572,13 @@ class IO:
          self.figures[name] = self.mplFigCount
          self.mplFigCount = self.mplFigCount + 1
       figure(self.figures[name], (6,4))
+      ion()
       xlabel('Step')
       ylabel(name)
       self.xData[name].append(step)
       self.yData[name].append(quantity)
       plot(self.xData[name], self.yData[name])
-      draw()
+      #show()
       if ((self.pause != 0) and (step % self.pause == 0)):
    	 print "PRESS <RETURN> TO CONTINUE"
    	 text = sys.stdin.read()
