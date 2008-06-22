@@ -442,6 +442,7 @@ protomol/mdl/MDLSetup.tcsh -text
 protomol/mdl/README -text
 protomol/mdl/RunMDL -text
 protomol/mdl/RunMDL.bat -text
+protomol/mdl/SConstruct -text
 protomol/mdl/data/UA_butane/UA_butane.conf -text
 protomol/mdl/data/UA_butane/UA_butane.par -text
 protomol/mdl/data/UA_butane/UA_butane.pdb -text
