@@ -19,7 +19,7 @@ using namespace ProtoMol;
 %}
 
 %include <protomol/type/Real.h>
-%include <protomol/config/Value.h>
+//%include <protomol/config/Value.h>
 %include <protomol/config/Parameter.h>
 %include <protomol/type/Vector3D.h>
 %include <protomol/type/Vector3DBlock.h>

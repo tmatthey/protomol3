@@ -1,6 +1,7 @@
 %module CutoffForce
 %{
 #include <protomol/base/Report.h>
+#include <protomol/config/Value.h>
 #include <protomol/force/OneAtomPair.h>
 #include <protomol/force/OneAtomPairTwo.h>
 #include <protomol/topology/PeriodicBoundaryConditions.h>
@@ -29,7 +30,7 @@ using namespace ProtoMol;
 
 %include "std_string.i"
 %include <protomol/type/Real.h>
-%include <protomol/config/Value.h>
+//%include <protomol/config/Value.h>
 %include <protomol/config/Parameter.h>
 %include <protomol/type/Vector3D.h>
 %include <interface/type/Vector3DBlock.i>
@@ -46,7 +47,6 @@ using namespace ProtoMol;
 %include <protomol/force/nonbonded/NonbondedCutoffForce.h>
 %include <protomol/force/nonbonded/NonbondedCutoffSystemForce.h>
 %include <protomol/force/nonbonded/NonbondedCutoffBornForce.h>
-
 
 %extend ProtoMol::NonbondedCutoffForce {
    Force* makeNewDiElec(Real cutoff,
@@ -191,7 +191,6 @@ using namespace ProtoMol;
 //******************************
 // TEMPLATES
 //******************************
-
 
 %template(NCF_CCM_OAPPBC_C1SF_CF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::PeriodicBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::PeriodicBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombForce> > >;
 %template(NCF_CCM_OAPPBC_C2SF_CF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::PeriodicBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::PeriodicBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombForce> > >;
