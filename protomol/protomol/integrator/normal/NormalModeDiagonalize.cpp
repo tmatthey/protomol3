@@ -59,7 +59,8 @@ namespace ProtoMol {
     if(rediagCounter && hessianCounter){
         rediagIters /= rediagCounter;
         report <<plain<<"NML Timing: Hessian: "<<(hessianTime.getTime()).getRealTime()
-            <<"[s] ("<<hessianCounter<<"), diagonalize: "<<(rediagTime.getTime()).getRealTime()<<"[s] ("<<rediagCounter<<", "<<rediagIters<<")."<<endl;
+            <<"[s] ("<<hessianCounter<<" times), diagonalize: "<<(rediagTime.getTime()).getRealTime()<<
+                "[s] ("<<rediagCounter<<" tests, "<<rediagUpdateCounter<<" re-diag, "<<rediagIters<<" iterations)."<<endl;
     }
     //de-allocate
     if(mhQu!=NULL && eigAlloc) delete [] mhQu;
@@ -133,7 +134,7 @@ namespace ProtoMol {
     //timers/counters for diagnostics
     rediagTime.reset();
     hessianTime.reset();
-    hessianCounter = rediagCounter = rediagIters = 0;
+    hessianCounter = rediagCounter = rediagIters = rediagUpdateCounter = 0;
   }
 
   //*************************************************************************************
@@ -231,6 +232,7 @@ namespace ProtoMol {
   int NormalModeDiagonalize::traceReDiagonalize(int maxIter, double spd, int idM, bool remBondEig){
     double traceThreshold, lambdaMax = 0, lambdaMax2, lambdaMin, spdOffs;
     int iter;
+    bool firstIter = true;
     //Blas variables
     char *transA, *transB;
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
@@ -322,6 +324,10 @@ namespace ProtoMol {
         if(lambdaMax < traceThreshold) break;
         //######## or find Q_{i+1} ##########################################
         else{
+            if(firstIter){	//update if re-diag triggered
+                rediagUpdateCounter++;
+                firstIter = false;
+            }
             //removeBondEig();
             traceThreshold = rediagHyst;	//set tighter threshold (hysteresis)
                 //##steepest descent method##
@@ -524,14 +530,14 @@ namespace ProtoMol {
     MTSIntegrator::getParameters(parameters);
     parameters.push_back(Parameter("averageSteps", Value(noAvStep,ConstraintValueType::NotNegative()),1,Text("Hessian averaged over number of steps.")));
     parameters.push_back(Parameter("avStepSize",Value(avStep,ConstraintValueType::NotNegative()),1.0,Text("Step size for Hessian averaging.")));
-    parameters.push_back(Parameter("reDiagFrequency", Value(rediagCount,ConstraintValueType::NotNegative()),0,Text("Frequency of re-diagonalization (steps).")));
+    parameters.push_back(Parameter("reDiagTestFrequency", Value(rediagCount,ConstraintValueType::NotNegative()),0,Text("Frequency of re-diagonalization (steps).")));
     parameters.push_back(Parameter("fullDiag",Value(fullDiag,ConstraintValueType::NoConstraints()),false,Text("Full diagonalization?")));
     parameters.push_back(Parameter("removeRand",Value(removeRand,ConstraintValueType::NoConstraints()),false,Text("Remove last random perturbation?")));
     parameters.push_back(Parameter("minSteps", Value(minSteps,ConstraintValueType::NotNegative()),0,Text("Max. number of minimizer steps.")));
     parameters.push_back(Parameter("minLim",Value(minLim,ConstraintValueType::NotNegative()),1.0,Text("Minimization limit kcal mol^{-1}.")));
-    parameters.push_back(Parameter("rediagThresh",Value(rediagThresh,ConstraintValueType::NotNegative()),0.0,Text("Re-diagonaliztion threshold.")));
-    parameters.push_back(Parameter("rediagHyst",Value(rediagHyst,ConstraintValueType::NotNegative()),0.0,Text("Re-diagonaliztion threshold with hysteresis.")));
-    parameters.push_back(Parameter("spdOff",Value(spdOff,ConstraintValueType::NotNegative()),200.0,Text("Factor to ensure Hessisn SPD.")));
+    parameters.push_back(Parameter("upperThreshold",Value(rediagThresh,ConstraintValueType::NotNegative()),0.0,Text("Re-diagonaliztion threshold.")));
+    parameters.push_back(Parameter("lowerThreshold",Value(rediagHyst,ConstraintValueType::NotNegative()),0.0,Text("Re-diagonaliztion threshold with hysteresis.")));
+    parameters.push_back(Parameter("spdOffset",Value(spdOff,ConstraintValueType::NotNegative()),200.0,Text("Factor to ensure Hessisn SPD.")));
     parameters.push_back(Parameter("maxIterations", Value(maxIterations,ConstraintValueType::NotNegative()),1000,Text("Maximum re-diagonalization iterations.")));
     parameters.push_back(Parameter("removeBondedEigs",Value(removeBondedEigs,ConstraintValueType::NoConstraints()),false,Text("Remove bonded eigenvectors?")));
   }

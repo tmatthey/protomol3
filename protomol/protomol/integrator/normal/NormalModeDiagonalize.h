@@ -103,7 +103,7 @@ namespace ProtoMol {
     int _idM;
     //Diagnostic data
     Timer rediagTime, hessianTime;
-    int hessianCounter, rediagCounter, rediagIters;
+    int hessianCounter, rediagCounter, rediagIters, rediagUpdateCounter;
     //Trace enhancements
     bool removeBondedEigs;
   };
