@@ -79,11 +79,12 @@ HessianInt::~HessianInt() {
       if (sortOnAbs) absSort();
     }
   }
-  if (info == 0)
+  if (info == 0){
     //output results
     //output eigenvec matrix/ eigenval vector
     outputDiagHess();
-  else
+    report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "." << endr;
+  }else
     report << hint << "[HessianInt::run] error info = " << info << endr;
   //
   if (eigVec != 0) delete[] eigVec;
@@ -158,6 +159,23 @@ void HessianInt::run(int numTimesteps) {
   }
   //
 }
+
+//Nose mass calculation based on Chris Sweet's Thesis
+Real HessianInt::calcQ() {
+    Real Q, sumF;
+    
+    if(sz > 6){
+        sumF = 0;
+        for(int i=6; i< sz;i++){
+            if(eigVal[i]) sumF += sqrt(3.0 / fabs(eigVal[i]));
+        }
+        Q = 0.6/(8.0 * (sz - 6)) * sumF*sumF;
+    }else{
+        Q=0.0;
+    }
+    return Q;
+}
+
 
 void HessianInt::outputDiagHess() {
   unsigned int i;

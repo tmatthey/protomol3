@@ -34,6 +34,7 @@ namespace ProtoMol {
     int diagHessian(double *eigVecO, double *eigValO);
     void outputDiagHess();
     void absSort();
+    Real calcQ();
 
   protected:
     void doKickdoDrift();
