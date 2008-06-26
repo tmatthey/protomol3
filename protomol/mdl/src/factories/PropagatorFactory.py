@@ -539,7 +539,12 @@ class PropagatorFactory:
 			     'fullDiag', 0,
 			     'removeRand', 0,
 			     'minSteps', 0,
-			     'minLim', 1.0))
+			     'minLim', 1.0,
+                       'rediagThresh', 0.0,
+                       'rediagHyst', 0.0,
+                       'spdOff', 200.0,
+                       'maxIterations', 1000,
+                       'removeBondedEigs', 0))
       self.registerPMObject("NormalModeLangevin",
 			    ('firstmode', 1,
 			     'numbermodes', 1,
