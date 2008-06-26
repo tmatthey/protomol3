@@ -79,6 +79,23 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, Cn, LennardJonesForce,
           Universal, CoulombForce> >());
 
+    // SCPISM
+    f.reg(new SimpleFullSystem<OneAtomPair<PBC, C1, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<PBC, C2, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<PBC, Cn, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<PBC, CmpCnCn,
+          CoulombSCPISMForce> >());
+
+    // OneAtomPairTwo
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, C2, LennardJonesForce, C1,
+          CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, C2, LennardJonesForce, C2,
+          CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, Cn, LennardJonesForce, Cn,
+          CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, CmpCnCn, LennardJonesForce,
+          C1, CoulombSCPISMForce> >());
+
   } else if (equalNocase(boundConds,  VacuumBoundaryConditions::keyword)) {
 
     // NonbondedSimpleFullSystemForce CoulombForce
@@ -129,5 +146,24 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
           LennardJonesForce, Complement<C1>, CoulombForceDiElec> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Complement<Cn>,
           LennardJonesForce, Complement<C1>, CoulombForceDiElec> >());
+
+    // SCPISM
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, C1, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, C2, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Cn, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, CmpCnCn,
+          CoulombSCPISMForce> >());
+
+    // OneAtomPairTwo
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2, LennardJonesForce, C1,
+          CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2, LennardJonesForce, C2,
+          CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Cn, LennardJonesForce, Cn,
+          CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, CmpCnCn, LennardJonesForce,
+          C1, CoulombSCPISMForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Cn, LennardJonesForce, C2,
+          CoulombSCPISMForce> >());
   }
 }
