@@ -20,7 +20,7 @@ namespace ProtoMol {
     typedef typename TOneAtomPair::BoundaryConditions BoundaryConditions;
     typedef Topology<BoundaryConditions, TCellManager> RealTopologyType;
     typedef typename RealTopologyType::Enumerator EnumeratorType;
-    typedef typename ProtoMol::CellPair CellPairType;
+    typedef CellPair CellPairType;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
