@@ -609,6 +609,7 @@ protomol/mdl/interface/topology/GenericTopology.i -text
 protomol/mdl/interface/topology/TopologyUtilities.i -text
 protomol/mdl/interface/type/ScalarStructure.i -text
 protomol/mdl/interface/type/Vector3DBlock.i -text
+protomol/mdl/simulations/BBK_BPTI.py -text
 protomol/mdl/simulations/DMDLeapfrog_Argon.py -text
 protomol/mdl/simulations/FTSM_ALA_ISM.py -text
 protomol/mdl/simulations/FTSM_ALA_SOLV.py -text
@@ -622,6 +623,7 @@ protomol/mdl/simulations/NosePoincGL_Butane.py -text
 protomol/mdl/simulations/PIT_ALA.py -text
 protomol/mdl/simulations/PLeapfrog.py -text
 protomol/mdl/simulations/RMT_Butane.py -text
+protomol/mdl/simulations/contour.py -text
 protomol/mdl/simulations/contour_dielec.py -text
 protomol/mdl/simulations/contour_dielec56.py -text
 protomol/mdl/simulations/contour_scpism.py -text

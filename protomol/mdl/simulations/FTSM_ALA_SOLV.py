@@ -1,5 +1,3 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
 from MDL import *
 
 import FTSM
@@ -10,7 +8,7 @@ PSI = 18
 
 # DEFINE THE NUMBER OF POINTS ON THE STRING 
 numpoints = 8
-numsteps = 100000
+numsteps = 2000
 
 # PHYSICAL SYSTEMS
 x = []
@@ -71,17 +69,15 @@ for ii in range(1, numpoints-1):
     z.append([newphi, newpsi])
 z.append([phiF, psiF])
 
+
+
 ff.params['LennardJones'] = {'algorithm':'Cutoff',
                              'switching':'Cutoff',
                              'cutoff':9}
 
-ff.params['Coulomb'] = {'algorithm':'PME',
+ff.params['Coulomb'] = {'algorithm':'Cutoff',
                         'switching':'Cutoff',
-                        'interpolation':'BSpline',
-                        'gridsize':32,
-                        'order':4,
                         'cutoff':9}
-
 
 ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
                                  'dihedralnum':[PHI-1, PSI-1],
@@ -89,12 +85,12 @@ ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
 
 #io.initializePlot('string')
 #io.pause=1
-stringgraph=io.newGraph('Phi', 'Psi')
+#stringgraph=io.newGraph('Phi', 'Psi')
 
 # PRINT INITIAL STRING I0
 print "\nI0: ",
 print z
-io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
+#io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
 
 
 dt = 1.0
@@ -104,12 +100,13 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
             kappa += (100.-40.)/90000.
 
         if (p != 0 or iter != 0):
-           FTSM.setConstraint(phi=z[p][0], psi=z[p][1], kappa=kappa, forcefield=ff)
+           FTSM.setConstraint(PHI, PSI, phi=z[p][0], psi=z[p][1], kappa=kappa, forcefield=ff)
         
         # UPDATE FREE SPACE
         # USE FIRST SYSTEM TO GET M
         # USE SECOND SYSTEM TO OBTAIN PHI AND PSI DIFFERENCES
         # FROM TARGETS
+        zp0 = z[p][0]
         z[p][0] -= (kappa/gamma)*dt*(FTSM.M(x[p], PHI, PHI)*(z[p][0]-y[p].angle(PHI)) + FTSM.M(x[p], PHI, PSI)*(z[p][1] - y[p].angle(PSI)))
         z[p][1] -= (kappa/gamma)*dt*(FTSM.M(x[p], PSI, PHI)*(z[p][0]-y[p].angle(PHI)) + FTSM.M(x[p], PSI, PSI)*(z[p][1] - y[p].angle(PSI)))
         
@@ -129,8 +126,8 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
         # all new force objects by changing params.
         #FTSM.setConstraint(phi=z[(p+1)%numpoints][0], psi=z[(p+1)%numpoints][1], kappa=kappa, forcefield=ff)
 
-    z = FTSM.reparam(z)
+    z = FTSM.reparamTrevor(z)
 
     print "\nI"+str(iter+1)+": ",z
-    io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
+    #io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])
 

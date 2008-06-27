@@ -1,5 +1,4 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
+# Recursive Multiple Thermostat technique
 from MDL import *
 
 # PHYSICAL SYSTEM

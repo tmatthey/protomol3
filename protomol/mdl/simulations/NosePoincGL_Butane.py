@@ -1,5 +1,6 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
+# Simulation of united-atom butane
+# Uses Nose-Poincare (Python prototyped)
+# to propagate the system
 from MDL import *
 
 # PHYSICAL SYSTEM
@@ -18,7 +19,7 @@ ff = forces.makeForceField(phys)
 ff.bondedForces("ba")
 
 # OUTPUT
-#io.plots = {'totalenergy':2000}
+io.plots = {'totalenergy':2000}
 io.screen = 4000
 
 # PROPAGATION

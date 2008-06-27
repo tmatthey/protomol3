@@ -1,5 +1,3 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
 from MDL import *
 
 import FTSM
@@ -161,12 +159,7 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
 
     z = FTSM.reparamTrevor(z)
 
-    #if (not converged):
-    #   tmpD = d
-    #   d = rmsd(initial, z)
-    #   if (tmpD < d):
-    #       converged = True
-    #       print "CONVERGED AT STEP ", iter, " ", d, " ", tmpD
+
     #if (iter % 10 == 0):
     #   rmsd_vals.append([iter, rmsd(initial,z)])
     

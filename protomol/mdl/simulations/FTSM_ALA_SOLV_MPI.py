@@ -1,5 +1,3 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
 from MDL import *
 
 import FTSM
@@ -96,6 +94,9 @@ else:
 #   
 #z_p = z[mpi.rank]
 z_p = mpi.scatter(z)[0]
+print z_p
+import sys
+sys.exit(0)
 ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
                                  'dihedralnum':[PHI-1, PSI-1],
                                  'angle':[z_p[0], z_p[1]]}
@@ -103,7 +104,7 @@ ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
 
 dt = 1.0
 kappaincr = (1000.-40.)/100000.
-for iter in range(0, 200000): # NUMBER OF FTSM ITERATIONS
+for iter in range(0, 2000): # NUMBER OF FTSM ITERATIONS
     #for workpt in range(0, numpoints): # LOOPING OVER POINTS
         if (iter >= 10001 and iter <= 110000):
             kappa += kappaincr

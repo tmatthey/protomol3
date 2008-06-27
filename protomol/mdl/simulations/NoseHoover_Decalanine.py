@@ -1,5 +1,5 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
+# Simulation of decalanine
+# Using Nose-Hoover for propagation.
 from MDL import *
 
 # PHYSICAL

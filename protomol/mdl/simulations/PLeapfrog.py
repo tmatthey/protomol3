@@ -1,6 +1,5 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
-
+# Position verlet propagation
+# of united-atom butane
 from MDL import *
 
 # PHYSICAL SYSTEM

@@ -1,5 +1,5 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
+# Simulation of alanine dipeptide in vacuum
+# Applies normal mode restraints.
 from MDL import *
 
 phys = Physical()

@@ -1,5 +1,5 @@
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
+# SIMULATION OF 280-ARGON MOLECULES
+# USING SELF-CONSISTENT LEAPFROG
 from MDL import *
 
 # PHYSICAL
@@ -8,11 +8,9 @@ io = IO()
 io.readPDBPos(phys, "data/argon_280/untitled.pdb")
 io.readPSF(phys, "data/argon_280/argon.psf")
 io.readPAR(phys, "data/argon_280/argon.par")
-#io.doMPL = True
 phys.bc = "Periodic"
 phys.cellsize = 6.5
 phys.temperature = 300
-#phys.buildAll()
 
 # FORCES
 forces = Forces()
