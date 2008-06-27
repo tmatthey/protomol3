@@ -5,7 +5,7 @@
 #define COMM_VERSION 2
 #define COMM_PORT    0xCE11
 #define COMM_NNCOORD 050363
-#define NUMCONN      5 
+#define NUMCONN      20 
 
 #include "stdtypes.h"
 
