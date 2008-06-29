@@ -643,9 +643,7 @@ protomol/mdl/src/modifiers/friction.py -text
 protomol/mdl/src/propagators/__init__.py -text
 protomol/mdl/src/propagators/classes/BBK.py -text
 protomol/mdl/src/propagators/classes/HMC.py -text
-protomol/mdl/src/propagators/classes/HMCMDL.py -text
 protomol/mdl/src/propagators/classes/Impulse.py -text
-protomol/mdl/src/propagators/classes/ImpulseMDL.py -text
 protomol/mdl/src/propagators/classes/LeapfrogMDL.py -text
 protomol/mdl/src/propagators/classes/MTS.py -text
 protomol/mdl/src/propagators/classes/NosePoincGL.py -text

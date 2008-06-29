@@ -7,10 +7,7 @@ import numpy
 
 class BBK(STS):
     def init(self, phys, forces, prop):
-       print self.gamma
-       print Constants.invTimeFactor()
        self.gamma = self.gamma*0.001/Constants.invTimeFactor()
-       print self.gamma
        prop.calculateForces(forces)
 
     def run(self, phys, forces, prop):
