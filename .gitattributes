@@ -640,9 +640,7 @@ protomol/mdl/src/forces/HDForce_smart.py -text
 protomol/mdl/src/forces/__init__.py -text
 protomol/mdl/src/modifiers/ModifierShadow.py -text
 protomol/mdl/src/modifiers/__init__.py -text
-protomol/mdl/src/modifiers/averagePositions.py -text
 protomol/mdl/src/modifiers/friction.py -text
-protomol/mdl/src/modifiers/mollify.py -text
 protomol/mdl/src/propagators/__init__.py -text
 protomol/mdl/src/propagators/classes/BBK.py -text
 protomol/mdl/src/propagators/classes/HMC.py -text
