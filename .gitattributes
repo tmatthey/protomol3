@@ -638,7 +638,6 @@ protomol/mdl/src/forces/ElectrostaticForce.py -text
 protomol/mdl/src/forces/HDForce.py -text
 protomol/mdl/src/forces/HDForce_smart.py -text
 protomol/mdl/src/forces/__init__.py -text
-protomol/mdl/src/modifiers/ModifierShadow.py -text
 protomol/mdl/src/modifiers/__init__.py -text
 protomol/mdl/src/modifiers/friction.py -text
 protomol/mdl/src/propagators/__init__.py -text
