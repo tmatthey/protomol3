@@ -66,6 +66,9 @@ def executePropagator(prop, phys, forces, io, numsteps):
       
       @type forces: Forces
       @param forces: MDL Forces object
+
+      @type io: IO
+      @param io: MDL IO object
       
       @type numsteps: int
       @param numsteps: Number of steps to run
@@ -141,17 +144,17 @@ class PropagatorFactory:
       # TO DO THIS, WE MUST FIRST OBTAIN
       # A LIST OF ALL FILES IN propagators/objects:
       mdlpath = os.getenv('MDLROOT')
-      myList = os.listdir(mdlpath+'/src/propagators/objects')
+      myList = os.listdir(mdlpath+'/src/propagators/classes')
 
       # NOW REMOVE THE .svn/ directory
-      myList.remove('.svn')
+      if (myList.count('.svn') != 0): myList.remove('.svn')
 
       # NOW PROCESS THE LIST.
       # 1. REMOVE DIRECTORIES
       # 2. REMOVE NON .py FILES
       i = 0
       while (i < myList.__len__()):
-          if ( (not os.path.isfile(mdlpath+'/src/propagators/objects/'+myList[i])) or
+          if ( (not os.path.isfile(mdlpath+'/src/propagators/classes/'+myList[i])) or
                (not myList[i].endswith('.py')) ):
               myList.remove(myList[i])
           else:
@@ -174,7 +177,7 @@ class PropagatorFactory:
       # MDL PROPAGATORS ARE LEFT
       ## NOW REGISTER.
       for i in range(0, myList.__len__()):
-          mod = _get_mod('objects.'+myList[i])
+          mod = _get_mod('classes.'+myList[i])
           if (hasattr(mod, 'name') and hasattr(mod, 'parameters')):
               self.registerObject(mod, mod.name, mod.parameters)
           if (hasattr(mod, 'modifiers')):
@@ -185,12 +188,12 @@ class PropagatorFactory:
 
       # REPEAT THE PROCESS FOR THE methods DIRECTORY
       # EXCEPT REGISTER METHODS.
-      myList = os.listdir(mdlpath+'/src/propagators/methods')
-      myList.remove('.svn')
+      myList = os.listdir(mdlpath+'/src/propagators/functions')
+      if (myList.count('.svn') != 0): myList.remove('.svn')
 
       i = 0
       while (i < myList.__len__()):
-          if ( (not os.path.isfile(mdlpath+'/src/propagators/methods/'+myList[i])) or
+          if ( (not os.path.isfile(mdlpath+'/src/propagators/functions/'+myList[i])) or
                (not myList[i].endswith('.py')) ):
               myList.remove(myList[i])
           else:
@@ -207,7 +210,7 @@ class PropagatorFactory:
               i += 1
               
       for i in range(0, myList.__len__()):
-          mod = _get_mod('methods.'+myList[i])
+          mod = _get_mod('functions.'+myList[i])
           if (hasattr(mod, 'name') and hasattr(mod, 'parameters')):
               self.registerMethod(mod, mod.name, mod.parameters)
           if (hasattr(mod, 'modifiers')):
@@ -337,7 +340,7 @@ class PropagatorFactory:
 
    def getType(self, name):
       """
-      Return the type (object or method) of a propagator
+      Return the type (class or function) of a propagator
 
       @type name: string
       @param name: Name of propagation scheme
@@ -539,12 +542,7 @@ class PropagatorFactory:
 			     'fullDiag', 0,
 			     'removeRand', 0,
 			     'minSteps', 0,
-			     'minLim', 1.0,
-                       'rediagThresh', 0.0,
-                       'rediagHyst', 0.0,
-                       'spdOff', 200.0,
-                       'maxIterations', 1000,
-                       'removeBondedEigs', 0))
+			     'minLim', 1.0))
       self.registerPMObject("NormalModeLangevin",
 			    ('firstmode', 1,
 			     'numbermodes', 1,
