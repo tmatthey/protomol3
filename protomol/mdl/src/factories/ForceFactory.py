@@ -254,8 +254,9 @@ class ForceFactory:
       @rtype: Force
       @return: SWIG-wrapped force object which computes Born Radii.
       """
-      # Modified TMC 6/30/08: Always use cutoff
+      # Modified TMC 6/30/08: ALWAYS use Cutoff switch and alg
       alg = "Cutoff"
+      newforce = self.bornForces[bc][alg]['Cutoff']()
       return self.applyParameters(newforce, bc, alg, 'Cutoff', params)
 
   def createLennardJonesCoulombForce(self, bc, params):
