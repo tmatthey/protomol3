@@ -2,6 +2,13 @@ from ForceGroup import *
 import sys
 
 class ForceField(ForceGroup):
+   """
+   A holder for the following data:
+     1. Set of forces to evaluate.
+     2. Algorithms to use for evaluation.
+     3. Switching function(s) to apply, if any.
+     4. Extra parameters, depending on the particular forces.
+   """
    # DEFAULT DESTRUCTOR WILL DELETE FORCE ARRAY
    # THIS DESTRUCTION IS HANDLED IN THE BACK END
    # SO WE DON'T DO IT AGAIN
@@ -64,7 +71,7 @@ class ForceField(ForceGroup):
       # l - LENNARDJONES, c - COULOMB
       # lc - LENNARDJONES/COULOMB TOGETHER PAIRWISE EVALUATION (Default)
       self.forcetypes = [] #: List of force types, can contain 'b' (bond), 'a' (angle), 'd' (dihedral), 'i' (improper), 'h' (harmonic dihedral), 'l' (van der Waals), 'c' (electrostatic), 'e' (implicit solvation dielectric scaling), 'lc' (coupled vdW and electrostatic)
-      self.pythonforces = []
+      self.pythonforces = [] #: List of Python-prototyped orce objects
       ################################################################### 
       
       ###################################################################
@@ -161,6 +168,12 @@ class ForceField(ForceGroup):
 
 
    def addPythonForce(self, pyforce):
+      """
+      Add a Python-prototyped force object for evaluation.
+
+      @type pyforce: PySystemForce
+      @param pyforce: An instance of the Python-prototyped force.
+      """
       self.pythonforces.append(pyforce)
 
 

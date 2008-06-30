@@ -6,14 +6,18 @@ import numpy
 # of forces
 def leapfrog(phys, forces, io, steps, timestep, fg):
    """
-   Leapfrog propagation method.
-   Single timestepping.
+   Implements the Leapfrog method.
+      1. Half-timestep update of velocities.
+      2. Full-timestep update of positions.
+      3. Half-timestep update of velocities.
+   cf. R. W. Hockney and J. W. Eastwood, Computer Simulation Using Particles.
+   New York: McGraw-Hill, 1981.
    
    @type phys: Physical
    @param phys: The physical system.
 
    @type forces: Forces
-   @param force: MDL Forces object.
+   @param forces: MDL Forces object.
 
    @type io: IO
    @param io: MDL IO object.

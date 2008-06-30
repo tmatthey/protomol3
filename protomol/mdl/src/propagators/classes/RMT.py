@@ -4,19 +4,13 @@ from STS import *
 import Constants
 import numpy
 
-######################################################################################
-####RMT integrator for scripted MDL                                                  #
-####Chris Sweet 10/20/2005.                                                          #
-####This method is based on an extended Hamiltonian with 'm' additional thermostats, #
-####or degrees of freedom. The resulting Hamiltonian gives rise to implicit coupling #
-####between the variables, requiring implicit symplectic methods. Since this is      #
-####undesirable a Hamiltonian splitting method is used to produce 2+m Hamiltonian    #
-####systems which can be solved explicitly. This spliting is described in            #
-####http://www.nd.edu/~csweet1/campus/rmtsplit.pdf                                   # 
-######################################################################################
+
 class RMT(STS):
    """
-   This method is based on an extended Hamiltonian with 'm' additional thermostats, or degrees of freedom. The resulting Hamiltonian gives rise to implicit coupling between the variables, requiring implicit symplectic methods. Since this is undesirable a Hamiltonian splitting method is used to produce 2+m Hamiltonian systems which can be solved explicitly. This spliting is described in: http://www.nd.edu/~csweet1/campus/rmtsplit.pdf                              
+   This method is based on an extended Hamiltonian with 'm' additional thermostats, or degrees of freedom. The resulting Hamiltonian gives rise to implicit coupling between the variables, requiring implicit symplectic methods. Since this is undesirable a Hamiltonian splitting method is used to produce 2+m Hamiltonian systems which can be solved explicitly. This spliting is described in: http://www.nd.edu/~csweet1/campus/rmtsplit.pdf
+   cf. B. J. Leimkuhlder and C. R. Sweet.  Hamiltonian Formulation for
+   Recursive Multiple Thermostats in a Common Timescale.  SIAM J. Appl. Dyn.
+   Sys. 4(1):187-216, 2005.
    """
 
    def init(self, phys, forces, prop):

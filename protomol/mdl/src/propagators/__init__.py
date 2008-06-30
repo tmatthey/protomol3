@@ -1,2 +1,2 @@
-import objects
-import methods
+import classes
+import functions

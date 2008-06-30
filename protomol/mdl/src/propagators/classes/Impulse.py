@@ -4,11 +4,20 @@ from math import *
 import Constants
 
 class ImpulseMDL(MTS):
-
+    """
+    Implements the multiple-timestepping Verlet/r-RESPA method, also
+    known as Impulse.  This propagator invokes an 'inner' propagator
+    for a specific number of cycles per iteration, then computes its
+    own forces.
+    cf. H. Grubmuller, H. Heller, A. Windemuth and K. Schulten.
+    Generalized Verlet Algorithm for Efficient Molecular Dyanmics
+    Simulatiosn with Long-Range Interactions.  Molecular Simulation,
+    vol. 6, pages 121-142, 1991.
+    """
     #  init()  -------------------------------------------------------------  #
     def init(self, phys, forces, prop):
         """
-        Initialize propagator: seed the generator, invoke the next
+        Initialize propagator: invoke the next
         propagator in the chain, and compute forces.
 
         @type phys: Physical
@@ -48,7 +57,7 @@ class ImpulseMDL(MTS):
     #  finish()  -----------------------------------------------------------  #
     def finish(self, phys, forces, prop ):
         """
-        Finish propagator; in this case just invoke the
+        Finish propagator; In this case just invoke the
         finish method of the next propagator in the chain
         
         @type phys: Physical

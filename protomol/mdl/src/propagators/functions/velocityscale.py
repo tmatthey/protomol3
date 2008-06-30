@@ -2,19 +2,17 @@ import Vector3DBlock
 import Constants
 import numpy
 import math
-# Leapfrog function accepts initial positions and velocities
-# Along with the number of steps to run, the timestep and a group
-# of forces
+
 def velocityscale(phys, forces, io, steps, timestep, fg, t0):
    """
-   Leapfrog propagation method.
-   Single timestepping.
+   Runs the Leapfrog method, but imposes a scaling of velocities
+   after execution, to keep average kinetic energy constant.
    
    @type phys: Physical
    @param phys: The physical system.
 
    @type forces: Forces
-   @param force: MDL Forces object.
+   @param forces: MDL Forces object.
 
    @type io: IO
    @param io: MDL IO object.
@@ -36,10 +34,7 @@ def velocityscale(phys, forces, io, steps, timestep, fg, t0):
    # Calculate new forces with updated position/velocity
    fg.calculateForces(phys, forces)
 
-   #print phys.velocities
-   #print phys.positions
-   #print forces.force
-   #sys.exit(1)
+
    step = 1
    # Run for the number of passed steps
    while (step < steps):

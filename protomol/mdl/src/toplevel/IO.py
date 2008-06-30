@@ -24,38 +24,43 @@ import OutputXYZTrajectoryVel
 import sys
 import os
 
-
-from _Gnuplot import *
-from pylab import *
+# Check for Gnuplot and Matplotlib
+# Conditional import.
+if sys.modules.has_key('_Gnuplot'): from _Gnuplot import *
+if sys.modules.has_key('pylab'): from pylab import *
 
 import numpy
 
 class IO:
-   
+   """
+   Controls output, for data analysis purposes.
+   Flexible and can output several different types of observables,
+   in formats such as screen, plots, and output files.
+   """
    def __init__(self):
       #####################################################################################
       # USER-ACCESSIBLE STRUCTURES
-      self.myOutputs = list()        #: LIST OF DESIRED OUTPUTS
-      self.myPlots = list()          #: LIST OF DESIRED PLOTS (Python functions)
-      self.doMPL = False             #: USING MATPLOTLIB?  USE GNUPLOT IF FALSE
-      self.pause = 0                 #: FREQUENCY FOR PAUSING (DEFAULT 0 = NEVER)
-      self.graphLabelsX = []         #: ARRAY OF X-AXIS GRAPH LABELS
-      self.graphLabelsY = []         #: ARRAY OF Y-AXIS GRAPH LABELS
+      self.myOutputs = list()        #: List of desired outputs
+      self.myPlots = list()          #: List of plots (Python functions)
+      self.doMPL = False             #: Using Matplotlib?
+      self.pause = 0                 #: Pause frequency (0=Never)
+      self.graphLabelsX = []         #: Array of x-axis graph labels
+      self.graphLabelsY = []         #: Array of y-axis graph labels
       
       ############################################################################
       # GNUPLOT STRUCTURES (EMPTY FOR MATPLOTLIB)
       ############################################################################
-      self.xyData = dict()           #: MAP FROM GRAPH NAME TO XY PAIRS FOR DATA
-      self.graphs = dict()           #: MAP FROM GRAPH NAME TO GNUPLOT GRAPH OBJECT
+      self.xyData = dict()           #: Maps graph name to xy data
+      self.graphs = dict()           #: Maps graph name to Gnuplot object
       ############################################################################
 
       ############################################################################
       # MATPLOTLIB STRUCTURES (EMPTY FOR GNUPLOT)
       ############################################################################
-      self.xData = dict()            #: MAP FROM GRAPH NAME TO X DATA
-      self.yData = dict()            #: MAP FROM GRAPH NAME TO Y DATA
-      self.figures = dict()          #: MAP FROM GRAPH NAME TO MATPLOTLIB OBJECT
-      self.mplFigCount = 0           #: NUMBER OF MATPLOTLIB OBJECT AT THE FRONT
+      self.xData = dict()            #: Maps graph name to x data
+      self.yData = dict()            #: Maps graph name to y data
+      self.figures = dict()          #: Maps graph name to Matplotlib object
+      self.mplFigCount = 0           #: Number of figures
       ############################################################################
 
       #####################################################################################
@@ -104,7 +109,7 @@ class IO:
                             'improperenergy':self.plotImproperEnergy,
                             'ljenergy':self.plotLJEnergy,
                             'coulombenergy':self.plotCoulombEnergy,
-                            'shadowenergy':self.plotShadowEnergy}
+                            'shadowenergy':self.plotShadowEnergy}  #: Map of plot names to functions which perform the plotting.
 
       self.dirty = 1        #: Dirty bit, set to 1 if data members have been modified since the last propagation
 
@@ -145,7 +150,7 @@ class IO:
       @param filename: Absolute or relative path to a file.
 
       @rtype: string
-      @param: Absolute path to the file (MDL root directory appended if the supplied path was relative).
+      @return: Absolute path to the file (MDL root directory appended if the supplied path was relative).
       """
       if (not os.path.exists(filename)):
          filename = os.getenv('MDLROOT')+'/'+filename
@@ -372,8 +377,8 @@ class IO:
       @type phys: Physical
       @param phys: The physical system.
       
-      @type pdbname: string
-      @param pdbname: XYZ file name.
+      @type xyzname: string
+      @param xyzname: XYZ file name.
       """
       XYZWriter.XYZWriter(xyzname).write(phys.posvec, phys.myTop.atoms, phys.myTop.atomTypes)
 
@@ -384,8 +389,8 @@ class IO:
       @type phys: Physical
       @param phys: The physical system.
       
-      @type pdbname: string
-      @param pdbname: XYZ file name.
+      @type xyzname: string
+      @param xyzname: XYZ file name.
       """
       XYZWriter.XYZWriter(xyzname).write(phys.velvec, phys.myTop.atoms, phys.myTop.atomTypes)
 
@@ -483,6 +488,7 @@ class IO:
         @param rangey: Plotting range for y-axis (default is to dynamically adjust to the data)
         """
         if (not self.doMPL):
+           graph('set data style linespoints')
            miny = 0; maxy = 0; minx = 0; maxx = 0;
            for i in range(0, vec.__len__()):
               if (vec[i][0] < minx):
@@ -871,8 +877,6 @@ class IO:
        @type phys: Physical
        @param phys: The physical system
 
-       @type forces: Forces
-       @param forces: MDL Forces object
        """
        self.myOutputCache.initialize(phys.app)
 

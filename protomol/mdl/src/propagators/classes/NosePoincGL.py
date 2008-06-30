@@ -1,18 +1,7 @@
 from STS import *
 import Constants
 import numpy
-#from umath import *
-#####################################################################################
-####Nose Poincare integrator for scripted MDL                                       #
-####Chris Sweet 10/20/2005.                                                         #
-####This method is based on an extended Hamiltonian with an additional thermostat,  #
-####or degree of freedom. The resulting Hamiltonian gives rise to implicit coupling #
-####between the variables, requiring implicit symplectic methods. Since this is     #
-####undesirable the Generalised Leapfrog method is utilised to produce a system     #
-####which can be solved explicitly. This method is described in detail in           #
-####S.D.Bond, B.Laird, and B.Leimkuhler, The Nose-Poincare method for constant      #
-####temperature molecular dynamics. J.Comp.Pys.,151:114,1999.                       #
-#####################################################################################
+
 class NosePoincGL(STS):
    """
    This method is based on an extended Hamiltonian with an additional thermostat, or degree of freedom. The resulting Hamiltonian gives rise to implicit coupling between the variables, requiring implicit symplectic methods. Since this is undesirable the Generalised Leapfrog method is utilised to produce a system which can be solved explicitly. This method is described in detail in:

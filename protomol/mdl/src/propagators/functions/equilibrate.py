@@ -2,19 +2,22 @@ import Vector3DBlock
 import Constants
 import numpy
 import math
-# Leapfrog function accepts initial positions and velocities
-# Along with the number of steps to run, the timestep and a group
-# of forces
+
+
 def equilibrate(phys, forces, io, steps, timestep, fg, t0, atomstart):
    """
-   Leapfrog propagation method.
+   A routine that you can run for NVT equilibration; by default simply
+   runs the Leapfrog method with velocity resetting around a target temperature
+   keeping average kinetic energy constant.  You can specify an atom number
+   to start equilibrating; this is useful if you just want to equilibrate
+   solvent molecules for example.
    Single timestepping.
    
    @type phys: Physical
    @param phys: The physical system.
 
    @type forces: Forces
-   @param force: MDL Forces object.
+   @param forces: MDL Forces object.
 
    @type io: IO
    @param io: MDL IO object.
@@ -27,6 +30,12 @@ def equilibrate(phys, forces, io, steps, timestep, fg, t0, atomstart):
 
    @type fg: ForceField
    @param fg: MDL force field for evaluation.
+
+   @type t0: float
+   @param t0: Kelvin temperature.
+
+   @type atomstart: int
+   @param atomstart: Atom index at which to start equilibration.  From 0 to N-1.
 
    """
    # Update velocities by half a step

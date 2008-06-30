@@ -22,17 +22,9 @@ class ElectrostaticForce:
     @type phys: Physical
     @param phys: The physical system.
 
-    @type phys: Forces
-    @param phys: MDL Forces object
-    
-    @type phi: float
-    @param phi: Target dihedral value in radians.
+    @type forces: Forces
+    @param forces: MDL Forces object
 
-    @type dihedral: integer
-    @param dihedral: Dihedral number to constrain.
-
-    @type k: float
-    @param: Scaling factor for constrain.
     """
     self.phys = phys
     self.forces = forces
@@ -43,7 +35,7 @@ class ElectrostaticForce:
     for i in range (0, n):
         self.q.append(self.phys.charge(i+1))
       
-  def evaluate(self):
+  def eval(self):
     """
     Modify energy and force vector to include this force term.
     """

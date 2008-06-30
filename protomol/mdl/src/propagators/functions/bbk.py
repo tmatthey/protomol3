@@ -1,18 +1,20 @@
 import Constants
 import Vector3DBlock
-#from umath import *
 import numpy
 
 def bbk(phys, forces, io, steps, timestep, fg, temp, gamma, seed):
    """
    Brunger-Brooks-Karplus propagation method.
+   cf. A. Brunger, C. B. Brooks and M. Karplus.  Stochastic
+   Boundary Conditions for Molecular Dynamics Simulations of ST2 Water.
+   Chem. Phys. Lett, v. 105, pages 495-500, 1982.
    Single timestepping.
    
    @type phys: Physical
    @param phys: The physical system.
 
    @type forces: Forces
-   @param force: MDL Forces object.
+   @param forces: MDL Forces object.
 
    @type io: IO
    @param io: MDL IO object.

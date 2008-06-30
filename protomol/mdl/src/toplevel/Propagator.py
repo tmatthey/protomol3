@@ -1,5 +1,4 @@
 import MathUtilities
-#import ReducedHessAngle
 from PropagatorFactory import *
 import time
 import Constants
@@ -8,20 +7,23 @@ import numpy
 import ProtoMolApp
 
 class Propagator:
+   """
+   Provides functionality to propagate a system with time.
+   """
    def __init__(self, phys, forces, io):
       #####################################################################################
       # USER-ACCESSIBLE STRUCTURES
-      self.myPropagator = 0                  #: PROPAGATOR OBJECT (0 IF METHOD)
-      self.myStep = 0                        #: CURRENT SIMULATION STEP
-      self.myTimestep = 0                    #: PROPAGATOR TIMESTEP (fs)
-      self.myLevel = 0                       #: CURRENT PROPAGATOR HIERARCHY LEVEL (0 IS STS)
+      self.myPropagator = 0                  #: Propagator object
+      self.myStep = 0                        #: Current simulation step
+      self.myTimestep = 0                    #: Propagator timestep
+      self.myLevel = 0                       #: Number of levels
       #####################################################################################
 
       phys.build()
 
-      self.phys = phys
-      self.forces = forces
-      self.io = io
+      self.phys = phys #: Physical object 
+      self.forces = forces #: Forces object
+      self.io = io  #: IO object
       io.phys = phys
 
       
@@ -42,7 +44,7 @@ class Propagator:
       @param integ: MDL propagator object (STS or MTS)
 
       @rtype: boolean
-      @return: True if the passed propagator is coded using MDL.
+      @return: True if the passed propagator is prototyped in pure Python.
       """
       return (hasattr(integ, "prerunmodifiers"))
 
@@ -131,8 +133,17 @@ class Propagator:
       """
       Run modifiers of a propagator
 
-      @type modifier: list of functions
-      @param modifier: A set of routines which alternates propagator behavior
+      @type modifiers: list of functions
+      @param modifiers: A set of routines which alternates propagator behavior
+
+      @type phys: Physical
+      @param phys: MDL Physical object
+
+      @type forces: Forces
+      @param forces: MDL Forces object
+
+      @type prop: Propagator
+      @param prop: MDL Propagator object
       
       @type integ: object
       @param integ: MDL propagator object (STS or MTS)
@@ -158,7 +169,7 @@ class Propagator:
         Calculate forces and update the atomic force vector.
       
         @type forces: Forces
-        @param integ: MDL Forces object
+        @param forces: MDL Forces object
         """
         for ii in range(0, self.myPropagator.preforcemodifiers.__len__()):
            self.myPropagator.preforcemodifiers[ii](self.phys, forces, self, self.myPropagator)
@@ -173,10 +184,10 @@ class Propagator:
       in the chain.
 
       @type phys: Physical
-      @param integ: MDL Physical object
+      @param phys: MDL Physical object
       
       @type forces: Forces
-      @param integ: MDL Forces object
+      @param forces: MDL Forces object
 
       """
       tempI = self.myPropagator
@@ -191,15 +202,12 @@ class Propagator:
       in the chain.
 
       @type phys: Physical
-      @param integ: MDL Physical object
+      @param phys: MDL Physical object
       
       @type forces: Forces
-      @param integ: MDL Forces object
+      @param forces: MDL Forces object
 
-      @type io: IO
-      @param integ: MDL IO object
-
-      @type cL: integer
+      @type cL: int
       @param cL: Cycle length (number of times to execute the
                  inner propagator)
       """
@@ -215,6 +223,16 @@ class Propagator:
       """
       For multiple timestepping, finish the next propagator
       in the chain.
+
+      @type phys: Physical
+      @param phys: MDL Physical object
+      
+      @type forces: Forces
+      @param forces: MDL Forces object
+
+      @type prop: Propagator
+      @param prop: MDL Propagator object
+
       """
       tempI = self.myPropagator
       self.myPropagator = self.myPropagator.next
@@ -232,20 +250,23 @@ class Propagator:
        """
        Propagate the system.
 
-       @type name: string
-       @param name: Name of the propagator to use.
+       @type scheme: string
+       @param scheme: Name of the propagator to use.
        
-       @type steps: integer
+       @type steps: int
        @param steps: Number of steps for execution.
 
+       @type cyclelength: int
+       @param cyclelength: Cyclelength for MTS propagation (-1 is STS).
+       
        @type dt: float
        @param dt: Timestep.
 
-       @type ff: ForceField
-       @param ff: MDL ForceField object.
+       @type forcefield: ForceField
+       @param forcefield: MDL ForceField object.
 
-       @type *args: tuple
-       @param *args: Extra parameters unique for this propagation scheme.
+       @type params: dictionary
+       @param params: Extra parameters unique for this propagation scheme.
                      (This could be empty).
 
        """

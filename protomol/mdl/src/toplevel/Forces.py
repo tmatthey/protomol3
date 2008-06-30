@@ -7,6 +7,10 @@ import numpy
 from PySystemForce import *
 
 class Forces:
+   """
+   Contains the atomic force vector, and a structure
+   to hold system energies.
+   """
    def __init__(self):
       #####################################################################
       # USER-ACCESSIBLE STRUCTURES
@@ -41,6 +45,9 @@ class Forces:
          self.__dict__[name] = val
 
    def initializeEnergies(self, app):
+      """
+      Initialize the energies structure.
+      """
       self.energies = app.energies
       
    # RESET SYSTEM STATE TO DEFAULTS

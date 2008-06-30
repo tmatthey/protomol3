@@ -1,19 +1,19 @@
 import Vector3DBlock
 import Constants
 import numpy
-# Simplified Takahashi function accepts initial positions and velocities
-# Along with the number of steps to run, the timestep and a group
-# of forces
+
 def takahashi(phys, forces, io, steps, timestep, fg):
    """
    Simplified Takahashi-Imada propagation method.
-   Single timestepping.
+   Uses an auxiliary position vector.
+   cf. M. Takahashi and M. Imada.  Monte Carlo Calculation of Quantum Systems.
+   J. Phys. Soc. Jpn.  v. 53, pages 3765-3769, 1984.
    
    @type phys: Physical
    @param phys: The physical system.
 
    @type forces: Forces
-   @param force: MDL Forces object.
+   @param forces: MDL Forces object.
 
    @type io: IO
    @param io: MDL IO object.

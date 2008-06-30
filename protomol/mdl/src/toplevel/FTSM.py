@@ -327,6 +327,12 @@ def extractPsi(phipsi):
 def setConstraint(angle1, angle2, phi, psi, kappa, forcefield):
     """
     Find the harmonic dihedral forces, and set their reference dihedrals
+    
+    @type angle1: int
+    @param angle1: Phi dihedral index.
+
+    @type angle2: int
+    @param angle2: Psi dihedral index
 
     @type phi: float
     @param phi: Reference phi value in radians
@@ -334,8 +340,11 @@ def setConstraint(angle1, angle2, phi, psi, kappa, forcefield):
     @type psi: float
     @param psi: Reference psi value in radians
 
-    @type args: list
-    @param args: MDL force fields
+    @type kappa: float
+    @param kappa: Controls restraint strength.
+    
+    @type forcefield: ForceField
+    @param forcefield: MDL ForceField object.
     """
     flag = False
     for i in range(0, forcefield.forcetypes.__len__()):
@@ -493,8 +502,22 @@ def M(phys, alpha, beta):
        return retval	
     
 
-# TREVOR'S SMOOTHING FUNCTION
 def L(z, p):
+   """
+   Helper function for reparameterization.
+   Defined in Maragliano and Vanden-Eijnden 2007:
+   L(1) = 0
+   L(p) = sum(q=2, p) |z_q* - z_(q-1)*|
+
+   @type z: list
+   @param z: The string.
+
+   @type p: int
+   @param p: Image index.
+
+   @rtype: float
+   @return: Length of z up to image p.
+   """
    result = 0
    if (p == 1):
       return result
@@ -503,17 +526,55 @@ def L(z, p):
    return result
 
 def l(z, p):
+   """
+   Helper function for reparameterization.
+   Defined in Maragliano and Vanden-Eijnden 2007:
+   l(p) = (p-1)L(R)/(R-1)
+
+   @type z: list
+   @param z: The string.
+
+   @type p: int
+   @param p: Image index.
+
+   @rtype: float
+   @return: Mean distance between string images.
+   """
    R = len(z)
    return (p-1)*L(z, R)/(R-1)
 
 def q(z, p):
+   """
+   Helper function for reparameterization.
+   Defined in Maragliano and Vanden-Eijnden 2007:
+   q(p) = 2...R such that L(q(p)-1) < l(p) < L(q(p))
+
+   @type z: list
+   @param z: The string.
+
+   @type p: int
+   @param p: Image index.
+
+   @rtype: int
+   @return: Integer between 2 and R, where R is the size of the string.
+   """
    tmpQ = 2
    myl = l(z, p)
    while (not (L(z, tmpQ-1) < myl and myl <= L(z, tmpQ))):
          tmpQ += 1
    return tmpQ
 
-def reparamTrevor(z):
+def reparam(z):
+   """
+   Reparameterize the string.
+   Defined in Maragliano and Vanden-Eijnden 2007.
+
+   @type z: list
+   @param z: The string.
+
+   @rtype: list
+   @return: The newly parameterized string.
+   """
    S = []
    S.append(z[0])
    for p in range(2, len(z)):
@@ -524,52 +585,4 @@ def reparamTrevor(z):
    S.append(z[len(z)-1])
    return S
 
-# CHRIS' SMOOTHING FUNCTION
-def reparam(z):
-    """
-    High level smoothing/reparameterization routine.  Invokes spline functions.
-
-    @type x: list
-    @param x: X values
-
-    @type y: list
-    @param y: Y values
-
-    @rtype: list
-    @return: Smoothed and reparameterized list of [x, y] pairs
-    """
-    x = extractPhi(z)
-    y = extractPsi(z)
-    dx = []
-    dy = []
-    cx = circshift(x)
-    cy = circshift(y)
-    for i in range(0, len(x)):
-       dx.append(x[i]-cx[i])
-       dy.append(y[i]-cy[i])
-    dx[0] = 0
-    dy[0] = 0
-
-    dist_vec = []
-    for i in range(0, len(dx)):
-       dist_vec.append(math.sqrt(dx[i]*dx[i]+dy[i]*dy[i]))
-
-    lxy = cumsum(dist_vec)
-    for i in range(0, len(lxy)):
-       lxy[i] /= lxy[len(lxy)-1]
-
-    mySpline = SplineInterpolator()
-    S_x = mySpline.Spline(lxy, x)
-    g1 = linspace(lxy[0], lxy[len(lxy)-1], 100)
-    vx = mySpline.EvalSpline(lxy, x, S_x, g1)
-    S_x = mySpline.SmoothingAndReparameterization(lxy, x, g1, vx, len(lxy))
-
-    S_y = mySpline.Spline(lxy, y)
-    vy = mySpline.EvalSpline(lxy, y, S_y, g1)
-    S_y = mySpline.SmoothingAndReparameterization(lxy, y, g1, vy, len(lxy))
-
-    S = []
-    for i in range(0, len(S_x)):
-       S.append([S_x[i][1], S_y[i][1]])
-    return S
     

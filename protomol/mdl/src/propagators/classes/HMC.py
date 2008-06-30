@@ -2,21 +2,19 @@ from random import *
 from MTS import *
 from math import *
 import Constants
-######################################################################################
-####Hybrid Monte Carlo integrator for scripted MDL                                   #
-####Trevor Cickovski 10/26/2005.                                                     #
-####HMC Integrator is implemented as Multiple-Timestepping (MTS)                     #
-####Wraps an inner integrator and takes into account the energy change as a result   #
-####of this integration.                                                             #
-####The changes in position and velocity that result from this integration are       #
-####accepted with Metropolis probability based on the resulting energy change        #
-####P = e^{-DH/kT}, where DH is the change in energy, k is boltzmann constant        #
-####and T is temperature.                                                            #
-####If we reject, we roll back positions and velocities.                             #
-######################################################################################
+
 class HMC(MTS):
     """
     Implements Hybrid Monte Carlo sampling.
+    HMC Integrator is implemented as Multiple-Timestepping (MTS)               
+    Wraps an inner integrator and takes into account
+    the energy change as a result of this integration.
+    The changes in position and velocity that result from this integration are
+    accepted with Metropolis probability based on the resulting energy change
+    P = e^{-DH/kT}, where DH is the change in energy, k is boltzmann constant
+    and T is temperature. If we reject, we roll back positions and velocities.
+    cf. S. Duane, A. D. Kennedy, B. J. Pendleton and D. Roweth.  Hybrid
+    Monte Carlo.  Phys. Lett. B. vol. 195 pages 216-222, 1987.
     """
     #  metropolis()  -------------------------------------------------------  #
     def metropolis( self, new, curr, phys ):

@@ -1,20 +1,23 @@
 import Constants
 import Vector3DBlock
-# Define the impulse integrator function
-# It will accept its own parameters for position, velocity,
-# number of steps to run, timestep, and force group
-# But also accept a next integrator function and its arguments
-# because it's multiple time-stepping
+
 def impulse(phys, forces, io, steps, cyclelength, fg, nextinteg, *args):
    """
    Verlet/r-RESPA propagation method.
-   Multiple timestepping.
+   Implements the multiple-timestepping Verlet/r-RESPA method, also
+   known as Impulse.  This propagator invokes an 'inner' propagator
+   for a specific number of cycles per iteration, then computes its
+   own forces.
+   cf. H. Grubmuller, H. Heller, A. Windemuth and K. Schulten.
+   Generalized Verlet Algorithm for Efficient Molecular Dyanmics
+   Simulatiosn with Long-Range Interactions.  Molecular Simulation,
+   vol. 6, pages 121-142, 1991.
    
    @type phys: Physical
    @param phys: The physical system.
 
    @type forces: Forces
-   @param force: MDL Forces object.
+   @param forces: MDL Forces object.
 
    @type io: IO
    @param io: MDL IO object.
@@ -22,13 +25,13 @@ def impulse(phys, forces, io, steps, cyclelength, fg, nextinteg, *args):
    @type steps: int
    @param steps: Number of steps to run.
 
-   @type timestep: float
-   @param timestep: Timestep for propagation.
+   @type cyclelength: float
+   @param cyclelength: Number of iterations of inner method.
 
    @type fg: ForceField
    @param fg: MDL force field for evaluation.
 
-   @type nextinteg: function
+   @type nextinteg: function handle
    @param nextinteg: Method handle for next propagator in the chain
 
    @type args: tuple
@@ -36,8 +39,6 @@ def impulse(phys, forces, io, steps, cyclelength, fg, nextinteg, *args):
 
    """
    # Calculate initial forces
-   #fg.calculateForces(phys, forces)
-   #fg.calculateForces(phys, phys.positions, phys.velocities, forces.force, forces.energies)
    step = 0
    # For all steps
    timestep = cyclelength*args[0]

@@ -1,6 +1,5 @@
 import numpy
 import math
-#from Potential import *
 import sys
 from PySystemForce import *
 
@@ -23,17 +22,17 @@ class HDForce:
     @type phys: Physical
     @param phys: The physical system.
 
-    @type phys: Forces
-    @param phys: MDL Forces object
+    @type forces: Forces
+    @param forces: MDL Forces object
     
     @type phi: float
     @param phi: Target dihedral value in radians.
 
-    @type dihedral: integer
-    @param dihedral: Dihedral number to constrain.
+    @type num: integer
+    @param num: Dihedral number to constrain.
 
     @type k: float
-    @param: Scaling factor for constrain.
+    @param k: Scaling factor for constrain.
     """
     self.phys = phys
     self.forces = forces

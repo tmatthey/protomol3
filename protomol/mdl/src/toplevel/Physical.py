@@ -497,7 +497,7 @@ class Physical:
       return self.myPSF.getAttributeReal("atom", atom-1, "charge")
 
    # SYSTEM TEMPERATURE.
-   def getTemperature(self):
+   def temperature(self):
       """
       System temperature (K)
 
@@ -508,7 +508,7 @@ class Physical:
 
    def angle(self, index):
       """
-      Dihedral angle (rad) at passed index
+      Dihedral angle (rad, -PI to PI) at passed index
 
       @type index: int
       @param index: Dihedral index
@@ -523,68 +523,16 @@ class Physical:
          myPhi += 2*numpy.pi
       return myPhi
 
-   # CALCULATE BOND AND ANGLE HESSIANS.
-   # EXPLICITLY USED IN MOLLY PROPAGATORS.
-   # IF YOU ARE NOT DESIGNING A MOLLY PROPAGATOR,
-   # YOU PROBABLY WON'T NEED THIS.
-   def calculateHessians(self, mollypos, angleFilter):
-      """
-      Calculate bond and angle Hessians for MOLLY propagators
-
-      @type mollypos: numpy.ndarray
-      @param mollypos: Mollified positions
-
-      @type angleFilter: ReducedHessAngleList
-      @param angleFilter: List of angle Hessians
-      """
-      anglelist = list()
-      ii = 0
-      b1 = 0
-      b2 = 0
-      while (ii < self.numAngles()):
-         a1 = self.angle(ii).atom1
-         a2 = self.angle(ii).atom2
-         a3 = self.angle(ii).atom3
-         jj = 0
-         while (jj < self.numBonds()):
-            if (self.bond(jj).atom1 == a1 and
-                self.bond(jj).atom2 == a2):
-               b1 = jj
-            else:
-               b2 = jj
-            jj = jj + 1
-            anglelist.append([b1,b2])
-            ii = ii + 1
-                          
-      while (ii < self.numAngles()):
-         a1 = self.angle(ii).atom1
-         a2 = self.angle(ii).atom2
-         a3 = self.angle(ii).atom3
-         theta0 = self.angle(ii).restAngle
-         k_t = self.angle(ii).forceConstant
-         angleFilter[ii].evaluate(mollypos[a1], mollypos[a2], mollypos[a3], k_t, theta0)
-               
-         r_0 = self.bond(anglelist[ii].bond1).restLength
-         k = self.bond(anglelist[ii].bond1).springConstant
-         bondHess12 = reducedHessBond.reducedHessbond(mollypos[a1],mollypos[a2], mollypos[a3], k, r_0)
-
-         r_0 = self.bond(anglelist[ii].bond2).restLength
-         k = self.bond(anglelist[ii].bond2).springConstant
-         bondHess23 = reducedHessBond.reducedHessbond(mollypos[a1],mollypos[a2], mollypos[a3], k, r_0)
-                    
-         angleFilter[ii].accumulateTo(0,0,bondHess12)
-         angleFilter[ii].accumulateTo(1,1,bondHess12)
-         angleFilter[ii].accumulateNegTo(1,0,bondHess12)
-         angleFilter[ii].accumulateNegTo(0,1,bondHess12)
-                    
-         angleFilter[ii].accumulateTo(0,0,bondHess23)
-         angleFilter[ii].accumulateTo(1,1,bondHess23)
-         angleFilter[ii].accumulateNegTo(1,0,bondHess23)
-         angleFilter[ii].accumulateNegTo(0,1,bondHess23)
-
 
    def randomVelocity(self, T):
+      """
+      Assign random velocities.
+
+      @type T: float
+      @param T: Kelvin temperature.
+      """
       _topologyutilities.randomVelocity(T, self.myTop, self.velvec, self.seed)
+
       
    def updateCOM_Momenta(self):
       """

@@ -16,15 +16,15 @@ class Energies(ScalarStructure):
    will index this table.
    
    This provides several inherited methods which are used:
-   - potentialEnergy()
-   - intoAdd()
-   - intoSubtract()
-   - molecularVirial()
-   - computeVirial()
+     - potentialEnergy()
+     - intoAdd()
+     - intoSubtract()
+     - molecularVirial()
+     - computeVirial()
    
    """
    def initialize(self, phys):
-      self.phys = phys
+      self.phys = phys #: Physical object
       
    def computeMolecularVirial(self):
       """
@@ -79,7 +79,6 @@ class Energies(ScalarStructure):
       @param r: Quantity to accumulate.
       """
       self.phys.app.energies.setTable(5, self.dihedralEnergy()+r)
-      #self.setTable(5, self.dihedralEnergy()+r)
 
    def addImproperEnergy(self, r):
       """
@@ -184,6 +183,9 @@ class Energies(ScalarStructure):
 
    def kineticEnergy(self, phys):
       """
+      @type phys: Physical
+      @param phys: Physical system.
+      
       @rtype: float
       @return: Kinetic energy, as a sum of 0.5*m*v^2 for each atom.
       """
@@ -191,6 +193,9 @@ class Energies(ScalarStructure):
 
    def potentialEnergy(self, phys):
       """
+      @type phys: Physical
+      @param phys: Physical system.
+      
       @rtype: float
       @return: Potential energy
       """
@@ -198,6 +203,9 @@ class Energies(ScalarStructure):
 
    def totalEnergy(self, phys):
       """
+      @type phys: Physical
+      @param phys: Physical system.
+      
       @rtype: float
       @return: Total energy, as a sum of potential and kinetic.
       """
