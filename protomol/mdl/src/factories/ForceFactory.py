@@ -89,13 +89,13 @@ class ForceFactory:
                                                 'ComplementCn':CutoffForce.NCSF_CCM_OAPPBC_CCNCNSF_CF}}
                                       
 
-                          } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  For fast electrostatics, an additional mapping is performed for the terms calculated (i.e. for Ewald, real reciprocal and correction).
+                          } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  
 
     self.bornForces = {'Vacuum':{'Cutoff':{'C1':CutoffForce.NCBF_CCM_OAPVBC_C1SF_CBF,
                                            'C2':CutoffForce.NCBF_CCM_OAPVBC_C2SF_CBF,
                                            'Cn':CutoffForce.NCBF_CCM_OAPVBC_CNSF_CBF,
                                            'CmpCnCn':CutoffForce.NCBF_CCM_OAPVBC_CCNSF_CBF,
-                                           'Cutoff':CutoffForce.NCBF_CCM_OAPVBC_CSF_CBF}}}
+                                           'Cutoff':CutoffForce.NCBF_CCM_OAPVBC_CSF_CBF}}} #: Maps boundary conditions, algorithm and switching function to an object which computes Born Radii. 
 
                
     self.ljCoulombForces = {'Vacuum':{'SimpleFull':{('Universal', 'Universal'):SimpleFullForce.NSFSF_V_U_L_U_C},
@@ -242,10 +242,21 @@ class ForceFactory:
       return self.applyParameters(newforce, bc, alg, switch, params)
 
   def createBornForce(self, bc, params):
+      """
+      Return an electrostatic force object.
+      
+      @type bc: string
+      @param bc: Boundary conditions (Periodic or Vacuum)
+      
+      @type params: dict
+      @param params: Mapping from parameter names to corresponding values.
+
+      @rtype: Force
+      @return: SWIG-wrapped force object which computes Born Radii.
+      """
+      # Modified TMC 6/30/08: Always use cutoff
       alg = "Cutoff"
-      switch = self.getParameter(params, 'switching', "Universal")
-      newforce = self.bornForces[bc][alg][switch]()
-      return self.applyParameters(newforce, bc, alg, switch, params)
+      return self.applyParameters(newforce, bc, alg, 'Cutoff', params)
 
   def createLennardJonesCoulombForce(self, bc, params):
       """
@@ -405,7 +416,6 @@ class ForceFactory:
                                         self.getParameter(params,'order',2))
       else:
         newforce = newforce.makeNewPair(self.getParameter(params, 'blocksize', 32))
-        print "MAKE NEW: ", newforce                                        
     else:
       if (str(newforce).find('CoulombForceDiElec') != -1): # Dielectric forces have extra params
         eps = self.getParameter(params, 'epsilon', 1)
