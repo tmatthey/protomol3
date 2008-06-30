@@ -99,7 +99,10 @@ env.Append(LIBPATH = ['.'])
 # Build libprotomol
 env.Prepend(LIBS = [libname])
 env.Library(libname, libsrc)
-protomol = env.Program('ProtoMol', src)
+if (env['PLATFORM'] == 'darwin'): # MAC
+   protomol = env.Program('ProtoMol-app', src)
+else:
+   protomol = env.Program('ProtoMol', src)
 Default(protomol)
 
 
