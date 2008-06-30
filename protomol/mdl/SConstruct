@@ -36,9 +36,9 @@ def pyWrap(env, pmhome):
 
   #env['ARFLAGS'] = "rcS"
   env.Append(CPPPATH = '#')
-  env.Append(LINKFLAGS=' -Wl,-E')
+  if (env['PLATFORM'] != 'darwin'):
+     env.Append(LINKFLAGS=' -Wl,-E')
   if (env['PLATFORM'] == 'win32'):
-     print env['LINKFLAGS']
      env['LIBS'] = ''
      env.Append(CXXFLAGS='-I\"'+pmhome+'\"')
      env.Append(SHCXXFLAGS=' -I\"'+numpypath+'\"')
@@ -48,12 +48,21 @@ def pyWrap(env, pmhome):
      #env.Append(SHCXXFLAGS='mdl.dll')
      #env['LIBSUFFIX'] = '.dll'
      env.Prepend(LIBS = [libname2])
+  elif (env['PLATFORM'] == 'darwin'):
+     env['LIBS'] = ''
+     env.Append(CXXFLAGS='-I'+pmhome)
+     env.Append(SHCXXFLAGS=' -I'+numpypath)
+     env.Append(SHCXXFLAGS='-I'+pmhome)
+     env.Append(LIBPATH=sys.exec_prefix+'/lib/python'+sys.version[0:3]+'/config/')
+     env.Append(CPPPATH=sys.exec_prefix+'/include')
+     env.Prepend(LIBS = ['blas', 'lapack', 'python2.5', libname2])
   else:
      env.Append(CXXFLAGS=' -fPIC')
      env.Append(CXXFLAGS='-I'+pmhome)
      env.Append(SHCXXFLAGS=' -I'+numpypath)
      env.Append(SHCXXFLAGS='-I'+pmhome)
-  env.Append(SHLINKFLAGS=' -Wl,-E')
+  if (env['PLATFORM'] != 'darwin'):
+     env.Append(SHLINKFLAGS=' -Wl,-E')
   env.Append(_LIBDIRFLAGS="-L.")
 
   if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
@@ -183,7 +192,7 @@ for s in subsrc:
      if (s != 'parallel/FFTComplex.cpp'):
         libsrc2.append(pmhome+'/protomol/'+s)
 libname2 = 'mdl'
-if (env['PLATFORM'] != 'win32'):
+if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
    env.Prepend(LIBS = [libname2])
    sl = env.SharedLibrary(libname2, libsrc2)
 else:
