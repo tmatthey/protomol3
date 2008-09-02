@@ -77,16 +77,14 @@ HessianInt::~HessianInt() {
       report << hint << "[HessianInt::run] diagonalized! Number of negative "
         "eigenvalues = " << numneg << "." << endr;
       if (sortOnAbs) absSort();
+      //output results
+      //output eigenvec matrix/ eigenval vector
+      outputDiagHess();
+      report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "." << endr;
+    }else{
+        report << hint << "[HessianInt::run] error info = " << info << endr;
     }
   }
-  if (info == 0){
-    //output results
-    //output eigenvec matrix/ eigenval vector
-    outputDiagHess();
-    report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "." << endr;
-  }else
-    report << hint << "[HessianInt::run] error info = " << info << endr;
-  //
   if (eigVec != 0) delete[] eigVec;
   if (eigVal != 0) delete[] eigVal;
   if (eigIndx != 0) delete[] eigIndx;
