@@ -35,7 +35,11 @@ Hessian::Hessian() {
 
 Hessian::Hessian(unsigned int szin) {
   sz = szin;
-  hessM = new double[sz * sz];   //assign array
+  try{
+    hessM = new double[sz * sz];   //assign array
+  }catch(bad_alloc&){
+    report << error << "[Hessian::Hessian] Cannot allocate memory for Hessian!" << endr;
+  }
 }
 
 Hessian::~Hessian() {
@@ -46,7 +50,12 @@ Hessian::~Hessian() {
 Hessian::Hessian(const Hessian &hess) {
   sz = hess.sz;
   if (hess.hessM != 0) {
-    hessM = new double[sz * sz];
+    try{
+        hessM = new double[sz * sz];   //assign array
+    }catch(bad_alloc&){
+        report << error << "[Hessian::Hessian] Cannot allocate memory for Hessian!" << endr;
+    }
+    //hessM = new double[sz * sz];
     for (unsigned int i = 0; i < sz * sz; i++) hessM[i] = hess.hessM[i];
   } else
     hessM = 0;
@@ -73,7 +82,14 @@ Hessian::Hessian(const Hessian &hess) {
 
 void Hessian::initialData(unsigned int szin) {
   sz = szin;
-  if (hessM == 0) hessM = new double[sz * sz]; //assign array
+  if (hessM == 0){
+      try{
+        hessM = new double[sz * sz];   //assign array
+      }catch(bad_alloc&){
+        report << error << "[Hessian::initialData] Cannot allocate memory for Hessian!" << endr;
+      }
+  }
+  //if (hessM == 0) hessM = new double[sz * sz]; //assign array
 }
 
 void Hessian::findForces(ForceGroup *overloadedForces) {

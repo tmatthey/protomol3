@@ -113,12 +113,15 @@ void HessianInt::initialize(ProtoMolApp *app) {
   hsn.initialData(sz);
   hsn.clear();
   //
-  eigVec = new double[sz * sz];
-  eigVal = new double[sz];
-  //index for sort by absolute
-  eigIndx = new int[sz];
+  try{
+    eigVec = new double[sz * sz];
+    eigVal = new double[sz];
+    //index for sort by absolute
+    eigIndx = new int[sz];
+  }catch(bad_alloc&){    
+      report << error << "[HessianInt::initialize] Cannot allocate memory for Eigenvectors." << endr;
+  }
   for (unsigned int i = 0; i < sz; i++) eigIndx[i] = i;
-
   //
   totStep = 0;
 }
@@ -267,9 +270,13 @@ int HessianInt::diagHessian(double *eigVecO, double *eigValO) {   //
   double *wrkSp;
   int *isuppz, *iwork;
 
-  wrkSp = new double[26 * sz];
-  isuppz = new int[2 * sz];
-  iwork = new int[10 * sz];
+  try{
+    wrkSp = new double[26 * sz];
+    isuppz = new int[2 * sz];
+    iwork = new int[10 * sz];
+  }catch(bad_alloc&){    
+      report << error << "[HessianInt::diagHessian] Cannot allocate workspace for diagonalization." << endr;
+  }
   //Diagonalize
   int info = 0;                 /* output 0=success */
 #if defined (HAVE_LAPACK) || defined (HAVE_SIMTK_LAPACK)
