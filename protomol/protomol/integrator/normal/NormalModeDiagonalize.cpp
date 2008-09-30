@@ -260,10 +260,10 @@ namespace ProtoMol {
         //######## Given Q_i in mhQu, find \bar{Q}_i \in \bar{Q}^* ##########
         //Find S_i \in R^{mxm} (innerHess)
         //find inner Hessian and save intermediate HQ
-        transA = "N"; transB = "N"; m = _3N; n = idM; k = _3N; lda = _3N; ldb = _3N; ldc = _3N; alpha = 1.0; beta = 0.0;
+        transA = (char *)"N"; transB = (char *)"N"; m = _3N; n = idM; k = _3N; lda = _3N; ldb = _3N; ldc = _3N; alpha = 1.0; beta = 0.0;
 #if defined(HAVE_LAPACK) 
         dgemm_ (transA, transB, &m, &n, &k, &alpha, hsn.hessM, &lda, mhQu, &ldb, &beta, HQ, &ldc);
-        transA = "T"; transB = "N"; m = idM; n = idM; k = _3N; lda = _3N; ldb = _3N; ldc = idM; alpha = 1.0; beta = 0.0;
+        transA = (char *)"T"; transB = (char *)"N"; m = idM; n = idM; k = _3N; lda = _3N; ldb = _3N; ldc = idM; alpha = 1.0; beta = 0.0;
         dgemm_ (transA, transB, &m, &n, &k, &alpha, mhQu, &lda, HQ, &ldb, &beta, innerHess, &ldc);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
@@ -337,10 +337,10 @@ namespace ProtoMol {
                     for(int j=0;j<idM;j++) innerEigVec[j + i*idM] *= w[i];
                 getNewEigs(HQ, innerEigVec, idM);	
                 //Find T1=(I-\bar{Q}_i\bar{Q}_i^T)H\bar{Q}_i, all ops N*m^2
-                transA = "T"; transB = "N"; m = idM; n = idM; k = _3N; lda = _3N; ldb = _3N; ldc = idM; alpha = 1.0; beta = 0.0;
+                transA = (char *)"T"; transB = (char *)"N"; m = idM; n = idM; k = _3N; lda = _3N; ldb = _3N; ldc = idM; alpha = 1.0; beta = 0.0;
 #if defined(HAVE_LAPACK)   
                 dgemm_ (transA, transB, &m, &n, &k, &alpha, mhQu, &lda, HQ, &ldb, &beta, tempMxM, &ldc);
-                transA = "N"; transB = "N"; m = _3N; n = idM; k = idM; lda = _3N; ldb = idM; ldc = _3N; alpha = -1.0; beta = 1.0;
+                transA = (char *)"N"; transB = (char *)"N"; m = _3N; n = idM; k = idM; lda = _3N; ldb = idM; ldc = _3N; alpha = -1.0; beta = 1.0;
                 for(int i=0;i<_3N*idM;i++) T1[i] = HQ[i];	//copy HQ to T1
                 dgemm_ (transA, transB, &m, &n, &k, &alpha, mhQu, &lda, tempMxM, &ldb, &beta, T1, &ldc);
                 //Find C_i = \bar{Q}H T1

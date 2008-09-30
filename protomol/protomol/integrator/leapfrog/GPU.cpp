@@ -162,10 +162,10 @@ void GPU::doStepsE(int numTimesteps){
 }
 
 void GPU::gpuCalculateForces(){
-    Real rDistSquared, distSquared, force, energy, deriv, value;
+    Real rDistSquared, force, energy, deriv, value;
 
     //clear forces/energies
-    for(int i=0;i<app->positions.size()*3;i++) myForces->c[i] = 0.0;
+    for(unsigned int i=0;i<app->positions.size()*3;i++) myForces->c[i] = 0.0;
     app->energies.clear();
     //Lennard jones
     if (myLennardJones){

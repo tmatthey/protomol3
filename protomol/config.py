@@ -28,6 +28,7 @@ if os.environ.has_key('LIBBZ2_HOME'):
 
 if not conf.CheckLib('bz2'):
     print 'libbzip2 not found.  Please set LIBBZ2_HOME'
+    Exit(1)
 
 else: have_bzip2 = 1
 

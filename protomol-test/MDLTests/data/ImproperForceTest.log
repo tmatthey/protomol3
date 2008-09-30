@@ -1,8 +1,4 @@
-Recoverable Error:  [PDB::read] Record unknown:'CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P 1           1'.
-Recoverable Error:  [PSF::read] Record !NUMLP with 0 entries not recognized.
-Hint:  Reduced fast delta max of ExclusionTable from 31 to 10.
-Hint:  Reduced fast delta max of ExclusionTable from 31 to 10.
-Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
-Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
-Hint:  Couldn't reduce fast delta max 10 of ExclusionTable (10).
-<OutputXYZTrajectoryForce.OutputXYZTrajectoryForce; proxy of <Swig Object of type 'ProtoMol::OutputXYZTrajectoryForce *' at 0xbf7330> >
+Traceback (most recent call last):
+  File "data/ImproperForceTest.py", line 2, in <module>
+    from MDL import *
+ImportError: No module named MDL

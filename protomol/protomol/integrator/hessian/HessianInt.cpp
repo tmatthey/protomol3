@@ -80,7 +80,8 @@ HessianInt::~HessianInt() {
       //output results
       //output eigenvec matrix/ eigenval vector
       outputDiagHess();
-      report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "." << endr;
+      report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "."
+             << endr;
     }else{
         report << hint << "[HessianInt::run] error info = " << info << endr;
     }
@@ -119,7 +120,8 @@ void HessianInt::initialize(ProtoMolApp *app) {
     //index for sort by absolute
     eigIndx = new int[sz];
   }catch(bad_alloc&){    
-      report << error << "[HessianInt::initialize] Cannot allocate memory for Eigenvectors." << endr;
+      report << error << "[HessianInt::initialize] Cannot allocate memory for "
+             << "Eigenvectors." << endr;
   }
   for (unsigned int i = 0; i < sz; i++) eigIndx[i] = i;
   //
@@ -167,7 +169,7 @@ Real HessianInt::calcQ() {
     
     if(sz > 6){
         sumF = 0;
-        for(int i=6; i< sz;i++){
+        for(unsigned int i=6; i< sz;i++){
             if(eigVal[i]) sumF += sqrt(3.0 / fabs(eigVal[i]));
         }
         Q = 0.6/(8.0 * (sz - 6)) * sumF*sumF;
@@ -267,15 +269,16 @@ void HessianInt::outputDiagHess() {
 }
 
 int HessianInt::diagHessian(double *eigVecO, double *eigValO) {   //
-  double *wrkSp;
-  int *isuppz, *iwork;
+  double *wrkSp = 0;
+  int *isuppz = 0, *iwork = 0;
 
   try{
     wrkSp = new double[26 * sz];
     isuppz = new int[2 * sz];
     iwork = new int[10 * sz];
   }catch(bad_alloc&){    
-      report << error << "[HessianInt::diagHessian] Cannot allocate workspace for diagonalization." << endr;
+      report << error << "[HessianInt::diagHessian] Cannot allocate workspace "
+             << "for diagonalization." << endr;
   }
   //Diagonalize
   int info = 0;                 /* output 0=success */

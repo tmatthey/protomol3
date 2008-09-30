@@ -13,9 +13,9 @@ echo %BUILD_ROOT% does not exist
 GOTO END
 
 :SET_VARS
-set LIBBZ2_HOME=%BUILD_ROOT%\libbzip2
-set LIBFAH_HOME=%BUILD_ROOT%\libfah
-set PROTOMOL_HOME=%BUILD_ROOT%\protomol-3.0
+set LIBBZ2_HOME=%BUILD_ROOT%\fah\libbzip2
+set LIBFAH_HOME=%BUILD_ROOT%\fah\libfah
+set PROTOMOL_HOME=%BUILD_ROOT%\protomol\protomol
 
 REM **************************************************************************
 set NAME=LIBBZIP2

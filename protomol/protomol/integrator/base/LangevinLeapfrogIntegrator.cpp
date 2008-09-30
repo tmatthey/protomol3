@@ -47,11 +47,14 @@ void LangevinLeapfrogIntegrator::doHalfKick() {
     const Real fdt = ( 1.0 - exp( -0.5 * myGamma * dt ) ) / myGamma;
     const Real vdt = exp(-0.5*myGamma*dt);
     const Real ndt = sqrt( ( 1.0 - exp( -myGamma * dt ) ) / (2.0 * myGamma) );
-    const Real forceConstant = 2 * Constant::BOLTZMANN * myLangevinTemperature * myGamma;
+    const Real forceConstant = 2 * Constant::BOLTZMANN * myLangevinTemperature *
+      myGamma;
 
-    for( int i = 0; i < count; i++ ) {
+    for (unsigned int i = 0; i < count; i++ ) {
         //  Generate gaussian random numbers for each spatial direction
-        Vector3D gaussRandCoord1(randomGaussianNumber(mySeed), randomGaussianNumber(mySeed), randomGaussianNumber(mySeed));
+        Vector3D gaussRandCoord1(randomGaussianNumber(mySeed),
+                                 randomGaussianNumber(mySeed),
+                                 randomGaussianNumber(mySeed));
         Real mass = app->topology->atoms[i].scaledMass;
         Real sqrtFCoverM = sqrt(forceConstant / mass);
         // semi-update velocities

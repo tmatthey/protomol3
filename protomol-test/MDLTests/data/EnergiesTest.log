@@ -1,20 +1,4 @@
-Success reading XYZBin
-Success reading XYZBin
-Hint:  Reduced fast delta max of ExclusionTable from 31 to 3.
-Hint:  Reduced fast delta max of ExclusionTable from 31 to 3.
-Hint:  Couldn't reduce fast delta max 3 of ExclusionTable (3).
-Hint:  Couldn't reduce fast delta max 3 of ExclusionTable (3).
-Hint:  Couldn't reduce fast delta max 3 of ExclusionTable (3).
-Fatal Error:   Can not open 'data/EnergiesTest.energies' for allEnergiesFile.
-terminate called after throwing an instance of 'ProtoMol::Exception'
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
-<OutputEnergies.OutputEnergies; proxy of <Swig Object of type 'ProtoMol::OutputEnergies *' at 0xbc03c0> >
+Traceback (most recent call last):
+  File "data/EnergiesTest.py", line 2, in <module>
+    from MDL import *
+ImportError: No module named MDL

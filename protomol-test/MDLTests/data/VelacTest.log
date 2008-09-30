@@ -1,38 +1,4 @@
-Success reading XYZBin
-Success reading XYZBin
-Hint:  Reduced fast delta max of ExclusionTable from 31 to 3.
-Hint:  Reduced fast delta max of ExclusionTable from 31 to 3.
-Hint:  Couldn't reduce fast delta max 3 of ExclusionTable (3).
-Hint:  Couldn't reduce fast delta max 3 of ExclusionTable (3).
-Hint:  Couldn't reduce fast delta max 3 of ExclusionTable (3).
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
-<OutputDCDTrajectoryVel.OutputDCDTrajectoryVel; proxy of <Swig Object of type 'ProtoMol::OutputDCDTrajectoryVel *' at 0xb534a0> >
+Traceback (most recent call last):
+  File "data/VelacTest.py", line 2, in <module>
+    from MDL import *
+ImportError: No module named MDL
