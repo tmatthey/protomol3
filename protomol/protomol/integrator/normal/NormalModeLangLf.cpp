@@ -21,7 +21,7 @@ using std::vector;
 namespace ProtoMol {
   //__________________________________________________ NormalModeLangLf
 
-  const string NormalModeLangLf::keyword( "NormalModeLangLf" );
+  const string NormalModeLangLf::keyword( "NormalModeLangevinLeapfrog" );
 
   NormalModeLangLf::NormalModeLangLf() : MTSIntegrator(), NormalModeUtilities()
   {
@@ -118,7 +118,7 @@ namespace ProtoMol {
     const Real dt = getTimestep() * Constant::INV_TIMEFACTOR; // in fs
     const Real fdt = ( 1.0 - exp( -0.5 * myGamma * dt ) ) / myGamma;
     const Real vdt = exp(-0.5*myGamma*dt);
-    const Real ndt = sqrt( ( 1.0 + exp( -myGamma * dt ) ) / (2.0 * myGamma) ); //was sqrt( fdt );
+    const Real ndt = sqrt( ( 1.0 - exp( -myGamma * dt ) ) / (2.0 * myGamma) ); //was sqrt( fdt );
     const Real sqrtFCoverM = sqrt( 2.0 * Constant::BOLTZMANN * myTemp * myGamma );
 
     for( int i = 0; i < _N; i++ ) {
