@@ -17,7 +17,7 @@ using namespace ProtoMol::Report;
 namespace ProtoMol {
 
   //constructors
-    NormalModeUtilities::NormalModeUtilities(): firstMode(1), numMode(-1), myGamma(-1), mySeed(-1), myTemp(-1)
+  NormalModeUtilities::NormalModeUtilities(): firstMode(1), numMode(-1), myGamma(-1), mySeed(-1), myTemp(-1), mhQu(0)
     {/*tmpFX=NULL;*/ tmpC=NULL; invSqrtMass=NULL; sqrtMass=NULL;}
 
     NormalModeUtilities::NormalModeUtilities( int firstmode, int nummode, Real gamma, int seed, Real temperature):

@@ -14,8 +14,8 @@ if env['CC'] == 'gcc':
 
 
 if not env.GetOption('clean'):
-  if env['CC'] == 'gcc':
-    env.Append(LINKFLAGS = ['-static'])
+  #if env['CC'] == 'gcc':
+  #  env.Append(LINKFLAGS = ['-static'])
 
   # ProtoMol
   if not os.environ.has_key('PROTOMOL_HOME'):

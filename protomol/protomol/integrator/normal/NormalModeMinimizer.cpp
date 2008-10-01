@@ -23,14 +23,14 @@ namespace ProtoMol {
 
   const string NormalModeMinimizer::keyword( "NormalModeMinimizer" );
 
-  NormalModeMinimizer::NormalModeMinimizer() : STSIntegrator(), NormalModeUtilities() 
+  NormalModeMinimizer::NormalModeMinimizer() : STSIntegrator(), NormalModeUtilities(), numSteps(0)
   {
   }
 
   NormalModeMinimizer::NormalModeMinimizer(Real timestep, int firstmode, int nummode, Real gamma, int seed, Real temperature, 
       Real minimlim, int rforce, bool simplemin, ForceGroup *overloadedForces) 
     : STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, gamma, seed, temperature),
-            minLim(minimlim), randforce(rforce),  simpleMin(simplemin)
+      numSteps(0), minLim(minimlim), randforce(rforce),  simpleMin(simplemin)
   {
   }
 

@@ -32,7 +32,7 @@ namespace ProtoMol {
 
   const string NormalModeDiagonalize::keyword( "NormalModeDiagonalize" );
 
-  NormalModeDiagonalize::NormalModeDiagonalize() : MTSIntegrator(), NormalModeUtilities()
+  NormalModeDiagonalize::NormalModeDiagonalize() : MTSIntegrator(), NormalModeUtilities(), eigAlloc(false), hessianCounter(0), rediagCounter(0)
   {
         eigVal=NULL;eigIndx=NULL;innerEigVec=NULL;innerEigVal=NULL;innerHess=NULL;eigAlloc=false;
         T1=NULL;HQ=NULL;tempMxM=NULL;temp3NxM=NULL;w=NULL;
@@ -41,9 +41,9 @@ namespace ProtoMol {
   NormalModeDiagonalize::NormalModeDiagonalize(int cycles, int avs,  Real avss, int redi, bool fDiag, bool rRand, 
                                                     int mins, Real minl, Real redn, Real redhy, Real spd, int maxi, bool rBond,
                                                         ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator) 
-    : MTSIntegrator(cycles, overloadedForces, nextIntegrator), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0), fullDiag(fDiag), removeRand(rRand), noAvStep(avs), 
+    : MTSIntegrator(cycles, overloadedForces, nextIntegrator), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0), eigAlloc(false), fullDiag(fDiag), removeRand(rRand), noAvStep(avs), 
         avStep(avss), rediagCount(redi), minSteps(mins), minLim(minl), 
-            rediagThresh(redn), rediagHyst(redhy), spdOff(spd), maxIterations(maxi), removeBondedEigs(rBond)   //
+      rediagThresh(redn), rediagHyst(redhy), spdOff(spd), maxIterations(maxi), hessianCounter(0), rediagCounter(0), removeBondedEigs(rBond)   //
   {
         eigVal=NULL;eigIndx=NULL;innerEigVec=NULL;innerEigVal=NULL;innerHess=NULL;eigAlloc=false;
         T1=NULL;HQ=NULL;tempMxM=NULL;temp3NxM=NULL;w=NULL;
