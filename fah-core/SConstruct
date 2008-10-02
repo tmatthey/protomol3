@@ -6,7 +6,7 @@ conf = Configure(env)
 
 
 if env['CC'] == 'cl':
-  env.Append(CCFLAGS = '/TP /EHsc') # C++ mode
+  env.Append(CCFLAGS = '/TP /EHsc /Zp') # C++ mode
 
 if env['CC'] == 'gcc':
   env.Append(CCFLAGS = '-Wall -Werror -g')
