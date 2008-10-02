@@ -99,7 +99,7 @@ namespace ProtoMol {
     Timer myTimer;
 
 #ifdef BUILD_FOR_FAH
-    boost::iostreams::stream<FAH::ChecksumDevice> myFile;
+    FAH::ChecksummedFile myFile;
 #else
     std::ofstream myFile;
 #endif

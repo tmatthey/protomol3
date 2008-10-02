@@ -36,7 +36,7 @@ namespace ProtoMol {
     std::string filename;
     std::string comment;
 #ifdef BUILD_FOR_FAH
-    boost::iostreams::stream<FAH::ChecksumDevice> file;
+    FAH::ChecksummedFile file;
 #else
     std::fstream file;
 #endif

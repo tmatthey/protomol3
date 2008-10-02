@@ -27,7 +27,7 @@ OutputEnergies::OutputEnergies(const string &filename, int freq,
 
 void OutputEnergies::doInitialize() {
 #ifdef BUILD_FOR_FAH
-    boost::iostreams::stream<FAH::ChecksumDevice> allEnergiesHeaderFile;
+    FAH::ChecksummedFile allEnergiesHeaderFile;
 #else
     ofstream allEnergiesHeaderFile;
 #endif

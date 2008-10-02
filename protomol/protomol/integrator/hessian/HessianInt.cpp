@@ -183,7 +183,7 @@ Real HessianInt::calcQ() {
 void HessianInt::outputDiagHess() {
   unsigned int i;
 #ifdef BUILD_FOR_FAH
-    boost::iostreams::stream<FAH::ChecksumDevice> myFile;
+  FAH::ChecksummedFile myFile;
 #else
     ofstream myFile;
 #endif
