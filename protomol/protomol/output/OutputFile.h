@@ -7,7 +7,6 @@
 #include <protomol/base/Timer.h>
 
 #ifdef BUILD_FOR_FAH
-#include <boost/iostreams/stream.hpp>
 #include <fah/core/ChecksumDevice.h>
 
 #else
