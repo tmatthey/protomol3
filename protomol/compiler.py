@@ -73,7 +73,7 @@ def compiler_configure(c99_mode = 1):
 
     # Options
     if env['CC'] == 'cl':
-        env.Append(CCFLAGS = '-EHsc /Zp1')
+        env.Append(CCFLAGS = '-EHsc /Zp')
 
 
     # Debug flags
