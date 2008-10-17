@@ -102,6 +102,8 @@ protomol-test/ConfigTests/data/DihedralForceTest.xyz.orig -text
 protomol-test/ConfigTests/data/EnergiesTest.conf -text
 protomol-test/ConfigTests/data/EnergiesTest.energies.orig -text
 protomol-test/ConfigTests/data/HessianIntTest.conf -text
+protomol-test/ConfigTests/data/HessianIntTest.eval.orig -text
+protomol-test/ConfigTests/data/HessianIntTest.evec.orig -text
 protomol-test/ConfigTests/data/HessianIntTest.return.expect -text
 protomol-test/ConfigTests/data/HessianIntTest.stderr.expect -text
 protomol-test/ConfigTests/data/HessianIntTest.stdout.expect -text
