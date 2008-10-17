@@ -165,8 +165,6 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
   if (data.size()) cout << " Atoms: " << setw(5) << data[0].size();
   cout << endl;
 #endif // DATA_COMPARATOR_STANDALONE
-
-  data.clear();
 }
 
 #ifdef DATA_COMPARATOR_STANDALONE
