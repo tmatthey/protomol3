@@ -16,6 +16,7 @@ protomol-test/ConfigTests/DebugTest -text
 protomol-test/ConfigTests/DielecForceSFTest -text
 protomol-test/ConfigTests/DihedralForceTest -text
 protomol-test/ConfigTests/EnergiesTest -text
+protomol-test/ConfigTests/HessianIntTest -text
 protomol-test/ConfigTests/ImproperForceTest -text
 protomol-test/ConfigTests/LJForceCutoffTest -text
 protomol-test/ConfigTests/LJForceSFTest -text
