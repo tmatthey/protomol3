@@ -16,6 +16,7 @@ protomol-test/ConfigTests/DebugTest -text
 protomol-test/ConfigTests/DielecForceSFTest -text
 protomol-test/ConfigTests/DihedralForceTest -text
 protomol-test/ConfigTests/EnergiesTest -text
+protomol-test/ConfigTests/HessianTest -text
 protomol-test/ConfigTests/ImproperForceTest -text
 protomol-test/ConfigTests/LJForceCutoffTest -text
 protomol-test/ConfigTests/LJForceSFTest -text
@@ -105,6 +106,12 @@ protomol-test/ConfigTests/data/HessianIntTest.return.expect -text
 protomol-test/ConfigTests/data/HessianIntTest.stderr.expect -text
 protomol-test/ConfigTests/data/HessianIntTest.stdout.expect -text
 protomol-test/ConfigTests/data/HessianIntTest.xyz.orig -text
+protomol-test/ConfigTests/data/HessianTest.conf -text
+protomol-test/ConfigTests/data/HessianTest.eval.orig -text
+protomol-test/ConfigTests/data/HessianTest.evec.orig -text
+protomol-test/ConfigTests/data/HessianTest.return.expect -text
+protomol-test/ConfigTests/data/HessianTest.stderr.expect -text
+protomol-test/ConfigTests/data/HessianTest.stdout.expect -text
 protomol-test/ConfigTests/data/ImproperForceTest.conf -text
 protomol-test/ConfigTests/data/ImproperForceTest.return.expect -text
 protomol-test/ConfigTests/data/ImproperForceTest.stderr.expect -text
