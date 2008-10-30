@@ -78,6 +78,10 @@ if not env.GetOption('clean'):
 
 
     env = conf.Finish()
+    
+    if env['PLATFORM'] == 'win32':
+      if debug: variant = 'Debug'
+      else: variant = 'Release'
 
 
 if fah:
@@ -107,9 +111,6 @@ Default(protomol)
 
 
 if env['PLATFORM'] == 'win32':
-  if debug: variant = 'Debug'
-  else: variant = 'Release'
-
   src = []
   def add_hdrs(arg, dir, files):
     global src
