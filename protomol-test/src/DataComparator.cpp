@@ -53,9 +53,9 @@ Real DataComparator::compare(const Vector3DBlock &data1,
     if (d > max) max = d;
 
     if (d > tolerance) count++;
-  }    
+  }
 
-  return max;  
+  return max;
 }
 
 Real DataComparator::compare(const vector<XYZ> &data1,
@@ -173,7 +173,10 @@ void DataComparator::read(const string &filename, vector<XYZ> &data) {
 #endif
 
 int main(int argc, char *argv[]) {
+#ifdef HAVE_STACK_TRACE
   Exception::enableStackTraces = true;
+#endif
+
 #ifndef _WIN32
   //Debugger::initStackTrace(argv[0]);
 #endif
@@ -195,7 +198,7 @@ int main(int argc, char *argv[]) {
 
     Real d = DataComparator::compare(argv[1], argv[2], tolerance,
                                      count, divergeFrame);
-    
+
     if (argc == 4) {
       if (tolerance < d) {
         cout << "Files do not match" << endl
@@ -207,7 +210,7 @@ int main(int argc, char *argv[]) {
         result = false;
 
       } else cout << "Files match" << endl;
-      
+
     } else {
       cout << "Maximum difference: " << d << endl;
       if (d) result = false;
