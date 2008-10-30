@@ -10,12 +10,12 @@ PROTOMOL_HOME = os.environ['PROTOMOL_HOME']
 execfile(PROTOMOL_HOME + os.sep + 'compiler.py')
 
 opts = Options('options.py')
+compiler_add_opts()
+
 env = Environment(options = opts, ENV = os.environ)
 conf = Configure(env)
 
-compiler_add_opts()
 Help(opts.GenerateHelpText(env))
-
 
 if not env.GetOption('clean'):
   env.Append(CPPPATH = [PROTOMOL_HOME])
@@ -26,7 +26,6 @@ if not env.GetOption('clean'):
     Exit(1)
 
   execfile(PROTOMOL_HOME + os.sep + 'config.py')
-
   compiler_configure()
   
 
