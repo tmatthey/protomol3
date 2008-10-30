@@ -61,28 +61,32 @@ HessianInt::~HessianInt() {
       hsn.hessM[i] /= (double)totStep;
 
   //
-  if (hsn.hessM != 0 && eigVec != 0 && eigVec != 0 && totStep &&
-      (evecfile != "" || evalfile != "")) {
+  if (hsn.hessM != 0 && eigVec != 0 && eigVal != 0 && totStep &&
+      (evecfile != "" || evalfile != "" || hessfile != "")) {
 
-    report << hint << "[HessianInt::run] diagonalizing Hessian." << endr;
-    //diagonalize
-    info = diagHessian(eigVec, eigVal);
-    if (info == 0) {
-      int numneg;
-      for (numneg = 0; numneg < (int)sz; numneg++)
-        if (eigVal[numneg] > 0.0) break;
+    if(evecfile != "" || evalfile != ""){
+        report << hint << "[HessianInt::run] diagonalizing Hessian." << endr;
+        //diagonalize
+        info = diagHessian(eigVec, eigVal);
+        if (info == 0) {
+          int numneg;
+          for (numneg = 0; numneg < (int)sz; numneg++)
+            if (eigVal[numneg] > 0.0) break;
 
-      //if(numneg) numneg--;
-      report << hint << "[HessianInt::run] diagonalized! Number of negative "
-        "eigenvalues = " << numneg << "." << endr;
-      if (sortOnAbs) absSort();
-      //output results
-      //output eigenvec matrix/ eigenval vector
-      outputDiagHess();
-      report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "."
-             << endr;
-    }else{
-        report << hint << "[HessianInt::run] error info = " << info << endr;
+          //if(numneg) numneg--;
+          report << hint << "[HessianInt::run] diagonalized! Number of negative "
+            "eigenvalues = " << numneg << "." << endr;
+          if (sortOnAbs) absSort();
+          //output nose value if eigvals available
+          report << hint << "[HessianInt::run] Nose Mass, Q = " << calcQ() << "."
+                 << endr;
+        }else{
+            report << hint << "[HessianInt::run] error info = " << info << endr;
+        }
+    }
+    if(info == 0){
+          //output eigenvec matrix/ eigenval vector/ Hessian
+          outputDiagHess();
     }
   }
   if (eigVec != 0) delete[] eigVec;
