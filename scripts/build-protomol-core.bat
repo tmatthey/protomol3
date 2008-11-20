@@ -18,7 +18,7 @@ echo BOOST_HOME not set or invalid
 GOTO END
 
 :BUILD_ROOT_SET
-set SCONSOPTS=debug=0 optimize=1 fah=1
+set SCONSOPTS=debug=0 optimize=1 fah=1 simtk_lapack=1
 set LIBBZ2_HOME=%BUILD_ROOT%\fah\libbzip2
 set LIBFAH_HOME=%BUILD_ROOT%\fah\libfah
 set PROTOMOL_HOME=%BUILD_ROOT%\protomol\protomol
@@ -42,7 +42,6 @@ goto DO_PART
 
 set NAME=PROTOMOL_CORE
 set DIR=%BUILD_ROOT%\protomol\fah-core
-set TARGET=simtk_lapack=1
 goto DO_PART
 :PROTOMOL_CORE_DONE
 
