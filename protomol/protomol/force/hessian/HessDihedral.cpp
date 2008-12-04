@@ -12,6 +12,17 @@ HessDihedral::HessDihedral(const Torsion &currTorsion, //torsion data
   // call the evaluate function
 }
 
+//extract single 3X3 matrix from 4X4 array
+Matrix3By3 HessDihedral::operator()(unsigned int i, unsigned int j) const{
+  int mi = i * 36 + j * 3;            //kk * 36 + ii*3;
+  Matrix3By3 rhd(hessD[mi], hessD[mi + 1], hessD[mi + 2],
+                           hessD[mi + 12], hessD[mi + 13],
+                           hessD[mi + 14],
+                           hessD[mi + 24], hessD[mi + 25],
+                           hessD[mi + 26]);
+  return rhd;
+}
+
 void HessDihedral::evaluate(const Torsion &currTorsion, const Vector3D &a1,
                             const Vector3D &a2, const Vector3D &a3,
                             const Vector3D &a4) {

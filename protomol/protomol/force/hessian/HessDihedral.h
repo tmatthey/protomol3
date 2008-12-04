@@ -3,6 +3,7 @@
 #define HESSDIHEDRAL_H
 
 #include <protomol/topology/GenericTopology.h>
+#include <protomol/type/Matrix3By3.h>
 
 namespace ProtoMol {
   /**
@@ -32,6 +33,7 @@ namespace ProtoMol {
     void evaluate(const Torsion &currTorsion, const Vector3D &a1,
                   const Vector3D &a2, const Vector3D &a3,
                   const Vector3D &a4);
+    Matrix3By3 operator()(const unsigned int i, const unsigned int j) const;
 
   private:
     //Use aRot to rotate the vector back into real space
