@@ -4,6 +4,7 @@
 
 #include <protomol/force/Force.h>
 #include <protomol/type/Vector3DBlock.h>
+#include <protomol/type/Matrix3By3.h>
 
 namespace ProtoMol {
   /**
@@ -13,6 +14,15 @@ namespace ProtoMol {
    *
    */
   class Hessian {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Types and Enums
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  protected:
+    enum {COULOMB = 1};
+    enum {COULOMBDIELEC = 2};
+    enum {COULOMBSCPISM = 4};
+    enum {LENNARDJONES = 8};
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,12 +42,19 @@ namespace ProtoMol {
                   const GenericTopology *myTopo,      //topology
                   const bool mrw);                    //mass re-weighted
 
-    void evaluateCoulombSCPISM(const Vector3DBlock *myPositions,
-                               const GenericTopology *myTopo,
-                               bool mrw);
-    void evaluateCoulombBornRadii(const Vector3DBlock *myPositions,
-                                  const GenericTopology *myTopo,
-                                  bool mrw);
+    Matrix3By3 evaluatePairsMatrix(int i, int j, int pairType, const Vector3DBlock *myPositions,
+                       const GenericTopology *myTopo, bool mrw);
+    void evaluatePairs(int i, int j, int pairType, const Vector3DBlock *myPositions,
+                       const GenericTopology *myTopo, bool mrw, 
+                       int mat_i, int mat_j, int mat_sz, double * mat_array);
+    void outputSparsePairMatrix(int i, int j, Real massi, Real massj, Matrix3By3 rha, 
+                                bool mrw, int arrSz, double * basePoint);
+    void outputSparseMatrix(int i, int j, Real massi, Real massj, Matrix3By3 rha, 
+                            bool mrw, int arrSz, double * basePoint);
+
+    void evaluateCoulombBornRadiiPair(int i, int j, const Vector3DBlock *myPositions,
+                                  const GenericTopology *myTopo, bool mrw, 
+                                  int mat_i, int mat_j, int mat_sz, double * mat_array);
 
   public:
     void clear(); // clear the hessian matrix
@@ -50,7 +67,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // private data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private:
+  protected:
     bool myBond;    //force field components
     bool myAngle;
     bool myCoulomb;
