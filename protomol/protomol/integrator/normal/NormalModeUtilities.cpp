@@ -571,7 +571,7 @@ namespace ProtoMol {
     }
     //Sort actual eigenvector array
     double *tmpVect = new double[dim];
-    double tmpElt;
+    double tmpElt, tmpEval;
     int ii, k;
     for(i=0;i<dim;i++){
         if( eigIndx[i] != (int)i && eigIndx[i] != -1){		//need to swap?
@@ -579,6 +579,10 @@ namespace ProtoMol {
                 tmpVect[j] = eigVec[i*dim+j];
                 eigVec[i*dim+j] = eigVec[eigIndx[i]*dim+j];
             }
+			//
+			tmpEval = eigVal[i];
+			eigVal[i] = eigVal[eigIndx[i]];
+			//
             eigIndx[i] = -1;								//flag swapped
             ii = i;
             do{
@@ -589,6 +593,11 @@ namespace ProtoMol {
                     tmpVect[j] = eigVec[k*dim+j];
                     eigVec[k*dim+j] = tmpElt;
                 }
+				//
+				tmpElt = tmpEval;
+				tmpEval = eigVal[k];
+				eigVal[k] = tmpElt;
+				//
                 eigIndx[k] = -1;							//flag swapped
                 ii = k;
             }while(k<dim);
