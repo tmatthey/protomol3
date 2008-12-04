@@ -1080,6 +1080,8 @@ protomol/protomol/type/AbstractEnumType.h -text
 protomol/protomol/type/Array.h -text
 protomol/protomol/type/ArrayFastest.h -text
 protomol/protomol/type/ArrayNoPartialSpecialization.h -text
+protomol/protomol/type/BlockMatrix.cpp -text
+protomol/protomol/type/BlockMatrix.h -text
 protomol/protomol/type/EigenvectorInfo.h -text
 protomol/protomol/type/Matrix3By3.cpp -text
 protomol/protomol/type/Matrix3By3.h -text
