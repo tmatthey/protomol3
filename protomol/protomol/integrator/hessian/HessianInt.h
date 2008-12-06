@@ -5,7 +5,8 @@
 #include <protomol/integrator/STSIntegrator.h>
 #include <protomol/force/Force.h>
 #include <protomol/type/Vector3DBlock.h>
-#include <protomol/integrator/hessian/Hessian.h>
+#include <protomol/integrator/hessian/BlockHessian.h>
+#include <protomol/integrator/hessian/BlockHessianDiagonalize.h>
 #include <protomol/type/TypeSelection.h>
 
 using namespace std;
@@ -23,7 +24,9 @@ namespace ProtoMol {
   public:
     HessianInt();
     HessianInt(Real timestep, std::string evec_s, std::string eval_s,
-               std::string hess_s, bool sorta, int fm, bool tef, bool masswt,
+               std::string hess_s, bool sorta, int fm, bool tef, 
+               bool fdi, Real evt, int rpb, Real bcd, bool masswt,
+               bool bnm,
                ForceGroup *overloadedForces);
     ~HessianInt();
 
@@ -31,9 +34,7 @@ namespace ProtoMol {
     // New methods of class HessianInt
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
-    int diagHessian(double *eigVecO, double *eigValO);
-    void outputDiagHess();
-    void absSort();
+    void outputDiagHess(int numModes);
     Real calcQ();
 
   protected:
@@ -70,15 +71,19 @@ namespace ProtoMol {
     static const std::string keyword;
   private:
     typedef TypeSelection::Int<4>::type int32;
-    double *eigVec, *eigVal;
-    int *eigIndx;
+    double *eigVec;
     int totStep;
     unsigned int sz;
     std::string evecfile, evalfile, hessfile;
     bool sortOnAbs;
-    unsigned int fixedModes;
-    bool textEig, massWeight;
-    Hessian hsn;
+    unsigned int numberOfModes;
+    bool textEig, fullDiag, massWeight, noseMass;
+    BlockHessian hsn;     
+    BlockHessianDiagonalize blockDiag;
+    Real eigenValueThresh, blockCutoffDistance;
+    int residuesPerBlock, residues_total_eigs;
+    Real max_eigenvalue;
+
   };
 }
 #endif

@@ -4,11 +4,13 @@
 
 #include <protomol/integrator/MTSIntegrator.h>
 #include <protomol/integrator/normal/NormalModeUtilities.h>
-#include <protomol/integrator/hessian/Hessian.h>
+#include <protomol/integrator/hessian/BlockHessian.h>
+#include <protomol/integrator/hessian/BlockHessianDiagonalize.h>
 
 #include <protomol/type/Vector3DBlock.h>
+#include <protomol/type/BlockMatrix.h>
 
-#include <protomol/base/TimerStatistic.h>
+#include <protomol/base/Timer.h>
 
 namespace ProtoMol {
 
@@ -18,14 +20,21 @@ namespace ProtoMol {
   //__________________________________________________ NormalModeDiagonalize
   class NormalModeDiagonalize :
     public MTSIntegrator, public NormalModeUtilities {
+
+  private:
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Types and Enums
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        enum {MAX_ATOMS_PER_RES = 30};
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NormalModeDiagonalize();
-    NormalModeDiagonalize(int cycles, int avs, Real avss, int redi, bool fDiag,
-                          bool rRand, int mins, Real minl, Real redn,
-                          Real redhy, Real spd, int maxi, bool rBond,
+    NormalModeDiagonalize(int cycles, int redi, bool fDiag,
+                          bool rRand, 
+                          Real redhy, Real eTh, int rpb, Real dTh,
                           ForceGroup *overloadedForces,
                           StandardIntegrator *nextIntegrator);
     ~NormalModeDiagonalize(); 
@@ -34,10 +43,7 @@ namespace ProtoMol {
     // New methods of class NormalModeDiagonalize
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   protected:
-    void drift();
-    void VerletAverage();
     void utilityCalculateForces();
-    void removeBondEig();
      
   private:
   public:
@@ -47,7 +53,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     virtual std::string getIdNoAlias() const{return keyword;}
-    virtual unsigned int getParameterSize() const{return 13;}
+    virtual unsigned int getParameterSize() const{return 8;}
     virtual void getParameters(std::vector<Parameter>& parameters) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,8 +78,6 @@ namespace ProtoMol {
     // New methods of class NormalModeUtilities
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   protected:  
-    int traceReDiagonalize(int maxIter, double spd, int idM, bool remEigs);
-    void getNewEigs(double *eigVec, double *innerEigVec, int rfM);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
@@ -82,30 +86,22 @@ namespace ProtoMol {
     static const std::string keyword;
 
   private:
-    Vector3DBlock diagAt, myAveragePos;
-    int numAveragePos;
-    Hessian hsn;
-    double *eigVal, *innerEigVec, *innerEigVal, *innerHess;
-    double *T1, *HQ, *tempMxM, *temp3NxM, *w;
-    int *eigIndx;
+    Vector3DBlock diagAt;
+    //Hessian/Diag Hessian
+    BlockHessian rHsn;
+    BlockHessianDiagonalize blockDiag;
+    //
     bool eigAlloc, firstDiag, fullDiag, removeRand;
-    int noAvStep;
-    Real avStep;
     int rediagCount, nextRediag;
-    int minSteps;
-    Real minLim;
     bool validMaxEigv;
     NormalModeUtilities *myNextNormalMode, *myLastNormalMode;
-    int forceCalc;
-    Real lastLambda;
-    Real rediagThresh, rediagHyst, spdOff;
-    int maxIterations;
-    int _idM;
+    Real rediagHysteresis;
     //Diagnostic data
-    Timer rediagTime, hessianTime;
-    int hessianCounter, rediagCounter, rediagIters, rediagUpdateCounter;
-    //Trace enhancements
-    bool removeBondedEigs;
+    int hessianCounter, rediagCounter, rediagUpdateCounter;
+    //Residues
+    Real eigenValueThresh, blockCutoffDistance;
+    int residuesPerBlock;
+    //
   };
 }
 
