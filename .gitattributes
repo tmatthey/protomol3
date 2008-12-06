@@ -826,6 +826,10 @@ protomol/protomol/integrator/base/LangevinLeapfrogIntegrator.h -text
 protomol/protomol/integrator/base/NumericalDifferentiation.cpp -text
 protomol/protomol/integrator/base/NumericalDifferentiation.h -text
 protomol/protomol/integrator/base/SConscript -text
+protomol/protomol/integrator/hessian/BlockHessian.cpp -text
+protomol/protomol/integrator/hessian/BlockHessian.h -text
+protomol/protomol/integrator/hessian/BlockHessianDiagonalize.cpp -text
+protomol/protomol/integrator/hessian/BlockHessianDiagonalize.h -text
 protomol/protomol/integrator/hessian/Hessian.cpp -text
 protomol/protomol/integrator/hessian/Hessian.h -text
 protomol/protomol/integrator/hessian/HessianInt.cpp -text
