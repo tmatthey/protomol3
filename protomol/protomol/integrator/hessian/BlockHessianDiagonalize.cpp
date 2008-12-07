@@ -72,11 +72,13 @@ namespace ProtoMol {
         report << error << "[BlockHessianDiagonalize::initialize] Block Eigenvector array allocation error." << endr;
     }
     //Assign Eigenvector Blocks
+    memory_footprint = 0;
     blockEigVect.resize(bHess->num_blocks);
     for(int i=0;i<bHess->num_blocks;i++){
       unsigned int start = bHess->hess_eig_point[i]*3;
       unsigned int rows = bHess->blocks_max[i]*3;
       blockEigVect[i].initialize(start,start,rows,rows);  //initialize block
+      memory_footprint += rows * rows;
     }
     //timers/counters for diagnostics
     rediagTime.reset();
@@ -109,6 +111,8 @@ namespace ProtoMol {
     //timers/counters for diagnostics
     rediagTime.reset();
     hessianTime.reset();
+    //
+    memory_footprint = 0;
 
   }
 
@@ -119,7 +123,8 @@ namespace ProtoMol {
   Real BlockHessianDiagonalize::findEigenvectors(const Vector3DBlock *myPositions,
                        const GenericTopology *myTopo, 
                        double * mhQu, const int sz_row, const int sz_col, 
-                       const Real blockCutoffDistance, const Real eigenValueThresh) {
+                       const Real blockCutoffDistance, const Real eigenValueThresh,
+                       const int blockVectorCols) {
 
     //find 'minimum' Hessians for blocks
     hessianTime.start();	//time Hessian
@@ -129,7 +134,7 @@ namespace ProtoMol {
     if(OUTPUTBHESS) outputDiagnostics(2); //Output inner Hessian matrix
     //Diagonalize residue Hessians       
     //find coarse block eigenvectors 
-    Real max_eigenvalue = findCoarseBlockEigs(eigenValueThresh);
+    Real max_eigenvalue = findCoarseBlockEigs(eigenValueThresh, blockVectorCols);
     //
     report << hint << "[BlockHessianDiagonalize::findEigenvectors] Average residue eigenvalues "<<residues_total_eigs/bHess->num_blocks<<
               ", for "<<bHess->num_blocks<<" blocks."<<endr;
@@ -178,6 +183,7 @@ namespace ProtoMol {
     //Initialize storage
     innerDiag.initialize(0,0,residues_total_eigs,residues_total_eigs); //set small output matrix
     innerDiag.clear();
+    memory_footprint += residues_total_eigs * residues_total_eigs;
     //Re-size eigs space for num_eig vectors per block
     unsigned int i_res_sum = 0;
     for(int i=0;i<bHess->num_blocks;i++){
@@ -252,8 +258,14 @@ namespace ProtoMol {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Find isolated block eigenvectors
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Real BlockHessianDiagonalize::findCoarseBlockEigs(const Real eigenValueThresh){
+  Real BlockHessianDiagonalize::findCoarseBlockEigs(const Real eigenValueThresh,
+                                                    const int blockVectorCols) {
 
+    //clear number of cols vector
+    blocVectCol.clear();
+    //number of cols precidence?
+    bool blockVprec = false;
+    if(blockVectorCols > 0) blockVprec = true;
     //size and position eigvects
     for(int i=0;i<bHess->num_blocks;i++){
       unsigned int start = blockEigVect[i].RowStart;
@@ -263,7 +275,8 @@ namespace ProtoMol {
     //    
     residues_total_eigs = 0;	//find total residue modes to use
     Real max_eigenvalue = 0;
-    for(int ii=0;ii<bHess->num_blocks;ii++){
+    int bHess_num_blks = bHess->num_blocks;
+    for(int ii=0;ii<bHess_num_blks;ii++){
       int numFound;
       rediagTime.start();
       int infor = diagHessian(blockEigVect[ii].arrayPointer(), &rE[bHess->hess_eig_point[ii] * 3], 
@@ -274,11 +287,13 @@ namespace ProtoMol {
       absSort(blockEigVect[ii].arrayPointer(), &rE[bHess->hess_eig_point[ii] * 3], eigIndx, bHess->blocks_max[ii] * 3);
       //find number of eigs required
       for(int jj=0;jj<bHess->blocks_max[ii] * 3;jj++){
-        if(fabs(rE[bHess->hess_eig_point[ii] * 3 + jj]) >= eigenValueThresh){
+        Real currEig = fabs(rE[bHess->hess_eig_point[ii] * 3 + jj]);
+        if(currEig >= eigenValueThresh){
           blocks_num_eigs[ii] = jj;
           residues_total_eigs += jj;
           break;
         }
+        if(blockVprec) blocVectCol.push_back(currEig);
       }
       //
       Real tempf = rE[(bHess->hess_eig_point[ii] + bHess->blocks_max[ii] - 1) * 3];
@@ -286,6 +301,24 @@ namespace ProtoMol {
       //
       //####for(int jj=0;jj<bHess->blocks_max[ii] * 3;jj++)
       //####  report << hint << "Loop "<<ii<<", Eig "<<jj<<", value "<<rE[bHess->hess_eig_point[ii]*3+jj]<<", index "<<eigIndx[jj]<<" eigs "<<blocks_num_eigs[ii]<<" tot "<<residues_total_eigs<<" Thresh "<<eigenValueThresh<<endr;
+    }
+    //use target number of block eigenvectors?
+    if(blockVprec && 
+            (bHess_num_blks * blockVectorCols) < blocVectCol.size()){ 
+      sort( blocVectCol.begin(), blocVectCol.end() ); //sort
+      Real newEigThr = blocVectCol[bHess_num_blks * blockVectorCols];
+      residues_total_eigs = 0;
+      for(int ii=0;ii<bHess_num_blks;ii++){
+        //find number of eigs for new thresh
+        for(int jj=0;jj<bHess->blocks_max[ii] * 3;jj++){
+          Real currEig = fabs(rE[bHess->hess_eig_point[ii] * 3 + jj]);
+          if(currEig >= newEigThr){
+            blocks_num_eigs[ii] = jj;
+            residues_total_eigs += jj;
+            break;
+          }
+        }
+      }
     }
     return max_eigenvalue;
     //

@@ -25,7 +25,7 @@ namespace ProtoMol {
     HessianInt();
     HessianInt(Real timestep, std::string evec_s, std::string eval_s,
                std::string hess_s, bool sorta, int fm, bool tef, 
-               bool fdi, Real evt, int rpb, Real bcd, bool masswt,
+               bool fdi, Real evt, int bvc, int rpb, Real bcd, bool masswt,
                bool bnm,
                ForceGroup *overloadedForces);
     ~HessianInt();
@@ -81,7 +81,7 @@ namespace ProtoMol {
     BlockHessian hsn;     
     BlockHessianDiagonalize blockDiag;
     Real eigenValueThresh, blockCutoffDistance;
-    int residuesPerBlock, residues_total_eigs;
+    int blockVectorCols, residuesPerBlock, residues_total_eigs;
     Real max_eigenvalue;
 
   };

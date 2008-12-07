@@ -18,10 +18,10 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Types and Enums
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  enum {SYMHESS = 1};
-  enum {OUTPUTIHESS = 1};
+  enum {SYMHESS = 0};
+  enum {OUTPUTIHESS = 0};
   enum {OUTPUTEGVAL = 0};
-  enum {OUTPUTBHESS = 1};
+  enum {OUTPUTBHESS = 0};
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
@@ -40,14 +40,15 @@ namespace ProtoMol {
                           const GenericTopology *myTopo, double * mhQu, 
                           const int _3N, const int _rfM, 
                           const Real blockCutoffDistance, 
-                          const Real eigenValueThresh);
+                          const Real eigenValueThresh,
+                          const int blockVectorCols);
     int diagHessian(double *eigVecO, double *eigValO,
                     double *hsnhessM, int dim, int &numFound);
     void absSort(double *eigVec, double *eigVal, int *eigIndx, int dim);
 
   private:
     void innerHessian();
-    Real findCoarseBlockEigs(const Real eigenValueThresh);
+    Real findCoarseBlockEigs(const Real eigenValueThresh, const int blockVectorCols);
     void fullElectrostaticBlocks();
     void outputDiagnostics(int typ); 
 
@@ -67,6 +68,7 @@ namespace ProtoMol {
     //Residue eigenvectors as Block Matrices
     vector<BlockMatrix> blockEigVect;
     BlockMatrix innerDiag, innerEigVec;
+    vector<Real> blocVectCol;
     //
   public:
     //Diagnostic data
@@ -76,6 +78,7 @@ namespace ProtoMol {
     int *eigIndx;
     //Blocks
     int residues_total_eigs;
+    int memory_footprint;
 
   };
 }

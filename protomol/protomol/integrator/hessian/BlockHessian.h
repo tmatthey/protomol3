@@ -78,6 +78,7 @@ namespace ProtoMol {
     vector<int> adj_nonbond_index;
     BlockMatrix electroStatics;
     bool fullElectrostatics;
+    int memory_base, memory_blocks;
 
   };
 }

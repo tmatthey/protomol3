@@ -42,12 +42,12 @@ HessianInt::HessianInt() :
 
 HessianInt::HessianInt(Real timestep, string evec_s, string eval_s,
                        string hess_s, bool sorta, int fm, bool tef,
-                       bool fdi, Real evt, int rpb, Real bct, bool masswt, 
+                       bool fdi, Real evt, int bvc, int rpb, Real bct, bool masswt, 
                        bool bnm, ForceGroup *overloadedForces) :
   STSIntegrator(timestep, overloadedForces), evecfile(evec_s),
   evalfile(eval_s), hessfile(hess_s), sortOnAbs(sorta), numberOfModes(fm),
-  textEig(tef), fullDiag(fdi), eigenValueThresh(evt), residuesPerBlock(rpb), 
-  blockCutoffDistance(bct), massWeight(masswt), noseMass(bnm) {
+  textEig(tef), fullDiag(fdi), eigenValueThresh(evt), blockVectorCols(bvc), 
+  residuesPerBlock(rpb), blockCutoffDistance(bct), massWeight(masswt), noseMass(bnm) {
   eigVec = 0;
   //
   hsn.findForces(overloadedForces);         //find forces and parameters
@@ -196,7 +196,9 @@ void HessianInt::run(int numTimesteps) {
       hsn.evaluate(&app->positions, app->topology, massWeight);
     }else{        //coarse diagonalize       
       max_eigenvalue = blockDiag.findEigenvectors(&app->positions, app->topology, 
-                                                         eigVec, sz, numberOfModes, blockCutoffDistance, eigenValueThresh);
+                                                  eigVec, sz, numberOfModes, 
+                                                  blockCutoffDistance, eigenValueThresh, 
+                                                  blockVectorCols);
       residues_total_eigs = blockDiag.residues_total_eigs;
     }
     report << hint << "[HessianInt::Find Hessian] Hessian found!" << endr;
@@ -401,8 +403,12 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
                Text("Full diagonalization?")));    
   parameters.push_back
     (Parameter("eigenValueThresh",
-               Value(eigenValueThresh,ConstraintValueType::NotNegative()),1.0,
-               Text("'Inner' eigenvalue inclusion threshold.")));
+               Value(eigenValueThresh,ConstraintValueType::NotNegative()),5.0,
+               Text("'Inner' eigenvalue inclusion threshold.")));    
+  parameters.push_back
+    (Parameter("blockVectorCols",
+               Value(blockVectorCols,ConstraintValueType::NotNegative()),0,
+               Text("Target number of block eigenvector columns.")));
   parameters.push_back
     (Parameter("residuesPerBlock", 
                Value(residuesPerBlock,ConstraintValueType::NotNegative()),1,
@@ -425,6 +431,6 @@ STSIntegrator *HessianInt::doMake(const vector<Value> &values,
                                   ForceGroup *fg) const {
   return new HessianInt(values[0], values[1], values[2], values[3], values[4],
                         values[5], values[6], values[7], values[8], values[9], 
-                        values[10], values[11], values[12], fg);
+                        values[10], values[11], values[12], values[13], fg);
 }
 

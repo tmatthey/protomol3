@@ -39,11 +39,11 @@ namespace ProtoMol {
   }
 
   NormalModeDiagonalize::NormalModeDiagonalize(int cycles, int redi,  bool fDiag, bool rRand, 
-                                                    Real redhy, Real eTh, int rpb, Real dTh,
-                                                        ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator) 
+                                               Real redhy, Real eTh, int bvc, int rpb, Real dTh,
+                                               ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator) 
     : MTSIntegrator(cycles, overloadedForces, nextIntegrator), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0), eigAlloc(false), fullDiag(fDiag), removeRand(rRand),
         rediagCount(redi), rediagHysteresis(redhy), 
-        hessianCounter(0), rediagCounter(0), eigenValueThresh(eTh), residuesPerBlock(rpb), blockCutoffDistance(dTh)   //
+        hessianCounter(0), rediagCounter(0), eigenValueThresh(eTh), blockVectorCols(bvc), residuesPerBlock(rpb), blockCutoffDistance(dTh)   //
   {
         eigAlloc=false;
         //
@@ -58,6 +58,9 @@ namespace ProtoMol {
         report <<plain<<"NML Timing: Hessian: "<<(blockDiag.hessianTime.getTime()).getRealTime()
             <<"[s] ("<<hessianCounter<<" times), diagonalize: "<<(blockDiag.rediagTime.getTime()).getRealTime()<<
                 "[s] ("<<rediagCounter<<" re-diagonalizations)."<<endl;
+        if(!fullDiag) report <<plain<<"NML Memory: Hessian: "<<memory_Hessian
+            <<"[Mb], diagonalize: "<<memory_eigenvector<<
+            "[Mb], vectors: "<<_3N*_rfM*sizeof(double)/1000000<<"[Mb]."<<endl;
     }
     //de-allocate
     if(mhQu!=NULL && eigAlloc) delete [] mhQu;
@@ -114,6 +117,8 @@ namespace ProtoMol {
     }else{
       blockDiag.initialize(&rHsn, _3N);
     }
+    //Diagnostics
+    memory_Hessian = memory_eigenvector = 0;
     //setup rediag counter in case valid
     nextRediag = 0;	//rediag first time 
     //save positions where diagonalized for checkpoint save (assume I.C. if file)
@@ -189,8 +194,12 @@ namespace ProtoMol {
                 //*******************************************************************************************//
                 report << hint << "Start coarse diagonalization."<<endr;  
                 Real max_eigenvalue = blockDiag.findEigenvectors(&app->positions, app->topology, 
-                                                                  mhQu, _3N, _rfM, blockCutoffDistance, eigenValueThresh);
+                                                                  mhQu, _3N, _rfM, 
+                                                                  blockCutoffDistance, eigenValueThresh, blockVectorCols);
+                //Stats/diagnostics
                 rediagCounter++; hessianCounter++;
+                memory_Hessian = (rHsn.memory_base + rHsn.memory_blocks) * sizeof(Real) / 1000000;
+                memory_eigenvector = blockDiag.memory_footprint * sizeof(Real) / 1000000;
                 //set flags if firstDiag (firstDiag can now be coarse)
                 if(firstDiag){
                     numEigvectsu = _3N;
@@ -228,14 +237,15 @@ namespace ProtoMol {
     parameters.push_back(Parameter("fullDiag",Value(fullDiag,ConstraintValueType::NoConstraints()),false,Text("Full diagonalization?")));
     parameters.push_back(Parameter("removeRand",Value(removeRand,ConstraintValueType::NoConstraints()),false,Text("Remove last random perturbation?")));
     parameters.push_back(Parameter("rediagHysteresis",Value(rediagHysteresis,ConstraintValueType::NotNegative()),0.0,Text("Re-diagonalization hysteresis.")));
-    parameters.push_back(Parameter("eigenValueThresh",Value(eigenValueThresh,ConstraintValueType::NotNegative()),1.0,Text("'Inner' eigenvalue inclusion threshold.")));
+    parameters.push_back(Parameter("eigenValueThresh",Value(eigenValueThresh,ConstraintValueType::NotNegative()),5.0,Text("'Inner' eigenvalue inclusion threshold.")));
+    parameters.push_back(Parameter("blockVectorCols",Value(blockVectorCols,ConstraintValueType::NotNegative()),0,Text("Target number of block eigenvector columns.")));
     parameters.push_back(Parameter("residuesPerBlock", Value(residuesPerBlock,ConstraintValueType::NotNegative()),1,Text("Residues per block.")));
     parameters.push_back(Parameter("blockCutoffDistance", Value(blockCutoffDistance,ConstraintValueType::NotNegative()),10,Text("Block cutoff distance for electrostatic forces.")));
   }
 
   MTSIntegrator* NormalModeDiagonalize::doMake(const vector<Value>& values,ForceGroup* fg, StandardIntegrator *nextIntegrator)const{
     return new NormalModeDiagonalize(values[0],values[1],values[2],values[3],values[4],values[5],values[6],
-      values[7],fg,nextIntegrator);
+      values[7], values[8], fg,nextIntegrator);
   }
 
   //void NormalModeDiagonalize::addModifierAfterInitialize(){

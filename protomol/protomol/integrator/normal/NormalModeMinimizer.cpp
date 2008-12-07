@@ -37,7 +37,7 @@ namespace ProtoMol {
   NormalModeMinimizer::~NormalModeMinimizer() 
   {  
       report.precision(5);
-      if(numSteps) report <<plain<<"NML Statistics: Minimizer average iterations = "<<(float)avItrs/(float)numSteps
+      if(numSteps) report <<plain<<"NML Stats.: Minimizer average iterations = "<<(float)avItrs/(float)numSteps
           <<", force average calcs = "<<(float)avMinForceCalc/(float)numSteps<<endl;
 
   }

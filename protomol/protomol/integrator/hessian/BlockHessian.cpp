@@ -205,23 +205,30 @@ void BlockHessian::initialResidueData(const GenericTopology *myTopo, int res_per
             atom_block_num[j] += residues_max[atom_block[j] * rpb + k];    
     }
     //Assign array
-    rsz = hess_array_size+(num_blocks*num_blocks * 9);
-    report << hint << "Reduced Hessian size "<<hess_array_size<<endr;
+    rsz = hess_array_size;//+(num_blocks*num_blocks * 9);
+    //report << hint << "Reduced Hessian size "<<hess_array_size<<endr;
     //Assign Hessian Blocks
     blocks.resize(num_blocks);
     adj_blocks.resize(num_blocks-1);
+    memory_base = 0;
     for(int i=0;i<num_blocks;i++){
-      blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i]*3,blocks_max[i]*3,blocks_max[i]*3);  //clear block
+      int blk_m3_i = blocks_max[i]*3;
+      blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i]*3,blk_m3_i,blk_m3_i);  //clear block
       blocks[i].clear();  //clear block
+      memory_base += blk_m3_i * blk_m3_i;
       if(i<num_blocks - 1){
-        adj_blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i+1]*3,blocks_max[i]*3,blocks_max[i+1]*3);  //clear block
+        int blk_m3_ip1 = blocks_max[i+1]*3;
+        adj_blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i+1]*3,blk_m3_i,blk_m3_ip1);  //clear block
         adj_blocks[i].clear();  //clear block
+        memory_base += blk_m3_i * blk_m3_ip1;
       }
     }
     //pre calculate mass square roots
     for(int j=0;j<myTopo->atoms.size();j++) sqrtMass[j] = sqrt(myTopo->atoms[j].scaledMass);//
+    //full Hessian for electrostatics?
     if(fullElectrostatics){  
       electroStatics.initialize(0,0,_3N,_3N);
+      memory_base += _3N * _3N;
     }
 
 }
@@ -484,6 +491,8 @@ void BlockHessian::clearBlocks() {
   }else{
     electroStatics.clear();
   }
+  //memory diags
+  memory_blocks = 0;
 
 }
 
@@ -495,13 +504,6 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
   int a1, a2, a3;
   Matrix3By3 rha;
 
-  //
-  //for(int i=0;i<num_blocks;i++){
-  //  blocks[i].clear();  //clear blocks
-  //  if(i < num_blocks - 1) adj_blocks[i].clear();  //clear adjacent block
-  //}
-  //non_adj_bond_blocks.resize(0);  //non adjacent bond blocks
-  //non_adj_bond_index.resize(0);
   //
   sz = 3 * myPositions->size();
   //Impropers
@@ -547,6 +549,7 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
         }
         BlockMatrix M((hess_eig_point[ar0]+block_num_1)*3,(hess_eig_point[ar1]+block_num_2)*3,3,3);
         M.clear();
+        memory_blocks += 9;
         //output
         int aout[2]={a1,a2};
         for (int ii = 0; ii < 2; ii++){
@@ -658,8 +661,11 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
           int ar1 = atom_block[a1];
           int block_num_1 = atom_block_num[a0];
           int block_num_2 = atom_block_num[a1];
-          BlockMatrix M((hess_eig_point[ar0]+block_num_1)*3,(hess_eig_point[ar1]+block_num_2)*3,residues_max[res_a]*3,residues_max[res_b]*3);
+          int r_max_a3 = residues_max[res_a]*3; 
+          int r_max_b3 = residues_max[res_b]*3; 
+          BlockMatrix M((hess_eig_point[ar0]+block_num_1)*3,(hess_eig_point[ar1]+block_num_2)*3,r_max_a3,r_max_b3);
           M.clear();
+          memory_blocks += r_max_a3 * r_max_b3;
           //
           for(int c=0;c<residues_max[res_a];c++){
             int i = residues[res_a*MAX_ATOMS_PER_RES+c];
