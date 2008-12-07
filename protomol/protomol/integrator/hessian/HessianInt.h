@@ -26,7 +26,7 @@ namespace ProtoMol {
     HessianInt(Real timestep, std::string evec_s, std::string eval_s,
                std::string hess_s, bool sorta, int fm, bool tef, 
                bool fdi, Real evt, int bvc, int rpb, Real bcd, bool masswt,
-               bool bnm,
+               bool bnm, bool aparm,
                ForceGroup *overloadedForces);
     ~HessianInt();
 
@@ -77,7 +77,7 @@ namespace ProtoMol {
     std::string evecfile, evalfile, hessfile;
     bool sortOnAbs;
     unsigned int numberOfModes;
-    bool textEig, fullDiag, massWeight, noseMass;
+    bool textEig, fullDiag, massWeight, noseMass, autoParmeters;
     BlockHessian hsn;     
     BlockHessianDiagonalize blockDiag;
     Real eigenValueThresh, blockCutoffDistance;

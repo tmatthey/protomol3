@@ -43,11 +43,13 @@ HessianInt::HessianInt() :
 HessianInt::HessianInt(Real timestep, string evec_s, string eval_s,
                        string hess_s, bool sorta, int fm, bool tef,
                        bool fdi, Real evt, int bvc, int rpb, Real bct, bool masswt, 
-                       bool bnm, ForceGroup *overloadedForces) :
+                       bool bnm, bool aparm,
+                       ForceGroup *overloadedForces) :
   STSIntegrator(timestep, overloadedForces), evecfile(evec_s),
   evalfile(eval_s), hessfile(hess_s), sortOnAbs(sorta), numberOfModes(fm),
   textEig(tef), fullDiag(fdi), eigenValueThresh(evt), blockVectorCols(bvc), 
-  residuesPerBlock(rpb), blockCutoffDistance(bct), massWeight(masswt), noseMass(bnm) {
+  residuesPerBlock(rpb), blockCutoffDistance(bct), massWeight(masswt), 
+  noseMass(bnm), autoParmeters(aparm) {
   eigVec = 0;
   //
   hsn.findForces(overloadedForces);         //find forces and parameters
@@ -125,8 +127,20 @@ void HessianInt::initialize(ProtoMolApp *app) {
 #endif
 #endif  
   //creat hessian arrays and initialize sz
-  sz = 3 * app->positions.size();
+  int _N = app->positions.size();
+  sz = 3 * _N;
   report << hint << "[HessianInt::Find Hessian] sz=" << sz << endr;
+  //automatically generate parameters?
+  if(autoParmeters){
+    numberOfModes = 3*(int)sqrt((float)sz);
+    residuesPerBlock = (int)pow((float)_N,0.6) / 15;
+    blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
+    blockCutoffDistance = hsn.cutOff;  
+    report << hint << "[HessianInt::initialize] Auto parameters: numberOfModes " << numberOfModes <<
+                    ", residuesPerBlock " << residuesPerBlock << 
+                    ", blockVectorCols " << blockVectorCols << 
+                    ", blockCutoffDistance " << blockCutoffDistance << "." << endr;
+  }
   //number modes correct?
   if(numberOfModes == 0 || numberOfModes > sz) numberOfModes = sz;
   //
@@ -387,7 +401,7 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
                string(""), Text("Hessian sparse filename")));
   parameters.push_back
     (Parameter("sortByAbs",
-               Value(sortOnAbs, ConstraintValueType::NoConstraints()), false,
+               Value(sortOnAbs, ConstraintValueType::NoConstraints()), true,
                Text("Sort eigenvalues/vectors by absolute magnitude")));
   parameters.push_back
     (Parameter("numberOfModes",
@@ -399,7 +413,7 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
                Text("Output eigenvectors as text file")));
   parameters.push_back
     (Parameter("fullDiag",
-               Value(fullDiag, ConstraintValueType::NoConstraints()), true,
+               Value(fullDiag, ConstraintValueType::NoConstraints()), false,
                Text("Full diagonalization?")));    
   parameters.push_back
     (Parameter("eigenValueThresh",
@@ -425,12 +439,16 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
     (Parameter("noseMass",
                Value(noseMass, ConstraintValueType::NoConstraints()),
                false, Text("Calculate Nose Mass?")));
+  parameters.push_back
+    (Parameter("autoParmeters",
+               Value(autoParmeters, ConstraintValueType::NoConstraints()),
+               false, Text("Automatically generate diagonalization parameters.")));
 }
 
 STSIntegrator *HessianInt::doMake(const vector<Value> &values,
                                   ForceGroup *fg) const {
   return new HessianInt(values[0], values[1], values[2], values[3], values[4],
                         values[5], values[6], values[7], values[8], values[9], 
-                        values[10], values[11], values[12], values[13], fg);
+                        values[10], values[11], values[12], values[13], values[14], fg);
 }
 

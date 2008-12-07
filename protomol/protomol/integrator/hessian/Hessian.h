@@ -84,6 +84,7 @@ namespace ProtoMol {
     int swt;
   public:
     double *hessM;  //matrix
+    Real cutOff;
   };
 }
 #endif

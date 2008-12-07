@@ -208,6 +208,8 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
     else if (equalStartNocase("Improper", ListForces[i]->getId()))
       myImproper = true;
   }
+  //set maxiumum cutoff value
+  cutOff = max(cSwitchoff, lSwitchoff);
 }
 
 void Hessian::evaluate(const Vector3DBlock *myPositions,
