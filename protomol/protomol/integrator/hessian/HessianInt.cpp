@@ -133,7 +133,7 @@ void HessianInt::initialize(ProtoMolApp *app) {
   //automatically generate parameters?
   if(autoParmeters){
     numberOfModes = 3*(int)sqrt((float)sz);
-    residuesPerBlock = (int)pow((float)_N,0.6) / 15;
+    residuesPerBlock = (int)pow((double)_N,0.6) / 15;
     blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
     blockCutoffDistance = hsn.cutOff;  
     report << hint << "[HessianInt::initialize] Auto parameters: numberOfModes " << numberOfModes <<
