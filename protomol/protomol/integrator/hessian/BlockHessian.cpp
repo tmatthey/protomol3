@@ -82,7 +82,7 @@ void BlockHessian::initialResidueData(const GenericTopology *myTopo, int res_per
   vector<int> residue_id;
   int current_id = myTopo->atoms[0].residue_seq;
   residue_id.push_back(current_id);
-  for(int j=0;j<myTopo->atoms.size();j++){
+  for(int j=0;j<_N;j++){
     if(myTopo->atoms[j].residue_seq != current_id){
       current_id = myTopo->atoms[j].residue_seq;
       residue_id.push_back(current_id);
@@ -98,138 +98,145 @@ void BlockHessian::initialResidueData(const GenericTopology *myTopo, int res_per
   blocks_max = new int[num_blocks];        
   //##report << hint << "blocks "<<num_blocks<<", rpb "<<rpb<<" residues"<<num_residues<<endl;
   //assignments
-    try{
-      //assign residue array
-      residues = new int[num_residues * MAX_ATOMS_PER_RES];   
-      residues_max = new int[num_residues];
-      residues_alpha_c = new int[num_residues];
-      residues_phi_n = new int[num_residues];
-      residues_psi_c = new int[num_residues];
-      //
-      hess_array_point = new int[num_blocks];
-      hess_eig_point = new int[num_blocks];
-      //reverse lookup for atoms
-      atom_residue = new int[myTopo->atoms.size()];
-      atom_res_num = new int[myTopo->atoms.size()];
-      atom_block = new int[myTopo->atoms.size()];
-      atom_block_num = new int[myTopo->atoms.size()];
-      //pre calculated square roots
-      sqrtMass = new Real[myTopo->atoms.size()];
-      //
-    }catch(bad_alloc&){
-        report << error << "[BlockHessian::initialData] Cannot allocate memory for residue variables!" << endr;
-    }
+  try{
+    //assign residue array
+    residues = new int[num_residues * MAX_ATOMS_PER_RES];   
+    residues_max = new int[num_residues];
+    residues_alpha_c = new int[num_residues];
+    residues_phi_n = new int[num_residues];
+    residues_psi_c = new int[num_residues];
     //
-    for(int i=0;i<num_residues * MAX_ATOMS_PER_RES;i++) residues[i] = -1; //flag no atom as default
-    //find atoms and alpha carbons belonging to residues
-    for(int i=0;i<num_residues;i++){
-        residues_alpha_c[i] = residues_phi_n[i] = residues_psi_c[i] = -1;	//flag invalid (and phi/psi links)
-        int res_idx = 0;
-        for(int j=0;j<myTopo->atoms.size();j++){
-            if(myTopo->atoms[j].residue_seq == residue_id[i]){
-                residues[i*MAX_ATOMS_PER_RES+res_idx] = j;
-                if(myTopo->atoms[j].name.compare("CA")==0){	//find alpha carbons
-                    residues_alpha_c[i] = j;	//flag valid and mark alpha carbons
-                }
-                //
-                atom_residue[j] = i;
-                atom_res_num[j] = res_idx;
-                //
-                res_idx++;
-            }
-        }
-        residues_max[i] = res_idx;	//set max number of atoms per residue
-        if(residues_alpha_c[i] == -1) report << error << "Alpha Carbon not found for residue "<<
-            myTopo->atoms[i].residue_name<<", "<<residue_id[i]<<"."<<endr;
-        report << debug(1) << "residue "<<residue_id[i]<<", valid "<<residues_alpha_c[i]<<", max "<<residues_max[i]<<
-            ", total "<<num_residues<<", alpha "<<myTopo->atoms[residues_alpha_c[i]].name<<endr;
-    }
-    //Find N,H for \phis and C,O for \psis
-    for(int i=0;i<myTopo->bonds.size();i++){	//N and C
-        int atom1 = myTopo->bonds[i].atom1;
-        int atom2 = myTopo->bonds[i].atom2;
-        if(myTopo->atoms[atom1].name.compare("CA")==0){				//atom 1 alpha_c
-                if(myTopo->atoms[atom2].name.compare("N")==0)			//and 2 nitrogen then \phi
-                    residues_phi_n[atom_residue[atom1]] = atom2;
-                if(myTopo->atoms[atom2].name.compare("C")==0)			//and 2 carbon then \psi
-                    residues_psi_c[atom_residue[atom1]] = atom2;
-        }else{																			//OR
-            if(myTopo->atoms[atom2].name.compare("CA")==0){			//atom 2 alpha_c
-                    if(myTopo->atoms[atom1].name.compare("N")==0)		//and 1 nitrogen then \phi
-                        residues_phi_n[atom_residue[atom2]] = myTopo->bonds[i].atom1;
-                    if(myTopo->atoms[atom1].name.compare("C")==0)		//and 1 carbon then \psi
-                        residues_psi_c[atom_residue[atom2]] = atom1;
-            }
-        }
-    }
-    for(int i=0;i<num_residues;i++){	//diags
-        report << debug(1) << "residue "<<i<<", phi N "<<residues_phi_n[i]<<
-            ", psi C "<<residues_psi_c[i]<<", alpha C "<<residues_alpha_c[i]<<endr;
-        if(residues_phi_n[i] == -1 || residues_psi_c[i] == -1)
-            report << error << "Phi/Psi paramiter not found!" << endr;
-    }
-    //test atoms are in the correct order (if not we need to implement eigenvector row swapping)
-    int i_res = 0;
-    int i_res_idx = 0;
-    for(int i=0;i<myTopo->atoms.size();i++){
-        if(residues[i_res*MAX_ATOMS_PER_RES+i_res_idx] != i) 
-            report << error << "Atoms NOT in sequence at residue "<<i_res<<", atom "<<i_res_idx
-                    <<", number "<<residues[i_res*MAX_ATOMS_PER_RES+i_res_idx]<<", i "<<i<<endr;
-        i_res_idx++;
-        if(i_res_idx >= residues_max[i_res]){
-            i_res++;
-            i_res_idx = 0;
-        }
-    }
-    report << hint << "Atoms ARE in sequence! Number of residues " << num_residues << "." << endr;
-    //find max of max atoms per residue
-    hess_array_size = 0;
-    hess_eig_size = 0;
-    for(int i=0;i<num_blocks;i++){
-        hess_array_point[i] = hess_array_size;
-        hess_eig_point[i] = hess_eig_size;
-        int block_max = 0;
-        for(int j=0;j<res_per_block;j++)
-            if(i*res_per_block+j<num_residues)
-                block_max += residues_max[i*res_per_block+j];
-        blocks_max[i] = block_max;    
-        //##report << hint << "Block "<<i<<" max " << block_max << endr;
-        hess_array_size += block_max * block_max * 9; 
-        hess_eig_size += block_max;
-    }
-    //find atom blocks and indexes
-    for(int j=0;j<myTopo->atoms.size();j++){
-        atom_block[j] = atom_residue[j] / rpb;
-        atom_block_num[j] = atom_res_num[j];
-        for(int k=0;k<atom_residue[j] % rpb;k++) 
-            atom_block_num[j] += residues_max[atom_block[j] * rpb + k];    
-    }
-    //Assign array
-    rsz = hess_array_size;//+(num_blocks*num_blocks * 9);
-    //report << hint << "Reduced Hessian size "<<hess_array_size<<endr;
-    //Assign Hessian Blocks
-    blocks.resize(num_blocks);
-    adj_blocks.resize(num_blocks-1);
-    memory_base = 0;
-    for(int i=0;i<num_blocks;i++){
-      int blk_m3_i = blocks_max[i]*3;
-      blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i]*3,blk_m3_i,blk_m3_i);  //clear block
-      blocks[i].clear();  //clear block
-      memory_base += blk_m3_i * blk_m3_i;
-      if(i<num_blocks - 1){
-        int blk_m3_ip1 = blocks_max[i+1]*3;
-        adj_blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i+1]*3,blk_m3_i,blk_m3_ip1);  //clear block
-        adj_blocks[i].clear();  //clear block
-        memory_base += blk_m3_i * blk_m3_ip1;
+    hess_array_point = new int[num_blocks];
+    hess_eig_point = new int[num_blocks];
+    //reverse lookup for atoms
+    atom_residue = new int[myTopo->atoms.size()];
+    atom_res_num = new int[myTopo->atoms.size()];
+    atom_block = new int[myTopo->atoms.size()];
+    atom_block_num = new int[myTopo->atoms.size()];
+    //pre calculated square roots
+    sqrtMass = new Real[myTopo->atoms.size()];
+    //
+  }catch(bad_alloc&){
+      report << error << "[BlockHessian::initialData] Cannot allocate memory for residue variables!" << endr;
+  }
+  //
+  for(int i=0;i<num_residues * MAX_ATOMS_PER_RES;i++) residues[i] = -1; //flag no atom as default
+  //find atoms and alpha carbons belonging to residues
+  int last_atom = 0;
+  for(int i=0;i<num_residues;i++){
+      residues_alpha_c[i] = residues_phi_n[i] = residues_psi_c[i] = -1;	//flag invalid (and phi/psi links)
+      int res_idx = 0;
+      bool in_block = false;
+      for(int j=last_atom;j<_N;j++){
+          if(myTopo->atoms[j].residue_seq == residue_id[i]){
+              in_block = true;  //only allow contigous atoms in 1 residue, numbers may be re-used.
+              residues[i*MAX_ATOMS_PER_RES+res_idx] = j;
+              if(myTopo->atoms[j].name.compare("CA")==0){	//find alpha carbons
+                  residues_alpha_c[i] = j;	//flag valid and mark alpha carbons
+              }
+              //
+              atom_residue[j] = i;
+              atom_res_num[j] = res_idx;
+              //
+              res_idx++;
+          }else{
+            last_atom = j;
+            if(in_block) break; //out if was in block
+          }
       }
+      residues_max[i] = res_idx;	//set max number of atoms per residue
+      if(residues_alpha_c[i] == -1) report << error << "Alpha Carbon not found for residue "<<
+          myTopo->atoms[i].residue_name<<", "<<residue_id[i]<<"."<<endr;
+      report << debug(1) << "residue "<<residue_id[i]<<", valid "<<residues_alpha_c[i]<<", max "<<residues_max[i]<<
+          ", total "<<num_residues<<", alpha "<<myTopo->atoms[residues_alpha_c[i]].name<<endr;
+  }
+  //Find N,H for \phis and C,O for \psis
+  int bonds_size = myTopo->bonds.size();
+  for(int i=0;i<bonds_size;i++){	//N and C
+      int atom1 = myTopo->bonds[i].atom1;
+      int atom2 = myTopo->bonds[i].atom2;
+      if(myTopo->atoms[atom1].name.compare("CA")==0){				//atom 1 alpha_c
+              if(myTopo->atoms[atom2].name.compare("N")==0)			//and 2 nitrogen then \phi
+                  residues_phi_n[atom_residue[atom1]] = atom2;
+              if(myTopo->atoms[atom2].name.compare("C")==0)			//and 2 carbon then \psi
+                  residues_psi_c[atom_residue[atom1]] = atom2;
+      }else{																			//OR
+          if(myTopo->atoms[atom2].name.compare("CA")==0){			//atom 2 alpha_c
+                  if(myTopo->atoms[atom1].name.compare("N")==0)		//and 1 nitrogen then \phi
+                      residues_phi_n[atom_residue[atom2]] = myTopo->bonds[i].atom1;
+                  if(myTopo->atoms[atom1].name.compare("C")==0)		//and 1 carbon then \psi
+                      residues_psi_c[atom_residue[atom2]] = atom1;
+          }
+      }
+  }
+  for(int i=0;i<num_residues;i++){	//diags
+      report << debug(1) << "residue "<<i<<", phi N "<<residues_phi_n[i]<<
+          ", psi C "<<residues_psi_c[i]<<", alpha C "<<residues_alpha_c[i]<<endr;
+      if(residues_phi_n[i] == -1 || residues_psi_c[i] == -1)
+          report << error << "Phi/Psi paramiter not found!" << endr;
+  }
+  //test atoms are in the correct order (if not we need to implement eigenvector row swapping)
+  int i_res = 0;
+  int i_res_idx = 0;
+  for(int i=0;i<_N;i++){
+      if(residues[i_res*MAX_ATOMS_PER_RES+i_res_idx] != i) 
+          report << error << "Atoms NOT in sequence at residue "<<i_res<<", atom "<<i_res_idx
+                  <<", number "<<residues[i_res*MAX_ATOMS_PER_RES+i_res_idx]<<", i "<<i<<endr;
+      i_res_idx++;
+      if(i_res_idx >= residues_max[i_res]){
+          i_res++;
+          i_res_idx = 0;
+      }
+  }
+  report << hint << "Atoms ARE in sequence! Number of residues " << num_residues << "." << endr;
+  //find max of max atoms per residue
+  hess_array_size = 0;
+  hess_eig_size = 0;
+  for(int i=0;i<num_blocks;i++){
+      hess_array_point[i] = hess_array_size;
+      hess_eig_point[i] = hess_eig_size;
+      int block_max = 0;
+      for(int j=0;j<res_per_block;j++)
+          if(i*res_per_block+j<num_residues)
+              block_max += residues_max[i*res_per_block+j];
+      blocks_max[i] = block_max;    
+      //##report << hint << "Block "<<i<<" max " << block_max << endr;
+      hess_array_size += block_max * block_max * 9; 
+      hess_eig_size += block_max;
+  }
+  //find atom blocks and indexes
+  for(int j=0;j<_N;j++){
+      atom_block[j] = atom_residue[j] / rpb;
+      atom_block_num[j] = atom_res_num[j];
+      for(int k=0;k<atom_residue[j] % rpb;k++) 
+          atom_block_num[j] += residues_max[atom_block[j] * rpb + k];    
+  }
+  //Assign array
+  rsz = hess_array_size;//+(num_blocks*num_blocks * 9);
+  //report << hint << "Reduced Hessian size "<<hess_array_size<<endr;
+  //Assign Hessian Blocks
+  blocks.resize(num_blocks);
+  adj_blocks.resize(num_blocks-1);
+  memory_base = 0;
+  for(int i=0;i<num_blocks;i++){
+    int blk_m3_i = blocks_max[i]*3;
+    blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i]*3,blk_m3_i,blk_m3_i);  //clear block
+    blocks[i].clear();  //clear block
+    memory_base += blk_m3_i * blk_m3_i;
+    if(i<num_blocks - 1){
+      int blk_m3_ip1 = blocks_max[i+1]*3;
+      adj_blocks[i].initialize(hess_eig_point[i]*3,hess_eig_point[i+1]*3,blk_m3_i,blk_m3_ip1);  //clear block
+      adj_blocks[i].clear();  //clear block
+      memory_base += blk_m3_i * blk_m3_ip1;
     }
-    //pre calculate mass square roots
-    for(int j=0;j<myTopo->atoms.size();j++) sqrtMass[j] = sqrt(myTopo->atoms[j].scaledMass);//
-    //full Hessian for electrostatics?
-    if(fullElectrostatics){  
-      electroStatics.initialize(0,0,_3N,_3N);
-      memory_base += _3N * _3N;
-    }
+  }
+  //pre calculate mass square roots
+  for(int j=0;j<_N;j++) sqrtMass[j] = sqrt(myTopo->atoms[j].scaledMass);//
+  //full Hessian for electrostatics?
+  if(fullElectrostatics){  
+    electroStatics.initialize(0,0,_3N,_3N);
+    memory_base += _3N * _3N;
+  }
 
 }
 
@@ -250,8 +257,9 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
     blocks[i].clear();  //clear blocks
   //Impropers
   if (myImproper) {
-    HessDihedral hi;        //create improper hessian
-    for (unsigned int i = 0; i < myTopo->impropers.size(); i++) {
+    HessDihedral hi;        //create improper hessian    
+    int impropers_size = myTopo->impropers.size();
+    for (unsigned int i = 0; i < impropers_size; i++) {
       bool nonZForce = false;       //test for force constants
       for (int j = 0; j < myTopo->impropers[i].multiplicity; j++)
         if (myTopo->impropers[i].forceConstant[j]) nonZForce = true;
@@ -296,8 +304,9 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
   }
   //Dihedrals
   if (myDihedral) {
-    HessDihedral hd;        //create dihedral hessian
-    for (unsigned int i = 0; i < myTopo->dihedrals.size(); i++) {
+    HessDihedral hd;        //create dihedral hessian    
+    int dihedrals_size = myTopo->dihedrals.size();
+    for (unsigned int i = 0; i < dihedrals_size; i++) {
       bool nonZForce = false;       //test for force constants
       for (int j = 0; j < myTopo->dihedrals[i].multiplicity; j++)
         if (myTopo->dihedrals[i].forceConstant[j]) nonZForce = true;
@@ -360,8 +369,9 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
   }
 
   //Bonds
-  if (myBond){
-    for (i = 0; i < myTopo->bonds.size(); i++) {
+  if (myBond){    
+    int bonds_size = myTopo->bonds.size();
+    for (i = 0; i < bonds_size; i++) {
       a1 = myTopo->bonds[i].atom1; a2 = myTopo->bonds[i].atom2;
       //test all in same block
       int ar1 = atom_block[a1];
@@ -391,8 +401,9 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
   }
 
   //Angles
-  if (myAngle){
-    for (i = 0; i < myTopo->angles.size(); i++) {
+  if (myAngle){    
+    int angles_size = myTopo->angles.size();
+    for (i = 0; i < angles_size; i++) {
       a1 = myTopo->angles[i].atom1;
       a2 = myTopo->angles[i].atom2;
       a3 = myTopo->angles[i].atom3;
@@ -513,8 +524,10 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
   if (myDihedral) outputTorsions(myTopo->dihedrals, *myPositions);
 
   //Bonds
-  if (myBond){
-    for (int i = 0; i < myTopo->bonds.size(); i++) {
+  if (myBond){    
+    int bonds_size = myTopo->bonds.size();
+
+    for (int i = 0; i < bonds_size; i++) {
       a1 = myTopo->bonds[i].atom1; a2 = myTopo->bonds[i].atom2;
       Real r_0 = myTopo->bonds[i].restLength;
       Real k = myTopo->bonds[i].springConstant;
@@ -575,7 +588,8 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
   //Angles
   if (myAngle) { 
     ReducedHessAngle rh;
-    for (int i = 0; i < myTopo->angles.size(); i++) {
+    int angles_size = myTopo->angles.size();
+    for (int i = 0; i < angles_size; i++) {
       a1 = myTopo->angles[i].atom1;
       a2 = myTopo->angles[i].atom2;
       a3 = myTopo->angles[i].atom3;
@@ -608,10 +622,11 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
         }
     }
   }
-
+  
+  int _N = myTopo->atoms.size();
   //Pairwise intra block or adjacent
-  for (unsigned int i = 0; i < myTopo->atoms.size(); i++){
-    for (unsigned int j = i + 1; j < myTopo->atoms.size(); j++){             
+  for (unsigned int i = 0; i < _N; i++){
+    for (unsigned int j = i + 1; j < _N; j++){             
       if(abs(atom_block[i] - atom_block[j]) < 2){  //within block or adjacent
         Matrix3By3 rhp(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
         //Accumulate pairwise
@@ -722,7 +737,8 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
 void BlockHessian::outputTorsions(const std::vector<Torsion> &torsions, const Vector3DBlock &myPositions){    
   
   HessDihedral hi;        //create improper hessian
-  for (unsigned int i = 0; i < torsions.size(); i++) {
+  int torsions_size = torsions.size();
+  for (unsigned int i = 0; i < torsions_size; i++) {
     bool nonZForce = false;       //test for force constants
     for (int j = 0; j < torsions[i].multiplicity; j++)
       if (torsions[i].forceConstant[j]) nonZForce = true;
@@ -764,13 +780,14 @@ void BlockHessian::outputBlocks(const unsigned int i, const unsigned int j, cons
 void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
                        const GenericTopology *myTopo) {
   
+  int _N = myTopo->atoms.size();
   sz = 3 * myPositions->size();
   //Set Matrix
   //electroStatics.clear();
   //
   //Pairwise
-  for (unsigned int i = 0; i < myTopo->atoms.size(); i++){
-    for (unsigned int j = i + 1; j < myTopo->atoms.size(); j++){             
+  for (unsigned int i = 0; i < _N; i++){
+    for (unsigned int j = i + 1; j < _N; j++){             
       if(abs(atom_block[i] - atom_block[j]) >= 2){  //NOT within block or adjacent
         Matrix3By3 rhp(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
         //Accumulate pairwise

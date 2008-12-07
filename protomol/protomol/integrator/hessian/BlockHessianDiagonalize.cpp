@@ -210,7 +210,8 @@ namespace ProtoMol {
       }
     }
     //Do non-adjacent bond blocks, distance > 1
-    for(int ii=0;ii<bHess->non_adj_bond_blocks.size();ii++){  
+    int non_adj_bond_blocks_size = bHess->non_adj_bond_blocks.size();
+    for(int ii=0;ii<non_adj_bond_blocks_size;ii++){  
       int ar0 = bHess->non_adj_bond_index[ii*2]; int ar1 = bHess->non_adj_bond_index[ii*2+1];
       BlockMatrix tempM((blockEigVect[ar0]).ColumnStart, (bHess->non_adj_bond_blocks[ii]).ColumnStart, (blockEigVect[ar0]).Columns, (bHess->non_adj_bond_blocks[ii]).Columns);
       (blockEigVect[ar0]).transposeProduct(bHess->non_adj_bond_blocks[ii], tempM); //Aaa^{T}This
@@ -223,7 +224,8 @@ namespace ProtoMol {
       }
     }
     //Do adjacent non-bond blocks
-    for(int ii=0;ii<bHess->adj_nonbond_blocks.size();ii++){  
+    int adj_nonbond_blocks_size = bHess->adj_nonbond_blocks.size();
+    for(int ii=0;ii<adj_nonbond_blocks_size;ii++){  
       int ar0 = bHess->adj_nonbond_index[ii*2]; int ar1 = bHess->adj_nonbond_index[ii*2+1];
       BlockMatrix tempM((blockEigVect[ar0]).ColumnStart, (bHess->adj_nonbond_blocks[ii]).ColumnStart, (blockEigVect[ar0]).Columns, (bHess->adj_nonbond_blocks[ii]).Columns);
       (blockEigVect[ar0]).transposeProduct(bHess->adj_nonbond_blocks[ii], tempM); //Aaa^{T}This
