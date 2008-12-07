@@ -19,6 +19,9 @@ namespace ProtoMol {
     // Types and Enums
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   enum {SYMHESS = 1};
+  enum {OUTPUTIHESS = 1};
+  enum {OUTPUTEGVAL = 0};
+  enum {OUTPUTBHESS = 1};
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment

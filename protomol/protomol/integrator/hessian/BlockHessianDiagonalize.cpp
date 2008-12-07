@@ -126,7 +126,7 @@ namespace ProtoMol {
     bHess->evaluateResidues(myPositions, myTopo, true);
     hessianTime.stop();	//stop timer
     //
-    outputDiagnostics(3); //#### output Matrices
+    if(OUTPUTBHESS) outputDiagnostics(2); //Output inner Hessian matrix
     //Diagonalize residue Hessians       
     //find coarse block eigenvectors 
     Real max_eigenvalue = findCoarseBlockEigs(eigenValueThresh);
@@ -146,7 +146,7 @@ namespace ProtoMol {
       //Q^T H Q for full electrostatics
       fullElectrostaticBlocks();
     }
-    outputDiagnostics(0); //#### output Matrix
+    if(OUTPUTBHESS) outputDiagnostics(0); //Output block hessian Matrices
     //**** diagonalize 'inner' Hessian ****************************************
     int numeFound;
     rediagTime.start();    
@@ -160,7 +160,7 @@ namespace ProtoMol {
     }else{
       report << error << "[BlockHessianDiagonalize::findEigenvectors] Diagnostic diagonalization failed."<<endr;
     }
-    //outputDiagnostics(1); //#### output eigenvalues
+    if(OUTPUTEGVAL) outputDiagnostics(1); //Output eigenvalues
     //
     //**** Multiply block eigenvectors with inner eigenvectors ****************
     innerEigVec.columnResize(sz_col);
@@ -196,12 +196,12 @@ namespace ProtoMol {
       BlockMatrix tempM((blockEigVect[ii]).ColumnStart, (bHess->adj_blocks[ii]).ColumnStart, (blockEigVect[ii]).Columns, (bHess->adj_blocks[ii]).Columns);
       (blockEigVect[ii]).transposeProduct(bHess->adj_blocks[ii], tempM); //Aaa^{T}This
       tempM.product(blockEigVect[ii+1], innerDiag); //Aaa^{T}HAbb
-#if SYMHESS
-      //Dont need this except for symmetric Hessians
-      for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
-        for(int kk=(blockEigVect[ii+1]).ColumnStart;kk<(blockEigVect[ii+1]).Columns+(blockEigVect[ii+1]).ColumnStart;kk++)
-           innerDiag(kk,jj) = innerDiag(jj,kk);
-#endif
+      if(SYMHESS){
+        //Dont need this except for symmetric Hessians
+        for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
+          for(int kk=(blockEigVect[ii+1]).ColumnStart;kk<(blockEigVect[ii+1]).Columns+(blockEigVect[ii+1]).ColumnStart;kk++)
+             innerDiag(kk,jj) = innerDiag(jj,kk);
+      }
     }
     //Do non-adjacent bond blocks, distance > 1
     for(int ii=0;ii<bHess->non_adj_bond_blocks.size();ii++){  
@@ -209,12 +209,12 @@ namespace ProtoMol {
       BlockMatrix tempM((blockEigVect[ar0]).ColumnStart, (bHess->non_adj_bond_blocks[ii]).ColumnStart, (blockEigVect[ar0]).Columns, (bHess->non_adj_bond_blocks[ii]).Columns);
       (blockEigVect[ar0]).transposeProduct(bHess->non_adj_bond_blocks[ii], tempM); //Aaa^{T}This
       tempM.product(blockEigVect[ar1], innerDiag); //Aaa^{T}HAbb
-#if SYMHESS
-      //Dont need this except for symmetric Hessians
-      for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
-        for(int kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
-          innerDiag(kk,jj) = innerDiag(jj,kk);
-#endif
+      if(SYMHESS){
+        //Dont need this except for symmetric Hessians
+        for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
+          for(int kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
+            innerDiag(kk,jj) = innerDiag(jj,kk);
+      }
     }
     //Do adjacent non-bond blocks
     for(int ii=0;ii<bHess->adj_nonbond_blocks.size();ii++){  
@@ -222,12 +222,12 @@ namespace ProtoMol {
       BlockMatrix tempM((blockEigVect[ar0]).ColumnStart, (bHess->adj_nonbond_blocks[ii]).ColumnStart, (blockEigVect[ar0]).Columns, (bHess->adj_nonbond_blocks[ii]).Columns);
       (blockEigVect[ar0]).transposeProduct(bHess->adj_nonbond_blocks[ii], tempM); //Aaa^{T}This
       tempM.sumProduct(blockEigVect[ar1], innerDiag); //Aaa^{T}HAbb
-#if SYMHESS 
-      //Dont need this except for symmetric Hessians
-      for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
-        for(int kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
-          innerDiag(kk,jj) = innerDiag(jj,kk);
-#endif
+      if(SYMHESS){
+        //Dont need this except for symmetric Hessians
+        for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
+          for(int kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
+            innerDiag(kk,jj) = innerDiag(jj,kk);
+      }
     }
     //
   }
@@ -241,11 +241,9 @@ namespace ProtoMol {
     for(int ii=0;ii<bHess->num_blocks;ii++){
       BlockMatrix tempM((blockEigVect[ii]).ColumnStart, (bHess->electroStatics).ColumnStart, (blockEigVect[ii]).Columns, bHess->electroStatics.Columns);
       (blockEigVect[ii]).transposeProduct(bHess->electroStatics, tempM); //Aaa^{T}This
-#if SYMHESS
-      for(int ll=0;ll<bHess->num_blocks;ll++){// should be from ii unless symmetric Hessians
-#else
-      for(int ll=ii;ll<bHess->num_blocks;ll++){
-#endif
+      int llStart = ii;
+      if(SYMHESS) llStart = 0;
+      for(int ll=llStart;ll<bHess->num_blocks;ll++){// should be from ii unless symmetric Hessians
         tempM.sumProduct(blockEigVect[ll], innerDiag); //Aaa^{T}HAbb
       }
     }
@@ -317,7 +315,7 @@ namespace ProtoMol {
       //close file
       myFile.close();
     }
-    if(typ == 3){
+    if(typ == 2){
       //Output block Hessians
       myFile.open("blockH", ofstream::out);
       myFile.precision(10);    
