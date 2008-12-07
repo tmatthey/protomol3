@@ -165,7 +165,7 @@ namespace ProtoMol
 #elif defined(HAVE_SIMTK_LAPACK)
     int len_trans = 1;
     dgemm_ ( *transA, *transB, m, n, k, alpha, ( double * )&MyArray[( kl-ColumnStart )*Rows], lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-             ldb, beta, &om.MyArray[0], ldc, len_trans, len_trans );
+             ldb, beta, &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], ldc, len_trans, len_trans );
 #else
     const unsigned int rowLength = RowStart + Rows;
     const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -395,7 +395,7 @@ namespace ProtoMol
 #elif defined(HAVE_SIMTK_LAPACK)
     int len_trans = 1;
     dgemm_ ( *transA, *transB, m, n, k, alpha, &MyArray[kl-RowStart], lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-             ldb, beta, &om.MyArray[0], ldc, len_trans, len_trans );
+             ldb, beta, &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], ldc, len_trans, len_trans );
 #else
     const unsigned int columnLength = ColumnStart + Columns;
     const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
