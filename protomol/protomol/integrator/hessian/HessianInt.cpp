@@ -75,7 +75,8 @@ HessianInt::~HessianInt() {
           //Full diagonalize
           report << hint << "[HessianInt::run] diagonalizing Hessian." << endr;
           //info = diagHessian(eigVec, eigVal);
-          int numFound;
+          int numFound;                
+          blockDiag.rediagTime.start();
           info = blockDiag.diagHessian(eigVec, blockDiag.eigVal, hsn.hessM, sz, numFound);
           if (info == 0) {
             int numneg;
@@ -87,7 +88,8 @@ HessianInt::~HessianInt() {
               "eigenvalues = " << numneg << "." << endr;  
             for (unsigned int i = 0; i < sz; i++) blockDiag.eigIndx[i] = i;    
             //if (sortOnAbs) absSort();
-            if (sortOnAbs) blockDiag.absSort(eigVec, blockDiag.eigVal, blockDiag.eigIndx, sz);
+            if (sortOnAbs) blockDiag.absSort(eigVec, blockDiag.eigVal, blockDiag.eigIndx, sz);                
+            blockDiag.rediagTime.stop();
             //output nose value if eigvals available
             if (noseMass) report << hint << "[HessianInt::run] Nose Mass, Q = " << 
                                     calcQ() << "." << endr;
@@ -105,6 +107,14 @@ HessianInt::~HessianInt() {
     if(info == 0){
           //output eigenvec matrix/ eigenval vector/ Hessian
           outputDiagHess(numModes);
+          report.precision(3);
+          report <<plain<<"NML Timing: Hessian: "<<(blockDiag.hessianTime.getTime()).getRealTime()
+              <<"[s] ("<<totStep<<" times), diagonalize: "<<(blockDiag.rediagTime.getTime()).getRealTime()<<
+                  "[s]."<<endl;
+          if(!fullDiag) report <<plain<<"NML Memory: Hessian: "<<(hsn.memory_base + hsn.memory_blocks) * sizeof(Real) / 1000000
+              <<"[Mb], diagonalize: "<<blockDiag.memory_footprint * sizeof(Real) / 1000000<<
+              "[Mb], vectors: "<<sz*numberOfModes*sizeof(double)/1000000<<"[Mb]."<<endl;
+
     }
   }
   if (eigVec != 0) delete[] eigVec;
@@ -185,8 +195,10 @@ void HessianInt::run(int numTimesteps) {
         doKickdoDrift();
         calculateForces();
         //true for mass re-weight;
-        if(fullDiag){
-          hsn.evaluate(&app->positions, app->topology, massWeight);
+        if(fullDiag){                
+          blockDiag.hessianTime.start();	//time Hessian
+          hsn.evaluate(&app->positions, app->topology, massWeight);                
+          blockDiag.hessianTime.stop();	//stop timer
           totStep++;
         }
 
@@ -194,8 +206,10 @@ void HessianInt::run(int numTimesteps) {
     }
     else {
       //true for mass re-weight;
-      if(fullDiag){
-        hsn.evaluate(&app->positions, app->topology, massWeight);
+      if(fullDiag){                
+        blockDiag.hessianTime.start();	//time Hessian
+        hsn.evaluate(&app->positions, app->topology, massWeight);                
+        blockDiag.hessianTime.stop();	//stop timer
         totStep++;
       }
     }
@@ -206,8 +220,10 @@ void HessianInt::run(int numTimesteps) {
     //Find current Hessian
     totStep++;
     //true for mass re-weight;
-    if(fullDiag){ //Full diagonalize
-      hsn.evaluate(&app->positions, app->topology, massWeight);
+    if(fullDiag){ //Full diagonalize                
+      blockDiag.hessianTime.start();	//time Hessian
+      hsn.evaluate(&app->positions, app->topology, massWeight);                
+      blockDiag.hessianTime.stop();	//stop timer
     }else{        //coarse diagonalize       
       max_eigenvalue = blockDiag.findEigenvectors(&app->positions, app->topology, 
                                                   eigVec, sz, numberOfModes, 
