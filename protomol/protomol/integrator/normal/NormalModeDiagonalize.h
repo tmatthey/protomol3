@@ -26,6 +26,7 @@ namespace ProtoMol {
         // Types and Enums
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         enum {MAX_ATOMS_PER_RES = 30};
+        enum {REGRESSION_T = 0};
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment

@@ -203,8 +203,9 @@ namespace ProtoMol {
                 //set flags if firstDiag (firstDiag can now be coarse)
                 if(firstDiag){
                     numEigvectsu = _3N;
-                    //####FIX LEFT LIKE THIS FOR REGRESSION TESTS
-                    maxEigvalu = 1000;//max_eigenvalue;	//maximum from blocks
+                    //use 1000 for regression tests, set REGRESSION_T NE 0.
+                    if(REGRESSION_T) maxEigvalu = 1000;
+                    else maxEigvalu = max_eigenvalue;	//maximum from blocks
                     validMaxEigv = true;
                     firstDiag = false;
                 }

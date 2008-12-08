@@ -131,7 +131,7 @@ namespace ProtoMol {
     bHess->evaluateResidues(myPositions, myTopo, true);
     hessianTime.stop();	//stop timer
     //
-    if(OUTPUTBHESS) outputDiagnostics(2); //Output inner Hessian matrix
+    if(OUTPUTBHESS) outputDiagnostics(2); //Output block Hessian matrix
     //Diagonalize residue Hessians       
     //find coarse block eigenvectors 
     Real max_eigenvalue = findCoarseBlockEigs(eigenValueThresh, blockVectorCols);
@@ -151,7 +151,7 @@ namespace ProtoMol {
       //Q^T H Q for full electrostatics
       fullElectrostaticBlocks();
     }
-    if(OUTPUTBHESS) outputDiagnostics(0); //Output block hessian Matrices
+    if(OUTPUTIHESS) outputDiagnostics(0); //Output inner hessian Matrices
     //**** diagonalize 'inner' Hessian ****************************************
     int numeFound;
     rediagTime.start();    
