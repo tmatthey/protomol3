@@ -87,7 +87,6 @@ namespace ProtoMol {
     static const std::string keyword;
 
   private:
-    Vector3DBlock diagAt;
     //Hessian/Diag Hessian
     BlockHessian rHsn;
     BlockHessianDiagonalize blockDiag;

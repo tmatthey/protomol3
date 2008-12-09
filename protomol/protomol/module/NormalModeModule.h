@@ -11,6 +11,7 @@ namespace ProtoMol {
 
   declareInputValue(InputEigenVectors, STRING, NOTEMPTY);
   declareInputValue(InputEigTextFile, STRING, NOTEMPTY);
+  declareInputValue(InputEigenValues, STRING, NOTEMPTY);
 
   class NormalModeModule : public Module {
     bool eiValid;

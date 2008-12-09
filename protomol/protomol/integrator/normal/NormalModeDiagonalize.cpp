@@ -123,6 +123,7 @@ namespace ProtoMol {
     nextRediag = 0;	//rediag first time 
     //save positions where diagonalized for checkpoint save (assume I.C. if file)
     diagAt = *&app->positions;
+    newDiag = false;
     //timers/counters for diagnostics
     hessianCounter = rediagCounter = rediagUpdateCounter = 0;
     //
@@ -142,6 +143,8 @@ namespace ProtoMol {
         //Full diagonalization
         if((rediagCount && (int)(app->topology->time/getTimestep()) >= nextRediag) || firstDiag){
             nextRediag += rediagCount;
+            //
+            newDiag = true;
             //
             report <<debug(1)<<"[NormalModeDiagonalize::run] Finding diagonalized Hessian."<<endr;
             //save positions where diagonalized for checkpoint save
@@ -202,6 +205,7 @@ namespace ProtoMol {
                 memory_eigenvector = blockDiag.memory_footprint * sizeof(Real) / 1000000;
                 //set flags if firstDiag (firstDiag can now be coarse)
                 if(firstDiag){
+                    //#####Fix, this should be the number of eigenvectors in set, _rfM?
                     numEigvectsu = _3N;
                     //use 1000 for regression tests, set REGRESSION_T NE 0.
                     if(REGRESSION_T) maxEigvalu = 1000;
@@ -221,6 +225,8 @@ namespace ProtoMol {
         }
         //run integrator
         myNextIntegrator->run(1);//numTimesteps); //SHOULD DO 'rediagCount' STEPS HERE
+        //remove diagonalization flags after inner integrator call
+        newDiag = false;
 
     }
 

@@ -3,8 +3,10 @@
 #define EIGENVECTORINFO_H
 
 #include <protomol/type/Real.h>
+#include <protomol/type/Vector3DBlock.h>
 #include <string>
 #include <iostream>
+
 using std::cout;
 using std::endl;
 namespace ProtoMol {
@@ -16,13 +18,24 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    EigenvectorInfo() {};
+    EigenvectorInfo() {
+      myEigenvectors = 0;
+    };
+
     EigenvectorInfo(unsigned int n, unsigned int m) {
       myEigenvectorLength = n;
       myNumEigenvectors = m;
       myMaxEigenvalue = 0.0;
       myEigenvectors = new Real[n * m * 3];
     }
+
+    ~EigenvectorInfo() {
+      if(myEigenvectors){
+        delete [] myEigenvectors;
+        myEigenvectors = 0;
+      }
+    };
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class EigenvectorInfo
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,6 +43,7 @@ namespace ProtoMol {
       //myEigenvectors = new Real[myEigenvectorLength*myNumEigenvectors];
       myEigenvectors = new Real[myEigenvectorLength * myNumEigenvectors * 3];
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,6 +52,7 @@ namespace ProtoMol {
     unsigned int myNumEigenvectors;
     Real myMaxEigenvalue;
     Real *myEigenvectors;
+    Vector3DBlock myEigenvalues;
   };
 }
 #endif /* EIGENVECTORINFO_H */

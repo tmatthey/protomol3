@@ -6,7 +6,7 @@
 #include <protomol/type/String.h>
 #include <protomol/io/EigenvectorReader.h>
 #include <protomol/io/EigenvectorTextReader.h>
-
+#include <protomol/io/XYZReader.h>
 #include <protomol/integrator/normal/NormalModeLangevin.h>
 #include <protomol/integrator/normal/NormalModeLangLf.h>
 #include <protomol/integrator/normal/NormalModeMinimizer.h>
@@ -15,6 +15,7 @@
 #include <protomol/integrator/normal/NormalModeRelax.h>
 #include <protomol/integrator/normal/NormalModeBrownian.h>
 #include <protomol/integrator/normal/NormalModeDamping.h>
+#include <protomol/integrator/normal/NormalModeQuadratic.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -22,10 +23,12 @@ using namespace ProtoMol::Report;
 
 defineInputValue(InputEigenVectors, "eigfile");
 defineInputValue(InputEigTextFile, "eigtextfile");
+defineInputValue(InputEigenValues, "eigvaluefile");
 
 void NormalModeModule::init(ProtoMolApp *app) {
   InputEigenVectors::registerConfiguration(&app->config);
   InputEigTextFile::registerConfiguration(&app->config);
+  InputEigenValues::registerConfiguration(&app->config);
 
   app->integratorFactory.registerExemplar(new NormalModeLangevin());
   app->integratorFactory.registerExemplar(new NormalModeLangLf());
@@ -35,12 +38,13 @@ void NormalModeModule::init(ProtoMolApp *app) {
   app->integratorFactory.registerExemplar(new NormalModeRelax());
   app->integratorFactory.registerExemplar(new NormalModeBrownian());
   app->integratorFactory.registerExemplar(new NormalModeDamping());
+  app->integratorFactory.registerExemplar(new NormalModeQuadratic());
 }
 
 void NormalModeModule::read(ProtoMolApp *app) {
   Configuration &config = app->config;
 
-  // Eigenvectors/values
+  // Eigenvectors/value
   if (config.valid(InputEigTextFile::keyword)) {
     EigenvectorTextReader evTextReader;
 
@@ -91,8 +95,29 @@ void NormalModeModule::read(ProtoMolApp *app) {
     report << plain << "Using eigfile '"
            << config[InputEigenVectors::keyword] << "' ("
            << app->eigenInfo.myEigenvectorLength << ")." << endr;
-    
+
     eiValid = true;
+  }
+
+  // Eigenvalues file
+  if (config.valid(InputEigenValues::keyword)) {
+    // eigenvalues
+    //app->eigenInfo.myEigenvalues.resize(app->positions.size());
+    XYZReader valReader;
+    if (!valReader.open(config[InputEigenValues::keyword])){
+      THROWS(string("Can't open eigenvalue file '") +
+        config[InputEigenValues::keyword].getString() + "'.");
+    }
+
+    if (!(valReader >> app->eigenInfo.myEigenvalues)){
+        THROWS(string("Could not parse eigenvalue file '") +
+          config[InputEigenValues::keyword].getString() + "'. ");
+    }
+
+    report << plain << "Using eigvaluefile '"
+           << config[InputEigenValues::keyword] << "' ("
+           << app->eigenInfo.myEigenvalues.size() * 3 << ")." << endr;
+
   }
 }
 

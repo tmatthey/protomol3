@@ -98,6 +98,10 @@ namespace ProtoMol {
         bool genCompNoise;
         //Random purtubation visible to outer Diag method
         Vector3DBlock gaussRandCoord1;
+        //Last diagonalization point
+        Vector3DBlock diagAt;
+        //flag for diag
+        bool newDiag;
 
     protected:
         double *invSqrtMass, *sqrtMass;

@@ -867,6 +867,8 @@ protomol/protomol/integrator/normal/NormalModeMinimizer.cpp -text
 protomol/protomol/integrator/normal/NormalModeMinimizer.h -text
 protomol/protomol/integrator/normal/NormalModeMori.cpp -text
 protomol/protomol/integrator/normal/NormalModeMori.h -text
+protomol/protomol/integrator/normal/NormalModeQuadratic.cpp -text
+protomol/protomol/integrator/normal/NormalModeQuadratic.h -text
 protomol/protomol/integrator/normal/NormalModeRelax.cpp -text
 protomol/protomol/integrator/normal/NormalModeRelax.h -text
 protomol/protomol/integrator/normal/NormalModeUtilities.cpp -text
