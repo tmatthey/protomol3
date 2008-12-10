@@ -6,6 +6,7 @@
 #if defined (HAVE_GUI) || defined (HAVE_LIBFAH)
 
 #include <protomol/output/Output.h>
+#include <protomol/base/Timer.h>
 #include <string>
 
 #ifdef HAVE_LIBFAH
@@ -26,7 +27,8 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     OutputFAHGUI();
-    OutputFAHGUI(const std::string &name, int freq, int port, int prange, const string &projn);
+    OutputFAHGUI(const std::string &name, int freq, int port, 
+                 int prange, const string &projn, Real timeout, bool pause);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  From class Output
@@ -61,12 +63,17 @@ namespace ProtoMol {
   private:
     std::string name;
     int myPort, myPortRange;
-    std::string myProjName;
+    std::string myProjName;  
+    Real myTimeout;
+    bool myPause;
+    Timer guiTimer;
+
 #ifdef HAVE_LIBFAH
     FAH::GUIServer *server;
 #else
     GUIServer *server;
 #endif
+
   };
 }
 

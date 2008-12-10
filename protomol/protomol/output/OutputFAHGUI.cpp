@@ -27,8 +27,15 @@ const string OutputFAHGUI::keyword("Gui");
 
 OutputFAHGUI::OutputFAHGUI() : name("ProtoMol"), server() {}
 
-OutputFAHGUI::OutputFAHGUI(const string &name, int freq, int port, int prange, const string &projn) :
-  Output(freq), name(name), myPort(port), myPortRange(prange), myProjName(projn), server(0) {}
+OutputFAHGUI::OutputFAHGUI(const string &name, int freq, 
+                           int port, int prange, const string &projn, double timeout, bool pause) :
+  Output(freq), name(name), myPort(port), myPortRange(prange), myProjName(projn), 
+  myTimeout(timeout), myPause(pause), server(0) {
+
+    //default pause timeout to 10 seconds
+    if(myPause && !myTimeout) myTimeout = 10;
+  
+  }
 
 void OutputFAHGUI::doInitialize() {
 #ifdef HAVE_LIBFAH
@@ -51,43 +58,61 @@ void OutputFAHGUI::doInitialize() {
   //start server now initial data set
   server->startServer();
 #endif
+
+  //timers for GuiTimeout
+  guiTimer.reset();
+  guiTimer.start();
+
 }
 
 void OutputFAHGUI::doRun(int step) {
-  GUIServer::request_t request;
+  GUIServer::request_t request = server->getRequest();
 
-  switch (request = server->getRequest()) {
-  case GUIServer::GS_META_REQUEST:
-  case GUIServer::GS_COORD_REQUEST:
-    server->startUpdate();
-          
-    if (request == GUIServer::GS_META_REQUEST) {
-      server->info.iterations = app->lastStep / 1000;
-      server->info.frames = app->lastStep;
-      setAtoms();
-      setBonds();
-            
-    } else {
-#ifdef HAVE_LIBFAH
-      server->current.iterations_done = app->currentStep / 1000;
-#endif
-      server->current.frames_done = app->currentStep;
-      server->current.energy = kineticEnergy(app->topology, &app->velocities);
-      server->current.temperature =
-        temperature(app->topology, &app->velocities);
-      //Mode number valid?
-      if(app->eigenInfo.currentMode != -1){
-        server->current.iterations_done = app->eigenInfo.currentMode;
-      }
-      //
-      setCoords();
+  //GuiPause?
+  if(myPause && request == GUIServer::GS_NO_REQUEST){
+    while((request = server->getRequest()) == GUIServer::GS_NO_REQUEST){
+      if((guiTimer.getTime()).getRealTime() > myTimeout)
+        THROW("GUI pause timed out.");
     }
-
-    server->endUpdate();
-    break;
-          
-  default: break;
   }
+    
+  switch (request) {
+    case GUIServer::GS_META_REQUEST:
+    case GUIServer::GS_COORD_REQUEST:
+      guiTimer.reset(); //restart watchdog
+      guiTimer.start();
+      server->startUpdate();
+            
+      if (request == GUIServer::GS_META_REQUEST) {
+        server->info.iterations = app->lastStep / 1000;
+        server->info.frames = app->lastStep;
+        setAtoms();
+        setBonds();
+              
+      } else {
+#ifdef HAVE_LIBFAH
+        server->current.iterations_done = app->currentStep / 1000;
+#endif
+        server->current.frames_done = app->currentStep;
+        server->current.energy = kineticEnergy(app->topology, &app->velocities);
+        server->current.temperature =
+          temperature(app->topology, &app->velocities);
+        //Mode number valid?
+        if(app->eigenInfo.currentMode != -1){
+          server->current.iterations_done = app->eigenInfo.currentMode;
+        }
+        //
+        setCoords();
+      }
+
+      server->endUpdate();
+      break;
+            
+    default: break;
+  }
+  if(myTimeout && (guiTimer.getTime()).getRealTime() > myTimeout)
+    THROW("GUI communication timeout.");
+
 }
 
 void OutputFAHGUI::doFinalize(int step) {
@@ -97,7 +122,8 @@ void OutputFAHGUI::doFinalize(int step) {
 }
 
 Output *OutputFAHGUI::doMake(const vector<Value> &values) const {
-  return new OutputFAHGUI(values[0], values[1], values[2], values[3], values[4]);
+  return new OutputFAHGUI(values[0], values[1], values[2], values[3], 
+                          values[4], values[5], values[6]);
 }
 
 bool OutputFAHGUI::isIdDefined(const Configuration *config) const {
@@ -119,6 +145,12 @@ void OutputFAHGUI::getParameters(vector<Parameter> &parameter) const {
   parameter.push_back  
     (Parameter(keyword + "Proj",
                Value(myProjName, ConstraintValueType::NoConstraints())));
+  parameter.push_back  
+    (Parameter(keyword + "Timeout",
+               Value(myTimeout, ConstraintValueType::NotNegative())));
+  parameter.push_back  
+    (Parameter(keyword + "Pause",
+               Value(myPause, ConstraintValueType::NoConstraints())));
 }
 
 bool OutputFAHGUI::adjustWithDefaultParameters(vector<Value> &values,
@@ -133,6 +165,8 @@ const {
   if (!values[2].valid()) values[2] = 52753;
   if (!values[3].valid()) values[3] = 1;
   if (!values[4].valid()) values[4] = "Protomol_3.0";
+  if (!values[5].valid()) values[5] = 0;
+  if (!values[6].valid()) values[6] = false;
 
   return checkParameters(values);
 }
