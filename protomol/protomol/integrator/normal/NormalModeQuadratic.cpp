@@ -63,7 +63,8 @@ namespace ProtoMol {
     for(int i=0;i<_3N;i++) cPos[i] = 0.0;
     //
     numSteps = 0;	//total steps
-    currMode = firstMode;
+    currMode = firstMode - 1;
+    if(stepModes) app->eigenInfo.currentMode = firstMode;
     //save initial positions
     ex0 = new Vector3DBlock;
     *ex0 = app->positions;
@@ -110,8 +111,9 @@ namespace ProtoMol {
         if(!(numSteps%cycleSteps)){
             cPos[currMode++] = 0.0;
             app->positions = *ex0;
-            if(currMode > firstMode + numMode - 1) currMode = firstMode - 1;
+            if(currMode >= firstMode + numMode - 1) currMode = firstMode - 1;
         }
+        app->eigenInfo.currentMode = currMode + 1;
         //****Analytical mode integrator loop*****
         tempFrq = sqrt( fabs( app->eigenInfo.myEigenvalues.c[currMode] ) );
         cPos[currMode] = tempKt * sin((double)(numSteps%cycleSteps)/(double)cycleSteps*2.0*M_PI);

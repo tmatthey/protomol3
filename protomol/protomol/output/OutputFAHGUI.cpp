@@ -40,7 +40,12 @@ void OutputFAHGUI::doInitialize() {
   server->info.iterations = app->lastStep / 1000;
   server->info.frames = app->lastStep;
   server->current.frames_done = 0;
-  server->current.iterations_done = 0;
+  //Mode number valid?
+  if(app->eigenInfo.currentMode != -1){
+    server->current.iterations_done = app->eigenInfo.currentMode;
+  }else{
+    server->current.iterations_done = 0;
+  }
   setAtoms();
   setBonds();
   //start server now initial data set
@@ -70,7 +75,11 @@ void OutputFAHGUI::doRun(int step) {
       server->current.energy = kineticEnergy(app->topology, &app->velocities);
       server->current.temperature =
         temperature(app->topology, &app->velocities);
-
+      //Mode number valid?
+      if(app->eigenInfo.currentMode != -1){
+        server->current.iterations_done = app->eigenInfo.currentMode;
+      }
+      //
       setCoords();
     }
 
@@ -144,9 +153,6 @@ void OutputFAHGUI::setCoords() {
   sz = app->positions.size();
   x /= sz; y /= sz; z /= sz;
   for (unsigned int i = 0; i < app->positions.size(); i++) {
-    //server->xyz[i].x = app->positions[i].c[0] - x;
-    //server->xyz[i].y = app->positions[i].c[1] - y;
-    //server->xyz[i].z = app->positions[i].c[2] - z;
     server->xyz[i].x = posMi[i].c[0] - x;
     server->xyz[i].y = posMi[i].c[1] - y;
     server->xyz[i].z = posMi[i].c[2] - z;
