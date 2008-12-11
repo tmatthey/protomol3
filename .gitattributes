@@ -1,4 +1,7 @@
 * text=auto !eol
+applications/dcd-reader/SConstruct -text
+applications/dcd-reader/dcd-reader.cpp -text
+applications/dcd-reader/modules.cpp -text
 fah-core/SConstruct -text
 fah-core/protomol.cpp -text
 protomol-test/ConfigTests/AngleForceTest -text
