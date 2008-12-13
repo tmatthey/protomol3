@@ -5,7 +5,7 @@
 #include <protomol/base/Exception.h>
 #include <protomol/output/OutputCollection.h>
 #include <protomol/io/DCDTrajectoryReader.h>
-//#include <protomol/config/InputValue.h>
+#include <protomol/config/InputValue.h>
 #include <protomol/base/Report.h>
 
 #include <iostream>
@@ -16,18 +16,19 @@ using namespace ProtoMol::Report;
 
 extern void moduleInitFunction(ModuleManager *);
 
-//namespace ProtoMol{
-//  declareInputValue(InputDcd, STRING, NOTEMPTY);
-//  defineInputValue(InputDcd, "inputDcdFile");
-//}
+//define our config file input values here
+namespace ProtoMol{
+  declareInputValue(InputDcd, STRING, NOTEMPTY);
+  defineInputValue(InputDcd, "inputDcdFile");
+}
 
 int main(int argc, char *argv[]) {  
 
-  if(argc < 3){
-    report << plain << "Only " << argc - 1 << " input parameter, require .conf and input dcd file names." << endr;
+  if(argc < 2){
+    report << plain << "Require .conf file name." << endr;
     return 0;
   }
-  string file_name( argv[2] );
+
   // dcd file
   DCDTrajectoryReader in;
   try {
@@ -36,6 +37,10 @@ int main(int argc, char *argv[]) {
     moduleInitFunction(&modManager);
     ProtoMolApp app(&modManager);
 
+    //register our config values
+    InputDcd::registerConfiguration(&(app.config));
+
+    //pass config file name
     vector<string> args;
     args.push_back("ProtoMol");
     args.push_back(argv[1]);
@@ -46,17 +51,18 @@ int main(int argc, char *argv[]) {
     if ((int)app.config[InputDebug::keyword]) app.print(cout);
 
     //open dcd file
-    if(in.open(file_name)){ 
+    if(in.open(app.config[InputDcd::keyword])){
       try{
         in >> app.positions;
-      }catch(const Exception &e){
+      }catch(const Exception &e){ //end if read error
         app.currentStep = app.lastStep;
       }
     }else{    
-      report << plain << "Input file not defined." << endr;
+      report << plain << "Input file '" << app.config[InputDcd::keyword] << "' not defined." << endr;
       return 0;
     }
     
+    //loop until end of dcd OR number of steps
     while(app.currentStep < app.lastStep){
       app.outputs->run(app.currentStep);
 
@@ -66,7 +72,7 @@ int main(int argc, char *argv[]) {
 
       try{
         in >> app.positions;
-      }catch(const Exception &e){
+      }catch(const Exception &e){ //end if read error
         app.currentStep = app.lastStep;
       }
 
