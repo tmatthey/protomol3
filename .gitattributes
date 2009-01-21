@@ -753,6 +753,12 @@ protomol/protomol/force/bonded/HarmDihedralSystemForce.h -text
 protomol/protomol/force/bonded/ImproperSystemForce.h -text
 protomol/protomol/force/bonded/MTorsionSystemForce.h -text
 protomol/protomol/force/bonded/SConscript -text
+protomol/protomol/force/born/BornRadii.cpp -text
+protomol/protomol/force/born/BornRadii.h -text
+protomol/protomol/force/born/BornSelfForce.cpp -text
+protomol/protomol/force/born/BornSelfForce.h -text
+protomol/protomol/force/born/BornSwitch.h -text
+protomol/protomol/force/born/SConscript -text
 protomol/protomol/force/coulomb/CoulombBornRadiiForce.cpp -text
 protomol/protomol/force/coulomb/CoulombBornRadiiForce.h -text
 protomol/protomol/force/coulomb/CoulombForceDiElec.cpp -text
