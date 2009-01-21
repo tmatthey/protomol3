@@ -81,7 +81,7 @@ namespace ProtoMol {
           g_i = -0.378;
         else
           g_i = topo->atomTypes[type1].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[topo->atoms[atom2].type].mySCPISM->g_i;
+        Real g_j = topo->atomTypes[type2].mySCPISM->g_i;
         // Eq. (2)
         topo->atoms[atom1].mySCPISM->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
       }
@@ -106,7 +106,7 @@ namespace ProtoMol {
         else g_i = topo->atomTypes[type2].mySCPISM->g_i;
         Real g_j = topo->atomTypes[type1].mySCPISM->g_i;
         //Eq. (2)
-        topo->atoms[atom1].mySCPISM->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
+        topo->atoms[atom2].mySCPISM->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
 
       }
     }
