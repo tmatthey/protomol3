@@ -19,11 +19,13 @@
 #include <protomol/force/hessian/ReducedHessCoulomb.h>
 #include <protomol/force/hessian/ReducedHessCoulombDiElec.h>
 #include <protomol/force/hessian/ReducedHessCoulombSCPISM.h>
-#include <protomol/force/hessian/ReducedHessCoulombBornRadii.h>
+//#include <protomol/force/hessian/ReducedHessCoulombBornRadii.h>
 #include <protomol/force/hessian/ReducedHessLennardJones.h>
+#include <protomol/force/hessian/ReducedHessBornSelf.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
 #include <protomol/force/coulomb/CoulombBornRadiiForce.h>
+#include <protomol/force/born/BornRadii.h>
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -66,7 +68,9 @@ Hessian::Hessian(const Hessian &hess) {
   myCoulomb = hess.myCoulomb;
   myCoulombDielec = hess.myCoulombDielec;
   myCoulombSCPISM = hess.myCoulombSCPISM;
-  myCoulombBornRadii = hess.myCoulombBornRadii;
+  //myCoulombBornRadii = hess.myCoulombBornRadii;
+  myBornRadii = hess.myBornRadii;
+  myBornSelf = hess.myBornSelf;
   myLennardJones = hess.myLennardJones;
   myDihedral = hess.myDihedral;
   myImproper = hess.myImproper;
@@ -100,11 +104,13 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
   lCutoff = lSwitchon = lSwitch = cCutoff = cSwitchon = cSwitch = 0.0;
   lOrder = cOrder = lSwitchoff = cSwitchoff = 0.0;
   D = 78.0; S = 0.3; epsi = 1.0;
+  myBornSwitch = 3; myDielecConst = 80.0;
   myBond = myAngle = myCoulomb = myCoulombDielec = myCoulombSCPISM =
-                                                     myCoulombBornRadii =
-                                                       myLennardJones =
-                                                         myDihedral =
-                                                           myImproper = false;
+                                                     myLennardJones =
+                                                       myDihedral =
+                                                         myImproper = 
+                                                           myBornRadii =
+                                                             myBornSelf = false;
   for (unsigned int i = 0; i < ListForces.size(); i++) {
     if (equalNocase(ListForces[i]->getId(), "Bond"))
       myBond = true;
@@ -158,9 +164,6 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
           cSwitch = 3;
         }
       }
-    } else if (equalStartNocase("CoulombBornRadii", ListForces[i]->getId())) {
-      myCoulombBornRadii = true;
-      swt = 1;         //default
     } else if (equalStartNocase("Coulomb", ListForces[i]->getId())) {
       myCoulomb = true;
       vector<Parameter> Fparam;
@@ -203,17 +206,32 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
           lSwitch = 3;
         }
       }
-    } else if (equalStartNocase("Dihedral", ListForces[i]->getId()))
+    } else if (equalStartNocase("Dihedral", ListForces[i]->getId())) {
       myDihedral = true;
-    else if (equalStartNocase("Improper", ListForces[i]->getId()))
+    } else if (equalStartNocase("Improper", ListForces[i]->getId())) {
       myImproper = true;
+    } else if (equalStartNocase("BornRadii", ListForces[i]->getId())) {
+      myBornRadii = true;
+    } else if (equalStartNocase("BornSelf", ListForces[i]->getId())) {
+      myBornSelf = true;
+      vector<Parameter> Fparam;
+      ListForces[i]->getParameters(Fparam);
+      for (unsigned int j = 0; j < Fparam.size(); j++) {
+        if (equalNocase(Fparam[j].keyword, "-bornswitch")) {
+          myBornSwitch = Fparam[j].value;
+        } else if (equalNocase(Fparam[j].keyword, "-D")) {
+          myDielecConst = Fparam[j].value;
+        } 
+      }
+    }
+
   }
   //set maxiumum cutoff value
   cutOff = max(cSwitchoff, lSwitchoff);
 }
 
 void Hessian::evaluate(const Vector3DBlock *myPositions,
-                       const GenericTopology *myTopo,
+                       GenericTopology *myTopo,
                        bool mrw) {
   int a1, a2, a3, eye, jay;
   Real tempf, ms1, ms2, ms3;
@@ -337,8 +355,15 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
     }
   }
   //Pairwise forces
-  for (unsigned int i = 0; i < myTopo->atoms.size(); i++){
-    for (unsigned int j = i + 1; j < myTopo->atoms.size(); j++){ 
+
+  //Pre-calculate Born radii if Self energy Hessian required
+  if(myBornRadii && myBornSelf && myTopo->doSCPISM){
+    evaluateBornRadii(myPositions, myTopo);
+  }
+
+  unsigned int atoms_size = myTopo->atoms.size();
+  for (unsigned int i = 0; i < atoms_size; i++){
+    for (unsigned int j = i + 1; j < atoms_size; j++){ 
       Matrix3By3 rhp(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
       //Lennard jones
       if (myLennardJones) 
@@ -353,8 +378,8 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
       if (myCoulombSCPISM)
         rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, mrw);
       //Bourn radii
-      if (myCoulombBornRadii)  
-        evaluateCoulombBornRadiiPair(i, j, myPositions, myTopo, mrw, i, j, sz, hessM);
+      if (myBornRadii && myBornSelf && myTopo->doSCPISM)          
+        rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
       //output sum to matrix
       outputSparsePairMatrix(i, j, myTopo->atoms[i].scaledMass, myTopo->atoms[j].scaledMass,
                               rhp, mrw, sz, hessM);
@@ -408,7 +433,7 @@ Matrix3By3 Hessian::evaluatePairsMatrix(int i, int j, int pairType, const Vector
   if (ec != EXCLUSION_FULL) {
       Vector3D rij =
             myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
-      //
+      //####FAST BAIL ON CUTOFF CHECK?#################################################
       Matrix3By3 mz(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
       Real a = rij.normSquared();
       Real rawE = 0.0, rawF = 0.0, swtchV = 1.0, swtchD = 0.0;
@@ -527,36 +552,59 @@ void Hessian::outputSparseMatrix(int i, int j, Real massi, Real massj,
 
 }
 
-void Hessian::evaluateCoulombBornRadiiPair(int i, int j, const Vector3DBlock *myPositions,
-                                       const GenericTopology *myTopo,
-                                       bool mrw, int mat_i, int mat_j, int mat_sz, double * mat_array) {
-  int eye, jay;
-  Real tempf, ms1, ms2, ms3;
-  Matrix3By3 rha, rhc;
-  ExclusionClass ec;
+//Find Born radii
+void Hessian::evaluateBornRadii(const Vector3DBlock *myPositions,
+                                  GenericTopology *myTopo){
 
+  unsigned int atoms_size = myTopo->atoms.size();
+  BornRadii br;
+  ReducedHessBornSelf rHessBS;  
+  Matrix3By3 rha(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+  //SCPISM pre-calculate initialize
+  for(unsigned int i=0;i<atoms_size;i++){
+    myTopo->atoms[i].mySCPISM->bornRadius = myTopo->atoms[i].mySCPISM->zeta;
+    myTopo->atoms[i].mySCPISM->energySum = true;
+    myTopo->atoms[i].mySCPISM->D_s = 0.0;
+  }
+  //check all pairs
+  for (unsigned int i = 0; i < atoms_size; i++){
+    for (unsigned int j = i + 1; j < atoms_size; j++){ 
+      //if not bonded/dihedral
+      ExclusionClass ec = myTopo->exclusions.check(i, j);
+      if (ec != EXCLUSION_FULL) {
+        Vector3D rij =
+              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+        Real a = rij.normSquared();
+        if(a < BORNCUTOFF2){ //within cutoff of 5A?      
+          Real rawE = 0.0, rawF = 0.0;
+          br(rawE, rawF, a, 1.0 / a, rij, myTopo, i, j, ec);  //do the calculation, no force/energy returned.
+        }
+      }
+    }
+  }
+}
+
+//Pairwise Born Self energy Hessian
+Matrix3By3 Hessian::evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPositions,
+                                       const GenericTopology *myTopo) {
+
+  ReducedHessBornSelf rHessBS;  
+  Matrix3By3 rha(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  //find the Hessian
   //if not bonded/dihedral
-  ec = myTopo->exclusions.check(i, j);
+  ExclusionClass ec = myTopo->exclusions.check(i, j);
   if (ec != EXCLUSION_FULL) {
     Vector3D rij =
           myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
-    //Vector3D rij = (*myPositions)[j]-(*myPositions)[i];
-    Matrix3By3 mz(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     Real a = rij.normSquared();
-
-    ReducedHessCoulombBornRadii rHess;
-    swt = myTopo->doSCPISM;
-    CoulombBornRadiiForce hForce(swt);
-    Real rawE = 0.0, rawF = 0.0, swtchV = 1.0, swtchD = 0.0;
-    rha =
-          rHess(rawE, rawF, a, a, rij, myTopo, i, j, swtchV, swtchD, mz, ec,
-                myPositions,
-                hForce);
-    //
-    outputSparsePairMatrix(mat_i,mat_j,myTopo->atoms[i].scaledMass,myTopo->atoms[j].scaledMass,rha,mrw,mat_sz,mat_array);
-
+    if(a < BORNCUTOFF2){ //within cutoff of 5A?      
+      Real rA = 1.0 / a;
+      Real rawE = 0.0, rawF = 0.0;
+      rha = rHessBS(a, rij, myTopo, i, j, myBornSwitch, myDielecConst, ec);  //find Hessian
+    }
   }
-
+  return rha;
 }
 
 void Hessian::clear() {

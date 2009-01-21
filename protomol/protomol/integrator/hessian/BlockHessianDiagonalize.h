@@ -37,7 +37,7 @@ namespace ProtoMol {
     void initialize(BlockHessian * bHessIn, const int sz);
     void initialize(const int sz);
     Real findEigenvectors(const Vector3DBlock *myPositions,
-                          const GenericTopology *myTopo, double * mhQu, 
+                          GenericTopology *myTopo, double * mhQu, 
                           const int _3N, const int _rfM, 
                           const Real blockCutoffDistance, 
                           const Real eigenValueThresh,

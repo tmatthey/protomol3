@@ -18,7 +18,7 @@ namespace ProtoMol {
     Real sasaFrac;
     ///< For SCPISM calculations
 
-    Real bornRadius;
+    Real bornRadius, D_s;
     ///< For SCPISM calculations
 
     Real polarFrac;
@@ -29,6 +29,9 @@ namespace ProtoMol {
     Real R_iw;
     Real R_w;
     Real R_p;
+    //##CRS
+    Real zeta, eta;
+    bool energySum;
   };
   /**
    * This class defines the information for one atom.  It contains the type

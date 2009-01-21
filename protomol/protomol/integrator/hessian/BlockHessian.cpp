@@ -511,7 +511,7 @@ void BlockHessian::clearBlocks() {
 // Evaluate intra and adjacent block Hessians
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock *myPositions,
-                       const GenericTopology *myTopo) {
+                       GenericTopology *myTopo) {
   int a1, a2, a3;
   Matrix3By3 rha;
 
@@ -625,6 +625,10 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
   
   int _N = myTopo->atoms.size();
   //Pairwise intra block or adjacent
+  //Pre-calculate Born radii if Self energy Hessian required
+  if(myBornRadii && myBornSelf && myTopo->doSCPISM)
+    evaluateBornRadii(myPositions, myTopo);
+
   for (unsigned int i = 0; i < _N; i++){
     for (unsigned int j = i + 1; j < _N; j++){             
       if(abs(atom_block[i] - atom_block[j]) < 2){  //within block or adjacent
@@ -638,8 +642,9 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
           rhp += evaluatePairsMatrix(i, j, COULOMBDIELEC, myPositions, myTopo, true);
         if (myCoulombSCPISM)  //SCP
           rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, true);
-#if 0
-        if (myCoulombBornRadii);  //TO DO
+#if 1
+        if (myBornRadii && myBornSelf && myTopo->doSCPISM)  //Bourn radii         
+          rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
 #endif
         //Output matrix
         int aout[2]={i,j};
@@ -696,8 +701,9 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
                 rhp += evaluatePairsMatrix(i, j, COULOMBDIELEC, myPositions, myTopo, true);
               if (myCoulombSCPISM)  //SCP
                 rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, true);
-  #if 0
-              if (myCoulombBornRadii);  //TO DO
+  #if 1
+              if (myBornRadii && myBornSelf && myTopo->doSCPISM)  //Bourn radii         
+                rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
   #endif
               //Output matrix
               int aout[2]={i,j};
@@ -778,14 +784,18 @@ void BlockHessian::outputBlocks(const unsigned int i, const unsigned int j, cons
 // Output inter block Hessians
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
-                       const GenericTopology *myTopo) {
+                       GenericTopology *myTopo) {
   
   int _N = myTopo->atoms.size();
   sz = 3 * myPositions->size();
   //Set Matrix
   //electroStatics.clear();
   //
-  //Pairwise
+  //Pairwise  
+  //Pre-calculate Born radii if Self energy Hessian required
+  if(myBornRadii && myBornSelf && myTopo->doSCPISM)
+    evaluateBornRadii(myPositions, myTopo);
+
   for (unsigned int i = 0; i < _N; i++){
     for (unsigned int j = i + 1; j < _N; j++){             
       if(abs(atom_block[i] - atom_block[j]) >= 2){  //NOT within block or adjacent
@@ -799,8 +809,9 @@ void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
           rhp += evaluatePairsMatrix(i, j, COULOMBDIELEC, myPositions, myTopo, true);
         if (myCoulombSCPISM)  //SCP
           rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, true);
-#if 0
-        if (myCoulombBornRadii);  //TO DO
+#if 1
+        if (myBornRadii && myBornSelf && myTopo->doSCPISM)  //Bourn radii         
+          rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
 #endif
         //Output matrix
         int aout[2]={i,j};

@@ -121,7 +121,7 @@ namespace ProtoMol {
   // _3N rows, _rfM columns
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Real BlockHessianDiagonalize::findEigenvectors(const Vector3DBlock *myPositions,
-                       const GenericTopology *myTopo, 
+                       GenericTopology *myTopo, 
                        double * mhQu, const int sz_row, const int sz_col, 
                        const Real blockCutoffDistance, const Real eigenValueThresh,
                        const int blockVectorCols) {

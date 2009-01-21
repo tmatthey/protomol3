@@ -12,6 +12,8 @@
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
 #include <protomol/force/coulomb/CoulombBornRadiiForce.h>
+#include <protomol/force/born/BornRadii.h>
+#include <protomol/force/born/BornSelfForce.h>
 #include <protomol/force/nonbonded/NonbondedCutoffSystemForce.h>
 #include <protomol/force/nonbonded/NonbondedCutoffBornForce.h>
 #include <protomol/force/table/LennardJonesTableForce.h>
@@ -136,6 +138,9 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           C1, CoulombForce> >());
 
     // SCPISM stuff
+    f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, Cutoff, BornRadii> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, Cutoff, BornSelfForce> >());
+
     // NonbondedCutoffSystemForce CoulombSCPISMForce
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, C1, CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, C2, CoulombSCPISMForce> >());

@@ -37,11 +37,11 @@ namespace ProtoMol {
                           bool simuMin);
     void evaluateBlocks(const Real cutoffDistance, 
                         const Vector3DBlock *myPositions,
-                        const GenericTopology *myTopo);
+                        GenericTopology *myTopo);
     void outputBlocks(const unsigned int ii, 
                            const unsigned int kk, const Matrix3By3 rhd);
     void evaluateInterBlocks(const Vector3DBlock *myPositions,
-                             const GenericTopology *myTopo);
+                             GenericTopology *myTopo);
     void outputMatrix(int i, int j, Real sqrtMassi, Real sqrtMassj, 
                         Matrix3By3 rha, int arrSz, double *basePoint);
   private:

@@ -779,6 +779,8 @@ protomol/protomol/force/hessian/ReducedHessAngle.cpp -text
 protomol/protomol/force/hessian/ReducedHessAngle.h -text
 protomol/protomol/force/hessian/ReducedHessBond.cpp -text
 protomol/protomol/force/hessian/ReducedHessBond.h -text
+protomol/protomol/force/hessian/ReducedHessBornSelf.cpp -text
+protomol/protomol/force/hessian/ReducedHessBornSelf.h -text
 protomol/protomol/force/hessian/ReducedHessCoulomb.cpp -text
 protomol/protomol/force/hessian/ReducedHessCoulomb.h -text
 protomol/protomol/force/hessian/ReducedHessCoulombBornRadii.cpp -text

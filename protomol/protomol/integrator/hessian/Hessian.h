@@ -22,6 +22,7 @@ namespace ProtoMol {
     enum {COULOMBDIELEC = 2};
     enum {COULOMBSCPISM = 4};
     enum {LENNARDJONES = 8};
+    enum {BORNCUTOFF2 = 25};
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
@@ -39,7 +40,7 @@ namespace ProtoMol {
     void initialData(unsigned int szin);
     void findForces(ForceGroup *overloadedForces);
     void evaluate(const Vector3DBlock *myPositions,   //positions
-                  const GenericTopology *myTopo,      //topology
+                  GenericTopology *myTopo,      //topology
                   const bool mrw);                    //mass re-weighted
 
     Matrix3By3 evaluatePairsMatrix(int i, int j, int pairType, const Vector3DBlock *myPositions,
@@ -52,9 +53,10 @@ namespace ProtoMol {
     void outputSparseMatrix(int i, int j, Real massi, Real massj, Matrix3By3 rha, 
                             bool mrw, int arrSz, double * basePoint);
 
-    void evaluateCoulombBornRadiiPair(int i, int j, const Vector3DBlock *myPositions,
-                                  const GenericTopology *myTopo, bool mrw, 
-                                  int mat_i, int mat_j, int mat_sz, double * mat_array);
+    void evaluateBornRadii(const Vector3DBlock *myPositions, GenericTopology *myTopo);
+
+    Matrix3By3 evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPositions,
+                                       const GenericTopology *myTopo);
 
   public:
     void clear(); // clear the hessian matrix
@@ -73,7 +75,9 @@ namespace ProtoMol {
     bool myCoulomb;
     bool myCoulombDielec;
     bool myCoulombSCPISM;
-    bool myCoulombBornRadii;
+    //bool myCoulombBornRadii;
+    bool myBornRadii;
+    bool myBornSelf;
     bool myLennardJones;
     bool myDihedral;
     bool myImproper;
@@ -81,7 +85,8 @@ namespace ProtoMol {
     Real lCutoff, lSwitchon, lSwitch, lOrder, lSwitchoff;
     Real D, S, epsi;
     unsigned int sz; //size
-    int swt;
+    int myBornSwitch;
+    Real myDielecConst;
   public:
     double *hessM;  //matrix
     Real cutOff;

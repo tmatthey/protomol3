@@ -107,9 +107,15 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       tempatomtype.mySCPISM->B_i = mySCPISM->myData[tempatomtype.name].B_i;
       tempatomtype.mySCPISM->C_i = mySCPISM->myData[tempatomtype.name].C_i;
       Real R_vdw = mySCPISM->myData[tempatomtype.name].R_vdw + 1.40;
-      tempatom.mySCPISM->dR_vdw2 = 1.0 / (4.0 * M_PI * R_vdw * R_vdw);
+      Real dR_vdw2 = 1.0 / (4.0 * M_PI * R_vdw * R_vdw);
+      tempatom.mySCPISM->dR_vdw2 = dR_vdw2;
       tempatom.mySCPISM->r_cov = mySCPISM->myData[tempatomtype.name].r_cov;
       tempatom.mySCPISM->R_iw = mySCPISM->myData[tempatomtype.name].R_iw;
+      //Updated method CRS 01/11/09
+      tempatom.mySCPISM->zeta = mySCPISM->myData[tempatomtype.name].r_cov 
+                                + 0.5 - dR_vdw2 * 0.5 * mySCPISM->myData[tempatomtype.name].A_i;
+      tempatom.mySCPISM->eta = dR_vdw2 * 0.5 * mySCPISM->myData[tempatomtype.name].B_i;
+
     }
 
     // Now check if this already exists (same name)
@@ -137,6 +143,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       tempatom.mySCPISM->sasaFrac = 0.0;
       tempatom.mySCPISM->polarFrac = 0.0;
       tempatom.mySCPISM->bornRadius = 0.0;
+      //Updated method CRS 01/11/09
+      tempatom.mySCPISM->zeta += (atom->charge > 0 ? 0.85 : 0.35);
     }
     // Now we need the size of the group for heavy atom ordering
     // We need to parse the name for any H's then any numbers following
