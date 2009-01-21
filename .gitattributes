@@ -411,6 +411,7 @@ protomol/SConstruct -text
 protomol/compiler.py -text
 protomol/config.py -text
 protomol/doc/Doxyfile -text
+protomol/doc/SCPISM_Implementation-Rev-1.pdf -text
 protomol/doc/footer.html -text
 protomol/doc/header.html -text
 protomol/doc/protomol.gif -text
