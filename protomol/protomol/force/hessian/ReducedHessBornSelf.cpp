@@ -26,10 +26,11 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
   //**********************************
   Real C_i = topo->atomTypes[type1].mySCPISM_T->C_i;
   Real eta_i = topo->atoms[atom1].mySCPISM_A->eta;
+  Real expCrij = exp(-C_i * dist);
   // Eq. (5)
-  Real dRs_ij = eta_i * (df_ij - f_ij * C_i) * exp(-C_i * dist);
+  Real dRs_ij = eta_i * (df_ij - f_ij * C_i) * expCrij;
   // Eq. (19)
-  Real d2Rs_ij = eta_i * (d2f_ij - 2 * df_ij * C_i + f_ij * C_i * C_i) * exp(-C_i * dist);
+  Real d2Rs_ij = eta_i * (d2f_ij - 2 * df_ij * C_i + f_ij * C_i * C_i) * expCrij;
   //**********************************
   // If atom 1 is a polar H+, accumulate the derivative dR.
   if (topo->atomTypes[type1].mySCPISM_T->isHbonded == PH &&
@@ -46,21 +47,23 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
     Real g_j = topo->atomTypes[type2].mySCPISM_T->g_i;
     //topo->atoms[atom1].mySCPISM->polarFrac += g_i * g_j * f_ij * exp(
     //  -E_i * dist);
+    Real expErij = exp(-E_i * dist);
     //**********************************
     // Eq. (7)
-    dRs_ij +=  g_i * g_j * (df_ij - f_ij * E_i) * exp(-E_i * dist);
+    dRs_ij +=  g_i * g_j * (df_ij - f_ij * E_i) * expErij;
     // Eq. (21)
-    d2Rs_ij += g_i * g_j * (d2f_ij - 2 * df_ij * E_i + f_ij * E_i * E_i) * exp(-E_i * dist);
+    d2Rs_ij += g_i * g_j * (d2f_ij - 2 * df_ij * E_i + f_ij * E_i * E_i) * expErij;
     //**********************************
   }
   //Atom 2 Born Radius first derivative
   //**********************************
   Real C_j = topo->atomTypes[type2].mySCPISM_T->C_i;
   Real eta_j = topo->atoms[atom2].mySCPISM_A->eta;
+  Real expCrji = exp(-C_j * dist);
   // Eq. (5)
-  Real dRs_ji = eta_j * (df_ij - f_ij * C_j) * exp(-C_j * dist);
+  Real dRs_ji = eta_j * (df_ij - f_ij * C_j) * expCrji;
   // Eq. (19)
-  Real d2Rs_ji = eta_j * (d2f_ij - 2 * df_ij * C_j + f_ij * C_j * C_j) * exp(-C_j * dist);
+  Real d2Rs_ji = eta_j * (d2f_ij - 2 * df_ij * C_j + f_ij * C_j * C_j) * expCrji;
   //**********************************
   // If atom 2 is a polar H+, accumulate polar
   // fraction and derivative
@@ -74,11 +77,12 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
       g_i = -0.378;
     else g_i = topo->atomTypes[type2].mySCPISM_T->g_i;
     Real g_j = topo->atomTypes[type1].mySCPISM_T->g_i;
+    Real expErji = exp(-E_i * dist);
     //**********************************
     // Eq. (7)
-    dRs_ji += g_i * g_j * (df_ij - f_ij * E_i) * exp(-E_i * dist);
+    dRs_ji += g_i * g_j * (df_ij - f_ij * E_i) * expErji;
     // Eq. (21)
-    d2Rs_ji += g_i * g_j * (d2f_ij - 2 * df_ij * E_i + f_ij * E_i * E_i) * exp(-E_i * dist);
+    d2Rs_ji += g_i * g_j * (d2f_ij - 2 * df_ij * E_i + f_ij * E_i * E_i) * expErji;
     //**********************************
   }      
   //Born radius
