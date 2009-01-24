@@ -40,7 +40,7 @@ namespace ProtoMol {
   public:
     void operator()(Real &energy, Real &force,
                     Real distSquared, Real rDistSquared, const Vector3D &diff,
-                    GenericTopology *topo,
+                    const GenericTopology *topo,
                     int atom1, int atom2, ExclusionClass excl) const {
       
       // If either molecule belongs to a water, do nothing.

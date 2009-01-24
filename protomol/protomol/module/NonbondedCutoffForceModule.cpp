@@ -8,6 +8,7 @@
 
 #include <protomol/force/OneAtomPair.h>
 #include <protomol/force/OneAtomPairTwo.h>
+#include <protomol/force/OneAtomPairThree.h>
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
@@ -138,15 +139,25 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           C1, CoulombForce> >());
 
     // SCPISM stuff
+    // Born radius
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, Cutoff, BornRadii> >());
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, Cutoff, BornSelfForce> >());
 
-    // NonbondedCutoffSystemForce CoulombSCPISMForce
+    // CoulombSCPISMForce
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, C1, CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, C2, CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, Cn, CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, CmpCnCn,
           CoulombSCPISMForce> >());
+
+    // OneAtomPairThree (forces): LennardJonesForce CoulombSCPISMForce BornRadii
+    f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, C2, LennardJonesForce, C1,
+          CoulombSCPISMForce, Cutoff, BornRadii > >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, C2, LennardJonesForce, Cn,
+          CoulombSCPISMForce, Cutoff, BornRadii > >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, Cn, LennardJonesForce, Cn,
+          CoulombSCPISMForce, Cutoff, BornRadii > >());
+
 
     // OneAtomPairTwo
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, C2, LennardJonesForce, C1,
@@ -168,6 +179,8 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           CoulombBornRadiiForce> >());
     f.reg(new CutoffBorn<CCM, OneAtomPair<VBC, Cutoff,
           CoulombBornRadiiForce> >());
+
+    // End of SCPISM
 
 
 
