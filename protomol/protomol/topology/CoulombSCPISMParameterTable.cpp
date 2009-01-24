@@ -203,14 +203,14 @@ void CoulombSCPISMParameterTable::displayTable() {
     report << it->second.alpha_i << "\t";
     report << it->second.hbond_factor << "\t";
     report << it->second.R_iw << "\t";
-    report << it->second.sqrt_alpha_i << "\t";
+    //report << it->second.sqrt_alpha_i << "\t";
     report << it->second.r_cov << "\t";
     report << it->second.gamma_i << "\t";
     report << it->second.isHbonded << "\t";
     report << it->second.A_i << "\t";
     report << it->second.B_i << "\t";
     report << it->second.C_i << "\t";
-    report << it->second.R_vdw << "\t";
+    //report << it->second.R_vdw << "\t";
     report << endl;
   }
 }

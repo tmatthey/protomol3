@@ -57,10 +57,10 @@ namespace ProtoMol {
     virtual ~GenericTopology() {
       if (doSCPISM) {
         for (unsigned int i = 0; i < atoms.size(); i++)
-          zap(atoms[i].mySCPISM);
+          zap(atoms[i].mySCPISM_A);
 
         for (unsigned int i = 0; i < atomTypes.size(); i++)
-          zap(atomTypes[i].mySCPISM);
+          zap(atomTypes[i].mySCPISM_T);
       }
     };
 

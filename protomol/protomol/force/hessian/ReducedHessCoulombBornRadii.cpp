@@ -28,19 +28,19 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
   fPrime = hForce.BornSwitchDerivative(na);
   fDoublePrime = hForce.BornSwitchSecondDerivative(na);
 
-  if (!topo->atoms[atom1].mySCPISM || !topo->atoms[atom2].mySCPISM ||
-      !topo->atomTypes[topo->atoms[atom1].type].mySCPISM ||
-      !topo->atomTypes[topo->atoms[atom2].type].mySCPISM)
+  if (!topo->atoms[atom1].mySCPISM_A || !topo->atoms[atom2].mySCPISM_A ||
+      !topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T ||
+      !topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T)
     report << error << "[ReducedHessCoulombBornRadii::operator()] SCPISM "
       "parameters not set for one or more atoms or atom types." << endr;
 
-  Real bornRadius_i = topo->atoms[atom1].mySCPISM->bornRadius;
-  Real bornRadius_j = topo->atoms[atom2].mySCPISM->bornRadius;
+  Real bornRadius_i = topo->atoms[atom1].mySCPISM_A->bornRadius;
+  Real bornRadius_j = topo->atoms[atom2].mySCPISM_A->bornRadius;
 
   Real K = (D - 1.0) / 2;
 
   Real sqrt_alpha_i =
-    topo->atomTypes[topo->atoms[atom1].type].mySCPISM->sqrt_alpha;
+    topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T->sqrt_alpha;
   Real alpha_i = sqrt_alpha_i * sqrt_alpha_i;
   Real Ds_r_i = (1.0 + D) / (1 + K * exp(-alpha_i * bornRadius_i)) - 1.0;
   Real dDs_r_i = alpha_i * (1.0 / (1.0 + D)) * (1 + Ds_r_i) * (D - Ds_r_i);
@@ -49,15 +49,15 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
 
   Real gamma = 0.5;
   int type_i = topo->atoms[atom1].type;
-  Real B_i = topo->atomTypes[type_i].mySCPISM->B_i;
-  Real C_i = topo->atomTypes[type_i].mySCPISM->C_i;
-  Real dR_vdw2_i = topo->atoms[atom1].mySCPISM->dR_vdw2;
+  Real B_i = topo->atomTypes[type_i].mySCPISM_T->B_i;
+  Real C_i = topo->atomTypes[type_i].mySCPISM_T->C_i;
+  Real dR_vdw2_i = topo->atoms[atom1].mySCPISM_A->dR_vdw2;
 
   Real dR_i_coeff = gamma * B_i * dR_vdw2_i * (1 / na) *
     (fPrime * exp(-C_i * na) - C_i * f * exp(-C_i * na));
 
   Real sqrt_alpha_j =
-    topo->atomTypes[topo->atoms[atom2].type].mySCPISM->sqrt_alpha;
+    topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T->sqrt_alpha;
   Real alpha_j = sqrt_alpha_j * sqrt_alpha_j;
   Real Ds_r_j = (1.0 + D) / (1 + K * exp(-alpha_j * bornRadius_j)) - 1.0;
   Real dDs_r_j = alpha_j * (1.0 / (1.0 + D)) * (1 + Ds_r_j) * (D - Ds_r_j);
@@ -65,9 +65,9 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
   Real d2Ds_r2_j = (alpha_j / (1 + D)) * (D - 1 - 2 * Ds_r_j) * dDs_r_j;
 
   int type_j = topo->atoms[atom2].type;
-  Real B_j = topo->atomTypes[type_j].mySCPISM->B_i;
-  Real C_j = topo->atomTypes[type_j].mySCPISM->C_i;
-  Real dR_vdw2_j = topo->atoms[atom2].mySCPISM->dR_vdw2;
+  Real B_j = topo->atomTypes[type_j].mySCPISM_T->B_i;
+  Real C_j = topo->atomTypes[type_j].mySCPISM_T->C_i;
+  Real dR_vdw2_j = topo->atoms[atom2].mySCPISM_A->dR_vdw2;
 
   Real dR_j_coeff = gamma * B_j * dR_vdw2_j * (1 / na) * 
     (fPrime * exp(-C_j * na) - C_j * f * exp(-C_j * na));
@@ -95,16 +95,16 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
   //Between atom1 and atom2
   //
 
-  if (topo->atomTypes[topo->atoms[atom1].type].mySCPISM->isHbonded == PH &&
-      topo->atomTypes[topo->atoms[atom2].type].mySCPISM->isHbonded == PA &&
+  if (topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T->isHbonded == PH &&
+      topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T->isHbonded == PA &&
       (topo->atoms[atom1].residue_seq !=
        topo->atoms[atom2].residue_seq)) {   // Polar
     Real E_i = 0.80;     // Currently all polar H+ have this value
     Real g_i;
     if (topo->atoms[atom1].name == "HN" && topo->atoms[atom2].name == "O")
       g_i = -0.378;
-    else g_i = topo->atomTypes[type_i].mySCPISM->g_i;
-    Real g_j = topo->atomTypes[type_j].mySCPISM->g_i;
+    else g_i = topo->atomTypes[type_i].mySCPISM_T->g_i;
+    Real g_j = topo->atomTypes[type_j].mySCPISM_T->g_i;
 
     dR_i_coeff += g_i * g_j * (1 / na) * (fPrime * exp(-E_i * na) + f * 
                                           exp(-E_i * na) * -E_i);
@@ -119,8 +119,8 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
   //
   //Between atom2 and atom1
   //
-  if (topo->atomTypes[type_j].mySCPISM->isHbonded == PH &&
-      topo->atomTypes[type_i].mySCPISM->isHbonded == PA &&
+  if (topo->atomTypes[type_j].mySCPISM_T->isHbonded == PH &&
+      topo->atomTypes[type_i].mySCPISM_T->isHbonded == PA &&
       (topo->atoms[atom2].residue_seq !=
        topo->atoms[atom1].residue_seq)) {
     Real E_j = 0.80;         // Currently all polar H+ have this value
@@ -129,8 +129,8 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
         topo->atoms[atom1].name == "O")
       g_i = -0.378;
     else
-      g_i = topo->atomTypes[type_j].mySCPISM->g_i;
-    Real g_j = topo->atomTypes[type_i].mySCPISM->g_i;
+      g_i = topo->atomTypes[type_j].mySCPISM_T->g_i;
+    Real g_j = topo->atomTypes[type_i].mySCPISM_T->g_i;
 
     dR_j_coeff += g_i * g_j * (1 / na) *
       (fPrime * exp(-E_j * na) + f * exp(-E_j * na) * -E_j);
@@ -142,8 +142,8 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
        (fPrime * exp(-E_j * na) + f * exp(-E_j * na) * -E_j));
   }
 
-  Real R_i = topo->atoms[atom1].mySCPISM->bornRadius;
-  Real R_j = topo->atoms[atom2].mySCPISM->bornRadius;
+  Real R_i = topo->atoms[atom1].mySCPISM_A->bornRadius;
+  Real R_j = topo->atoms[atom2].mySCPISM_A->bornRadius;
 
   Real MR_i = (1 / (R_i * R_i)) - (1 / (R_i * R_i * Ds_r_i)) -
     (1 / (R_i * Ds_r_i * Ds_r_i)) * dDs_r_i;
@@ -219,13 +219,13 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
     Real scaledCharge_ii = topo->atoms[ii].scaledCharge;
     //cout<<"Atom "<<ii<<", charge "<<scaledCharge_ii<<endl;
     int type_ii = topo->atoms[ii].type;
-    Real B_ii = topo->atomTypes[type_ii].mySCPISM->B_i;
+    Real B_ii = topo->atomTypes[type_ii].mySCPISM_T->B_i;
     Real sqrt_alpha_ii =
-      topo->atomTypes[topo->atoms[ii].type].mySCPISM->sqrt_alpha;
+      topo->atomTypes[topo->atoms[ii].type].mySCPISM_T->sqrt_alpha;
     Real alpha_ii = sqrt_alpha_ii * sqrt_alpha_ii;
-    Real dr_vdw2_ii = topo->atoms[ii].mySCPISM->dR_vdw2;
-    Real C_ii = topo->atomTypes[type_ii].mySCPISM->C_i;
-    Real R_ii = topo->atoms[ii].mySCPISM->bornRadius;
+    Real dr_vdw2_ii = topo->atoms[ii].mySCPISM_A->dR_vdw2;
+    Real C_ii = topo->atomTypes[type_ii].mySCPISM_T->C_i;
+    Real R_ii = topo->atoms[ii].mySCPISM_A->bornRadius;
     Real Ds_r_ii = (1 + D) / (1 + K * exp(-alpha_ii * R_ii)) - 1;
     Real dDs_r_ii =
       alpha_ii * (1.0 / (1.0 + D)) * (1 + Ds_r_ii) * (D - Ds_r_ii);
@@ -243,16 +243,16 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
 
     Real dR_ii_coeff_1 = gamma * B_ii * dr_vdw2_ii * (1 / ria1) * 
       (fPrime * exp(-C_ii * ria1) - C_ii * f * exp(-C_ii * ria1));
-    if (topo->atomTypes[topo->atoms[ii].type].mySCPISM->isHbonded == PH &&
-        topo->atomTypes[topo->atoms[atom1].type].mySCPISM->isHbonded == PA &&
+    if (topo->atomTypes[topo->atoms[ii].type].mySCPISM_T->isHbonded == PH &&
+        topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T->isHbonded == PA &&
         (topo->atoms[atom1].residue_seq !=
          topo->atoms[ii].residue_seq)) {   // Polar
       Real E_i = 0.80;   // Currently all polar H+ have this value
       Real g_i;
       if (topo->atoms[ii].name == "HN" && topo->atoms[atom1].name == "O")
         g_i = -0.378;
-      else g_i = topo->atomTypes[topo->atoms[ii].type].mySCPISM->g_i;
-      Real g_j = topo->atomTypes[topo->atoms[atom1].type].mySCPISM->g_i;
+      else g_i = topo->atomTypes[topo->atoms[ii].type].mySCPISM_T->g_i;
+      Real g_j = topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T->g_i;
 
       dR_ii_coeff_1 += g_i * g_j * (1 / ria1) *
         (fPrime * exp(-E_i * ria1) - f * E_i * exp(-E_i * ria1));
@@ -272,16 +272,16 @@ Matrix3By3 ReducedHessCoulombBornRadii::operator()(
     Real dR_ii_coeff_2 = gamma * B_ii * dr_vdw2_ii * (1 / ria2) *
       (fPrime * exp(-C_ii * ria2) - C_ii * f * exp(-C_ii * ria2));
 
-    if (topo->atomTypes[topo->atoms[ii].type].mySCPISM->isHbonded == PH &&
-        topo->atomTypes[topo->atoms[atom2].type].mySCPISM->isHbonded == PA &&
+    if (topo->atomTypes[topo->atoms[ii].type].mySCPISM_T->isHbonded == PH &&
+        topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T->isHbonded == PA &&
         (topo->atoms[atom2].residue_seq !=
          topo->atoms[ii].residue_seq)) {   // Polar
       Real E_i = 0.80;   // Currently all polar H+ have this value
       Real g_i;
       if (topo->atoms[ii].name == "HN" && topo->atoms[atom2].name == "O")
         g_i = -0.378;
-      else g_i = topo->atomTypes[topo->atoms[ii].type].mySCPISM->g_i;
-      Real g_j = topo->atomTypes[topo->atoms[atom2].type].mySCPISM->g_i;
+      else g_i = topo->atomTypes[topo->atoms[ii].type].mySCPISM_T->g_i;
+      Real g_j = topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T->g_i;
 
       dR_ii_coeff_2 += g_i * g_j * (1 / ria2) *
         (fPrime * exp(-E_i * ria2) - f * E_i * exp(-E_i * ria2));

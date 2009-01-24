@@ -549,13 +549,13 @@ calcPairInteractionHess(Real doSwitch, Real switchon, Real cutoff, Real order,
           ReducedHessCoulombSCPISM rHess;
           CoulombSCPISMForce hForce;
           Real rawE = 0.0, rawF = 0.0, swtchV = 1.0, swtchD = 0.0;
-          if (!app->topology->atoms[i].mySCPISM ||
-              !app->topology->atoms[j].mySCPISM)
+          if (!app->topology->atoms[i].mySCPISM_A ||
+              !app->topology->atoms[j].mySCPISM_A)
             report
               << error << "[LeapfrogTruncatedShadow::calcPairInteractionHess] "
               "SCPISM data not set." << endr;
-          Real alpha_ij = app->topology->atoms[i].mySCPISM->sqrtalphaSCPISM *
-                          app->topology->atoms[j].mySCPISM->sqrtalphaSCPISM;
+          Real alpha_ij = app->topology->atoms[i].mySCPISM_A->sqrtalphaSCPISM *
+                          app->topology->atoms[j].mySCPISM_A->sqrtalphaSCPISM;
           if (doSwitch) {
             if (doSwitch == 3) {
               CnSwitchingFunction cnsf(switchon, cutoff, order, switchoff);

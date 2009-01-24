@@ -51,13 +51,13 @@ namespace ProtoMol {
 
       //**********************************
       // Eq. (5)
-      Real C_i = topo->atomTypes[type1].mySCPISM->C_i;
-      Real eta_i = topo->atoms[atom1].mySCPISM->eta;
+      Real C_i = topo->atomTypes[type1].mySCPISM_T->C_i;
+      Real eta_i = topo->atoms[atom1].mySCPISM_A->eta;
       Real dRs_i_j = eta_i * (fp_ij - f_ij * C_i) * exp(-C_i * dist);
       //**********************************
       // If atom 1 is a polar H+, accumulate the derivative dR.
-      if (topo->atomTypes[type1].mySCPISM->isHbonded == PH &&
-          topo->atomTypes[type2].mySCPISM->isHbonded == PA &&
+      if (topo->atomTypes[type1].mySCPISM_T->isHbonded == PH &&
+          topo->atomTypes[type2].mySCPISM_T->isHbonded == PA &&
           (topo->atoms[atom1].residue_seq !=
            topo->atoms[atom2].residue_seq)) { // Polar
         Real E_i = 0.80; // Currently all polar H+ have this value
@@ -66,8 +66,8 @@ namespace ProtoMol {
             topo->atoms[atom2].name == "O")
           g_i = -0.378;
         else
-          g_i = topo->atomTypes[type1].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[type2].mySCPISM->g_i;
+          g_i = topo->atomTypes[type1].mySCPISM_T->g_i;
+        Real g_j = topo->atomTypes[type2].mySCPISM_T->g_i;
         //topo->atoms[atom1].mySCPISM->polarFrac += g_i * g_j * f_ij * exp(
         //  -E_i * dist);
         //**********************************
@@ -86,16 +86,16 @@ namespace ProtoMol {
       // Therefore, we have to multiply by 2.
 
       // More variable definitions
-      Real bornRadius = topo->atoms[atom1].mySCPISM->bornRadius;
+      Real bornRadius = topo->atoms[atom1].mySCPISM_A->bornRadius;
       Real rBornRadius = 1.0 / bornRadius;
       Real K = (D - 1.0) / 2;
-      Real alpha_i = topo->atomTypes[type1].mySCPISM->alpha;
+      Real alpha_i = topo->atomTypes[type1].mySCPISM_T->alpha;
       //Screening
-      Real Ds_r = topo->atoms[atom1].mySCPISM->D_s;
+      Real Ds_r = topo->atoms[atom1].mySCPISM_A->D_s;
       if(Ds_r == 0.0){
         // Eq. (9)
         Ds_r = (1.0 + D) / (1 + K * exp(-alpha_i * bornRadius)) - 1.0;
-        topo->atoms[atom1].mySCPISM->D_s = Ds_r;
+        topo->atoms[atom1].mySCPISM_A->D_s = Ds_r;
       }
       Real rDs_r = 1.0 / Ds_r;
       // Eq. (12)
@@ -109,22 +109,22 @@ namespace ProtoMol {
       // J term
       //**********************************
       // Eq. (5)
-      Real C_j = topo->atomTypes[type2].mySCPISM->C_i;
-      Real eta_j = topo->atoms[atom2].mySCPISM->eta;
+      Real C_j = topo->atomTypes[type2].mySCPISM_T->C_i;
+      Real eta_j = topo->atoms[atom2].mySCPISM_A->eta;
       Real dRs_j_i = eta_j * (fp_ij - f_ij * C_j) * exp(-C_j * dist);
       //**********************************
       // If atom 2 is a polar H+, accumulate polar
       // fraction and derivative
-      if (topo->atomTypes[type2].mySCPISM->isHbonded == PH &&
-          topo->atomTypes[type1].mySCPISM->isHbonded == PA &&
+      if (topo->atomTypes[type2].mySCPISM_T->isHbonded == PH &&
+          topo->atomTypes[type1].mySCPISM_T->isHbonded == PA &&
           (topo->atoms[atom2].residue_seq !=
            topo->atoms[atom1].residue_seq)) {
         Real E_i = 0.80; // Currently all polar H+ have this value
         Real g_i;
         if (topo->atoms[atom2].name == "HN" && topo->atoms[atom1].name == "O")
           g_i = -0.378;
-        else g_i = topo->atomTypes[type2].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[type1].mySCPISM->g_i;
+        else g_i = topo->atomTypes[type2].mySCPISM_T->g_i;
+        Real g_j = topo->atomTypes[type1].mySCPISM_T->g_i;
         //**********************************
         // Eq. (7)
         dRs_j_i += g_i * g_j *
@@ -133,15 +133,15 @@ namespace ProtoMol {
       }
 
 
-      Real bornRadius_j = topo->atoms[atom2].mySCPISM->bornRadius;
+      Real bornRadius_j = topo->atoms[atom2].mySCPISM_A->bornRadius;
       Real rBornRadius_j = 1.0 / bornRadius_j;
-      Real alpha_j = topo->atomTypes[type2].mySCPISM->alpha;
+      Real alpha_j = topo->atomTypes[type2].mySCPISM_T->alpha;
       //Screening
-      Real Ds_r_j = topo->atoms[atom2].mySCPISM->D_s;
+      Real Ds_r_j = topo->atoms[atom2].mySCPISM_A->D_s;
       if(Ds_r_j == 0.0){        
         // Eq. (9)
         Ds_r_j = (1.0 + D) / (1 + K * exp(-alpha_j * bornRadius_j)) - 1.0;
-        topo->atoms[atom2].mySCPISM->D_s = Ds_r_j;
+        topo->atoms[atom2].mySCPISM_A->D_s = Ds_r_j;
       }
       //Real Ds_r_j =
       //  (1.0 + D) / (1 + K * exp(-alpha_j * bornRadius_j)) - 1.0;
@@ -158,13 +158,13 @@ namespace ProtoMol {
 
       //**********************************************
       // Eq. (8)
-      if(topo->atoms[atom1].mySCPISM->energySum){
+      if(topo->atoms[atom1].mySCPISM_A->energySum){
         energy = 0.5 * q_i * q_i * rBornRadius * (rDs_r - 1);
-        topo->atoms[atom1].mySCPISM->energySum = false;
+        topo->atoms[atom1].mySCPISM_A->energySum = false;
       }
-      if(topo->atoms[atom2].mySCPISM->energySum){
+      if(topo->atoms[atom2].mySCPISM_A->energySum){
         energy += 0.5 * q_j * q_j * rBornRadius_j * (rDs_r_j - 1);
-        topo->atoms[atom2].mySCPISM->energySum = false;
+        topo->atoms[atom2].mySCPISM_A->energySum = false;
       }
       //**********************************************
     }

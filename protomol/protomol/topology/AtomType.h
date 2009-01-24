@@ -16,7 +16,8 @@ namespace ProtoMol {
     Hbonded isHbonded;      ///< TC: type of H-bond, none, polar, or acceptor
     Real A_i;               ///< JI: A_i in (2) on SCPISM.impl
     Real B_i;               ///< JI: B_i in (2) on SCPISM.impl
-    Real C_i;               ///< JI: C_i in (2) on SCPISM.impl
+    Real C_i;               ///< JI: C_i in (2) on SCPISM.impl    
+    //Real eta;               ///< CS: Constant for Born radius
   };
 
   //________________________________________ AtomType
@@ -30,7 +31,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    AtomType() : name(""), mass(0.0), charge(0.0), symbolName(""), mySCPISM(0)
+    AtomType() : name(""), mass(0.0), charge(0.0), symbolName(""), mySCPISM_T(0)
     {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -40,7 +41,9 @@ namespace ProtoMol {
     Real mass;              ///< The mass of this atom type.
     Real charge;            ///< The charge of this atom type.
     std::string symbolName; ///< The symbol untity name of this atom type.
-    SCPISMAtomTypeParameters *mySCPISM;
+    Real vdwR;              ///< The van del waals radius, used for implicit solvents
+
+    SCPISMAtomTypeParameters *mySCPISM_T;
   };
 }
 #endif /* ATOMTYPE_H */

@@ -439,10 +439,10 @@ Matrix3By3 Hessian::evaluatePairsMatrix(int i, int j, int pairType, const Vector
       Real rawE = 0.0, rawF = 0.0, swtchV = 1.0, swtchD = 0.0;
       //SCP extras
       if(pairType == COULOMBSCPISM){
-          if (!myTopo->atoms[i].mySCPISM || !myTopo->atoms[j].mySCPISM)
+          if (!myTopo->atoms[i].mySCPISM_A || !myTopo->atoms[j].mySCPISM_A)
                     report << error << "[Hessian::evaluateCoulombSCPISM] SCPISM data not set." << endr;
-          alpha_ij = myTopo->atoms[i].mySCPISM->sqrtalphaSCPISM *
-                            myTopo->atoms[j].mySCPISM->sqrtalphaSCPISM;
+          alpha_ij = myTopo->atoms[i].mySCPISM_A->sqrtalphaSCPISM *
+                            myTopo->atoms[j].mySCPISM_A->sqrtalphaSCPISM;
       }
       //
       if (pSwitch) {
@@ -563,9 +563,9 @@ void Hessian::evaluateBornRadii(const Vector3DBlock *myPositions,
 
   //SCPISM pre-calculate initialize
   for(unsigned int i=0;i<atoms_size;i++){
-    myTopo->atoms[i].mySCPISM->bornRadius = myTopo->atoms[i].mySCPISM->zeta;
-    myTopo->atoms[i].mySCPISM->energySum = true;
-    myTopo->atoms[i].mySCPISM->D_s = 0.0;
+    myTopo->atoms[i].mySCPISM_A->bornRadius = myTopo->atoms[i].mySCPISM_A->zeta;
+    myTopo->atoms[i].mySCPISM_A->energySum = true;
+    myTopo->atoms[i].mySCPISM_A->D_s = 0.0;
   }
   //check all pairs
   for (unsigned int i = 0; i < atoms_size; i++){

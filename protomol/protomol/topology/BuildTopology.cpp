@@ -55,23 +55,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   topo->impropers.clear();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // CoulombSCPISMParameters
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  CoulombSCPISMParameterTable *mySCPISM = 0;
-  if (topo->doSCPISM) {
-    if (topo->doSCPISM < 1 || topo->doSCPISM > 3)
-      THROW("doscpism should be between 1 and 3");
-    mySCPISM = new CoulombSCPISMParameterTable();
-    mySCPISM->populateTable();
-    if (topo->doSCPISM == 3) {
-      // Quartic parameters
-      mySCPISM->myData["H"].hbond_factor = 0.4695;
-      mySCPISM->myData["HC"].hbond_factor = 7.2560;
-    }
-    mySCPISM->displayTable();
-  }
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Get the atoms
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -88,36 +71,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
     tempatomtype.symbolName = atomTypeToSymbolName(atom->atom_type);
     tempatomtype.charge = atom->charge;
 
-    // SCPISM
-    if (topo->doSCPISM && mySCPISM->myData.find(tempatomtype.name) !=
-        mySCPISM->myData.end()) {
-      tempatomtype.mySCPISM = new SCPISMAtomTypeParameters();
-      tempatom.mySCPISM = new SCPISMAtomParameters();
-
-      // atom type exists in SCPISM parameters
-      tempatomtype.mySCPISM->sqrt_alpha =
-        mySCPISM->myData[tempatomtype.name].sqrt_alpha_i;
-      tempatomtype.mySCPISM->alpha =
-        mySCPISM->myData[tempatomtype.name].alpha_i;
-      tempatomtype.mySCPISM->g_i =
-        mySCPISM->myData[tempatomtype.name].hbond_factor;
-      tempatomtype.mySCPISM->isHbonded =
-        mySCPISM->myData[tempatomtype.name].isHbonded;
-      tempatomtype.mySCPISM->A_i = mySCPISM->myData[tempatomtype.name].A_i;
-      tempatomtype.mySCPISM->B_i = mySCPISM->myData[tempatomtype.name].B_i;
-      tempatomtype.mySCPISM->C_i = mySCPISM->myData[tempatomtype.name].C_i;
-      Real R_vdw = mySCPISM->myData[tempatomtype.name].R_vdw + 1.40;
-      Real dR_vdw2 = 1.0 / (4.0 * M_PI * R_vdw * R_vdw);
-      tempatom.mySCPISM->dR_vdw2 = dR_vdw2;
-      tempatom.mySCPISM->r_cov = mySCPISM->myData[tempatomtype.name].r_cov;
-      tempatom.mySCPISM->R_iw = mySCPISM->myData[tempatomtype.name].R_iw;
-      //Updated method CRS 01/11/09
-      tempatom.mySCPISM->zeta = mySCPISM->myData[tempatomtype.name].r_cov 
-                                + 0.5 - dR_vdw2 * 0.5 * mySCPISM->myData[tempatomtype.name].A_i;
-      tempatom.mySCPISM->eta = dR_vdw2 * 0.5 * mySCPISM->myData[tempatomtype.name].B_i;
-
-    }
-
     // Now check if this already exists (same name)
     if (atomLookUpTable.find(tempatomtype.name) == atomLookUpTable.end()) {
       atomLookUpTable[tempatomtype.name] = topo->atomTypes.size();
@@ -133,19 +86,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
     // Now, the scaled charge.  This is straightforward.
     tempatom.scaledCharge = (atom->charge) * Constant::SQRTCOULOMBCONSTANT;
     tempatom.scaledMass = atom->mass;
-    if (topo->doSCPISM && tempatom.mySCPISM) {
-      tempatom.mySCPISM->R_w =
-        tempatom.mySCPISM->r_cov + (atom->charge > 0 ? 0.85 : 0.35);
-      tempatom.mySCPISM->R_p =
-        tempatom.mySCPISM->R_iw + tempatom.mySCPISM->R_w;
-      tempatom.mySCPISM->sqrtalphaSCPISM = tempatomtype.mySCPISM->sqrt_alpha;
-      tempatom.mySCPISM->alphaSCPISM = tempatomtype.mySCPISM->alpha;
-      tempatom.mySCPISM->sasaFrac = 0.0;
-      tempatom.mySCPISM->polarFrac = 0.0;
-      tempatom.mySCPISM->bornRadius = 0.0;
-      //Updated method CRS 01/11/09
-      tempatom.mySCPISM->zeta += (atom->charge > 0 ? 0.85 : 0.35);
-    }
     // Now we need the size of the group for heavy atom ordering
     // We need to parse the name for any H's then any numbers following
     // First, if the atom is an H then this is 0
@@ -174,8 +114,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   // calculate the # of degrees of freedom, if there are any bond constraints
   // they will be subtracted later by ModifierShake
   topo->degreesOfFreedom = 3 * topo->atoms.size() - 3;
-
-  if (topo->doSCPISM) delete mySCPISM;
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Get the bonds
@@ -564,6 +502,9 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       THROWS("Could not find matching parameter nonbonded of atom '"
             << topo->atomTypes[i].name << "'.");
 
+    //for implicit solvents we require the van der waals radius from the LJ params
+    topo->atomTypes[i].vdwR = par.nonbondeds[bi].sigma;
+
     for (unsigned int j = i; j < sizeAtomTypes; j++) {
       int tj = 0;
       unsigned int bj = sizeNonbondeds;
@@ -652,6 +593,104 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   }
 
   // end loop over NbFix types
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // CoulombSCPISMParameters
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CoulombSCPISMParameterTable *mySCPISMTable = 0;
+  if (topo->doSCPISM) {
+    if (topo->doSCPISM < 1 || topo->doSCPISM > 3)
+      THROW("doscpism should be between 1 and 3");
+    mySCPISMTable = new CoulombSCPISMParameterTable();
+    mySCPISMTable->populateTable();
+    if (topo->doSCPISM == 3) {
+      // Quartic parameters
+      mySCPISMTable->myData["H"].hbond_factor = 0.4695;
+      mySCPISMTable->myData["HC"].hbond_factor = 7.2560;
+    }
+    mySCPISMTable->displayTable();
+  }
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // SCPISM data
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (topo->doSCPISM) {
+
+    // Types  
+    unsigned int typesSize = topo->atomTypes.size();
+
+    for (unsigned int i = 0; i < typesSize; i++) {    
+
+      AtomType *tempatomtype = &topo->atomTypes[i];
+      std::string name = tempatomtype->name;
+
+      if (mySCPISMTable->myData.find(name) !=
+        mySCPISMTable->myData.end()) {
+
+        tempatomtype->mySCPISM_T = new SCPISMAtomTypeParameters();
+
+        // fill in data from inputs
+        tempatomtype->mySCPISM_T->alpha =
+          mySCPISMTable->myData[name].alpha_i;
+        tempatomtype->mySCPISM_T->sqrt_alpha =
+          sqrt(tempatomtype->mySCPISM_T->alpha);
+        tempatomtype->mySCPISM_T->g_i =
+          mySCPISMTable->myData[name].hbond_factor;
+        tempatomtype->mySCPISM_T->isHbonded =
+          mySCPISMTable->myData[name].isHbonded;
+        tempatomtype->mySCPISM_T->A_i = mySCPISMTable->myData[name].A_i;
+        tempatomtype->mySCPISM_T->B_i = mySCPISMTable->myData[name].B_i;
+        tempatomtype->mySCPISM_T->C_i = mySCPISMTable->myData[name].C_i;
+
+      } else {
+        THROW("No SCPISM data for atom type.");
+
+      }
+
+    }
+
+    // Atoms  
+    unsigned int atomsSize = topo->atoms.size();
+    for (unsigned int i = 0; i < atomsSize; i++) {  
+    
+      Atom *tempatom = &topo->atoms[i];
+      int type = tempatom->type;
+      std::string name = topo->atomTypes[type].name;
+
+      tempatom->mySCPISM_A = new SCPISMAtomParameters();
+
+      // calculated values
+      Real R_vdw = topo->atomTypes[type].vdwR + 1.40;  //van der waals strored from LJ params
+      Real dR_vdw2 = 1.0 / (4.0 * M_PI * R_vdw * R_vdw);
+      Real r_cov = mySCPISMTable->myData[name].r_cov;
+
+      //Variables for original implementation
+      tempatom->mySCPISM_A->dR_vdw2 = dR_vdw2;      
+      tempatom->mySCPISM_A->r_cov = r_cov;
+      tempatom->mySCPISM_A->R_iw = mySCPISMTable->myData[name].R_iw;
+      tempatom->mySCPISM_A->R_w = r_cov + (tempatom->scaledCharge > 0 ? 0.85 : 0.35);
+      tempatom->mySCPISM_A->R_p =
+        tempatom->mySCPISM_A->R_iw + tempatom->mySCPISM_A->R_w;
+      tempatom->mySCPISM_A->sqrtalphaSCPISM = topo->atomTypes[type].mySCPISM_T->sqrt_alpha;
+      tempatom->mySCPISM_A->alphaSCPISM = topo->atomTypes[type].mySCPISM_T->alpha;
+      tempatom->mySCPISM_A->sasaFrac = 0.0;
+      tempatom->mySCPISM_A->polarFrac = 0.0;
+
+      //Updated method implementation CRS 01/11/09
+      tempatom->mySCPISM_A->zeta = r_cov + (tempatom->scaledCharge > 0 ? 0.85 : 0.35) + 0.5 
+                                    - dR_vdw2 * 0.5 * topo->atomTypes[type].mySCPISM_T->A_i;
+      tempatom->mySCPISM_A->eta = dR_vdw2 * 0.5 * topo->atomTypes[type].mySCPISM_T->B_i;
+      tempatom->mySCPISM_A->energySum = false;
+      //
+      tempatom->mySCPISM_A->bornRadius = 0.0;
+
+    }
+
+  }
+
+  // end of SCPISM
+
+  if (topo->doSCPISM) delete mySCPISMTable;
 
   // store the molecule information
   buildMoleculeTable(topo);

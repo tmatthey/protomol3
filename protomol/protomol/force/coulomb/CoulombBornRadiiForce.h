@@ -79,14 +79,14 @@ namespace ProtoMol {
 
       // Atom 1 variables
       int type1 = topo->atoms[atom1].type;
-      Real B_i = topo->atomTypes[type1].mySCPISM->B_i;
-      Real C_i = topo->atomTypes[type1].mySCPISM->C_i;
+      Real B_i = topo->atomTypes[type1].mySCPISM_T->B_i;
+      Real C_i = topo->atomTypes[type1].mySCPISM_T->C_i;
       //Real dR_vdw2 = topo->atomTypes[type1].dR_vdw2;
-      Real dR_vdw2 = topo->atoms[atom1].mySCPISM->dR_vdw2;
+      Real dR_vdw2 = topo->atoms[atom1].mySCPISM_A->dR_vdw2;
 
       //**********************************
       // Part of Eq. 1
-      topo->atoms[atom1].mySCPISM->sasaFrac -= B_i * f_ij * exp(-C_i * dist);
+      topo->atoms[atom1].mySCPISM_A->sasaFrac -= B_i * f_ij * exp(-C_i * dist);
       //**********************************
 
       //**********************************
@@ -97,8 +97,8 @@ namespace ProtoMol {
       //**********************************
 
       // If atom 1 is a polar H+, accumulate the derivative dR.
-      if (topo->atomTypes[topo->atoms[atom1].type].mySCPISM->isHbonded == PH &&
-          topo->atomTypes[topo->atoms[atom2].type].mySCPISM->isHbonded == PA &&
+      if (topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T->isHbonded == PH &&
+          topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T->isHbonded == PA &&
           (topo->atoms[atom1].residue_seq !=
            topo->atoms[atom2].residue_seq)) { // Polar
         Real E_i = 0.80; // Currently all polar H+ have this value
@@ -107,9 +107,9 @@ namespace ProtoMol {
             topo->atoms[atom2].name == "O")
           g_i = -0.378;
         else
-          g_i = topo->atomTypes[type1].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[topo->atoms[atom2].type].mySCPISM->g_i;
-        topo->atoms[atom1].mySCPISM->polarFrac += g_i * g_j * f_ij * exp(
+          g_i = topo->atomTypes[type1].mySCPISM_T->g_i;
+        Real g_j = topo->atomTypes[topo->atoms[atom2].type].mySCPISM_T->g_i;
+        topo->atoms[atom1].mySCPISM_A->polarFrac += g_i * g_j * f_ij * exp(
           -E_i * dist);
         //**********************************
         // Eq. 8
@@ -120,13 +120,13 @@ namespace ProtoMol {
 
       // Atom 2 variables
       int type2 = topo->atoms[atom2].type;
-      B_i = topo->atomTypes[type2].mySCPISM->B_i;
-      dR_vdw2 = topo->atoms[atom2].mySCPISM->dR_vdw2;
-      C_i = topo->atomTypes[type2].mySCPISM->C_i;
+      B_i = topo->atomTypes[type2].mySCPISM_T->B_i;
+      dR_vdw2 = topo->atoms[atom2].mySCPISM_A->dR_vdw2;
+      C_i = topo->atomTypes[type2].mySCPISM_T->C_i;
 
       //**********************************
       // Part of Eq. 1
-      topo->atoms[atom2].mySCPISM->sasaFrac -= B_i * f_ij * exp(-C_i * dist);
+      topo->atoms[atom2].mySCPISM_A->sasaFrac -= B_i * f_ij * exp(-C_i * dist);
       //**********************************
 
       //**********************************
@@ -137,17 +137,17 @@ namespace ProtoMol {
 
       // If atom 2 is a polar H+, accumulate polar
       // fraction and derivative
-      if (topo->atomTypes[type2].mySCPISM->isHbonded == PH &&
-          topo->atomTypes[topo->atoms[atom1].type].mySCPISM->isHbonded == PA &&
+      if (topo->atomTypes[type2].mySCPISM_T->isHbonded == PH &&
+          topo->atomTypes[topo->atoms[atom1].type].mySCPISM_T->isHbonded == PA &&
           (topo->atoms[atom2].residue_seq !=
            topo->atoms[atom1].residue_seq)) {
         Real E_i = 0.80; // Currently all polar H+ have this value
         Real g_i;
         if (topo->atoms[atom2].name == "HN" && topo->atoms[atom1].name == "O")
           g_i = -0.378;
-        else g_i = topo->atomTypes[type2].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[type1].mySCPISM->g_i;
-        topo->atoms[atom2].mySCPISM->polarFrac +=
+        else g_i = topo->atomTypes[type2].mySCPISM_T->g_i;
+        Real g_j = topo->atomTypes[type1].mySCPISM_T->g_i;
+        topo->atoms[atom2].mySCPISM_A->polarFrac +=
           g_i * g_j * f_ij * exp(-E_i * dist);
         //**********************************
         // Eq. 8

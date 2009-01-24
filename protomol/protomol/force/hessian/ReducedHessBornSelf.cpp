@@ -24,16 +24,16 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
   Real d2f_ij = bSw.switchSecondDerivative(dist);
   //Atom 1 Born Radius derivatives
   //**********************************
-  Real C_i = topo->atomTypes[type1].mySCPISM->C_i;
-  Real eta_i = topo->atoms[atom1].mySCPISM->eta;
+  Real C_i = topo->atomTypes[type1].mySCPISM_T->C_i;
+  Real eta_i = topo->atoms[atom1].mySCPISM_A->eta;
   // Eq. (5)
   Real dRs_ij = eta_i * (df_ij - f_ij * C_i) * exp(-C_i * dist);
   // Eq. (19)
   Real d2Rs_ij = eta_i * (d2f_ij - 2 * df_ij * C_i + f_ij * C_i * C_i) * exp(-C_i * dist);
   //**********************************
   // If atom 1 is a polar H+, accumulate the derivative dR.
-  if (topo->atomTypes[type1].mySCPISM->isHbonded == PH &&
-      topo->atomTypes[type2].mySCPISM->isHbonded == PA &&
+  if (topo->atomTypes[type1].mySCPISM_T->isHbonded == PH &&
+      topo->atomTypes[type2].mySCPISM_T->isHbonded == PA &&
       (topo->atoms[atom1].residue_seq !=
        topo->atoms[atom2].residue_seq)) { // Polar
     Real E_i = 0.80; // Currently all polar H+ have this value
@@ -42,8 +42,8 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
         topo->atoms[atom2].name == "O")
       g_i = -0.378;
     else
-      g_i = topo->atomTypes[type1].mySCPISM->g_i;
-    Real g_j = topo->atomTypes[type2].mySCPISM->g_i;
+      g_i = topo->atomTypes[type1].mySCPISM_T->g_i;
+    Real g_j = topo->atomTypes[type2].mySCPISM_T->g_i;
     //topo->atoms[atom1].mySCPISM->polarFrac += g_i * g_j * f_ij * exp(
     //  -E_i * dist);
     //**********************************
@@ -55,8 +55,8 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
   }
   //Atom 2 Born Radius first derivative
   //**********************************
-  Real C_j = topo->atomTypes[type2].mySCPISM->C_i;
-  Real eta_j = topo->atoms[atom2].mySCPISM->eta;
+  Real C_j = topo->atomTypes[type2].mySCPISM_T->C_i;
+  Real eta_j = topo->atoms[atom2].mySCPISM_A->eta;
   // Eq. (5)
   Real dRs_ji = eta_j * (df_ij - f_ij * C_j) * exp(-C_j * dist);
   // Eq. (19)
@@ -64,16 +64,16 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
   //**********************************
   // If atom 2 is a polar H+, accumulate polar
   // fraction and derivative
-  if (topo->atomTypes[type2].mySCPISM->isHbonded == PH &&
-      topo->atomTypes[type1].mySCPISM->isHbonded == PA &&
+  if (topo->atomTypes[type2].mySCPISM_T->isHbonded == PH &&
+      topo->atomTypes[type1].mySCPISM_T->isHbonded == PA &&
       (topo->atoms[atom2].residue_seq !=
        topo->atoms[atom1].residue_seq)) {
     Real E_i = 0.80; // Currently all polar H+ have this value
     Real g_i;
     if (topo->atoms[atom2].name == "HN" && topo->atoms[atom1].name == "O")
       g_i = -0.378;
-    else g_i = topo->atomTypes[type2].mySCPISM->g_i;
-    Real g_j = topo->atomTypes[type1].mySCPISM->g_i;
+    else g_i = topo->atomTypes[type2].mySCPISM_T->g_i;
+    Real g_j = topo->atomTypes[type1].mySCPISM_T->g_i;
     //**********************************
     // Eq. (7)
     dRs_ji += g_i * g_j * (df_ij - f_ij * E_i) * exp(-E_i * dist);
@@ -82,19 +82,19 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
     //**********************************
   }      
   //Born radius
-  Real Rs_i = topo->atoms[atom1].mySCPISM->bornRadius;
+  Real Rs_i = topo->atoms[atom1].mySCPISM_A->bornRadius;
   Real rRs_i = 1.0 / Rs_i;
-  Real Rs_j = topo->atoms[atom2].mySCPISM->bornRadius;
+  Real Rs_j = topo->atoms[atom2].mySCPISM_A->bornRadius;
   Real rRs_j = 1.0 / Rs_j;
   //Screening
   Real D = dielecConst;
   Real K = (D - 1.0) / 2;
-  Real alpha_i = topo->atomTypes[type1].mySCPISM->alpha;
-  Real Ds_i = topo->atoms[atom1].mySCPISM->D_s;
+  Real alpha_i = topo->atomTypes[type1].mySCPISM_T->alpha;
+  Real Ds_i = topo->atoms[atom1].mySCPISM_A->D_s;
   if(Ds_i == 0.0){
     // Eq. (9)
     Ds_i = (1.0 + D) / (1 + K * exp(-alpha_i * Rs_i)) - 1.0;
-    topo->atoms[atom1].mySCPISM->D_s = Ds_i;
+    topo->atoms[atom1].mySCPISM_A->D_s = Ds_i;
   }
   //Real Ds_i = topo->atoms[atom1].mySCPISM->D_s;
   Real rDs_i = 1.0 / Ds_i;
@@ -107,12 +107,12 @@ Matrix3By3 ReducedHessBornSelf::operator()(Real a,
   //Real d2Ds_i = (2 * (1.0 + D) * K * K * alpha_i * alpha_i * expaRs * expaRs) / ( (1 + K * expaRs) * (1 + K * expaRs) * (1 + K * expaRs) )
   //               - ((1.0 + D) * K * alpha_i * alpha_i * expaRs) / ( (1 + K * expaRs) * (1 + K * expaRs) );
 
-  Real alpha_j = topo->atomTypes[type2].mySCPISM->alpha;
-  Real Ds_j = topo->atoms[atom2].mySCPISM->D_s;
+  Real alpha_j = topo->atomTypes[type2].mySCPISM_T->alpha;
+  Real Ds_j = topo->atoms[atom2].mySCPISM_A->D_s;
   if(Ds_j == 0.0){    
     // Eq. (9)
     Ds_j = (1.0 + D) / (1 + K * exp(-alpha_j * Rs_j)) - 1.0;
-    topo->atoms[atom2].mySCPISM->D_s = Ds_j;
+    topo->atoms[atom2].mySCPISM_A->D_s = Ds_j;
   }
   //Real Ds_j = topo->atoms[atom2].mySCPISM->D_s;
   Real rDs_j = 1.0 / Ds_j;  

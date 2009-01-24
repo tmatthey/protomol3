@@ -64,14 +64,14 @@ namespace ProtoMol {
 
       //**********************************
       // Part of Eq. (1)
-      Real C_i = topo->atomTypes[type1].mySCPISM->C_i;
-      Real eta_i = topo->atoms[atom1].mySCPISM->eta;
-      topo->atoms[atom1].mySCPISM->bornRadius += eta_i * f_ij * exp(-C_i * dist);
+      Real C_i = topo->atomTypes[type1].mySCPISM_T->C_i;
+      Real eta_i = topo->atoms[atom1].mySCPISM_A->eta;
+      topo->atoms[atom1].mySCPISM_A->bornRadius += eta_i * f_ij * exp(-C_i * dist);
       //**********************************
 
       // If atom 1 is a polar H+, accumulate the derivative dR.
-      if (topo->atomTypes[type1].mySCPISM->isHbonded == PH &&
-          topo->atomTypes[type2].mySCPISM->isHbonded == PA &&
+      if (topo->atomTypes[type1].mySCPISM_T->isHbonded == PH &&
+          topo->atomTypes[type2].mySCPISM_T->isHbonded == PA &&
           (topo->atoms[atom1].residue_seq !=
            topo->atoms[atom2].residue_seq)) { // Polar
         Real E_i = 0.80; // Currently all polar H+ have this value
@@ -80,33 +80,33 @@ namespace ProtoMol {
             topo->atoms[atom2].name == "O")
           g_i = -0.378;
         else
-          g_i = topo->atomTypes[type1].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[type2].mySCPISM->g_i;
+          g_i = topo->atomTypes[type1].mySCPISM_T->g_i;
+        Real g_j = topo->atomTypes[type2].mySCPISM_T->g_i;
         // Eq. (2)
-        topo->atoms[atom1].mySCPISM->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
+        topo->atoms[atom1].mySCPISM_A->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
       }
 
       //**********************************
       // Part of Eq. (1)      
-      Real C_j = topo->atomTypes[type2].mySCPISM->C_i;      
-      Real eta_j = topo->atoms[atom2].mySCPISM->eta;
-      topo->atoms[atom2].mySCPISM->bornRadius += eta_j * f_ij * exp(-C_j * dist);
+      Real C_j = topo->atomTypes[type2].mySCPISM_T->C_i;      
+      Real eta_j = topo->atoms[atom2].mySCPISM_A->eta;
+      topo->atoms[atom2].mySCPISM_A->bornRadius += eta_j * f_ij * exp(-C_j * dist);
       //**********************************
 
       // If atom 2 is a polar H+, accumulate polar
       // fraction and derivative
-      if (topo->atomTypes[type2].mySCPISM->isHbonded == PH &&
-          topo->atomTypes[type1].mySCPISM->isHbonded == PA &&
+      if (topo->atomTypes[type2].mySCPISM_T->isHbonded == PH &&
+          topo->atomTypes[type1].mySCPISM_T->isHbonded == PA &&
           (topo->atoms[atom2].residue_seq !=
            topo->atoms[atom1].residue_seq)) {
         Real E_i = 0.80; // Currently all polar H+ have this value
         Real g_i;
         if (topo->atoms[atom2].name == "HN" && topo->atoms[atom1].name == "O")
           g_i = -0.378;
-        else g_i = topo->atomTypes[type2].mySCPISM->g_i;
-        Real g_j = topo->atomTypes[type1].mySCPISM->g_i;
+        else g_i = topo->atomTypes[type2].mySCPISM_T->g_i;
+        Real g_j = topo->atomTypes[type1].mySCPISM_T->g_i;
         //Eq. (2)
-        topo->atoms[atom2].mySCPISM->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
+        topo->atoms[atom2].mySCPISM_A->bornRadius += g_i * g_j * f_ij * exp(-E_i * dist);
 
       }
     }

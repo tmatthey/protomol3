@@ -56,8 +56,8 @@ namespace ProtoMol {
       Real Dist = 1.0 / rDist;
 
       // Screening term for interaction energy calculation
-      Real alpha_ij = topo->atoms[atom1].mySCPISM->sqrtalphaSCPISM *
-                      topo->atoms[atom2].mySCPISM->sqrtalphaSCPISM;
+      Real alpha_ij = topo->atoms[atom1].mySCPISM_A->sqrtalphaSCPISM *
+                      topo->atoms[atom2].mySCPISM_A->sqrtalphaSCPISM;
       Real Dp1 = D + 1.0;
       Real rDp1 = 1.0 / Dp1;
       Real Dm1 = D - 1.0;
