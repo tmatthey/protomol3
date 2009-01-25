@@ -43,6 +43,9 @@ namespace ProtoMol {
                     const GenericTopology *topo,
                     int atom1, int atom2, ExclusionClass excl) const {
       
+      //SCPISM valid?
+      if(!topo->doSCPISM)
+        report << error << "BornRadii requires SCPISM parameters." << endr;
       // If either molecule belongs to a water, do nothing.
       // Won't happen in most simulations, but could in the 
       // case of comparing forces.

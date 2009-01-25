@@ -38,6 +38,10 @@ namespace ProtoMol {
                     Real rDistSquared, const Vector3D &,
                     const GenericTopology *topo, int atom1, int atom2,
                     ExclusionClass excl) const {
+
+      //SCPISM valid?
+      if(!topo->doSCPISM)
+        report << error << "BornSelfForce requires SCPISM parameters." << endr;
       //Stuff from the old born radii calculations      
       Real dist = sqrt(distSquared);
       Real rDist = 1.0 / dist;

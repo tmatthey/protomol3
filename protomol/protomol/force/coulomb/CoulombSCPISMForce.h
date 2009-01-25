@@ -7,11 +7,14 @@
 #include <protomol/topology/ExclusionTable.h>
 #include <protomol/config/Parameter.h>
 #include <protomol/base/PMConstants.h>
+#include <protomol/base/Report.h>
 #include <string>
 #include <math.h>
 
 #include <iostream>
 using namespace std;
+
+using namespace ProtoMol::Report;
 
 namespace ProtoMol {
   //____ CoulombForce
@@ -33,7 +36,7 @@ namespace ProtoMol {
     CoulombSCPISMForce(Real Dval);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // New methods of class CoulombForce
+    // New methods of class CoulombSCPISForce
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     void operator()(Real &energy, Real &force,
@@ -41,12 +44,15 @@ namespace ProtoMol {
                     const GenericTopology *topo,
                     int atom1, int atom2, ExclusionClass excl) const {
 
+      //SCPISM valid?
+      if(!topo->doSCPISM)
+        report << error << "CoulombSCPISMForce requires SCPISM parameters." << endr;
       // If either molecule belongs to a water, do nothing.
       // Won't happen in most simulations, but could in the 
       // case of comparing forces.
       if (topo->molecules[topo->atoms[atom1].molecule].water ||
-	  topo->molecules[topo->atoms[atom2].molecule].water)
-	return;
+	      topo->molecules[topo->atoms[atom2].molecule].water)
+	        return;
 
       //std::cout << "EPS: " << EPS << std::endl;
       //std::cout << "D: " << D << std::endl;
