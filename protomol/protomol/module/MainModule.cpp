@@ -21,6 +21,7 @@ defineInputValue(InputIntegrator, "integrator");
 defineInputValue(InputReducedImage, "reducedImage");
 defineInputValue(InputTemperature, "temperature");
 defineInputValue(InputDoSCPISM, "doscpism");
+defineInputValue(InputSCPISM, "scpismfile");
 defineInputValueAndText(InputVirialCalc, "virialCalc",
                         "Required for constant pressure simulations.");
 defineInputValueAndText(InputMolVirialCalc, "molVirialCalc",
@@ -42,6 +43,7 @@ void MainModule::init(ProtoMolApp *app) {
   InputReducedImage::registerConfiguration(config);
   InputTemperature::registerConfiguration(config);
   InputDoSCPISM::registerConfiguration(config, 0);
+  InputSCPISM::registerConfiguration(config);
   InputVirialCalc::registerConfiguration(config, false);
   InputMolVirialCalc::registerConfiguration(config, false);
   InputOutput::registerConfiguration(&app->config, true);

@@ -37,7 +37,7 @@ static void findNextNeighbor(int a, vector<int> &v, vector<PairInt> &p,
 }
 
 void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
-                             const PAR &par, bool dihedralMultPSF) {
+                             const PAR &par, bool dihedralMultPSF, std::string scpismFile) {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // First, generate the array of atomtypes
   // Each time a new atom comes up, we need to check if it is
@@ -599,10 +599,10 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   CoulombSCPISMParameterTable *mySCPISMTable = 0;
   if (topo->doSCPISM) {
-    if (topo->doSCPISM < 1 || topo->doSCPISM > 3)
-      THROW("doscpism should be between 1 and 3");
+    if ((topo->doSCPISM < 1 || topo->doSCPISM > 3) && scpismFile.empty())
+      THROW("doscpism should be between 1 and 3 or an input file should be used.");
     mySCPISMTable = new CoulombSCPISMParameterTable();
-    mySCPISMTable->populateTable();
+    mySCPISMTable->populateTable(scpismFile);
     if (topo->doSCPISM == 3) {
       // Quartic parameters
       mySCPISMTable->myData["H"].hbond_factor = 0.4695;

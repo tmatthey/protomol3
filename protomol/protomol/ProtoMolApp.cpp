@@ -139,13 +139,22 @@ void ProtoMolApp::build() {
     if (!topology) throw e;
   }
 
-  if (config[InputDoSCPISM::keyword]) {
-    report << config[InputDoSCPISM::keyword] << endr;
-    topology->doSCPISM = true;
+  // Using SCPISM parameter? Flag or filename
+  std:string scpismFile;
+  scpismFile.clear();
+  if (config[InputDoSCPISM::keyword] || config.valid(InputSCPISM::keyword)) {
+    if(config[InputDoSCPISM::keyword])
+       topology->doSCPISM = config[InputDoSCPISM::keyword];
+    else
+       topology->doSCPISM = 4;
+    if(config.valid(InputSCPISM::keyword)) scpismFile = (std::string)config[InputSCPISM::keyword];
+    report << "SCPISM: doSCPISM set to " << topology->doSCPISM << ", using filename " 
+      << config[InputSCPISM::keyword] << "." << endr;
+
   }
 
-
-  buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword]);
+  // Build the topology
+  buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword], scpismFile);
 
 
   // Register Forces

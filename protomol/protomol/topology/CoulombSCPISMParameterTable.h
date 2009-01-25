@@ -4,6 +4,7 @@
 
 #include <protomol/type/Real.h>
 #include <protomol/topology/CoulombSCPISMParameters.h>
+#include <protomol/io/SCPISMReader.h>
 
 #include <string>
 #include <map>
@@ -28,7 +29,7 @@ namespace ProtoMol {
     // New methods of class CoulombSCPISMParameterTable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    void populateTable();
+    void populateTable(std::string scpismFile);
 
     void displayTable();
 

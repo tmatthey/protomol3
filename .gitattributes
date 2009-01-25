@@ -918,6 +918,8 @@ protomol/protomol/io/PosVelReaderType.cpp -text
 protomol/protomol/io/PosVelReaderType.h -text
 protomol/protomol/io/Reader.cpp -text
 protomol/protomol/io/Reader.h -text
+protomol/protomol/io/SCPISMReader.cpp -text
+protomol/protomol/io/SCPISMReader.h -text
 protomol/protomol/io/SConscript -text
 protomol/protomol/io/Writer.cpp -text
 protomol/protomol/io/Writer.h -text

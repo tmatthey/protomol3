@@ -11,7 +11,7 @@ namespace ProtoMol {
   void buildExclusionTable(GenericTopology *topo,
                            const ExclusionType &exclusionType);
   void buildTopology(GenericTopology *topo, const PSF &psf,
-                     const PAR &par, bool dihedralMultPSF);
+    const PAR &par, bool dihedralMultPSF, std::string scpismFile);
   void buildMoleculeTable(GenericTopology *topo);
 }
 
