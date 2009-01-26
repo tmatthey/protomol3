@@ -15,8 +15,6 @@ namespace ProtoMol {
    * The switching function provide C2, 3, 4 0r 6 continuous
    */
   class CnSwitchingFunction {
-#define MAXEQNN 7
-#define NUMSW   5
 
   public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,13 +23,15 @@ namespace ProtoMol {
     enum {USE = 1};
     enum {MODIFY = 1};
     enum {CUTOFF = 1};
+    enum {MAXEQNN = 7};
+    enum {NUMSW = 5};
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     CnSwitchingFunction();
-    CnSwitchingFunction(Real switchon, Real cutoff, Real order, Real switchoff);
+    CnSwitchingFunction(Real order, Real switchon, Real switchoff, Real cutoff );
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class CnSwitchingFunction
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -37,10 +37,9 @@ CnSwitchingFunction::CnSwitchingFunction() :
 
 //  --------------------------------------------------------------------  //
 
-CnSwitchingFunction::CnSwitchingFunction(Real switchon, Real cutoff, Real
-                                         order,
-                                         Real switchoff) :
-  mySwitchon(switchon), mySwitchon2(switchon * switchon), myOrder(order),
+CnSwitchingFunction::CnSwitchingFunction(Real order, Real switchon, 
+                                          Real switchoff, Real cutoff) :
+  myOrder(order), mySwitchon(switchon), mySwitchon2(switchon * switchon),
   mySwitchoff(switchoff) {
 
   if (switchoff) myCutoff = switchoff;           //use switchoff if defined
@@ -63,6 +62,9 @@ CnSwitchingFunction::CnSwitchingFunction(Real switchon, Real cutoff, Real
 
 void CnSwitchingFunction::getParameters(vector<Parameter> &parameters) const {
   parameters.push_back
+    (Parameter("-n", Value(myOrder, ConstraintValueType::Positive()),
+               Text("Cn swf smoothness")));
+  parameters.push_back
     (Parameter("-switchon",
                Value(mySwitchon, ConstraintValueType::NotNegative()),
                Text("Cn swf switch on")));
@@ -73,46 +75,46 @@ void CnSwitchingFunction::getParameters(vector<Parameter> &parameters) const {
   parameters.push_back
     (Parameter("-cutoff", Value(myCutoff, ConstraintValueType::Positive()),
                Text("Cn swf cutoff")));
-  parameters.push_back
-    (Parameter("-n", Value(myOrder, ConstraintValueType::Positive()),
-               Text("Cn swf smoothness")));
 }
 
 //  --------------------------------------------------------------------  //
 
 CnSwitchingFunction CnSwitchingFunction::make(vector<Value> values) {
-  Real switchon, cutoff, order, switchoff;
+  Real order, switchon, switchoff, cutoff;
 
-  values[0].get(switchon);
-  values[1].get(switchoff);
-  values[2].get(cutoff);
-  values[3].get(order);
+  values[0].get(order);
+  values[1].get(switchon);
+  values[2].get(switchoff);
+  values[3].get(cutoff);
 
   if (!values[0].valid() || !values[1].valid() || !values[2].valid() ||
-      switchon < 0.0 || cutoff <= 0.0 || switchon >= cutoff ||
+    switchon < 0.0 || cutoff <= 0.0 || switchon >= cutoff || (switchoff > 0.0 &&  switchoff != cutoff) ||
       order < 2.0 || order > 6.0) {
 
     string err;
     if (switchoff)
       err += getId() + " switching function: 0 <= switchon (="
-        + values[0].getString() + ") < switchoff (="
-        + values[1].getString() + ") <= cutoff (="
-        + values[2].getString() + ").";
+        + values[1].getString() + ") < switchoff (="
+        + values[2].getString() + ") = cutoff (="
+        + values[3].getString() + ").";
 
     else
       err += getId() + " switching function: 0 <= switchon (="
-        + values[0].getString() + ") <= cutoff (="
-        + values[2].getString() + ").";
+        + values[1].getString() + ") <= cutoff (="
+        + values[3].getString() + ").";
 
-    THROW(err + ", order 2, 3, 4, 6 (=" + values[3].getString() + ").");
+    THROW(err + ", order 2, 3, 4, 6 (=" + values[0].getString() + ").");
   }
 
-  return CnSwitchingFunction(switchon, cutoff, order, switchoff);
+  return CnSwitchingFunction(order, switchon, switchoff, cutoff);
 }
 
 //  --------------------------------------------------------------------  //
 
 Matrix3By3 CnSwitchingFunction::hessian(const Vector3D &rij, Real a) const {
+
+  //if (a > myCutoff2) return Matrix3By3(0, 0, 0, 0, 0, 0, 0, 0, 0);
+
   Real sqrta = sqrt(a), invA = 1 / a;
   Real c[MAXEQNN + 1];
   Real swDiff;

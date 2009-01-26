@@ -111,12 +111,60 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
                                                          myImproper = 
                                                            myBornRadii =
                                                              myBornSelf = false;
+
   for (unsigned int i = 0; i < ListForces.size(); i++) {
-    if (equalNocase(ListForces[i]->getId(), "Bond"))
+
+    if (equalNocase(ListForces[i]->getId(), "Bond")) {
       myBond = true;
-    else if (equalNocase(ListForces[i]->getId(), "Angle"))
+    } else if (equalNocase(ListForces[i]->getId(), "Angle")) {
       myAngle = true;
-    else if (equalStartNocase("CoulombDiElec", ListForces[i]->getId())) {
+    // Check for combined force
+    } else if (equalStartNocase("LennardJones CoulombSCPISM BornRadii", ListForces[i]->getId())) {
+      myBornRadii = true; myLennardJones = true; myCoulombSCPISM = true;
+      vector<Parameter> Fparam;
+      lSwitch = cSwitch = 1;
+      int curr_force = 0;
+      bool last_was_cutoff = false;
+      ListForces[i]->getParameters(Fparam);
+      for (unsigned int j = 0; j < Fparam.size(); j++) {
+        if (equalNocase(Fparam[j].keyword, "-cutoff")) {
+          if(!last_was_cutoff) curr_force++;
+          last_was_cutoff = true;
+        } else {
+          last_was_cutoff = false;
+          if (equalNocase(Fparam[j].keyword, "-switchon")) {
+            if(curr_force == 0){
+              cSwitchon = Fparam[j].value;
+              if (equalStartNocase("C2", Fparam[j].text)) cSwitch = 2;
+              else if (equalStartNocase("Cn", Fparam[j].text)) cSwitch = 3;
+              else cSwitch = 1;
+            }else if(curr_force == 1){
+              lSwitchon = Fparam[j].value;
+              if (equalStartNocase("C2", Fparam[j].text)) lSwitch = 2;
+              else if (equalStartNocase("Cn", Fparam[j].text)) lSwitch = 3;
+              else lSwitch = 1;
+            }
+          } else if (equalNocase(Fparam[j].keyword, "-n")) {
+            if(curr_force == 0){
+              cOrder = Fparam[j].value;
+              cSwitch = 3;
+            }else if(curr_force == 1){          
+              lOrder = Fparam[j].value;
+              lSwitch = 3;
+            }
+          } else if (equalNocase(Fparam[j].keyword, "-switchoff")) {
+            if(curr_force == 0){
+              cSwitchoff = Fparam[j].value;
+              cSwitch = 3;
+            }else if(curr_force == 1){          
+              lSwitchoff = Fparam[j].value;
+              lSwitch = 3;
+            }
+          }
+        }
+      }
+    // Single forces here
+    } else if (equalStartNocase("CoulombDiElec", ListForces[i]->getId())) {
       myCoulombDielec = true;
       vector<Parameter> Fparam;
       ListForces[i]->getParameters(Fparam);
@@ -225,7 +273,7 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
       }
     }
 
-  }
+  }      
   //set maxiumum cutoff value
   cutOff = max(cSwitchoff, lSwitchoff);
 }
@@ -447,7 +495,7 @@ Matrix3By3 Hessian::evaluatePairsMatrix(int i, int j, int pairType, const Vector
       //
       if (pSwitch) {
           if (pSwitch == 3) {
-              CnSwitchingFunction cnsf(pSwitchon, pCutoff, pOrder, pSwitchoff);
+              CnSwitchingFunction cnsf(pOrder, pSwitchon, pSwitchoff, pCutoff);
               cnsf(swtchV, swtchD, a);
               if (swtchV > 0.0 && swtchV < 1.0) {
                   switch(pairType){
