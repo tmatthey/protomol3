@@ -15,8 +15,6 @@ namespace ProtoMol {
    * The switching function provide C2,3,4 or 6 with compliment continuous
    */
   class CmpCnCnSwitchingFunction {
-#define MAXEQNCM    7
-#define NUMSWCM 5
 
   public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,6 +23,8 @@ namespace ProtoMol {
     enum {USE = 1};
     enum {MODIFY = 1};
     enum {CUTOFF = 1};
+    enum {MAXEQNCM = 7};
+    enum {NUMSWCM = 5};
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
