@@ -39,7 +39,7 @@ using namespace ProtoMol::Constant;
 
 ProtoMolApp::ProtoMolApp(ModuleManager *modManager) :
   modManager(modManager), cmdLine(&config), outputs(0), integrator(0),
-  topology(0) {
+  topology(0), SCPISMParameters(0) {
   modManager->init(this);
 
   topologyFactory.registerAllExemplarsConfiguration(&config);
@@ -140,21 +140,36 @@ void ProtoMolApp::build() {
   }
 
   // Using SCPISM parameter? Flag or filename
-  std:string scpismFile;
-  scpismFile.clear();
-  if (config[InputDoSCPISM::keyword] || config.valid(InputSCPISM::keyword)) {
+  if (config[InputDoSCPISM::keyword] || SCPISMParameters) { 
+
     if(config[InputDoSCPISM::keyword])
        topology->doSCPISM = config[InputDoSCPISM::keyword];
-    else
-       topology->doSCPISM = 4;
-    if(config.valid(InputSCPISM::keyword)) scpismFile = (std::string)config[InputSCPISM::keyword];
-    report << "SCPISM: doSCPISM set to " << topology->doSCPISM << ", using filename " 
-      << config[InputSCPISM::keyword] << "." << endr;
+
+    if ((topology->doSCPISM < 1 || topology->doSCPISM > 3) && !SCPISMParameters) 
+      THROW("doscpism should be between 1 and 3 or an input file should be used.");
+
+    if(SCPISMParameters) {
+       if(!config[InputDoSCPISM::keyword]) topology->doSCPISM = 4;
+    } else {
+      SCPISMParameters = new CoulombSCPISMParameterTable;
+      SCPISMParameters->populateTable();
+    }
+
+
+    report << "SCPISM: doSCPISM set to " << topology->doSCPISM << "." << endr;
+
+    if (topology->doSCPISM == 3) {
+      // Quartic switch parameters
+      SCPISMParameters->myData["H"].hbond_factor = 0.4695;
+      SCPISMParameters->myData["HC"].hbond_factor = 7.2560;
+    }
+
+    SCPISMParameters->displayTable();
 
   }
 
   // Build the topology
-  buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword], scpismFile);
+  buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword], SCPISMParameters);
 
 
   // Register Forces
@@ -259,6 +274,7 @@ void ProtoMolApp::finalize() {
   zap(topology);
   zap(integrator);
   zap(outputs);
+  zap(SCPISMParameters);
 
   report
     << allnodesserial << plain << "Timing: " << TimerStatistic() << "." << endr;

@@ -37,7 +37,8 @@ static void findNextNeighbor(int a, vector<int> &v, vector<PairInt> &p,
 }
 
 void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
-                             const PAR &par, bool dihedralMultPSF, std::string scpismFile) {
+                             const PAR &par, bool dihedralMultPSF,  
+                             CoulombSCPISMParameterTable *mySCPISMTable) { 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // First, generate the array of atomtypes
   // Each time a new atom comes up, we need to check if it is
@@ -595,23 +596,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   // end loop over NbFix types
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // CoulombSCPISMParameters
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  CoulombSCPISMParameterTable *mySCPISMTable = 0;
-  if (topo->doSCPISM) {
-    if ((topo->doSCPISM < 1 || topo->doSCPISM > 3) && scpismFile.empty())
-      THROW("doscpism should be between 1 and 3 or an input file should be used.");
-    mySCPISMTable = new CoulombSCPISMParameterTable();
-    mySCPISMTable->populateTable(scpismFile);
-    if (topo->doSCPISM == 3) {
-      // Quartic parameters
-      mySCPISMTable->myData["H"].hbond_factor = 0.4695;
-      mySCPISMTable->myData["HC"].hbond_factor = 7.2560;
-    }
-    mySCPISMTable->displayTable();
-  }
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // SCPISM data
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (topo->doSCPISM) {
@@ -689,8 +673,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   }
 
   // end of SCPISM
-
-  if (topo->doSCPISM) delete mySCPISMTable;
 
   // store the molecule information
   buildMoleculeTable(topo);

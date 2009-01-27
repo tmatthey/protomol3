@@ -14,6 +14,7 @@
 #include <protomol/type/PSF.h>
 #include <protomol/type/PAR.h>
 #include <protomol/type/ScalarStructure.h>
+#include <protomol/topology/CoulombSCPISMParameterTable.h>
 
 #include <ostream>
 
@@ -34,6 +35,7 @@ namespace ProtoMol {
     PSF psf;
     PAR par;
     ScalarStructure energies;
+    CoulombSCPISMParameterTable *SCPISMParameters;
 
     // Factories
     TopologyFactory topologyFactory;

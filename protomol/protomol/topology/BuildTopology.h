@@ -2,6 +2,7 @@
 #define BUILD_TOPOLOGY_H
 
 #include <protomol/topology/ExclusionType.h>
+#include <protomol/topology/CoulombSCPISMParameterTable.h>
 
 namespace ProtoMol {
   class GenericTopology;
@@ -11,7 +12,7 @@ namespace ProtoMol {
   void buildExclusionTable(GenericTopology *topo,
                            const ExclusionType &exclusionType);
   void buildTopology(GenericTopology *topo, const PSF &psf,
-    const PAR &par, bool dihedralMultPSF, std::string scpismFile);
+    const PAR &par, bool dihedralMultPSF, CoulombSCPISMParameterTable *SCPISMParameters);
   void buildMoleculeTable(GenericTopology *topo);
 }
 

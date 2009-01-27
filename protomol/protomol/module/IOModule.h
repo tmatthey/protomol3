@@ -15,6 +15,7 @@ namespace ProtoMol {
   declareInputValue(InputPAR, STRING, NOTEMPTY);
   declareInputValue(InputPDBScaling, BOOL, NOCONSTRAINTS);
   declareInputValue(InputDihedralMultPSF, BOOL, NOCONSTRAINTS);
+  declareInputValue(InputSCPISM, STRING, NOTEMPTY);
 
   class IOModule : public Module {
   public:

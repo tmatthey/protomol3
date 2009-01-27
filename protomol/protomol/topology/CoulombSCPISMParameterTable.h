@@ -29,7 +29,7 @@ namespace ProtoMol {
     // New methods of class CoulombSCPISMParameterTable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    void populateTable(std::string scpismFile);
+    void populateTable();
 
     void displayTable();
 

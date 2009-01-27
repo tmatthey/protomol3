@@ -15,7 +15,6 @@ namespace ProtoMol {
   declareInputValue(InputReducedImage, BOOL, NOCONSTRAINTS);
   declareInputValue(InputTemperature, REAL, NOTNEGATIVE);
   declareInputValue(InputDoSCPISM, BOOL, NOCONSTRAINTS);
-  declareInputValue(InputSCPISM, STRING, NOTEMPTY);
   declareInputValue(InputMolVirialCalc, BOOL, NOCONSTRAINTS);
   declareInputValue(InputVirialCalc, BOOL, NOCONSTRAINTS);
   declareInputValue(InputOutputfreq, INT, NOTNEGATIVE);

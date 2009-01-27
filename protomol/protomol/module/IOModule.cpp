@@ -11,6 +11,8 @@
 #include <protomol/type/String.h>
 #include <protomol/type/PDB.h>
 #include <protomol/module/MainModule.h>
+#include <protomol/io/SCPISMReader.h>
+#include <protomol/topology/CoulombSCPISMParameterTable.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -24,6 +26,7 @@ defineInputValueWithAliases(InputPSF, "psffile", ("structure"));
 defineInputValueWithAliases(InputPAR, "parfile", ("parameters"));
 defineInputValue(InputPDBScaling, "pdbScaling");
 defineInputValue(InputDihedralMultPSF, "dihedralMultPSF");
+defineInputValue(InputSCPISM, "scpismfile");
 
 
 void IOModule::init(ProtoMolApp *app) {
@@ -34,7 +37,9 @@ void IOModule::init(ProtoMolApp *app) {
   InputPSF::registerConfiguration(config);
   InputPAR::registerConfiguration(config);
   InputPDBScaling::registerConfiguration(config);
-  InputDihedralMultPSF::registerConfiguration(config);
+  InputDihedralMultPSF::registerConfiguration(config);  
+  InputSCPISM::registerConfiguration(config);
+
 }
 
 void IOModule::read(ProtoMolApp *app) {
@@ -136,6 +141,21 @@ void IOModule::read(ProtoMolApp *app) {
   if (config[InputDihedralMultPSF::keyword])
     report << " Dihedral multiplictity defined by PSF.";
   report << endr;
+
+  //SCPISM
+  if (config.valid(InputSCPISM::keyword)) {
+
+    app->SCPISMParameters = new CoulombSCPISMParameterTable;
+
+    SCPISMReader mReader(config[InputSCPISM::keyword]);
+
+    if(!mReader.read( app->SCPISMParameters->myData ))
+      report << error << "Invalid SCPISM parameter file " << config[InputSCPISM::keyword] << "." << endr;
+
+    report << plain << "Using SCPISM file '" << config[InputSCPISM::keyword] << "'." << endr;
+
+
+  }
 
   // Test input
   if (app->positions.size() != app->velocities.size() ||
