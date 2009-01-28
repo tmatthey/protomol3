@@ -411,12 +411,15 @@ protomol/SConstruct -text
 protomol/compiler.py -text
 protomol/config.py -text
 protomol/doc/Doxyfile -text
+protomol/doc/SCPISM.tex -text
 protomol/doc/SCPISM_Implementation-Rev-1.pdf -text
 protomol/doc/footer.html -text
 protomol/doc/header.html -text
 protomol/doc/protomol.gif -text
 protomol/doc/protomol.html -text
 protomol/doc/protomol_icon.ico -text
+protomol/doc/scpism.inp -text
+protomol/doc/scpismQuartic.inp -text
 protomol/mdl/MDL.py -text
 protomol/mdl/MDLSetup.bash -text
 protomol/mdl/MDLSetup.tcsh -text
