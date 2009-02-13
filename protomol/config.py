@@ -1,3 +1,8 @@
+if env['PLATFORM'] == 'win32':
+    env.Append(LIBS = 'wsock32')
+else:
+    env.Append(LIBS = 'pthread')
+
 if env['CC'] == 'gcc':
     if os.environ.has_key('ATLAS_HOME'):
         env.Append(LIBPATH = [os.environ['ATLAS_HOME']])
