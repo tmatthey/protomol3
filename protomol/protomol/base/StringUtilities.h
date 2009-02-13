@@ -3,6 +3,8 @@
 #define STRINGUTILITIES_H
 
 #include <string>
+#include <cstring>
+
 #ifdef HAVE_NO_SSTREAM
 #include <protomol/base/sstream_local.h>
 #else

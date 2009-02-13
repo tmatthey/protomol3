@@ -85,7 +85,7 @@ namespace ProtoMol
       void transposeProduct( const BlockMatrix &bm, BlockMatrix &om ) const;
 
       // Multiply transpose of 'this' with 'bm', return result: TEST
-      const BlockMatrix BlockMatrix::operator/( const BlockMatrix &bm ) const;
+      const BlockMatrix operator/( const BlockMatrix &bm ) const;
 
       // Get sub-matrix
       const BlockMatrix subMatrix( unsigned int atRow, unsigned int atColumn, unsigned int getRows, unsigned int getColumns ) const;

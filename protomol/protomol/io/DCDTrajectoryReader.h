@@ -7,6 +7,7 @@
 #include <protomol/type/TypeSelection.h>
 
 #include <vector>
+#include <cstring>
 
 namespace ProtoMol {
   //____DCDTrajectoryReader
