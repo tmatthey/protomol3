@@ -62,20 +62,20 @@ libs.append(libname)
 if not env.GetOption('clean'):
     execfile('package_h.py')
     execfile('config.py')
-
-    if (have_bzip2 and have_boost_iostreams and have_libfah):
-      env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
-      have_libfah=1
-
-
+    
     # Folding@Home library version
     if fah:
+      execfile('configfah.py')
+
+      if (have_bzip2 and have_boost_iostreams and have_libfah):
+        env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+        have_libfah=1
+
       if not (have_libfah and have_bzip2 and have_boost_iostreams):
         print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
         Exit(1)
 
       env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
-
 
     env = conf.Finish()
     
