@@ -1,5 +1,6 @@
 #include <protomol/base/MathUtilities.h>
 #include <protomol/base/Timer.h>
+#include <protomol/base/Random.h>
 
 using namespace std;
 
@@ -142,22 +143,39 @@ namespace ProtoMol {
 
 //____ randomNumber()
   Real randomNumber(unsigned int seed) {
-    static bool first = true;
+    return randomNumber(seed, 0);
+  }
 
-    //  If this is the first call, seed it
+//____ randomNumber()
+  Real randomNumber(unsigned int seed, unsigned int randomTypeIn) {
+    static bool first = true;
+    static int randomType = 0;
+    static Random rand_r;
+
+    //new random number?
+    if (randomTypeIn || randomType) {
+      if (first) {
+        rand_r.seed(seed);
+        first = false;
+        randomType = randomTypeIn;
+      }
+      return rand_r.rand();
+    } else {
+      //  If this is the first call, seed it
 #ifdef _WIN32
-    if (first) {
-      srand(seed);
-      first = false;
-    }
-    return double (rand()) / double (RAND_MAX);
+      if (first) {
+        srand(seed);
+        first = false;
+      }
+      return double (rand()) / double (RAND_MAX);
 #else
-    if (first) {
-      srand48((long)seed);
-      first = false;
-    }
-    return drand48();
+      if (first) {
+        srand48((long)seed);
+        first = false;
+      }
+      return drand48();
 #endif
+    }
   }
 
 //____ randomGaussian()

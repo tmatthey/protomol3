@@ -13,6 +13,7 @@ using namespace ProtoMol;
 using namespace ProtoMol::Report;
 
 defineInputValue(InputSeed, "seed");
+defineInputValue(InputRandomType, "randomtype");
 defineInputValue(InputFirststep, "firststep");
 defineInputValue(InputNumsteps, "numsteps");
 defineInputValueAndText(InputDebug, "debug", "report level, suppresses all "
@@ -35,6 +36,7 @@ void MainModule::init(ProtoMolApp *app) {
   Configuration *config = &app->config;
 
   InputSeed::registerConfiguration(config, getTimerSeed());
+  InputRandomType::registerConfiguration(config, 0);
   InputFirststep::registerConfiguration(config, 0);
   InputNumsteps::registerConfiguration(config);
   InputDebug::registerConfiguration(config, 1);
@@ -59,7 +61,10 @@ void MainModule::configure(ProtoMolApp *app) {
   int seed = config[InputSeed::keyword];
   Parallel::bcast(seed);
   config[InputSeed::keyword] = seed;
-  randomNumber(seed);
+  int randomtype = config[InputRandomType::keyword];
+  Parallel::bcast(randomtype);
+  config[InputRandomType::keyword] = randomtype;
+  randomNumber(seed, randomtype);
 
 
   // Check if configuration is complete

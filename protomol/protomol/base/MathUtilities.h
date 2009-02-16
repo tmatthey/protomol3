@@ -197,6 +197,7 @@ namespace ProtoMol {
 
   //_____________________________________________________________ randomNumber()
   Real randomNumber(unsigned int seed = 1234);
+  Real randomNumber(unsigned int seed, unsigned int randomtype);
   //___________________________________________________________ randomGaussian()
   Real randomGaussian(Real sdv, unsigned int seed = 1234);
   //_____________________________________________________ randomGaussianNumber()
