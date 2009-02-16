@@ -674,6 +674,8 @@ protomol/protomol/base/ModuleManager.h -text
 protomol/protomol/base/PMConstants.cpp -text
 protomol/protomol/base/PMConstants.h -text
 protomol/protomol/base/Proxy.h -text
+protomol/protomol/base/Random.cpp -text
+protomol/protomol/base/Random.h -text
 protomol/protomol/base/Report.cpp -text
 protomol/protomol/base/Report.h -text
 protomol/protomol/base/SConscript -text
