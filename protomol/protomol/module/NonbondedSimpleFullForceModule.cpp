@@ -11,7 +11,6 @@
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
-#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 
 #include <protomol/switch/C1SwitchingFunction.h>

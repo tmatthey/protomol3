@@ -10,26 +10,13 @@ namespace ProtoMol {
   //________________________________________ Atom
 
   struct SCPISMAtomParameters {
-    SCPISMAtomParameters() : sasaFrac(0.0), polarFrac(0.0) {}
+    SCPISMAtomParameters() {}
     Real sqrtalphaSCPISM;
-    Real alphaSCPISM;
+
     ///< For SCPISM calculations
-    ///< Parameterized by Atom Type according to Hassan et al. (2002)
-    Real sasaFrac;
-    ///< For SCPISM calculations
+    //Updated version CRS 01/24/09
 
     Real bornRadius, D_s;
-    ///< For SCPISM calculations
-
-    Real polarFrac;
-    ///< For SCPISM calculations
-
-    Real dR_vdw2;
-    Real r_cov;
-    Real R_iw;
-    Real R_w;
-    Real R_p;
-    //Updated version CRS 01/24/09
     Real zeta, eta;
     bool energySum;
   };

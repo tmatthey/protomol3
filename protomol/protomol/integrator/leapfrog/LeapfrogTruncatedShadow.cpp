@@ -13,11 +13,9 @@
 #include <protomol/force/hessian/ReducedHessCoulomb.h>
 #include <protomol/force/hessian/ReducedHessCoulombDiElec.h>
 #include <protomol/force/hessian/ReducedHessCoulombSCPISM.h>
-#include <protomol/force/hessian/ReducedHessCoulombBornRadii.h>
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
-#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
 #include <protomol/switch/CnSwitchingFunction.h>
 #include <protomol/switch/C2SwitchingFunction.h>
 #include <protomol/switch/C1SwitchingFunction.h>
@@ -44,18 +42,13 @@ LeapfrogTruncatedShadow::LeapfrogTruncatedShadow(Real timestep,
   lOrder = cOrder = lSwitchoff = cSwitchoff = 0.0;
   D = 78.0; S = 0.3; epsi = 1.0;
   myBond = myAngle = myCoulomb = myCoulombDielec = myCoulombSCPISM =
-    myCoulombBornRadii = myLennardJones = myDihedral = myImproper = false;
+    myLennardJones = myDihedral = myImproper = false;
 
   for (unsigned int i = 0; i < ListForces.size(); i++) {
-    if (equalNocase(ListForces[i]->getId(), "Bond"))
+    if (equalNocase(ListForces[i]->getId(), "Bond")) {
       myBond = true;
-    else if (equalNocase(ListForces[i]->getId(), "Angle"))
+    } else if (equalNocase(ListForces[i]->getId(), "Angle")) {
       myAngle = true;
-    else if (equalStartNocase("CoulombBornRadii", ListForces[i]->getId())) {
-      myCoulombBornRadii = true;
-      swt = 1;
-      swt = app->topology->doSCPISM;
-
     } else if (equalStartNocase("CoulombDiElec", ListForces[i]->getId())) {
       myCoulombDielec = true;
       vector<Parameter> Fparam;
@@ -169,9 +162,8 @@ LeapfrogTruncatedShadow::LeapfrogTruncatedShadow(Real timestep,
   report
     << hint << "[LeapfrogTruncatedShadow::initialize] myCoulumb="
     << myCoulomb << ", myCoulombDielec=" << myCoulombDielec
-    << ", myCoulombSCPISM=" << myCoulombSCPISM << ", myCoulombBornRadii="
-    << myCoulombBornRadii << ", myLJ=" << myLennardJones << ", myBond="
-    << myBond << ", myAngle=" << myAngle << ", nyDihedral=" << myDihedral 
+    << ", myCoulombSCPISM=" << myCoulombSCPISM << ", myLJ=" << myLennardJones 
+    << ", myBond=" << myBond << ", myAngle=" << myAngle << ", nyDihedral=" << myDihedral 
     << ", myImproper=" << myImproper << endr;
 
   report
@@ -435,15 +427,6 @@ Real LeapfrogTruncatedShadow::calcNearHamiltonian() {
     accum += scpismAccum;
 #endif
   }
-  if (myCoulombBornRadii) {
-#if 1
-    Real bornAccum;
-    bornAccum =
-      calcPairInteractionHess(cSwitch, cSwitchon, cCutoff, cOrder, cSwitchoff,
-                              4);
-    accum += bornAccum;
-#endif
-  }
   //
   gl2 = 2.0 * accum;
   //calc (U')^TM^{-1}U'
@@ -583,13 +566,6 @@ calcPairInteractionHess(Real doSwitch, Real switchon, Real cutoff, Real order,
           rha =
             rHess(rawE, rawF, a, a, rij, app->topology, i, j, swtchV, swtchD,
                   mz, ec, alpha_ij, 80.0);
-        } else if (lj == 4) {
-          ReducedHessCoulombBornRadii rHess;
-          CoulombBornRadiiForce hForce(swt);
-          Real rawE = 0.0, rawF = 0.0, swtchV = 1.0, swtchD = 0.0;
-          rha =
-            rHess(rawE, rawF, a, a, rij, app->topology, i, j, swtchV, swtchD,
-                  mz, ec, &app->positions, hForce);
         } else {        // Colombic
           ReducedHessCoulomb rHess;
           CoulombForce hForce;

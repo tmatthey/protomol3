@@ -648,17 +648,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       Real dR_vdw2 = 1.0 / (4.0 * M_PI * R_vdw * R_vdw);
       Real r_cov = mySCPISMTable->myData[name].r_cov;
 
-      //Variables for original implementation
-      tempatom->mySCPISM_A->dR_vdw2 = dR_vdw2;      
-      tempatom->mySCPISM_A->r_cov = r_cov;
-      tempatom->mySCPISM_A->R_iw = mySCPISMTable->myData[name].R_iw;
-      tempatom->mySCPISM_A->R_w = r_cov + (tempatom->scaledCharge > 0 ? 0.85 : 0.35);
-      tempatom->mySCPISM_A->R_p =
-        tempatom->mySCPISM_A->R_iw + tempatom->mySCPISM_A->R_w;
+      //Variables for original implementation, now just for screened Coulombic
       tempatom->mySCPISM_A->sqrtalphaSCPISM = topo->atomTypes[type].mySCPISM_T->sqrt_alpha;
-      tempatom->mySCPISM_A->alphaSCPISM = topo->atomTypes[type].mySCPISM_T->alpha;
-      tempatom->mySCPISM_A->sasaFrac = 0.0;
-      tempatom->mySCPISM_A->polarFrac = 0.0;
 
       //Updated method implementation CRS 01/11/09
       tempatom->mySCPISM_A->zeta = r_cov + (tempatom->scaledCharge > 0 ? 0.85 : 0.35) + 0.5 

@@ -16,11 +16,9 @@
 #include <protomol/force/hessian/ReducedHessCoulomb.h>
 #include <protomol/force/hessian/ReducedHessCoulombDiElec.h>
 #include <protomol/force/hessian/ReducedHessCoulombSCPISM.h>
-#include <protomol/force/hessian/ReducedHessCoulombBornRadii.h>
 #include <protomol/force/hessian/ReducedHessLennardJones.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
-#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
 
 #include <protomol/type/BlockMatrix.h>
 

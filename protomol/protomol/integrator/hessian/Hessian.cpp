@@ -19,12 +19,10 @@
 #include <protomol/force/hessian/ReducedHessCoulomb.h>
 #include <protomol/force/hessian/ReducedHessCoulombDiElec.h>
 #include <protomol/force/hessian/ReducedHessCoulombSCPISM.h>
-//#include <protomol/force/hessian/ReducedHessCoulombBornRadii.h>
 #include <protomol/force/hessian/ReducedHessLennardJones.h>
 #include <protomol/force/hessian/ReducedHessBornSelf.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
-#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
 #include <protomol/force/born/BornRadii.h>
 
 using namespace std;
@@ -68,7 +66,6 @@ Hessian::Hessian(const Hessian &hess) {
   myCoulomb = hess.myCoulomb;
   myCoulombDielec = hess.myCoulombDielec;
   myCoulombSCPISM = hess.myCoulombSCPISM;
-  //myCoulombBornRadii = hess.myCoulombBornRadii;
   myBornRadii = hess.myBornRadii;
   myBornSelf = hess.myBornSelf;
   myLennardJones = hess.myLennardJones;

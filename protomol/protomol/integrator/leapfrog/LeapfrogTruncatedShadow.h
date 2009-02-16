@@ -86,7 +86,6 @@ namespace ProtoMol {
     bool myCoulomb;
     bool myCoulombDielec;
     bool myCoulombSCPISM;
-    bool myCoulombBornRadii;
     bool myLennardJones;
     bool myDihedral;
     bool myImproper;
