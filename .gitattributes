@@ -764,8 +764,6 @@ protomol/protomol/force/born/BornSelfForce.cpp -text
 protomol/protomol/force/born/BornSelfForce.h -text
 protomol/protomol/force/born/BornSwitch.h -text
 protomol/protomol/force/born/SConscript -text
-protomol/protomol/force/coulomb/CoulombBornRadiiForce.cpp -text
-protomol/protomol/force/coulomb/CoulombBornRadiiForce.h -text
 protomol/protomol/force/coulomb/CoulombForceDiElec.cpp -text
 protomol/protomol/force/coulomb/CoulombForceDiElec.h -text
 protomol/protomol/force/coulomb/CoulombSCPISMForce.cpp -text
@@ -788,8 +786,6 @@ protomol/protomol/force/hessian/ReducedHessBornSelf.cpp -text
 protomol/protomol/force/hessian/ReducedHessBornSelf.h -text
 protomol/protomol/force/hessian/ReducedHessCoulomb.cpp -text
 protomol/protomol/force/hessian/ReducedHessCoulomb.h -text
-protomol/protomol/force/hessian/ReducedHessCoulombBornRadii.cpp -text
-protomol/protomol/force/hessian/ReducedHessCoulombBornRadii.h -text
 protomol/protomol/force/hessian/ReducedHessCoulombDiElec.cpp -text
 protomol/protomol/force/hessian/ReducedHessCoulombDiElec.h -text
 protomol/protomol/force/hessian/ReducedHessCoulombSCPISM.cpp -text
@@ -797,13 +793,9 @@ protomol/protomol/force/hessian/ReducedHessCoulombSCPISM.h -text
 protomol/protomol/force/hessian/ReducedHessLennardJones.cpp -text
 protomol/protomol/force/hessian/ReducedHessLennardJones.h -text
 protomol/protomol/force/hessian/SConscript -text
-protomol/protomol/force/nonbonded/Born.h -text
-protomol/protomol/force/nonbonded/NonbondedCutoffBornForce.h -text
 protomol/protomol/force/nonbonded/NonbondedCutoffForce.h -text
 protomol/protomol/force/nonbonded/NonbondedCutoffSystemForce.h -text
-protomol/protomol/force/nonbonded/NonbondedFullBornForce.h -text
 protomol/protomol/force/nonbonded/NonbondedFullSystemForce.h -text
-protomol/protomol/force/nonbonded/NonbondedSimpleFullBornForce.h -text
 protomol/protomol/force/nonbonded/NonbondedSimpleFullSystemForce.h -text
 protomol/protomol/force/nonbonded/SConscript -text
 protomol/protomol/force/system/SConscript -text
