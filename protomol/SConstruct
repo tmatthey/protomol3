@@ -1,8 +1,6 @@
-import os
-import sys
+import os, sys
 
 execfile('compiler.py')
-
 
 # Command Line Options
 opts = Options('options.py')
@@ -12,9 +10,8 @@ opts.AddOptions(
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
     BoolOption('lapack', 'Use LAPACK', 0),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
-    )
-
-
+    EnumOption('openmm', 'Build with OpenMM', 'none', allowed_values=('none', 'reference', 'cuda'))
+)
 
 compiler_add_opts()
 
@@ -22,12 +19,10 @@ compiler_add_opts()
 env = Environment(options = opts, ENV = os.environ)
 
 Export('env')
-
  
 # Configure
 conf = Configure(env)
 Export('conf')
-
 
 # Import subdir build files
 subsrc = SConscript('protomol/SConscript')
@@ -38,6 +33,16 @@ fah = int(env.get('fah', 0))
 use_lapack = int(env.get('lapack', 0))
 use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
+openmm_type = env.get('openmm')
+if( openmm_type == 'none' ):
+    use_openmm = 0
+else:
+    use_openmm = 1
+
+    if ( openmm_type == 'reference' ):
+        use_openmm_reference = 1
+    elif ( openmm_type == 'cuda' ):
+        use_openmm_cuda = 1
 
 # Configure compiler
 compiler_configure()
