@@ -7,6 +7,7 @@
 #include <protomol/topology/TopologyUtilities.h>
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/PMConstants.h>
+#include <protomol/base/Zap.h>
 
 using namespace std; 
 using namespace ProtoMol::Report;
@@ -24,7 +25,8 @@ OpenMMIntegrator::OpenMMIntegrator() :
 #if defined (HAVE_OPENMM)
     system = 0;
     bonds = 0;
-    angles = 0;
+    angles = 0;    
+    nonbonded = 0;
     integrator = 0;
     context = 0;
 #endif
@@ -33,19 +35,20 @@ OpenMMIntegrator::OpenMMIntegrator() :
 OpenMMIntegrator::
 OpenMMIntegrator(Real timestep, Real LangevinTemperature, Real gamma,
                           int seed,
-                          bool bond, bool angle, bool nonbonded,
+                          bool bond, bool angle, bool nonbond,
                           ForceGroup *overloadedForces) :
   STSIntegrator(timestep, overloadedForces),
   myLangevinTemperature(LangevinTemperature),
   myGamma(gamma / (1000 * Constant::INV_TIMEFACTOR)),
   // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
   mySeed(seed),
-  HarmonicBondForce(bond), HarmonicAngleForce(angle), NonbondedForce(nonbonded)
+  HarmonicBondForce(bond), HarmonicAngleForce(angle), NonbondedForce(nonbond)
   {
 #if defined (HAVE_OPENMM)
     system = 0;
     bonds = 0;
     angles = 0;
+    nonbonded = 0;
     integrator = 0;
     context = 0;
 #endif
@@ -53,12 +56,12 @@ OpenMMIntegrator(Real timestep, Real LangevinTemperature, Real gamma,
 
 OpenMMIntegrator::~OpenMMIntegrator() {
 #if defined (HAVE_OPENMM)
-  //if (context != 0) delete context;
-  //if (integrator != 0) delete integrator;
-  //if (nonbonded != 0) delete nonbonded;
-  //if (angles != 0) delete angles;
-  //if (bonds != 0) delete bonds;
-  //if (system != 0) delete system;
+  zap(context);
+  zap(integrator);
+  //zap(nonbonded);
+  //zap(angles);
+  zap(system);
+  //zap(bonds);
 #endif
 }
 

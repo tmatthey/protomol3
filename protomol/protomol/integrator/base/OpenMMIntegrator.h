@@ -33,7 +33,7 @@ namespace ProtoMol {
     OpenMMIntegrator();
     OpenMMIntegrator(Real timestep, Real LangevinTemperature,
                               Real gamma, int seed, 
-                              bool bond, bool angle, bool nonbonded,  //openMM forces
+                              bool bond, bool angle, bool nonbond,  //openMM forces
                               ForceGroup *overloadedForces);
     ~OpenMMIntegrator();
 
