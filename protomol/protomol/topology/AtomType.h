@@ -43,6 +43,9 @@ namespace ProtoMol {
     std::string symbolName; ///< The symbol untity name of this atom type.
     Real vdwR;              ///< The van del waals radius, used for implicit solvents
 
+    //LJ parameters for openMM and Amber force fields.
+    Real sigma, sigma14, epsilon, epsilon14;
+
     SCPISMAtomTypeParameters *mySCPISM_T;
   };
 }

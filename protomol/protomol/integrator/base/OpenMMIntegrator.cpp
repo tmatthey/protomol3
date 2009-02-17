@@ -137,6 +137,11 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   //print platform
   report << plain << "OpenMM platform is: '" << context->getPlatform().getName() << "'." << endr;
 
+#else
+
+  //print platform
+  report << plain << "OpenMM platform is not available." << endr;
+
 #endif
 
 }

@@ -505,6 +505,11 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
 
     //for implicit solvents we require the van der waals radius from the LJ params
     topo->atomTypes[i].vdwR = par.nonbondeds[bi].sigma;
+    //Require all parameters for Amber and OpenMM
+    topo->atomTypes[i].sigma = par.nonbondeds[bi].sigma;
+    topo->atomTypes[i].sigma14 = par.nonbondeds[bi].sigma14;
+    topo->atomTypes[i].epsilon = par.nonbondeds[bi].epsilon;
+    topo->atomTypes[i].epsilon14 = par.nonbondeds[bi].epsilon14;
 
     for (unsigned int j = i; j < sizeAtomTypes; j++) {
       int tj = 0;
