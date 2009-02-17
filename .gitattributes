@@ -830,6 +830,8 @@ protomol/protomol/integrator/base/LangevinLeapfrogIntegrator.cpp -text
 protomol/protomol/integrator/base/LangevinLeapfrogIntegrator.h -text
 protomol/protomol/integrator/base/NumericalDifferentiation.cpp -text
 protomol/protomol/integrator/base/NumericalDifferentiation.h -text
+protomol/protomol/integrator/base/OpenMMIntegrator.cpp -text
+protomol/protomol/integrator/base/OpenMMIntegrator.h -text
 protomol/protomol/integrator/base/RMTIntegrator.cpp -text
 protomol/protomol/integrator/base/RMTIntegrator.h -text
 protomol/protomol/integrator/base/SConscript -text
