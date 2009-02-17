@@ -14,7 +14,7 @@ namespace ProtoMol {
    * Random number generation
    * "Minimal" random number generator of Park and Miller with Bays-Durham shuffle and added
    * safeguards. Returns a uniform random deviate between 0.0 and 1.0 (exclusive of the endpoint
-   * values). Call with intermediate_rand a negative integer to initialize; thereafter, do not alter intermediate_rand between
+   * values). Do not alter intermediate_rand between
    * successive deviates in a sequence. LESS_THAN_ONE should approximate the largest floating value that is
    * less than 1.
    */
@@ -42,7 +42,7 @@ namespace ProtoMol {
   //  New methods of class Random
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    void seed( int seed );
+    void seed( unsigned int seed );
     double rand();
     friend ostream &operator<<(ostream &stream, Random ob);
     friend istream &operator>>(istream &stream, Random &ob);

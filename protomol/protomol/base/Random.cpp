@@ -21,7 +21,7 @@ Random::Random() {
   intermediate_rand = SEED_DEFAULT;
   //Initialize.
   if (intermediate_rand < 1) intermediate_rand = 1;  //Be sure to prevent intermediate_rand = 0.
-  for (j=SHUFFLE_LEN+7;j>=0;j--) {                   //Load the shuffe table (after 8 warm-ups).
+  for (j=SHUFFLE_LEN+7;j>=0;j--) {                   //Load the shuffle table (after 8 warm-ups).
     k = intermediate_rand / SCHRAGE_Q;
     intermediate_rand = MULTIPLIER * (intermediate_rand - k * SCHRAGE_Q) - SCHRAGE_R * k;
     if (intermediate_rand < 0) intermediate_rand += MUDULUS;
@@ -31,7 +31,7 @@ Random::Random() {
 
 }
 
-void Random::seed( int seed ) {
+void Random::seed( unsigned int seed ) {
   int j, k;
 
   shuffle_val = 0;
@@ -40,7 +40,7 @@ void Random::seed( int seed ) {
   if (intermediate_rand < 1) { intermediate_rand = 1;  //Be sure to prevent intermediate_rand = 0.
     report << plain << "Warning: Seed must not be less than unity!" << endr;
   }
-  for (j=SHUFFLE_LEN+7;j>=0;j--) {   //Load the shuffe table (after 8 warm-ups).
+  for (j=SHUFFLE_LEN+7;j>=0;j--) {   //Load the shuffle table (after 8 warm-ups).
     k = intermediate_rand / SCHRAGE_Q;
     intermediate_rand = MULTIPLIER * (intermediate_rand - k * SCHRAGE_Q) - SCHRAGE_R * k;
     if (intermediate_rand < 0) intermediate_rand += MUDULUS;
@@ -61,7 +61,7 @@ double Random::rand() {
   if(intermediate_rand < 0) intermediate_rand += MUDULUS;     //flows by Schrage's method.
   j = shuffle_val / SHUFFLE_DIVISOR;                          //Will be in the range 0..SHUFFLE_LEN-1.
   shuffle_val = shuffle_array[j];                             //Output previously stored value and refill the
-  shuffle_array[j] = intermediate_rand;                       //shuffe table.
+  shuffle_array[j] = intermediate_rand;                       //shuffle table.
 
   if ((temp = INVERSE_MODULUS*shuffle_val) > LESS_THAN_ONE) 
     return LESS_THAN_ONE;   //Users expect (0,1)
