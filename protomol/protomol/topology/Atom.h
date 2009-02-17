@@ -11,6 +11,14 @@ namespace ProtoMol {
 
   struct SCPISMAtomParameters {
     SCPISMAtomParameters() {}
+
+    //Pre force initialization
+    void preForce(){
+      bornRadius = zeta;
+      energySum = true;
+      D_s = 0.0;
+    }
+
     Real sqrtalphaSCPISM;
 
     ///< For SCPISM calculations

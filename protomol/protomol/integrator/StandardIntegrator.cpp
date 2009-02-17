@@ -42,11 +42,8 @@ void StandardIntegrator::calculateForces() {
 
   //SCPISM pre-force initialize
   if(app->topology->doSCPISM){
-    for(unsigned int i=0;i<app->topology->atoms.size();i++){
-      app->topology->atoms[i].mySCPISM_A->bornRadius = app->topology->atoms[i].mySCPISM_A->zeta;
-      app->topology->atoms[i].mySCPISM_A->energySum = true;
-      app->topology->atoms[i].mySCPISM_A->D_s = 0.0;
-    }
+    for(unsigned int i=0;i<app->topology->atoms.size();i++)
+        app->topology->atoms[i].mySCPISM_A->preForce();
   }
 
   preForceModify();
