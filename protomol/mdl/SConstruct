@@ -90,7 +90,6 @@ else:
    pmhome=pwd+'/../'
 execfile(pmhome+'/compiler.py')
 
-
 # Command Line Options
 opts = Options(pmhome+'/options.py')
 Export('opts')
@@ -150,6 +149,7 @@ if not env.GetOption('clean'):
     os.chdir(pmhome)
     execfile(pmhome+'/package_h.py')
     execfile(pmhome+'/config.py')
+    execfile(pmhome+'/configfah.py')
 
     if (have_bzip2 and have_boost_iostreams and have_libfah):
       env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
