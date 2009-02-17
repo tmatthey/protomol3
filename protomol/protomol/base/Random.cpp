@@ -38,7 +38,7 @@ void Random::seed( int seed ) {
   intermediate_rand = seed;
   //Initialize.
   if (intermediate_rand < 1) { intermediate_rand = 1;  //Be sure to prevent intermediate_rand = 0.
-    //report << plain << "Warning: Seed must not be less than unity!" << endr;
+    report << plain << "Warning: Seed must not be less than unity!" << endr;
   }
   for (j=SHUFFLE_LEN+7;j>=0;j--) {   //Load the shuffe table (after 8 warm-ups).
     k = intermediate_rand / SCHRAGE_Q;
