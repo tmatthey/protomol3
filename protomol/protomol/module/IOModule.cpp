@@ -3,6 +3,7 @@
 #include <protomol/io/PosVelReader.h>
 #include <protomol/io/PSFReader.h>
 #include <protomol/io/PARReader.h>
+#include <protomol/io/AMBERReader.h>
 
 #include <protomol/config/Configuration.h>
 #include <protomol/base/Exception.h>
@@ -27,7 +28,7 @@ defineInputValueWithAliases(InputPAR, "parfile", ("parameters"));
 defineInputValue(InputPDBScaling, "pdbScaling");
 defineInputValue(InputDihedralMultPSF, "dihedralMultPSF");
 defineInputValue(InputSCPISM, "scpismfile");
-
+defineInputValue(InputAMBER, "amberfile");
 
 void IOModule::init(ProtoMolApp *app) {
   Configuration *config = &app->config;
@@ -107,40 +108,56 @@ void IOModule::read(ProtoMolApp *app) {
 
   } else THROW("Neither temperature nor velocity file specified.");
 
-  // PSF
-  PSFReader psfReader;
-  if (!psfReader.open(config[InputPSF::keyword]))
-    THROW(string("Can't open PSF file '") +
-      config[InputPSF::keyword].getString() + "'.");
+  //AMBER input files
+  if (config.valid(InputAMBER::keyword)) {
+    //AMBER
+    AMBERReader amberReader;
 
-  if (!(psfReader >> app->psf))
-    THROW(string("Could not parse PSF file '") +
-      config[InputPSF::keyword].getString() + "'.");
+    if (!amberReader.open(config[InputAMBER::keyword]))
+      THROW(string("Can't open AMBER file '") +
+        config[InputAMBER::keyword].getString() + "'.");
 
-  report << plain << "Using PSF file '" << config[InputPSF::keyword]
-         << "' (" << app->psf.atoms.size() << ")." << endr;
+    if (!( amberReader.read(app->psf,app->par) ))
+      THROW(string("Could not parse AMBER file '") +
+        config[InputAMBER::keyword].getString() + "'.");
 
-  // PAR
-  PARReader parReader;
-  if (!parReader.open(config[InputPAR::keyword]))
-    THROW(string("Can't open PAR file '") +
-      config[InputPAR::keyword].getString() + "'.");
+  } else {
+    // PSF
+    PSFReader psfReader;
+    if (!psfReader.open(config[InputPSF::keyword]))
+      THROW(string("Can't open PSF file '") +
+        config[InputPSF::keyword].getString() + "'.");
 
-  if (!(parReader >> app->par))
-    THROW(string("Could not parse PAR file '") +
-      config[InputPAR::keyword].getString() + "'.");
+    if (!(psfReader >> app->psf))
+      THROW(string("Could not parse PSF file '") +
+        config[InputPSF::keyword].getString() + "'.");
 
-  report << plain << "Using PAR file '" << config[InputPAR::keyword]
-         << "', " << (parReader.getCharmmTypeDetected() != PAR::CHARMM28 ?
-                      "old" : "new") << " charmm force field.";
+    report << plain << "Using PSF file '" << config[InputPSF::keyword]
+           << "' (" << app->psf.atoms.size() << ")." << endr;
 
-  if (!config[InputDihedralMultPSF::keyword].valid())
-    config[InputDihedralMultPSF::keyword] =
-      (parReader.getCharmmTypeDetected() != PAR::CHARMM28);
+    // PAR
+    PARReader parReader;
+    if (!parReader.open(config[InputPAR::keyword]))
+      THROW(string("Can't open PAR file '") +
+        config[InputPAR::keyword].getString() + "'.");
 
-  if (config[InputDihedralMultPSF::keyword])
-    report << " Dihedral multiplictity defined by PSF.";
-  report << endr;
+    if (!(parReader >> app->par))
+      THROW(string("Could not parse PAR file '") +
+        config[InputPAR::keyword].getString() + "'.");
+
+    report << plain << "Using PAR file '" << config[InputPAR::keyword]
+           << "', " << (parReader.getCharmmTypeDetected() != PAR::CHARMM28 ?
+                        "old" : "new") << " charmm force field.";
+
+    if (!config[InputDihedralMultPSF::keyword].valid())
+      config[InputDihedralMultPSF::keyword] =
+        (parReader.getCharmmTypeDetected() != PAR::CHARMM28);
+
+    if (config[InputDihedralMultPSF::keyword])
+      report << " Dihedral multiplictity defined by PSF.";
+    report << endr;
+
+  }
 
   //SCPISM
   if (config.valid(InputSCPISM::keyword)) {

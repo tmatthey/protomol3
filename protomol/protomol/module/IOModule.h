@@ -13,6 +13,7 @@ namespace ProtoMol {
   declareInputValue(InputVelocities, STRING, NOTEMPTY);
   declareInputValue(InputPSF, STRING, NOTEMPTY);
   declareInputValue(InputPAR, STRING, NOTEMPTY);
+  declareInputValue(InputAMBER, STRING, NOTEMPTY);
   declareInputValue(InputPDBScaling, BOOL, NOCONSTRAINTS);
   declareInputValue(InputDihedralMultPSF, BOOL, NOCONSTRAINTS);
   declareInputValue(InputSCPISM, STRING, NOTEMPTY);
