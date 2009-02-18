@@ -177,7 +177,7 @@ namespace ProtoMol
   {
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
     // Transpose Q, LAPACK checks only first character N/V
-    const char *transA = "N";
+    char *transA = "N";
 
     //sizes
     int m = _3N; int n = _rfM; int incxy = 1;
