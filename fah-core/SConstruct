@@ -1,10 +1,12 @@
 import os
 
+execfile('../protomol/boost.py')
+
 opts = Options('options.py')
 opts.AddOptions( BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0) )
 
 env = Environment(options = opts, ENV = os.environ)
-conf = Configure(env)
+conf = Configure(env, custom_tests = {'BoostVersion' : boost_check_version})
 
 if env['CC'] == 'cl':
   env.Append(CCFLAGS = '/TP /EHsc /Zp') # C++ mode
