@@ -122,6 +122,9 @@ void IOModule::read(ProtoMolApp *app) {
       THROW(string("Could not parse AMBER file '") +
         config[InputAMBER::keyword].getString() + "'.");
 
+    report << plain << "Using AMBER file '" << config[InputAMBER::keyword]
+           << "' (" << app->psf.atoms.size() << ")." << endr;
+
   } else {
     // PSF
     PSFReader psfReader;
