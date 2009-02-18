@@ -1,6 +1,7 @@
 import os, sys
 
 execfile('compiler.py')
+execfile('boost.py')
 
 # Command Line Options
 opts = Options('options.py')
@@ -21,7 +22,7 @@ env = Environment(options = opts, ENV = os.environ)
 Export('env')
  
 # Configure
-conf = Configure(env)
+conf = Configure(env, custom_tests = {'BoostVersion' : boost_check_version})
 Export('conf')
 
 # Import subdir build files

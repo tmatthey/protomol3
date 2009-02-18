@@ -408,6 +408,7 @@ protomol-test/src/DataComparator.cpp -text
 protomol-test/src/DataComparator.h -text
 protomol-test/testHarness -text
 protomol/SConstruct -text
+protomol/boost.py -text
 protomol/compiler.py -text
 protomol/config.py -text
 protomol/configfah.py -text

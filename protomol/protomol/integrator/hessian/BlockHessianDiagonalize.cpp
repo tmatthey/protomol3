@@ -204,8 +204,8 @@ namespace ProtoMol {
       tempM.product(blockEigVect[ii+1], innerDiag); //Aaa^{T}HAbb
       if(SYMHESS){
         //Dont need this except for symmetric Hessians
-        for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
-          for(int kk=(blockEigVect[ii+1]).ColumnStart;kk<(blockEigVect[ii+1]).Columns+(blockEigVect[ii+1]).ColumnStart;kk++)
+        for(unsigned jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
+          for(unsigned kk=(blockEigVect[ii+1]).ColumnStart;kk<(blockEigVect[ii+1]).Columns+(blockEigVect[ii+1]).ColumnStart;kk++)
              innerDiag(kk,jj) = innerDiag(jj,kk);
       }
     }
@@ -218,8 +218,8 @@ namespace ProtoMol {
       tempM.product(blockEigVect[ar1], innerDiag); //Aaa^{T}HAbb
       if(SYMHESS){
         //Dont need this except for symmetric Hessians
-        for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
-          for(int kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
+        for(unsigned jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
+          for(unsigned kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
             innerDiag(kk,jj) = innerDiag(jj,kk);
       }
     }
@@ -232,8 +232,8 @@ namespace ProtoMol {
       tempM.sumProduct(blockEigVect[ar1], innerDiag); //Aaa^{T}HAbb
       if(SYMHESS){
         //Dont need this except for symmetric Hessians
-        for(int jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
-          for(int kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
+        for(unsigned jj=tempM.RowStart;jj<tempM.Rows+tempM.RowStart;jj++)
+          for(unsigned kk=(blockEigVect[ar1]).ColumnStart;kk<(blockEigVect[ar1]).Columns+(blockEigVect[ar1]).ColumnStart;kk++)
             innerDiag(kk,jj) = innerDiag(jj,kk);
       }
     }
@@ -306,7 +306,7 @@ namespace ProtoMol {
     }
     //use target number of block eigenvectors?
     if(blockVprec && 
-            (bHess_num_blks * blockVectorCols) < blocVectCol.size()){ 
+       (unsigned)(bHess_num_blks * blockVectorCols) < blocVectCol.size()){ 
       sort( blocVectCol.begin(), blocVectCol.end() ); //sort
       Real newEigThr = blocVectCol[bHess_num_blks * blockVectorCols];
       residues_total_eigs = 0;

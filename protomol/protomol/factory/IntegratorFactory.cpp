@@ -143,14 +143,16 @@ Integrator *IntegratorFactory::make(const string &definition,
 
     if (dynamic_cast<const StandardIntegrator *>(prototype)) {
       if (!((i == 0 && dynamic_cast<const STSIntegrator *>(prototype)) ||
-            i > 0 && dynamic_cast<const MTSIntegrator *>(prototype))) {
+            (i > 0 && dynamic_cast<const MTSIntegrator *>(prototype)))) {
 
         if (i > 0)
           err += "\nIntegrator " + toString(prototype->getId()) +
-            " at level " + toString(i) + " is a STS integrator, expected MTS.";
+            " at level " + toString(i) +
+            " is a STS integrator, expected MTS.";
         else
           err += "\nIntegrator " + toString(prototype->getId()) +
-            " at level " + toString(i) + " is a MTS integrator, expected STS.";
+            " at level " + toString(i) +
+            " is a MTS integrator, expected STS.";
       }
 
     } else if (dynamic_cast<const NonStandardIntegrator *>(prototype)) {

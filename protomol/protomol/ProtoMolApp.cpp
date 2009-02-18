@@ -38,8 +38,8 @@ using namespace ProtoMol::Report;
 using namespace ProtoMol::Constant;
 
 ProtoMolApp::ProtoMolApp(ModuleManager *modManager) :
-  modManager(modManager), cmdLine(&config), outputs(0), integrator(0),
-  topology(0), SCPISMParameters(0) {
+  modManager(modManager), SCPISMParameters(0), cmdLine(&config), outputs(0),
+  integrator(0), topology(0) {
   modManager->init(this);
 
   topologyFactory.registerAllExemplarsConfiguration(&config);

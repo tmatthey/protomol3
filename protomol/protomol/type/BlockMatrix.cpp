@@ -17,7 +17,8 @@ namespace ProtoMol
 
   // Constructors/distructors~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   BlockMatrix::BlockMatrix() :
-      RowStart ( 0 ), ColumnStart ( 0 ), Rows ( 0 ), Columns ( 0 ), arraySize( 0 )
+      RowStart ( 0 ), Rows ( 0 ), ColumnStart ( 0 ), Columns ( 0 ),
+      arraySize( 0 )
   {
   }
 
@@ -450,7 +451,8 @@ namespace ProtoMol
   // Operators~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // Double Index access
-  double & BlockMatrix::operator()( int rowIndex, int colIndex )
+  double & BlockMatrix::operator()(unsigned int rowIndex,
+                                   unsigned int colIndex )
   {
     if ( rowIndex < RowStart || rowIndex > RowStart + Rows || colIndex < ColumnStart || colIndex > ColumnStart + Columns ) {
       Report::report << Report::error << "[BlockMatrix::operator(,)] Index out of range." << Report::endr;
@@ -460,7 +462,7 @@ namespace ProtoMol
   }
 
   // Index access
-  double & BlockMatrix::operator[]( int index )
+  double & BlockMatrix::operator[](unsigned int index )
   {
     if ( index < 0 || index > arraySize ) {
       Report::report << Report::error << "[BlockMatrix::operator[]] Index out of range." << Report::endr;

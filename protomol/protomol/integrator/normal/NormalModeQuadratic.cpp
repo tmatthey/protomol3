@@ -93,7 +93,8 @@ namespace ProtoMol
       report << error << "No Eigenvectors for NormalMode integrator." << endr;
     }
 
-    if ( app->eigenInfo.myEigenvalues.size() * 3 < firstMode + numMode - 1 ){
+    if ( app->eigenInfo.myEigenvalues.size() * 3 <
+         (unsigned)firstMode + numMode - 1 ){
       report << error << "Insufficient Eigenvalues for Quadratic integrator (" << app->eigenInfo.myEigenvalues.size() * 3 << "." << endr;
     }
 
@@ -174,14 +175,16 @@ namespace ProtoMol
   //Project from subspace to 3D space
   Vector3DBlock* NormalModeQuadratic::subspaceProj( double *tmpC, Vector3DBlock * iPos )
   {
+#if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
     // Transpose Q, LAPACK checks only first character N/V
-    char *transA = "N";
+    const char *transA = "N";
 
     //sizes
     int m = _3N; int n = _rfM; int incxy = 1;
 
     //multiplyers, see Blas docs.
     double alpha = 1.0; double beta = 0.0;
+#endif
 
 #if defined(HAVE_LAPACK)
     dgemv_ ( transA, &m, &n, &alpha, ( *Q ), &m, tmpC, &incxy, &beta, iPos->c, &incxy );

@@ -56,7 +56,7 @@ bool PDBWriter::write(const Vector3DBlock &coords,
     const PDB::Atom &a(atoms[i]);
     const Vector3D &c(coords[i]);
     string resSeq = toString(a.residueNum);
-    if (a.residueNum >= 10000)
+    if (a.residueNum >= 10000) {
       if (a.residueNum < 36000) {
         resSeq = string(1, 'A' + (a.residueNum - 10000) / 1000) + string(
           toString(a.residueNum % 1000));
@@ -65,6 +65,7 @@ bool PDBWriter::write(const Vector3DBlock &coords,
         ++toBig;
         resSeq = "-1";
       }
+    }
     line.replace(PDB::Atom::S_RECORD_NAME, PDB::Atom::L_RECORD_NAME,
                  getRightFill(a.elementType,
                               PDB::Atom::L_RECORD_NAME));
@@ -119,7 +120,7 @@ bool PDBWriter::write(const Vector3DBlock &coords,
       string line(80, ' ');
       const PDB::Ter &t(ters[tersMap[a.elementNum]]);
       string resSeq = toString(t.residueNum);
-      if (t.residueNum >= 10000)
+      if (t.residueNum >= 10000) {
         if (t.residueNum < 36000) {
           resSeq = string(1, 'A' + (t.residueNum - 10000) / 1000) + string(
             toString(t.residueNum % 1000));
@@ -128,6 +129,7 @@ bool PDBWriter::write(const Vector3DBlock &coords,
           ++toBig;
           resSeq = "-1";
         }
+      }
       line.replace(PDB::Ter::S_RECORD_NAME, PDB::Ter::L_RECORD_NAME,
                    getRightFill(t.elementType,
                                 PDB::Ter::L_RECORD_NAME));

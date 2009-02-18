@@ -33,14 +33,15 @@ Real CnSwitchingFunction::d2swcoef[][MAXEQNN] = {
 //  --------------------------------------------------------------------  //
 
 CnSwitchingFunction::CnSwitchingFunction() :
-  mySwitchon(-1.0), myCutoff(0.0), myOrder(0.0), mySwitchoff(0.0) {}
+  mySwitchon(-1), mySwitchon2(0), myCutoff(0), myCutoff2(0), myOrder(0.0),
+  mySwitchoff(0), ordInt(0), ordIdx(0) {}
 
 //  --------------------------------------------------------------------  //
 
 CnSwitchingFunction::CnSwitchingFunction(Real order, Real switchon, 
                                           Real switchoff, Real cutoff) :
-  myOrder(order), mySwitchon(switchon), mySwitchon2(switchon * switchon),
-  mySwitchoff(switchoff) {
+  mySwitchon(switchon), mySwitchon2(switchon * switchon), 
+  myCutoff(0), myCutoff2(0), myOrder(order), mySwitchoff(switchoff) {
 
   if (switchoff) myCutoff = switchoff;           //use switchoff if defined
   else myCutoff = cutoff;

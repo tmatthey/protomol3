@@ -738,7 +738,7 @@ namespace ProtoMol {
             for (unsigned int k = 0; k < mybonds3.size(); k++) {
               PairIntSorted s2(topology->bonds[mybonds3[k]].atom1,
                                topology->bonds[mybonds3[k]].atom2);
-              if (p2 == s2)
+              if (p2 == s2) {
                 if (b1 > -1 || b2 > -1)
                   report << warning << "Found already two bonds (" << b1 <<
                   "," << b2 << ") for angle " << i << "." << endr;
@@ -746,6 +746,7 @@ namespace ProtoMol {
                   b1 = mybonds1[j];
                   b2 = mybonds3[k];
                 }
+              }
             }
 
         }
@@ -788,7 +789,7 @@ namespace ProtoMol {
 
       if (!((atom1 == inAtomID &&
              atom2 == outAtomID) || (atom1 == outAtomID && atom2 == inAtomID)))
-        if (atom1 == atomID)
+        if (atom1 == atomID) {
           if (atomSet->find(atom2) == atomSet->end())
             getAtomsBondedtoDihedral(topology,
               atomSet, atom2, inAtomID, outAtomID, exclAtomID);
@@ -796,6 +797,7 @@ namespace ProtoMol {
           if (atomSet->find(atom1) == atomSet->end())
             getAtomsBondedtoDihedral(topology,
               atomSet, atom1, inAtomID, outAtomID, exclAtomID);
+        }
     }
   }
 

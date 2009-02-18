@@ -92,7 +92,7 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
         removeBeginEndBlanks(record.substr(PDB::Atom::S_RES_SEQ,
             PDB::Atom::L_RES_SEQ));
       int resSeq = toInt(str);
-      if (!isInt(str))
+      if (!isInt(str)) {
         if (str.size() == 4 &&
             isInt(string(&str[1],
                 &str[4])) && str[0] >= 'A' && str[0] <= 'Z') {
@@ -103,6 +103,7 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
           resSeq = -1;
           ++toBig;
         }
+      }
 
       atoms.push_back(PDB::Atom(removeBeginEndBlanks(record.substr(PDB::Atom::
                 S_RECORD_NAME, PDB::Atom::L_RECORD_NAME)),
@@ -119,7 +120,8 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
           removeBeginEndBlanks(record.substr(PDB::Atom::S_I_CODE,
               PDB::Atom::L_I_CODE)),
           toReal(record.substr(PDB::Atom::S_OCCUP, PDB::Atom::L_OCCUP)),
-          toReal(record.substr(PDB::Atom::S_TEMP_FACT, PDB::Atom::L_TEMP_FACT)),
+          toReal(record.substr(PDB::Atom::S_TEMP_FACT,
+                               PDB::Atom::L_TEMP_FACT)),
           removeBeginEndBlanks(record.substr(PDB::Atom::S_SEG_ID,
               PDB::Atom::L_SEG_ID)),
           removeBeginEndBlanks(record.substr(PDB::Atom::S_ELEMENT_SYMBOL,
@@ -137,7 +139,7 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
         removeBeginEndBlanks(record.substr(PDB::Ter::S_RES_SEQ,
             PDB::Ter::L_RES_SEQ));
       int resSeq = toInt(str);
-      if (!isInt(str))
+      if (!isInt(str)) {
         if (str.size() == 4 &&
             isInt(string(&str[1],
                 &str[4])) && str[0] >= 'A' && str[0] <= 'Z') {
@@ -148,6 +150,7 @@ bool PDBReader::read(Vector3DBlock &coords, vector<PDB::Atom> &atoms,
           resSeq = -1;
           ++toBig;
         }
+      }
 
       ters.push_back(PDB::Ter(removeBeginEndBlanks(record.substr(PDB::Ter::
                 S_RECORD_NAME, PDB::Ter::L_RECORD_NAME)),

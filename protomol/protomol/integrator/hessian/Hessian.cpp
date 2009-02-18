@@ -278,12 +278,10 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
 void Hessian::evaluate(const Vector3DBlock *myPositions,
                        GenericTopology *myTopo,
                        bool mrw) {
-  int a1, a2, a3, eye, jay;
-  Real tempf, ms1, ms2, ms3;
+  int a1, a2, a3;
   unsigned int i;
   ReducedHessAngle rh;
   Matrix3By3 rha;
-  ExclusionClass ec;
 
   sz = 3 * myPositions->size();
   //Impropers
@@ -461,7 +459,7 @@ Matrix3By3 Hessian::evaluatePairsMatrix(int i, int j, int pairType, const Vector
   ReducedHessLennardJones rHessLj;
   LennardJonesForce hForceLj;
   //SCP
-  Real alpha_ij;
+  Real alpha_ij = 0;
   //Switches
   Real pCutoff, pSwitchon, pSwitch, pOrder, pSwitchoff; 
 
@@ -603,7 +601,6 @@ void Hessian::evaluateBornRadii(const Vector3DBlock *myPositions,
 
   unsigned int atoms_size = myTopo->atoms.size();
   BornRadii br;
-  ReducedHessBornSelf rHessBS;  
   Matrix3By3 rha(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
   //SCPISM pre-calculate initialize
@@ -644,8 +641,6 @@ Matrix3By3 Hessian::evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPo
           myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
     Real a = rij.normSquared();
     if(a < BORNCUTOFF2){ //within cutoff of 5A?      
-      Real rA = 1.0 / a;
-      Real rawE = 0.0, rawF = 0.0;
       rha = rHessBS(a, rij, myTopo, i, j, myBornSwitch, myDielecConst, ec);  //find Hessian
     }
   }

@@ -50,10 +50,10 @@ namespace ProtoMol
       void blockMove( unsigned int newRowStart, unsigned int newColumnStart );
 
       // Double Index access
-      double &operator()( int rowIndex, int colIndex );
+      double &operator()(unsigned int rowIndex, unsigned int colIndex );
 
       // Index access
-      double &operator[]( int index );
+      double &operator[](unsigned int index );
 
       // Equals
       BlockMatrix &operator=( const BlockMatrix &bm );

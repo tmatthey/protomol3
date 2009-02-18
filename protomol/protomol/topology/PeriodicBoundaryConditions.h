@@ -37,7 +37,7 @@ namespace ProtoMol {
     Vector3D minimalDifference(const Vector3D &c1, const Vector3D &c2) const {
       Vector3D diff(c2);
       diff -= c1;
-      if (myOrthogonal)
+      if (myOrthogonal) {
         if (diff.normSquared() > myD) {
           // diff not small engouh, we do have to do more ...
           // ... may be it's just a single wrapping
@@ -60,7 +60,7 @@ namespace ProtoMol {
             diff.c[2] -= myE3.c[2] * rint(myE3r.c[2] * diff.c[2]);
           }
         }
-      else
+      } else
         // ... really difficult!
         diff -=
           Vector3D(myE1 * rint(myE1r.dot(diff)) + myE2 * rint(myE2r.dot(

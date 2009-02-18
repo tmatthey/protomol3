@@ -182,12 +182,13 @@ void Process::parseArgs(char *args, int &argc, char *argv[], int n) {
       case ' ':
       case '\n':
       case '\r':
-        if (inArg)
+        if (inArg) {
           if (inSQuote || inDQuote) addChar = true;
           else {
             args[i++] = 0;
             inArg = false;
           }
+        }
         break;
 
       default: addChar = true;

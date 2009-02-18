@@ -460,7 +460,8 @@ namespace ProtoMol {
       if (wildcard[pos] == '*') {
         int ok = 0;
         for (unsigned int i = pos; i <= name.size(); i++)
-          if (equalWildcard(string(wildcard.begin() + pos + 1, wildcard.end()),
+          if (equalWildcard(string(wildcard.begin() + pos + 1,
+                                   wildcard.end()),
                 string(name.begin() + i, name.end())) > 0)
             ok = 1;
 
@@ -476,7 +477,8 @@ namespace ProtoMol {
       else if (wildcard[pos] == '#') {
         int ok = 0;
         for (unsigned int i = pos; i <= name.size(); i++) {
-          if (equalWildcard(string(wildcard.begin() + pos + 1, wildcard.end()),
+          if (equalWildcard(string(wildcard.begin() + pos + 1,
+                                   wildcard.end()),
                 string(name.begin() + i, name.end())) > 0)
             ok = 1;
           if (i < name.size() && !isdigit(name[i]))
@@ -484,13 +486,13 @@ namespace ProtoMol {
         }
 
         return ok;
-      } else if (wildcard[pos] == '+')
+      } else if (wildcard[pos] == '+') {
         if (pos < name.size() && isdigit(name[pos]) &&
             equalWildcard(string(wildcard.begin() + pos + 1, wildcard.end()),
               string(name.begin() + pos + 1, name.end())) > 0)
           return 1;
-        else
-          return 0;
+        else return 0;
+      }
     }
     return 0;
   }

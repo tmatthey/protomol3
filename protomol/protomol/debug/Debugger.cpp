@@ -99,7 +99,9 @@ bool Debugger::_getStackTrace(trace_t &trace) {
     // Run gdb commands
     string debugCmd =
       string("set width ") + String(BUF_SIZE - 1) + "\nwhere\nquit\n";
-    write(inPipe->getInFD(), debugCmd.c_str(), debugCmd.length());
+    ssize_t size =
+      write(inPipe->getInFD(), debugCmd.c_str(), debugCmd.length());
+    size = size;
 
     // Execute debugger process
     debugProc.exec((char **)argv);

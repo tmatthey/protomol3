@@ -71,9 +71,9 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
   //openMM
 
+#if defined (HAVE_OPENMM)
   unsigned int sz = app->positions.size();
 
-#if defined (HAVE_OPENMM)
 
   system = new OpenMM::System(sz, 0);
   for (int i = 0; i < sz; ++i)
@@ -150,20 +150,20 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 }
 
 void OpenMMIntegrator::run(int numTimesteps) {
-  unsigned int sz = app->positions.size();
 
   preStepModify();
 
 #if defined (HAVE_OPENMM)
+  unsigned int sz = app->positions.size();
 
   // do integration
   integrator->step(numTimesteps);
 
   // Retrive data
   const OpenMM::State state = context->getState(OpenMM::State::Positions | 
-                                                  OpenMM::State::Velocities |
-                                                    OpenMM::State::Forces |
-                                                      OpenMM::State::Energy);
+                                                OpenMM::State::Velocities |
+                                                OpenMM::State::Forces |
+                                                OpenMM::State::Energy);
   openMMpositions = state.getPositions();
   openMMvelocities = state.getVelocities();
   openMMforces = state.getForces();

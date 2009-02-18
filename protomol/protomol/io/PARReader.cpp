@@ -103,8 +103,8 @@ bool PARReader::read(PAR &par) {
     if (!str.empty() && str[0] == '*')
       continue;
 
-    if (find(str.begin(), str.end(),
-          '}') == str.end() && find(str.begin(), str.end(), '{') == str.end())
+    if (find(str.begin(), str.end(), '}') == str.end() &&
+        find(str.begin(), str.end(), '{') == str.end()) {
       if (comment > 0)
         continue;
       else {
@@ -137,6 +137,7 @@ bool PARReader::read(PAR &par) {
 
         str = tmp;
       }
+    }
 
     // Remove ! comments
     str.resize(find(str.begin(), str.end(), '!') - str.begin());
@@ -171,7 +172,7 @@ bool PARReader::read(PAR &par) {
       // Statistics for format selection
       if (numbers.size() == 1 && isKeywordCharmm28(data[0]))
         ++charmm28;
-      else if (numbers.size() > 1 && isKeywordCharmm19(data[0]) ||
+      else if ((numbers.size() > 1 && isKeywordCharmm19(data[0])) ||
                find(numbers.begin(), numbers.end(), 'w') == numbers.end())
         ++charmm19;
       else if (numbers.size() > 1 && !isKeywordCharmm19(data[0]) &&

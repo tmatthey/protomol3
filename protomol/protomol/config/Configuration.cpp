@@ -19,7 +19,7 @@ void Configuration::registerKeyword(const string &keyword, Value value) {
     myValues[keyword] = value;
   } else if (myAliases.end() == myAliases.find(keyword))
     myValues[keyword] = value;
-
+  
   else
     report << hint << "[Configuration::registerKeyword] keyword \'"
            << keyword << "\' already used for alias \'"
@@ -29,15 +29,15 @@ void Configuration::registerKeyword(const string &keyword, Value value) {
 void Configuration::registerAliases(const string &keyword,
                                     const vector<string> &aliases) {
   for (unsigned int i = 0; i < aliases.size(); ++i)
-    if (!aliases[i].empty() && !keyword.empty())
+    if (!aliases[i].empty() && !keyword.empty()) {
       if (myAliases.end() == myAliases.find(aliases[i]))
         myAliases[aliases[i]] = keyword;
 
-      else
-      if (!equalNocase(myAliases[aliases[i]], keyword))
+      else if (!equalNocase(myAliases[aliases[i]], keyword))
         report << hint << "[Configuration::registerAliases] alias \'"
                << aliases[i] << "\' already used for \'" <<
-        myAliases[aliases[i]] << "\'." << endr;
+          myAliases[aliases[i]] << "\'." << endr;
+    }
 }
 
 void Configuration::unregisterKeyword(const string &keyword) {

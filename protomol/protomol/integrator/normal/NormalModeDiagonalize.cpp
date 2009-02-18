@@ -32,18 +32,24 @@ namespace ProtoMol
 
   const string NormalModeDiagonalize::keyword( "NormalModeDiagonalize" );
 
-  NormalModeDiagonalize::NormalModeDiagonalize() : MTSIntegrator(), NormalModeUtilities(), eigAlloc( false ), hessianCounter( 0 ), rediagCounter( 0 )
-  {
+  NormalModeDiagonalize::NormalModeDiagonalize() :
+	 MTSIntegrator(), NormalModeUtilities(), eigAlloc( false ),
+	 hessianCounter( 0 ), rediagCounter( 0 ) {
     eigAlloc = false;
   }
 
-  NormalModeDiagonalize::NormalModeDiagonalize( int cycles, int redi,  bool fDiag, bool rRand,
-      Real redhy, Real eTh, int bvc, int rpb, Real dTh,
-      ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator )
-      : MTSIntegrator( cycles, overloadedForces, nextIntegrator ), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0 ), eigAlloc( false ), fullDiag( fDiag ), removeRand( rRand ),
-      rediagCount( redi ), rediagHysteresis( redhy ),
-      hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ), blockVectorCols( bvc ), residuesPerBlock( rpb ), blockCutoffDistance( dTh )   //
-  {
+  NormalModeDiagonalize::
+  NormalModeDiagonalize(int cycles, int redi, bool fDiag, bool rRand,
+                        Real redhy, Real eTh, int bvc, int rpb, Real dTh,
+                        ForceGroup *overloadedForces,
+                        StandardIntegrator *nextIntegrator ) :
+    MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
+    NormalModeUtilities( 1, 1, 91.0, 1234, 300.0 ),
+    eigAlloc( false ), fullDiag( fDiag ), removeRand( rRand ),
+    rediagCount( redi ), rediagHysteresis( redhy ),
+    hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
+    blockCutoffDistance( dTh ), blockVectorCols( bvc ),
+    residuesPerBlock( rpb ) {
     eigAlloc = false;
 
     //find forces and parameters

@@ -244,8 +244,7 @@ void BlockHessian::initialResidueData(const GenericTopology *myTopo, int res_per
 void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
                        const GenericTopology *myTopo,
                        bool simuMin) {
-  int a1, a2, a3, eye, jay;
-  Real tempf, ms1, ms2, ms3;
+  int a1, a2, a3;
   unsigned int i;
   ReducedHessAngle rh;
   Matrix3By3 rha;
@@ -256,7 +255,7 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
   //Impropers
   if (myImproper) {
     HessDihedral hi;        //create improper hessian    
-    int impropers_size = myTopo->impropers.size();
+    unsigned int impropers_size = myTopo->impropers.size();
     for (unsigned int i = 0; i < impropers_size; i++) {
       bool nonZForce = false;       //test for force constants
       for (int j = 0; j < myTopo->impropers[i].multiplicity; j++)
@@ -303,7 +302,7 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
   //Dihedrals
   if (myDihedral) {
     HessDihedral hd;        //create dihedral hessian    
-    int dihedrals_size = myTopo->dihedrals.size();
+    unsigned int dihedrals_size = myTopo->dihedrals.size();
     for (unsigned int i = 0; i < dihedrals_size; i++) {
       bool nonZForce = false;       //test for force constants
       for (int j = 0; j < myTopo->dihedrals[i].multiplicity; j++)
@@ -368,7 +367,7 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
 
   //Bonds
   if (myBond){    
-    int bonds_size = myTopo->bonds.size();
+    unsigned int bonds_size = myTopo->bonds.size();
     for (i = 0; i < bonds_size; i++) {
       a1 = myTopo->bonds[i].atom1; a2 = myTopo->bonds[i].atom2;
       //test all in same block
@@ -400,7 +399,7 @@ void BlockHessian::evaluateResidues(const Vector3DBlock *myPositions,
 
   //Angles
   if (myAngle){    
-    int angles_size = myTopo->angles.size();
+    unsigned int angles_size = myTopo->angles.size();
     for (i = 0; i < angles_size; i++) {
       a1 = myTopo->angles[i].atom1;
       a2 = myTopo->angles[i].atom2;
@@ -621,7 +620,7 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
     }
   }
   
-  int _N = myTopo->atoms.size();
+  unsigned int _N = myTopo->atoms.size();
   //Pairwise intra block or adjacent
   //Pre-calculate Born radii if Self energy Hessian required
   if(myBornRadii && myBornSelf && myTopo->doSCPISM)
@@ -741,7 +740,7 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
 void BlockHessian::outputTorsions(const std::vector<Torsion> &torsions, const Vector3DBlock &myPositions){    
   
   HessDihedral hi;        //create improper hessian
-  int torsions_size = torsions.size();
+  unsigned int torsions_size = torsions.size();
   for (unsigned int i = 0; i < torsions_size; i++) {
     bool nonZForce = false;       //test for force constants
     for (int j = 0; j < torsions[i].multiplicity; j++)
@@ -784,7 +783,7 @@ void BlockHessian::outputBlocks(const unsigned int i, const unsigned int j, cons
 void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
                        GenericTopology *myTopo) {
   
-  int _N = myTopo->atoms.size();
+  unsigned int _N = myTopo->atoms.size();
   sz = 3 * myPositions->size();
   //Set Matrix
   //electroStatics.clear();

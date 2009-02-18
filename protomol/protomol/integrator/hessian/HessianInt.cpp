@@ -42,14 +42,15 @@ HessianInt::HessianInt() :
 
 HessianInt::HessianInt(Real timestep, string evec_s, string eval_s,
                        string hess_s, bool sorta, int fm, bool tef,
-                       bool fdi, Real evt, int bvc, int rpb, Real bct, bool masswt, 
-                       bool bnm, bool aparm,
+                       bool fdi, Real evt, int bvc, int rpb, Real bct,
+                       bool masswt, bool bnm, bool aparm,
                        ForceGroup *overloadedForces) :
   STSIntegrator(timestep, overloadedForces), evecfile(evec_s),
   evalfile(eval_s), hessfile(hess_s), sortOnAbs(sorta), numberOfModes(fm),
-  textEig(tef), fullDiag(fdi), eigenValueThresh(evt), blockVectorCols(bvc), 
-  residuesPerBlock(rpb), blockCutoffDistance(bct), massWeight(masswt), 
-  noseMass(bnm), autoParmeters(aparm) {
+  textEig(tef), fullDiag(fdi),
+  massWeight(masswt), noseMass(bnm), autoParmeters(aparm),
+  eigenValueThresh(evt), blockCutoffDistance(bct),
+  blockVectorCols(bvc), residuesPerBlock(rpb) {
   eigVec = 0;
   //
   hsn.findForces(overloadedForces);         //find forces and parameters

@@ -59,7 +59,7 @@ namespace ProtoMol {
       BornSwitch bSw(myBornSwitch);  // Always quartic now  6/1/2008
 
       Real f_ij = bSw.switchValue(dist);
-      Real fp_ij = bSw.switchDerivative(dist);
+      bSw.switchDerivative(dist);
 
       // Atom 1 variables
       int type1 = topo->atoms[atom1].type;
