@@ -3,8 +3,9 @@ if env['PLATFORM'] == 'win32':
 else:
     env.Append(LIBS = 'pthread')
 
-# boost
-boost_configure(conf, ['version', 'iostreams/stream'], ['iostreams'])
+if fah:
+    # boost
+    boost_configure(conf, ['version', 'iostreams/stream'], ['iostreams'])
 
 
 if env['CC'] == 'gcc':
