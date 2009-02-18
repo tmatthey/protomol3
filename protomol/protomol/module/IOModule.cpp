@@ -40,6 +40,7 @@ void IOModule::init(ProtoMolApp *app) {
   InputPDBScaling::registerConfiguration(config);
   InputDihedralMultPSF::registerConfiguration(config);  
   InputSCPISM::registerConfiguration(config);
+  InputAMBER::registerConfiguration(config);
 
 }
 
