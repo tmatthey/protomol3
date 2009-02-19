@@ -30,7 +30,8 @@ namespace ProtoMol
   const string NormalModeQuadratic::keyword( "NormalModeQuadratic" );
 
   NormalModeQuadratic::NormalModeQuadratic() : STSIntegrator(), NormalModeUtilities()
-  {
+  {    
+    ex0 = NULL; cPos = NULL;
   }
 
   NormalModeQuadratic::NormalModeQuadratic( Real timestep,
