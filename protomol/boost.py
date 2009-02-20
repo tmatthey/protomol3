@@ -39,7 +39,7 @@ def boost_check_version(context, version):
     return ret
 
 
-def boost_configure(conf, hdrs, libs, version = '1.35', lib_suffix = ''):
+def boost_configure(conf, hdrs, libs, version = '1.37', lib_suffix = ''):
     env = conf.env
 
     boost_inc = None

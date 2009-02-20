@@ -18,22 +18,22 @@ namespace ProtoMol {
 
   //_________________________________________________________________AMBERReader
 
-  AMBERReader::AMBERReader():     
+  AMBERReader::AMBERReader():
     Reader(),myPSF(NULL),myPAR(NULL){}
 
   AMBERReader::AMBERReader(const std::string& filename):
-    Reader(filename),myPSF(NULL),myPAR(NULL){} 
+    Reader(filename),myPSF(NULL),myPAR(NULL){}
 
   AMBERReader::~AMBERReader(){
     if(myPSF != NULL)
       delete myPSF;
     if(myPAR != NULL)
       delete myPAR;
-    
+
   }
 
   //amber topology does not start with any keyword as in psfs.
-  //That's why there is nothing to do to check format.	
+  //That's why there is nothing to do to check format.
   bool AMBERReader::tryFormat(){    //tryFormat check file format
     if(!open())
       return false;
@@ -47,7 +47,7 @@ namespace ProtoMol {
     std::cout<<filename<<std::endl;
     if(myPSF == NULL) {
       myPSF = new PSF();
-      std::cout<<"Creating PSF structure"<<endl;}	
+      std::cout<<"Creating PSF structure"<<endl;}
     if(myPAR == NULL){
       myPAR = new PAR();
       std::cout<<"Creating PAR structure"<<endl;}
@@ -55,7 +55,7 @@ namespace ProtoMol {
   }
 
   bool AMBERReader::read(PSF& psf,PAR& par) {
-    
+
     //check if the file is open
     if ( !open()) {
       cout<<"Not open file:false"<<endl;
@@ -66,15 +66,15 @@ namespace ProtoMol {
     //first clear the data structures.
     psf.clear();
     par.clear();
-    
 
-    //Now proceed and read the toplogy information	
+
+    //Now proceed and read the toplogy information
     string line = getline();
     //cout<<line<<endl;
     vector<int> ptrVals;
     int numRecords, numAngles;
-    
-    stringstream ss;	
+
+    stringstream ss;
     string str;
     string keyword;
     vector<int> iac;
@@ -105,20 +105,20 @@ namespace ProtoMol {
 
       if (isBlank(line)) {
     line = getline();
-    continue; 
+    continue;
       }
       else {
     //extract the header and check
     if(std::find(line.begin(),line.end(),'%') !=line.begin()) return false;
-    else {	
+    else {
       stringstream ss(line);
       ss >> keyword;
-      if (equal("%FLAG", keyword)) {ss >> keyword; 
+      if (equal("%FLAG", keyword)) {ss >> keyword;
       //std::cout<<"Keyword = "<<keyword<<std::endl;
       }
-      else if(std::find(line.begin(),line.end(),'%') !=line.begin()) return false; 
+      else if(std::find(line.begin(),line.end(),'%') !=line.begin()) return false;
       line = getline();
-    }	
+    }
       }
       if(equalStartNocase("POINTERS",keyword)) {
     //line = getline();
@@ -132,7 +132,7 @@ namespace ProtoMol {
       ss << line;
       //std::cout<<line<<std::endl;
       while(ss>>str) {
-        //cout<<str<<"\t";	
+        //cout<<str<<"\t";
         ptrVals.push_back(toInt(str));
       }
       //cout<<ptrVals.size()<<endl;
@@ -151,7 +151,7 @@ namespace ProtoMol {
     //cout<<"NUmRecords = "<<numRecords<<endl;
     int num_atoms = 0;
     while((!line.empty()) && (line.substr(0,1) != "%")) {
-      ss.clear();	
+      ss.clear();
       ss << line;
       while(ss>>str) {
         if(str.size() > 4) {
@@ -173,7 +173,7 @@ namespace ProtoMol {
           temp_atom.atom_name = str;
           psf.atoms.push_back(temp_atom);
         }
-                    
+
       }
 
       line = getline();
@@ -257,7 +257,7 @@ namespace ProtoMol {
       }
       line = getline();
     }
-    //break; 
+    //break;
       }
       else if(equalStartNocase("RESIDUE_LABEL",keyword)) {
     //int index = 0;
@@ -265,14 +265,14 @@ namespace ProtoMol {
       line = getline();
     //std::vector<PSF::Atom>::iterator atom_iterator = psf.atoms.begin();
     while((!line.empty()) && (line.substr(0,1) != "%")) {
-      ss.clear(); 
+      ss.clear();
       ss << line;
       while(ss>>str) {
         //(*atom_iterator).residue_name = str;
         //index++;
         //if(atom_iterator != psf.atoms.end()) atom_iterator++;
         //else return false; //more entries for charge than # of atoms.
-        residues.push_back(str);	
+        residues.push_back(str);
       }
       line = getline();
     }
@@ -286,12 +286,12 @@ namespace ProtoMol {
     std::vector<PSF::Atom>::iterator atom_iterator = psf.atoms.begin();
     std::vector<string>::iterator residue_label_iterator = residues.begin();
     while((!line.empty()) && (line.substr(0,1) != "%")) {
-      ss.clear(); 
+      ss.clear();
       ss << line;
       while(ss>>str) {
         residue_pointers.push_back(toInt(str));
       }
-      line = getline();		 
+      line = getline();
     }
     //std::vector<int>::iterator residue_ptr_iterator = residue_pointers.begin();
     int current, next, k = 0;
@@ -307,7 +307,7 @@ namespace ProtoMol {
       }
       residue_label_iterator++;
     }
-    //break;	
+    //break;
       }
       else if(equalStartNocase("BOND_FORCE_CONSTANT",keyword)) {
     //line = getline();
@@ -329,7 +329,7 @@ namespace ProtoMol {
     while((std::find(line.begin(), line.end(),'%') == line.begin()) || (line.empty()))
       line = getline();
     while((!line.empty()) && (line.substr(0,1) != "%")) {
-      ss.clear();	
+      ss.clear();
       ss << line;
       while(ss >> str) {
         req.push_back(toReal(str));
@@ -337,7 +337,7 @@ namespace ProtoMol {
       line = getline();
         }
     //cout<<"Bond equil val = "<<req.size()<<endl;
-    //break;	
+    //break;
       }
       else if(equalStartNocase("ANGLE_FORCE_CONSTANT",keyword)) {
     //line = getline();
@@ -345,7 +345,7 @@ namespace ProtoMol {
     while((std::find(line.begin(), line.end(),'%') == line.begin()) || (line.empty()))
       line = getline();
     while((!line.empty()) && (line.substr(0,1) != "%")) {
-      ss.clear();	
+      ss.clear();
       ss << line;
       while(ss>>str) {
         tk.push_back(toReal(str));
@@ -354,7 +354,7 @@ namespace ProtoMol {
     }
 
     //cout<<"Angle Force Constant = "<<tk.size()<<endl;
-    //break;	
+    //break;
       }
       else if(equalStartNocase("ANGLE_EQUIL_VALUE",keyword)) {
     //line = getline();
@@ -391,7 +391,7 @@ namespace ProtoMol {
     while((std::find(line.begin(), line.end(),'%') == line.begin()) || (line.empty()))
       line = getline();
     while((!line.empty()) && (line.substr(0,1) != "%")) {
-      ss.clear();	
+      ss.clear();
       ss << line;
       while(ss >> str) {
         phi_n.push_back(toReal(str));
@@ -427,7 +427,7 @@ namespace ProtoMol {
     //break;
       }
       else if(equalStartNocase("LENNARD_JONES_ACOEF",keyword)) {
-                                        
+
     while((std::find(line.begin(), line.end(),'%') == line.begin()) || (line.empty()))
       line = getline();
     while((!line.empty()) && (line.substr(0,1) != "%")) {
@@ -461,12 +461,12 @@ namespace ProtoMol {
       else if(equalStartNocase("BONDS_INC_HYDROGEN",keyword)){
     //int temp_atom_number;
     //line = getline();
-                                                       
+
     for(int i=0;i<ptrVals[2];i++) {
       int rkeq_index;
       PSF::Bond psf_bond;
       PAR::Bond par_bond;
-                                                                                                            
+
       psf_bond.number = i+1;
       par_bond.number = i+1;
       file >> temp_atom_number;
@@ -713,7 +713,7 @@ namespace ProtoMol {
     }while(std::find(line.begin(), line.end(),'%') != line.begin());
       }
       else if(equalStartNocase("HBOND_ACOEF",keyword)) {
-                                        
+
     //while((std::find(line.begin(), line.end(),'%') == line.begin()) || (line.empty()))
     while((!line.empty()) && (std::find(line.begin(), line.end(),'%') == line.begin())){
       line = getline();
@@ -725,15 +725,15 @@ namespace ProtoMol {
       ss << line;
       while( ss >> str ) {
         hbond_acoff.push_back(toReal(str));
-      }   
+      }
       line = getline();
       //cout<<line<<endl;
-    }   
+    }
     //cout<<"HBOND_ACOEF = "<<hbond_acoff.size()<<endl;
     //break;
       }
       else if(equalStartNocase("HBOND_BCOEF",keyword)) {
-                                        
+
     //while((std::find(line.begin(), line.end(),'%') == line.begin()) || (line.empty()))
     while((!line.empty()) && (std::find(line.begin(), line.end(),'%') == line.begin()))
       line = getline();
@@ -758,7 +758,7 @@ namespace ProtoMol {
       line = getline();
     }while(std::find(line.begin(), line.end(),'%') != line.begin());
 
-      }			  
+      }
       else if(equalStartNocase("AMBER_ATOM_TYPE", keyword)) {
     //fill up the atom types
     int index = 0;
@@ -780,17 +780,18 @@ namespace ProtoMol {
     break;
     //How to fill up PAR structure?
 
-      } 
+      }
 
       else {
     line = getline();
       }
-       
+
 
 
     }
     close();
 
+    #ifndef BUILD_FOR_FAH
     //Now open the parm99/gaff file to read in nonbonded parameters.
     if(!file.is_open()) {
         file.open("parm99.dat");
@@ -798,14 +799,14 @@ namespace ProtoMol {
     else {
         cout<<"Error opening parameter file"<<endl;
     }
-    
+
     while(!file.eof()) {
         line = getline();
         ss << line;
         ss>>str;
         if(equalStartNocase("MOD4", str)) break;
     }
-    
+
     int nonbonded_number = 0;
     while(!file.eof()) {
         PAR::Nonbonded nonb;
@@ -830,13 +831,14 @@ namespace ProtoMol {
             //Insert into par structure
             par.nonbondeds.push_back(nonb);
         }
-    }	
-            
+    }
+    #endif
+
     return true;
 
   }
-        
-    
+
+
 
   PSF* AMBERReader::orphanPSF(){
     PSF* tmp = myPSF;

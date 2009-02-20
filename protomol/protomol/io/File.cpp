@@ -25,7 +25,12 @@ File::~File() {}
 bool File::open() {
   if (is_open()) close();
   file.clear();
-  file.open(filename.c_str(), mode);
+
+  #ifdef BUILD_FOR_FAH
+    file.open(FAH::ChecksumDevice(filename.c_str(), mode), 0);
+  #else
+    file.open(filename.c_str(), mode);
+  #endif
 
   return is_open();
 }

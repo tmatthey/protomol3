@@ -3,11 +3,6 @@ if env['PLATFORM'] == 'win32':
 else:
     env.Append(LIBS = 'pthread')
 
-if fah:
-    # boost
-    boost_configure(conf, ['version', 'iostreams/stream'], ['iostreams'])
-
-
 if env['CC'] == 'gcc':
     if os.environ.has_key('ATLAS_HOME'):
         env.Append(LIBPATH = [os.environ['ATLAS_HOME']])

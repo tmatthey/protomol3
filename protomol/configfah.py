@@ -2,6 +2,7 @@
 if os.environ.has_key('BOOST_HOME'):
     env.Append(CPPPATH = [os.environ['BOOST_HOME']])
 
+boost_configure(conf, ['version', 'iostreams/stream'], ['iostreams'])
 
 have_libfah=0
 if os.environ.has_key('LIBFAH_HOME'):
