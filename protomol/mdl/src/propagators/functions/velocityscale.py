@@ -55,7 +55,7 @@ def velocityscale(phys, forces, io, steps, timestep, fg, t0):
    # Update velocities by half a step
    phys.velocities += forces.force*0.5*timestep*phys.invmasses # kick
    # Scale
-   phys.velocities *= math.sqrt(t0/phys.getTemperature())
+   phys.velocities *= math.sqrt(t0/phys.temperature)
    # Return positions and velocities as an array of arrays.
 
 
