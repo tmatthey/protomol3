@@ -53,12 +53,11 @@ class HDForce:
 
     # ADD ENERGY
     self.forces.energies.addDihedralEnergy(self.k * diff * diff)
-
     # COMPUTE FORCES
-    atomI = self.phys.dihedral(self.dihedral-1).atom1 - 1
-    atomJ = self.phys.dihedral(self.dihedral-1).atom2 - 1
-    atomK = self.phys.dihedral(self.dihedral-1).atom3 - 1
-    atomL = self.phys.dihedral(self.dihedral-1).atom4 - 1
+    atomI = self.phys.dihedral(self.dihedral).atom1 - 1
+    atomJ = self.phys.dihedral(self.dihedral).atom2 - 1
+    atomK = self.phys.dihedral(self.dihedral).atom3 - 1
+    atomL = self.phys.dihedral(self.dihedral).atom4 - 1
     rij = self.phys.positions[atomJ*3:atomJ*3+3] - self.phys.positions[atomI*3:atomI*3+3]
     rkj = self.phys.positions[atomJ*3:atomJ*3+3] - self.phys.positions[atomK*3:atomK*3+3]
     rkl = self.phys.positions[atomL*3:atomL*3+3] - self.phys.positions[atomK*3:atomK*3+3]
