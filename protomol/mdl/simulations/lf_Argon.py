@@ -30,5 +30,5 @@ io.screen = 1
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate(scheme="leapfrog", steps=50, dt=20.0, forcefield=ff, params={'T0':phys.getTemperature()})
+gamma = prop.propagate(scheme="leapfrog", steps=50, dt=20.0, forcefield=ff, params={'T0':phys.temperature})
 
