@@ -84,6 +84,7 @@ class Forces:
       self.phys = ff.phys = phys
       ff.bc = phys.bc
       ff.setDefaults()
+      self.energies.initialize(phys)
       #ff.thisown = 0
       self.myForceFields.append(ff)
       return self.myForceFields[self.myForceFields.__len__()-1]
