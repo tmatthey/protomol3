@@ -16,7 +16,7 @@
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
-#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
+//#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/table/LennardJonesTableForce.h>
 #include <protomol/force/table/CoulombTableForce.h>
@@ -24,7 +24,7 @@
 #include <protomol/topology/CellListEnumeratorPeriodicBoundaries.h>
 #include <protomol/force/nonbonded/NonbondedCutoffForce.h>
 #include <protomol/force/nonbonded/NonbondedCutoffSystemForce.h>
-#include <protomol/force/nonbonded/NonbondedCutoffBornForce.h>
+//#include <protomol/force/nonbonded/NonbondedCutoffBornForce.h>
 using namespace ProtoMol;
 %}
 
@@ -46,7 +46,7 @@ using namespace ProtoMol;
 %include <protomol/force/system/SystemForce.h>
 %include <protomol/force/nonbonded/NonbondedCutoffForce.h>
 %include <protomol/force/nonbonded/NonbondedCutoffSystemForce.h>
-%include <protomol/force/nonbonded/NonbondedCutoffBornForce.h>
+//%include <protomol/force/nonbonded/NonbondedCutoffBornForce.h>
 
 %extend ProtoMol::NonbondedCutoffForce {
    Force* makeNewDiElec(Real cutoff,
@@ -209,11 +209,11 @@ using namespace ProtoMol;
 %template(NCF_CCM_OAPVBC_CCNSF_CSCPF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombSCPISMForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombSCPISMForce> > >;
 %template(NCF_CCM_OAPVBC_CSF_CSCPF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombSCPISMForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombSCPISMForce> > >;
 
-%template(NCF_CCM_OAPVBC_C1SF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
-%template(NCF_CCM_OAPVBC_C2SF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
-%template(NCF_CCM_OAPVBC_CNSF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
-%template(NCF_CCM_OAPVBC_CCNSF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
-%template(NCF_CCM_OAPVBC_CSF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
+//%template(NCF_CCM_OAPVBC_C1SF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
+//%template(NCF_CCM_OAPVBC_C2SF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
+//%template(NCF_CCM_OAPVBC_CNSF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
+//%template(NCF_CCM_OAPVBC_CCNSF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
+//%template(NCF_CCM_OAPVBC_CSF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
 
 
 
@@ -272,11 +272,11 @@ using namespace ProtoMol;
 
 
 // Born
-%template(NCBF_CCM_OAPVBC_C1SF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
-%template(NCBF_CCM_OAPVBC_C2SF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
-%template(NCBF_CCM_OAPVBC_CNSF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
-%template(NCBF_CCM_OAPVBC_CCNSF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
-%template(NCBF_CCM_OAPVBC_CSF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
+//%template(NCBF_CCM_OAPVBC_C1SF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
+//%template(NCBF_CCM_OAPVBC_C2SF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
+//%template(NCBF_CCM_OAPVBC_CNSF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
+//%template(NCBF_CCM_OAPVBC_CCNSF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
+//%template(NCBF_CCM_OAPVBC_CSF_CBF) ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombBornRadiiForce> >;
 
 
 
