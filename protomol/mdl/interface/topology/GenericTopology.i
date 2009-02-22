@@ -6,6 +6,7 @@
 #include <protomol/topology/VacuumBoundaryConditions.h>
 #include <protomol/topology/Topology.h>
 #include <protomol/topology/BuildTopology.h>
+#include <protomol/topology/CoulombSCPISMParameterTable.h>
 #include <protomol/type/PSF.h>
 #include <protomol/type/PAR.h>
 using namespace ProtoMol;
@@ -28,7 +29,7 @@ using namespace ProtoMol;
 
 %extend ProtoMol::GenericTopology {
         void setExclusion(char* e) {self->exclude = ExclusionType((const char*)e);}
-
+        CoulombSCPISMParameterTable* makeSCPISM() {CoulombSCPISMParameterTable* SCPISMParameters = new CoulombSCPISMParameterTable(); SCPISMParameters->populateTable(); return SCPISMParameters;}
 };
 %extend ProtoMol::Topology<ProtoMol::VacuumBoundaryConditions, ProtoMol::CubicCellManager> {
 	void setCellSize(ProtoMol::Real r){
