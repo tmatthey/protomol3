@@ -132,6 +132,7 @@ class Physical:
       # THESE ARE NUMPY ARRAY WRAPPERS
       # USER SHOULD ACCESS THROUGH
       # self.positions and self.velocities
+      print "INITIALIZING TOPOLOGY" 
       self.__dict__['myTop'] = GenericTopology.T_Periodic()
       self.__dict__['posvec'] = Vector3DBlock.Vector3DBlock()
       self.__dict__['velvec'] = Vector3DBlock.Vector3DBlock()
@@ -585,7 +586,7 @@ class Physical:
              self.myTop.setBC(self.cB1[0],self.cB1[1],self.cB1[2],self.cB2[0],self.cB2[1],self.cB2[2],self.cB3[0],self.cB3[1],self.cB3[2],self.cO[0],self.cO[1],self.cO[2])
       self.myTop.setExclusion(self.exclude)
       if (self.myPSF.numAtoms() > 0 and hasattr(self.myPAR, 'readFlag')):
-         GenericTopology.buildTopology(self.myTop, self.myPSF, self.myPAR, 0)
+         GenericTopology.buildTopology(self.myTop, self.myPSF, self.myPAR, 0, self.myTop.makeSCPISM())
          if (numpy.size(self.velocities) == 0):
             # This function actually returns a value, since it is
             # unused the runtime environment detects a memory leak.
