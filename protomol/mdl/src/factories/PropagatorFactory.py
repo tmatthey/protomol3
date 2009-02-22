@@ -38,14 +38,13 @@ def setPropagator(prop, phys, forces, obj, levelswitch=False):
 	   if (dir(obj).count('setIntegratorSetPointers') != 0):
 		   obj.setIntegratorSetPointers(obj, phys.myEig, 1)
 	   phys.app = obj.appInit(phys.myTop,phys.posvec,phys.velvec,forces.energies)
-	   phys.app.energies = forces.energies
+           phys.app.energies = forces.energies
            #obj.initialize(phys.myTop,phys.posvec,phys.velvec,forces.energies)
 	# Do not perform garbage collection if we are setting our propagator
 	# to something else, and aren't simply changing levels in the hierarchy
 	if (prop.myPropagator != 0 and (not levelswitch)):
 	    prop.myPropagator.thisown = 0
 	#   del(prop.myPropagator)
-	   
 	prop.myPropagator = obj
         if (prop.isMDL(prop.myPropagator)):
            prop.runModifiers(prop.myPropagator.preinitmodifiers, phys, forces, prop, prop.myPropagator)
@@ -84,7 +83,7 @@ def executePropagator(prop, phys, forces, io, numsteps):
               if (prop.isMDL(prop.myPropagator)):
                  prop.myPropagator.run(phys, forces, prop)
                  phys.myTop.time = prop.myStep*prop.myPropagator.getTimestep()*Constants.invTimeFactor()
-		 phys.updateCOM_Momenta()		 
+                 phys.updateCOM_Momenta()
               else:
                  prop.myPropagator.run(1)
               ii = ii + 1
@@ -536,13 +535,21 @@ class PropagatorFactory:
 			     'avForceFile', "",
 			     'inForceFile', ""))
       self.registerPMObject("NormalModeDiagonalize",
-			    ('averageSteps', 1,
-			     'avStepSize', 1.0,
-			     'reDiagFrequency', 0,
-			     'fullDiag', 0,
-			     'removeRand', 0,
-			     'minSteps', 0,
-			     'minLim', 1.0))
+			    ('reDiagFrequency', 0,
+                             'fullDiag', 1,
+                             'removeRand', 0,
+                             'rediagHysteresis', 0,
+                             'eigenValueThresh', 5,
+                             'blockVectorCols', 0,
+                             'residuesPerBlock', 1,
+                             'blockCutoffDistance', 10))
+                            #('averageSteps', 1,
+			    # 'avStepSize', 1.0,
+			    # 'reDiagFrequency', 0,
+			    # 'fullDiag', 0,
+			    # 'removeRand', 0,
+			    # 'minSteps', 0,
+			    # 'minLim', 1.0))
       self.registerPMObject("NormalModeLangevin",
 			    ('firstmode', 1,
 			     'numbermodes', 1,
