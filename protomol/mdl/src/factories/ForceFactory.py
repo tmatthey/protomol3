@@ -91,11 +91,11 @@ class ForceFactory:
 
                           } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  
 
-    self.bornForces = {'Vacuum':{'Cutoff':{'C1':CutoffForce.NCBF_CCM_OAPVBC_C1SF_CBF,
-                                           'C2':CutoffForce.NCBF_CCM_OAPVBC_C2SF_CBF,
-                                           'Cn':CutoffForce.NCBF_CCM_OAPVBC_CNSF_CBF,
-                                           'CmpCnCn':CutoffForce.NCBF_CCM_OAPVBC_CCNSF_CBF,
-                                           'Cutoff':CutoffForce.NCBF_CCM_OAPVBC_CSF_CBF}}} #: Maps boundary conditions, algorithm and switching function to an object which computes Born Radii. 
+    #self.bornForces = {'Vacuum':{'Cutoff':{'C1':CutoffForce.NCBF_CCM_OAPVBC_C1SF_CBF,
+    #                                       'C2':CutoffForce.NCBF_CCM_OAPVBC_C2SF_CBF,
+    #                                       'Cn':CutoffForce.NCBF_CCM_OAPVBC_CNSF_CBF,
+    #                                       'CmpCnCn':CutoffForce.NCBF_CCM_OAPVBC_CCNSF_CBF,
+    #                                       'Cutoff':CutoffForce.NCBF_CCM_OAPVBC_CSF_CBF}}} #: Maps boundary conditions, algorithm and switching function to an object which computes Born Radii. 
 
                
     self.ljCoulombForces = {'Vacuum':{'SimpleFull':{('Universal', 'Universal'):SimpleFullForce.NSFSF_V_U_L_U_C},
