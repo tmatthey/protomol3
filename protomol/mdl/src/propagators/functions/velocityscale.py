@@ -47,7 +47,7 @@ def velocityscale(phys, forces, io, steps, timestep, fg, t0):
        # Calculate new forces
        fg.calculateForces(phys, forces)
        # Scale
-       phys.velocities *= math.sqrt(t0/phys.getTemperature())
+       phys.velocities *= math.sqrt(t0/phys.temperature)
        # Update time
        phys.time = step*timestep       
        # Increment the step
