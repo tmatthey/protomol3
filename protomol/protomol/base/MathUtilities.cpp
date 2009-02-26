@@ -1,6 +1,5 @@
 #include <protomol/base/MathUtilities.h>
 #include <protomol/base/Timer.h>
-#include <protomol/base/Random.h>
 
 using namespace std;
 
@@ -150,7 +149,6 @@ namespace ProtoMol {
   Real randomNumber(unsigned int seed, unsigned int randomTypeIn) {
     static bool first = true;
     static int randomType = 0;
-    static Random rand_r;
 
     //new random number?
     if (randomTypeIn || randomType) {

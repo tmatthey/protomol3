@@ -987,6 +987,8 @@ protomol/protomol/output/Output.cpp -text
 protomol/protomol/output/Output.h -text
 protomol/protomol/output/OutputCache.cpp -text
 protomol/protomol/output/OutputCache.h -text
+protomol/protomol/output/OutputCheckpoint.cpp -text
+protomol/protomol/output/OutputCheckpoint.h -text
 protomol/protomol/output/OutputCollection.cpp -text
 protomol/protomol/output/OutputCollection.h -text
 protomol/protomol/output/OutputDCDTrajectory.cpp -text

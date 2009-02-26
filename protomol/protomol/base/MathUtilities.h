@@ -4,8 +4,9 @@
 
 #include <protomol/base/PMConstants.h>
 #include <protomol/type/SimpleTypes.h>
+#include <protomol/base/Random.h>
 
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <queue>
 #include <vector>
@@ -26,6 +27,8 @@
 #include <limits>
 #endif /* HAVE_NO_LIMITS */
 namespace ProtoMol {
+    static Random rand_r;
+
 #ifdef _MSC_VER
   //___________________________________________________________________ isnan()
 
