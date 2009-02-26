@@ -55,9 +55,10 @@ void IOModule::read(ProtoMolApp *app) {
 
   if (reader.tryFormat(PosVelReaderType::PDB)) {
     PDB pdb;
-    if (!(reader >> pdb))
+	if (!(reader >> pdb)){
       THROW(string("Could not parse PDB position file '") +
         config[InputPositions::keyword].getString() + "'.");
+	}
     
     // TMC: Can no longer do std::swap, must use swap function
     // of Vector3DBlock
@@ -66,11 +67,17 @@ void IOModule::read(ProtoMolApp *app) {
     // Add to output cache
     app->outputCache.add(pdb.atoms);
 
-  } else if (!(reader >> app->positions))
-    THROW(string("Could not parse position file '") +
-      config[InputPositions::keyword].getString() +
-      "'. Supported formats are : " +
-      PosVelReaderType::getPossibleValues(", ") + ".");
+  } else if (reader.tryFormat(PosVelReaderType::XYZ)){
+	  XYZ xyz;
+	  if (!(reader >> xyz)){
+		THROW(string("Could not parse position file '") +
+		  config[InputPositions::keyword].getString() +
+		  "'. Supported formats are : " +
+		  PosVelReaderType::getPossibleValues(", ") + ".");
+	  }
+
+	  app->positions.swap(xyz.coords);
+  }
 
   report << plain << "Using " << reader.getType() << " posfile '"
          << config[InputPositions::keyword] << "' ("

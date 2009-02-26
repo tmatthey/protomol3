@@ -22,7 +22,11 @@ bool XYZReader::tryFormat() {
   Vector3DBlock coords;
   vector<string> names;
 
-  return read(coords, names);
+  bool retVal = read(coords, names);
+
+  close();
+
+  return retVal;
 }
 
 bool XYZReader::read() {
