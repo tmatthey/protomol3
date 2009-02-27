@@ -1,10 +1,9 @@
 #include <protomol/base/Random.h>
 #include <protomol/base/Report.h>
 
+using namespace std;
 using namespace ProtoMol;
 using namespace ProtoMol::Report;
-
-
 
 //____ Random
 
@@ -13,7 +12,7 @@ const double Random::EPSILON = 3.0e-16;
 const double Random::INVERSE_MODULUS = 1.0 / MUDULUS;
 const double Random::LESS_THAN_ONE = 1.0 - EPSILON;
 
-Random::Random() {  
+Random::Random(){
   int j, k;
 
   shuffle_array.resize(SHUFFLE_LEN);
@@ -47,7 +46,6 @@ void Random::seed( unsigned int seed ) {
     if (j < SHUFFLE_LEN) shuffle_array[j] = intermediate_rand;
   }
   shuffle_val = shuffle_array[0];
-
 }
 
 double Random::rand() {
@@ -56,14 +54,14 @@ double Random::rand() {
   double temp;
 
   k = intermediate_rand / SCHRAGE_Q;                          //Start here when not initializing.
-  intermediate_rand = MULTIPLIER * (intermediate_rand - k * SCHRAGE_Q) 
+  intermediate_rand = MULTIPLIER * (intermediate_rand - k * SCHRAGE_Q)
                         - SCHRAGE_R * k;                      //Compute intermediate_rand=(MULTIPLIER*intermediate_rand) % MUDULUS without overiflows by Scrage's method.
   if(intermediate_rand < 0) intermediate_rand += MUDULUS;     //flows by Schrage's method.
   j = shuffle_val / SHUFFLE_DIVISOR;                          //Will be in the range 0..SHUFFLE_LEN-1.
   shuffle_val = shuffle_array[j];                             //Output previously stored value and refill the
   shuffle_array[j] = intermediate_rand;                       //shuffle table.
 
-  if ((temp = INVERSE_MODULUS*shuffle_val) > LESS_THAN_ONE) 
+  if ((temp = INVERSE_MODULUS*shuffle_val) > LESS_THAN_ONE)
     return LESS_THAN_ONE;   //Users expect (0,1)
   else return temp;
 

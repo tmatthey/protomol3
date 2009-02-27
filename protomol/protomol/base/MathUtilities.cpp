@@ -147,30 +147,35 @@ namespace ProtoMol {
 
 //____ randomNumber()
   Real randomNumber(unsigned int seed, unsigned int randomTypeIn) {
-    static bool first = true;
     static int randomType = 0;
 
     //new random number?
     if (randomTypeIn || randomType) {
-      if (first) {
-        rand_r.seed(seed);
-        first = false;
+
+      if (!Rand::isSeeded) {
+        Rand::isSeeded = true;
+        Random::Instance().seed( seed );
+
         randomType = randomTypeIn;
       }
-      return rand_r.rand();
+
+      return Random::Instance().rand();
     } else {
-      //  If this is the first call, seed it
 #ifdef _WIN32
-      if (first) {
+      if (!Rand::isSeeded) {
         srand(seed);
-        first = false;
+
+        Rand::isSeeded = true;
       }
+
       return double (rand()) / double (RAND_MAX);
 #else
-      if (first) {
+      if (!Rand::isSeeded) {
         srand48((long)seed);
-        first = false;
+
+        Rand::isSeeded = true;
       }
+
       return drand48();
 #endif
     }

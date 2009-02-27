@@ -2,10 +2,11 @@
 #define RANDOM_H
 
 #include <protomol/type/Real.h>
+#include <protomol/base/Singleton.h>
+
 #include <vector>
-#include <iostream>
 #include <fstream>
-using namespace std;
+#include <iostream>
 
 namespace ProtoMol {
 
@@ -18,7 +19,7 @@ namespace ProtoMol {
    * successive deviates in a sequence. LESS_THAN_ONE should approximate the largest floating value that is
    * less than 1.
    */
-  class Random {
+  class Random : public Singleton<Random> {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Types & enum's
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +36,6 @@ namespace ProtoMol {
   // Constructors, destructors, assignment
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-
     Random();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,23 +44,20 @@ namespace ProtoMol {
   public:
     void seed( unsigned int seed );
     double rand();
-    friend ostream &operator<<(ostream &stream, Random ob);
-    friend istream &operator>>(istream &stream, Random &ob);
+
+    friend std::ostream &operator<<(std::ostream &stream, Random ob);
+    friend std::istream &operator>>(std::istream &stream, Random &ob);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // My data members
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  public:
-
   private:
     int intermediate_rand;
     std::vector<int> shuffle_array;
     int shuffle_val;
     static const int SHUFFLE_LEN;
     static const double EPSILON, INVERSE_MODULUS, LESS_THAN_ONE;
-    
   };
-
 };
 
 #endif // RANDOM_H

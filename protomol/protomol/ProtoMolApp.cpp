@@ -2,6 +2,7 @@
 
 #include <protomol/base/ModuleManager.h>
 #include <protomol/base/SystemUtilities.h>
+#include <protomol/base/StringUtilities.h>
 #include <protomol/base/PMConstants.h>
 #include <protomol/base/TimerStatistic.h>
 #include <protomol/base/Zap.h>
@@ -55,7 +56,7 @@ void ProtoMolApp::splash(ostream &stream) {
     << setw(w) << "Description: ";
   fillFormat(stream, "A rapid PROTOtyping MOLecular dynamics object-oriented "
              "component based framework.", w, w);
-  stream 
+  stream
 #ifdef HAVE_PACKAGE_H
     << setw(w) << "Version: " << PACKAGE_VERSION << endl
     << setw(w) << "SVN revision: " << PACKAGE_REVISION << endl
@@ -106,7 +107,64 @@ bool ProtoMolApp::configure(const vector<string> &args) {
 
   modManager->configure(this);
 
+  if( config.valid("Checkpoint") ){
+      if ( config["Checkpoint"] == "true" ){
+          if ( !readCheckpoint( "checkpoint.dat" ) ){
+            readCheckpoint( "checkpoint.last" );
+          }
+      }
+  }
+
   return true;
+}
+
+bool ProtoMolApp::readCheckpoint( const std::string& path ){
+    bool retVal = true;
+
+    ifstream file ( path.c_str() );
+
+    if ( file ){
+      /* Read in latest id */
+      int id;
+      file >> id;
+
+      config["CheckpointStart"] = id;
+
+      /* Update the pos file */
+      std::string posFile = config["posfile"];
+
+      std::string resFile = posFile.substr( 0, posFile.find(".pos") + 4 );
+      resFile = Append( resFile, id );
+
+      config["posfile"] = resFile;
+
+      /* Update the vel file */
+      std::string velFile = config["velfile"];
+
+      std::string resVelFile = velFile.substr( 0, velFile.find(".vel") + 4 );
+      resVelFile = Append( velFile, id );
+
+      config["velfile"] = resVelFile;
+
+      /* Read in starting step */
+      int steps;
+      file >> steps;
+
+      config["firststep"] = steps;
+
+      config["numsteps"] = toString(
+        toInt( config["numsteps"] ) - toInt( config["firststep"] )
+      );
+
+      /* Read in random states */
+      file >> Random::Instance();
+
+      Rand::isSeeded = true;
+    }else{
+        retVal = false;
+    }
+
+    return retVal;
 }
 
 void ProtoMolApp::build() {
@@ -140,12 +198,12 @@ void ProtoMolApp::build() {
   }
 
   // Using SCPISM parameter? Flag or filename
-  if (config[InputDoSCPISM::keyword] || SCPISMParameters) { 
+  if (config[InputDoSCPISM::keyword] || SCPISMParameters) {
 
     if(config[InputDoSCPISM::keyword])
        topology->doSCPISM = config[InputDoSCPISM::keyword];
 
-    if ((topology->doSCPISM < 1 || topology->doSCPISM > 3) && !SCPISMParameters) 
+    if ((topology->doSCPISM < 1 || topology->doSCPISM > 3) && !SCPISMParameters)
       THROW("doscpism should be between 1 and 3 or an input file should be used.");
 
     if(SCPISMParameters) {
@@ -237,7 +295,7 @@ void ProtoMolApp::build() {
   integratorFactory.unregisterAllExemplars();
   forceFactory.unregisterAllExemplars();
   outputFactory.unregisterAllExemplars();
- 
+
   // Setup run paramiters
   //currentStep = config[InputFirststep::keyword];
   //lastStep = currentStep + (int)config[InputNumsteps::keyword];

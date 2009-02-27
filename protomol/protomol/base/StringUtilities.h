@@ -165,6 +165,15 @@ namespace ProtoMol {
   void fillFormat(std::ostream &stream, const std::string &str,
                   unsigned int currentColumn = 0, unsigned int indent = 0,
                   unsigned int maxColumn = 80);
+
+  template <typename T>
+  std::string Append( const std::string& inData, T value ){
+    std::ostringstream retStream;
+
+    retStream << inData << value;
+
+    return std::string( retStream.str() );
+  }
 }
 
 #define THROWS(msgs) {                          \

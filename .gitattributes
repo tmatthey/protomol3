@@ -680,6 +680,7 @@ protomol/protomol/base/Random.h -text
 protomol/protomol/base/Report.cpp -text
 protomol/protomol/base/Report.h -text
 protomol/protomol/base/SConscript -text
+protomol/protomol/base/Singleton.h -text
 protomol/protomol/base/SmartPointer.h -text
 protomol/protomol/base/StringUtilities.cpp -text
 protomol/protomol/base/StringUtilities.h -text

@@ -2,9 +2,9 @@
 #ifndef OUTPUTCHECKPIINT_H
 #define OUTPUTCHECKPIINT_H
 
+#include <protomol/base/StringUtilities.h>
 #include <protomol/output/Output.h>
 #include <protomol/base/Timer.h>
-#include <string>
 
 namespace ProtoMol {
     class Configuration;
@@ -18,8 +18,10 @@ namespace ProtoMol {
             OutputCheckpoint();
             OutputCheckpoint( const std::string &name, int freq, int start );
         private:
+            void ReadConfig( );
             void WritePositions( int step );
             void WriteVelocities( int step );
+            void WriteConfig( int step );
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             //  From class Output
@@ -55,14 +57,7 @@ namespace ProtoMol {
 
     };
 
-    template <typename T>
-    std::string Append( const std::string& inData, T value ){
-        std::ostringstream retStream;
 
-        retStream << inData << value;
-
-        return std::string( retStream.str() );
-    }
 }
 
 #endif

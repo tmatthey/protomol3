@@ -21,6 +21,8 @@ const string OutputCheckpoint::keyword( "Checkpoint" );
 OutputCheckpoint::OutputCheckpoint() : mName( "false" ), mCurrent( 0 ) {
     if ( mName == "true" || mName == "True" || mName == "TRUE" ) {
         isActive = true;
+    }else{
+        isActive = false;
     }
 }
 
@@ -28,6 +30,8 @@ OutputCheckpoint::OutputCheckpoint( const std::string& name, int freq, int start
         Output( freq ), mName( name ), mCurrent( start ) {
     if ( mName == "true" || mName == "True" || mName == "TRUE" ) {
         isActive = true;
+    }else{
+        isActive = false;
     }
 }
 
@@ -43,10 +47,12 @@ void OutputCheckpoint::doInitialize() {
 }
 
 void OutputCheckpoint::doRun( int step ) {
-    if ( step != 0 ){
+    if ( step != 0 ) {
         if ( isActive ) {
+            ReadConfig();
             WritePositions( step );
             WriteVelocities( step );
+            WriteConfig( step );
 
             mCurrent += 1;
 
@@ -56,15 +62,7 @@ void OutputCheckpoint::doRun( int step ) {
 }
 
 void OutputCheckpoint::doFinalize( int step ) {
-    if ( isActive ) {
-        ofstream outFile( "checkpoint.dat" );
 
-        if ( outFile ){
-            outFile << mCurrent << std::endl;
-            outFile << step << std::endl;
-            outFile << rand_r << std::endl;
-        }
-    }
 }
 
 Output *OutputCheckpoint::doMake( const vector<Value> &values ) const {
@@ -108,6 +106,19 @@ bool OutputCheckpoint::adjustWithDefaultParameters( vector<Value> &values,
     return checkParameters( values );
 }
 
+void OutputCheckpoint::ReadConfig( ) {
+    ifstream inFile( "checkpoint.dat" );
+    ofstream outFile( "checkpoint.last" );
+
+    if ( inFile && outFile ) {
+        std::string line;
+
+        while ( std::getline( inFile, line ) ) {
+            outFile << line << '\n';
+        }
+    }
+}
+
 void OutputCheckpoint::WritePositions( int step ) {
     std::string posFile = Append( mBaseFile + ".pos", mCurrent );
 
@@ -139,5 +150,15 @@ void OutputCheckpoint::WriteVelocities( int step ) {
     if ( !velWriter.write( *&app->velocities, app->topology->atoms,
                            app->topology->atomTypes ) ) {
         THROW( string( "Could not write " ) + getId() + " '" + velFile + "'." );
+    }
+}
+
+void OutputCheckpoint::WriteConfig( int step ){
+    ofstream outFile( "checkpoint.dat" );
+
+    if ( outFile ) {
+        outFile << mCurrent << std::endl;
+        outFile << step << std::endl;
+        outFile << Random::Instance() << std::endl;
     }
 }
