@@ -17,7 +17,7 @@ using namespace ProtoMol::Report;
 namespace ProtoMol {
 
   //constructors
-  NormalModeUtilities::NormalModeUtilities(): firstMode(1), numMode(-1), myGamma(-1), mySeed(-1), myTemp(-1), mhQu(0)
+  NormalModeUtilities::NormalModeUtilities(): firstMode(1), numMode(-1), myGamma(-1), mySeed(-1), myTemp(-1)
     {/*tmpFX=NULL;*/ tmpC=NULL; invSqrtMass=NULL; sqrtMass=NULL;}
 
     NormalModeUtilities::NormalModeUtilities( int firstmode, int nummode, Real gamma, int seed, Real temperature):
@@ -99,41 +99,21 @@ namespace ProtoMol {
 
     NormalModeUtilities *nmint;	
     if(eiValid){
-        mhQu = eipt->myEigenvectors;
-        maxEigvalu = eipt->myMaxEigenvalue;
         numEigvectsu = eipt->myNumEigenvectors;
     }else{
-        mhQu = NULL;
-        maxEigvalu = 0;
         numEigvectsu = 0;
     }
-    eigValP = &maxEigvalu;
-    Q = &mhQu;
+    eigValP = &eipt->myMaxEigenvalue;
+    Q = &eipt->myEigenvectors;
     //find next integrators
     for(Integrator* i = integrator->next();i != NULL;i = i->next()){
         nmint = dynamic_cast<NormalModeUtilities*>(i);
         if(nmint == NULL) report << error << "Normal Mode integrator chain contains unknown integrator type."<<endr;
-        nmint->eigValP = &maxEigvalu;
-        nmint->Q = &mhQu;
+        nmint->eigValP = &eipt->myMaxEigenvalue;
+        nmint->Q = &eipt->myEigenvectors;
         nmint->numEigvectsu = numEigvectsu;
-        nmint->mhQu = NULL;
-        nmint->maxEigvalu = 0;
     }
   }
-
-  //****Routines to convert between Vector3DBlocks and linear arrays*********************
-
-  //Convert Vector3DBlock formal to linear array for BLAS
-//   double* NormalModeUtilities::vector3DBlockTOvect(Vector3DBlock* blkDat, double* vecDat){
-//       for( int i=0; i<3*_N; i++) vecDat[i] = (*blkDat)[i/3][i%3];
-//       return vecDat;
-//  }
-
-  //Convert linear array from BLAS to Vector3DBlock 
-//   Vector3DBlock* NormalModeUtilities::vectTOvector3DBlock(double* vecDat, Vector3DBlock* blkDat){
-//       for( int i=0; i<3*_N; i++) (*blkDat)[i/3][i%3] = vecDat[i];
-//       return blkDat;
-//   }
 
   //*************************************************************************************
   //****Projectors for complement sub space and sub space********************************

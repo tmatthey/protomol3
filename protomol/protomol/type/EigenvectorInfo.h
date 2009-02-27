@@ -2,10 +2,9 @@
 #ifndef EIGENVECTORINFO_H
 #define EIGENVECTORINFO_H
 
-#include <protomol/type/Real.h>
-#include <protomol/type/Vector3DBlock.h>
 #include <string>
 #include <iostream>
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -19,10 +18,10 @@ namespace ProtoMol
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    EigenvectorInfo() : myEigenvectors ( 0 ), currentMode( -1 ) {};
+    EigenvectorInfo() : myEigenvectors ( 0 ), currentMode( -1 ), myMinimumLimit( 0.5 ) {};
 
     EigenvectorInfo( unsigned int n, unsigned int m ) : myEigenvectorLength( n ), myNumEigenvectors( m ),
-        myMaxEigenvalue( 0.0 ), myEigenvectors ( new Real[n * m * 3] ), currentMode( -1 ) {}
+        myMaxEigenvalue( 0.0 ), myEigenvectors ( new double[n * m * 3] ), currentMode( -1 ), myMinimumLimit( 0.5 ) {}
 
     ~EigenvectorInfo() {
       if ( myEigenvectors ) {
@@ -34,8 +33,19 @@ namespace ProtoMol
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class EigenvectorInfo
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    void initializeEigenvectors() {
-      myEigenvectors = new Real[myEigenvectorLength * myNumEigenvectors * 3];
+    bool initializeEigenvectors() {
+      try {
+
+        myEigenvectors = new double[myEigenvectorLength * myNumEigenvectors * 3];
+
+      } catch ( std::bad_alloc& ) {
+
+        return false;
+
+      }
+
+      return true;
+
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,10 +54,14 @@ namespace ProtoMol
     // Eigenvector information
     unsigned int myEigenvectorLength;
     unsigned int myNumEigenvectors;
-    Real myMaxEigenvalue;
-    Real *myEigenvectors;
-    Vector3DBlock myEigenvalues;
+    double myMaxEigenvalue;
+    double *myEigenvectors;
+
+    std::vector< double > myEigenvalues;
     int currentMode;
+
+    double myMinimumLimit;
+
   };
 }
 #endif /* EIGENVECTORINFO_H */

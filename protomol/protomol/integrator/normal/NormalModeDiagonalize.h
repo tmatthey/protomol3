@@ -93,7 +93,7 @@ namespace ProtoMol
       BlockHessian rHsn;
       BlockHessianDiagonalize blockDiag;
 
-      bool eigAlloc, firstDiag, fullDiag, removeRand;
+      bool firstDiag, fullDiag, removeRand;
       int rediagCount, nextRediag;
       bool validMaxEigv;
       NormalModeUtilities *myNextNormalMode, *myLastNormalMode;

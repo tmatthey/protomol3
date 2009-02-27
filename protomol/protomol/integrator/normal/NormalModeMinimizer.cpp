@@ -62,6 +62,9 @@ namespace ProtoMol {
     avItrs = 0;		//average number of minimizer iterations/force calcs
     avMinForceCalc = 0;
     numSteps = 0;	//total steps
+
+    //Set up minimum limit
+    app->eigenInfo.myMinimumLimit = minLim;
     //
     gaussRandCoord1.zero(-1); //zero vector for use as random force
   }

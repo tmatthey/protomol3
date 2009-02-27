@@ -33,9 +33,8 @@ namespace ProtoMol
   const string NormalModeDiagonalize::keyword( "NormalModeDiagonalize" );
 
   NormalModeDiagonalize::NormalModeDiagonalize() :
-	 MTSIntegrator(), NormalModeUtilities(), eigAlloc( false ),
+	 MTSIntegrator(), NormalModeUtilities(), 
 	 hessianCounter( 0 ), rediagCounter( 0 ) {
-    eigAlloc = false;
   }
 
   NormalModeDiagonalize::
@@ -45,12 +44,11 @@ namespace ProtoMol
                         StandardIntegrator *nextIntegrator ) :
     MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
     NormalModeUtilities( 1, 1, 91.0, 1234, 300.0 ),
-    eigAlloc( false ), fullDiag( fDiag ), removeRand( rRand ),
+    fullDiag( fDiag ), removeRand( rRand ),
     rediagCount( redi ), rediagHysteresis( redhy ),
     hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
     residuesPerBlock( rpb ) {
-    eigAlloc = false;
 
     //find forces and parameters
     rHsn.findForces( overloadedForces );
@@ -75,11 +73,6 @@ namespace ProtoMol
       }
     }
 
-    //de-allocate
-    if ( mhQu != NULL && eigAlloc ) {
-      delete [] mhQu;
-      mhQu = NULL;
-    }
   }
 
   void NormalModeDiagonalize::initialize( ProtoMolApp *app )
@@ -116,21 +109,19 @@ namespace ProtoMol
     }
 
     // Check if array is already assigned
-    if ( mhQu != NULL ) {
-      firstDiag = eigAlloc = false;
+    if ( app->eigenInfo.myEigenvectors ) { 
+      firstDiag = false;
       validMaxEigv = true;
     } else {
-      firstDiag = eigAlloc = true;
+      firstDiag = true;
       validMaxEigv = false;
 
       //Calculate array size to be created
-      const unsigned int arraySize = ( fullDiag == true ) ? _3N * _3N : _3N * _rfM;
+      app->eigenInfo.myEigenvectorLength = _N;
+      app->eigenInfo.myNumEigenvectors = ( fullDiag == true ) ? _3N : _rfM;
+      if(!app->eigenInfo.initializeEigenvectors())
+          report << error << "Eigenvector array allocation error." << endr;
 
-      try {
-        mhQu = new double[ arraySize ];
-      } catch ( bad_alloc& ) {
-        report << error << "Eigenvector array allocation error." << endr;
-      }
     }
 
     //Initialize BlockHessianDiagonalize, pass BlockHessian if Blocks (not full diag)
@@ -205,7 +196,7 @@ namespace ProtoMol
           //Diagonalize
           blockDiag.rediagTime.start();
           int numeFound;
-          int info = blockDiag.diagHessian( mhQu, blockDiag.eigVal, rHsn.hessM, _3N, numeFound );
+          int info = blockDiag.diagHessian( *Q , blockDiag.eigVal, rHsn.hessM, _3N, numeFound );
 
           if ( info ) {
             report << error << "Full diagonalization failed." << endr;
@@ -225,7 +216,7 @@ namespace ProtoMol
             blockDiag.eigIndx[i] = i;
           }
 
-          blockDiag.absSort( mhQu, blockDiag.eigVal, blockDiag.eigIndx, _3N );
+          blockDiag.absSort( *Q , blockDiag.eigVal, blockDiag.eigIndx, _3N );
 
           blockDiag.rediagTime.stop();
           rediagCounter++;
@@ -233,7 +224,7 @@ namespace ProtoMol
           //set flags if firstDiag
           if ( firstDiag ) {
             numEigvectsu = _3N;
-            maxEigvalu = blockDiag.eigVal[_3N-1];
+            *eigValP = blockDiag.eigVal[_3N-1];
             validMaxEigv = true;
             firstDiag = false;
           }
@@ -247,7 +238,7 @@ namespace ProtoMol
           //*******************************************************************************************//
           report << hint << "Start coarse diagonalization." << endr;
           Real max_eigenvalue = blockDiag.findEigenvectors( &app->positions, app->topology,
-                                mhQu, _3N, _rfM,
+                                *Q , _3N, _rfM,
                                 blockCutoffDistance, eigenValueThresh, blockVectorCols );
 
           //Stats/diagnostics
@@ -262,11 +253,11 @@ namespace ProtoMol
 
             //use 1000 for regression tests, set REGRESSION_T NE 0.
             if ( REGRESSION_T ) {
-              maxEigvalu = 1000;
+              *eigValP = 1000;
             } else {
 
               //maximum from blocks
-              maxEigvalu = max_eigenvalue;
+              *eigValP = max_eigenvalue;
             }
 
             validMaxEigv = true;

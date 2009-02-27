@@ -89,8 +89,6 @@ namespace ProtoMol {
         int mySeed;
         Real myTemp;
         //eig pointers, used if topmost integrator
-        double* mhQu;
-        Real maxEigvalu;
         unsigned int numEigvectsu;
         //compliment randoms, compatibility with NormModeInt
         Vector3DBlock tempV3DBlk; 

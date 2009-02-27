@@ -53,7 +53,7 @@ bool EigenvectorTextReader::read(EigenvectorInfo &ei) {
   ei.myEigenvectorLength = num;
   ei.myNumEigenvectors = num1;
   ei.myMaxEigenvalue = ev;
-  ei.initializeEigenvectors();
+  if(!ei.initializeEigenvectors()) return false;
 
   for (int i = 0; i < num; i++) {
     int x;

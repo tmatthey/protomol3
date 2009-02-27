@@ -102,16 +102,23 @@ void NormalModeModule::read(ProtoMolApp *app) {
   // Eigenvalues file
   if (config.valid(InputEigenValues::keyword)) {
     // eigenvalues
-    //app->eigenInfo.myEigenvalues.resize(app->positions.size());
     XYZReader valReader;
+    Vector3DBlock tempEVal;
     if (!valReader.open(config[InputEigenValues::keyword])){
       THROWS(string("Can't open eigenvalue file '") +
         config[InputEigenValues::keyword].getString() + "'.");
     }
 
-    if (!(valReader >> app->eigenInfo.myEigenvalues)){
+    //if (!(valReader >> app->eigenInfo.myEigenvalues)){
+    if (!(valReader >> tempEVal)){
         THROWS(string("Could not parse eigenvalue file '") +
           config[InputEigenValues::keyword].getString() + "'. ");
+    }
+
+    //copy data accross
+    int evsize = tempEVal.size() * 3;
+    for ( int i=0; i<evsize; i++ ){
+      app->eigenInfo.myEigenvalues.push_back(tempEVal.c[i]);
     }
 
     report << plain << "Using eigvaluefile '"

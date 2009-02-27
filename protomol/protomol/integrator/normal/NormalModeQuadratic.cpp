@@ -94,9 +94,9 @@ namespace ProtoMol
       report << error << "No Eigenvectors for NormalMode integrator." << endr;
     }
 
-    if ( app->eigenInfo.myEigenvalues.size() * 3 <
+    if ( app->eigenInfo.myEigenvalues.size() <
          (unsigned)firstMode + numMode - 1 ){
-      report << error << "Insufficient Eigenvalues for Quadratic integrator (" << app->eigenInfo.myEigenvalues.size() * 3 << "." << endr;
+      report << error << "Insufficient Eigenvalues for Quadratic integrator (" << app->eigenInfo.myEigenvalues.size() << "." << endr;
     }
 
     if ( numTimesteps < 1 ){
@@ -140,7 +140,7 @@ namespace ProtoMol
         app->eigenInfo.currentMode = currMode + 1;
 
         //****Analytical mode integrator loop*****
-        tempFrq = sqrt( fabs( app->eigenInfo.myEigenvalues.c[currMode] ) );
+        tempFrq = sqrt( fabs( app->eigenInfo.myEigenvalues[currMode] ) );
         cPos[currMode] = tempKt * sin( ( double )( numSteps % cycleSteps ) / ( double )cycleSteps * 2.0 * M_PI );
 
         cPos[currMode] /= fScale ? tempFrq : sqrt( tempFrq );
@@ -155,7 +155,7 @@ namespace ProtoMol
 
         for ( int i = startm; i < firstMode + numMode - 1;i++ ) {
           //****Analytical mode integrator loop*****
-          tempFrq = sqrt( fabs( app->eigenInfo.myEigenvalues.c[i] ) );
+          tempFrq = sqrt( fabs( app->eigenInfo.myEigenvalues[i] ) );
           cPos[i] = tempKt * sin( total_time * tempFrq );
 
           cPos[i] /= fScale ? tempFrq : sqrt( tempFrq );
