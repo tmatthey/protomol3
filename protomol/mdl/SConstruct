@@ -147,18 +147,17 @@ libs.append(libname)
 
 if not env.GetOption('clean'):
     os.chdir(pmhome)
-    execfile(pmhome+'/package_h.py')
     execfile(pmhome+'/config.py')
-    execfile(pmhome+'/configfah.py')
-
-    if (have_bzip2 and have_boost_iostreams and have_libfah):
-      env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
-      have_libfah=1
-
+    execfile(pmhome+'/package_h.py')
 
     # Folding@Home library version
     if fah:
-      if not (have_libfah and have_bzip2 and have_boost_iostreams):
+      execfile(pmhome+'/boost.py')
+      execfile(pmhome+'/configfah.py')
+
+      if (have_libfah and have_bzip2 and have_boost_iostreams):
+        env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+      else:	
         print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
         Exit(1)
 
@@ -193,7 +192,7 @@ for s in subsrc:
         libsrc2.append(pmhome+'/protomol/'+s)
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
-   env.Prepend(LIBS = [libname2])
+#   env.Prepend(LIBS = [libname2])
    sl = env.SharedLibrary(libname2, libsrc2)
 else:
    sl = env.StaticLibrary(libname2, libsrc2, LIBSUFFIX=env['LIBSUFFIX'], LIBS=env['LIBS'])
