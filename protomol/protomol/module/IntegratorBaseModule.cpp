@@ -5,7 +5,6 @@
 #include <protomol/integrator/base/CGMinimizerIntegrator.h>
 #include <protomol/integrator/base/NumericalDifferentiation.h>
 #include <protomol/integrator/base/RMTIntegrator.h>
-#include <protomol/integrator/base/OpenMMIntegrator.h>
 
 #include <protomol/ProtoMolApp.h>
 
@@ -18,6 +17,5 @@ void IntegratorBaseModule::init(ProtoMolApp *app) {
   app->integratorFactory.registerExemplar(new CGMinimizerIntegrator());
   app->integratorFactory.registerExemplar(new NumericalDifferentiation());
   app->integratorFactory.registerExemplar(new RMTIntegrator());  
-  app->integratorFactory.registerExemplar(new OpenMMIntegrator());
 
 }

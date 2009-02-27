@@ -103,12 +103,14 @@ namespace ProtoMol {
     }else{
         numEigvectsu = 0;
     }
+    eigVecChangedP = &eipt->myEigVecChanged;
     eigValP = &eipt->myMaxEigenvalue;
     Q = &eipt->myEigenvectors;
     //find next integrators
     for(Integrator* i = integrator->next();i != NULL;i = i->next()){
         nmint = dynamic_cast<NormalModeUtilities*>(i);
         if(nmint == NULL) report << error << "Normal Mode integrator chain contains unknown integrator type."<<endr;
+        nmint->eigVecChangedP = &eipt->myEigVecChanged;
         nmint->eigValP = &eipt->myMaxEigenvalue;
         nmint->Q = &eipt->myEigenvectors;
         nmint->numEigvectsu = numEigvectsu;

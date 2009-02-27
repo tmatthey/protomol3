@@ -218,6 +218,9 @@ namespace ProtoMol
 
           blockDiag.absSort( *Q , blockDiag.eigVal, blockDiag.eigIndx, _3N );
 
+          //flag update to eigenvectors
+          *eigVecChangedP = true;
+
           blockDiag.rediagTime.stop();
           rediagCounter++;
 
@@ -245,6 +248,9 @@ namespace ProtoMol
           rediagCounter++; hessianCounter++;
           memory_Hessian = ( rHsn.memory_base + rHsn.memory_blocks ) * sizeof( Real ) / 1000000;
           memory_eigenvector = blockDiag.memory_footprint * sizeof( Real ) / 1000000;
+
+          //flag update to eigenvectors
+          *eigVecChangedP = true;
 
           //set flags if firstDiag (firstDiag can now be coarse)
           if ( firstDiag ) {

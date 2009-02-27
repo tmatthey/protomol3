@@ -18,15 +18,21 @@ namespace ProtoMol
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    EigenvectorInfo() : myEigenvectors ( 0 ), currentMode( -1 ), myMinimumLimit( 0.5 ) {};
+    EigenvectorInfo() : myEigenvectors ( 0 ), currentMode( -1 ), 
+      myMinimumLimit( 0.5 ), myEigVecChanged( true ), mySingleEigs( 0 ) {};
 
     EigenvectorInfo( unsigned int n, unsigned int m ) : myEigenvectorLength( n ), myNumEigenvectors( m ),
-        myMaxEigenvalue( 0.0 ), myEigenvectors ( new double[n * m * 3] ), currentMode( -1 ), myMinimumLimit( 0.5 ) {}
+        myMaxEigenvalue( 0.0 ), myEigenvectors ( new double[n * m * 3] ), 
+        currentMode( -1 ), myMinimumLimit( 0.5 ), myEigVecChanged( true ), mySingleEigs( 0 ) {}
 
     ~EigenvectorInfo() {
       if ( myEigenvectors ) {
         delete [] myEigenvectors;
         myEigenvectors = 0;
+      }
+      if ( mySingleEigs ) {
+        delete [] mySingleEigs;
+        mySingleEigs = 0;
       }
     };
 
@@ -48,6 +54,38 @@ namespace ProtoMol
 
     }
 
+    float* getFloatEigPointer() {
+
+      //no eigenvectors assigned?
+      if(!myEigenvectors) return (float*)0;
+
+      const unsigned int arrayLen = myEigenvectorLength * myNumEigenvectors * 3;
+
+      //assign storage if required
+      if(!mySingleEigs) {  
+
+        try {
+          mySingleEigs = new float[arrayLen];
+        } catch ( std::bad_alloc& ) {
+          return (float*)0;
+        }
+
+      }
+
+      //update values if double array updated
+      if(myEigVecChanged) {
+
+        for( unsigned int i=0; i<arrayLen; i++)
+          mySingleEigs[i] = (float)myEigenvectors[i];
+
+        myEigVecChanged = false;
+
+      }
+
+      return mySingleEigs;
+
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,10 +95,16 @@ namespace ProtoMol
     double myMaxEigenvalue;
     double *myEigenvectors;
 
+    //OpenMM single precision interface
+    float *mySingleEigs;
+    bool myEigVecChanged;
+
+    double myMinimumLimit;
+
+    //Analytic integrator
     std::vector< double > myEigenvalues;
     int currentMode;
 
-    double myMinimumLimit;
 
   };
 }

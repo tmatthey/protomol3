@@ -13,6 +13,7 @@
 #include <protomol/module/NormalModeModule.h>
 #include <protomol/module/LeapfrogModule.h>
 #include <protomol/module/HessianIntegratorModule.h>
+#include <protomol/module/IntegratorOpenMMModule.h>
 
 #include <protomol/module/NonbondedCutoffForceModule.h>
 #include <protomol/module/NonbondedFullForceModule.h>
@@ -34,6 +35,7 @@ void moduleInitFunction(ModuleManager *manager) {
   manager->add(new NormalModeModule());
   manager->add(new LeapfrogModule());
   manager->add(new HessianIntegratorModule());
+  manager->add(new IntegratorOpenMMModule());
 
   // Forces
   manager->add(new BondedForcesModule());

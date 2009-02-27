@@ -77,6 +77,7 @@ namespace ProtoMol {
         //pointers to eig pointers, used by all integrators in chain
         double **Q;
         double *eigValP;
+        bool *eigVecChangedP;
         unsigned int numEig;
         //molecule constants
         int _N, _3N, _rfM;
