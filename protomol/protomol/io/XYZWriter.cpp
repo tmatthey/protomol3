@@ -45,7 +45,7 @@ bool XYZWriter::write(const Vector3DBlock &coords,
   file << count << endl;
 
   // Write atoms
-  file << setprecision(15);   // This should be some FLT_DIG or DBL_DIG ...
+  file.precision(15);// << setprecision(15);   // This should be some FLT_DIG or DBL_DIG ...
   for (unsigned int i = 0; i < count; ++i) {
     file << names[i] << "\t";
     file.width(24);
