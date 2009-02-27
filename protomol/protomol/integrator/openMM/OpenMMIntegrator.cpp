@@ -1,4 +1,4 @@
-#include <protomol/integrator/base/OpenMMIntegrator.h>
+#include <protomol/integrator/openMM/OpenMMIntegrator.h>
 #include <protomol/base/Report.h>
 #include <protomol/type/ScalarStructure.h>
 #include <protomol/type/Vector3DBlock.h>
