@@ -17,10 +17,7 @@ using namespace ProtoMol;
 const string OpenMMIntegrator::keyword("OpenMM");
 
 OpenMMIntegrator::OpenMMIntegrator() :
-  STSIntegrator(), myLangevinTemperature(-1.0), myGamma(-1.0),
-  // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
-  mySeed(-1),
-  HarmonicBondForce(false), HarmonicAngleForce(false), NonbondedForce(false)
+  STSIntegrator()
   {
 #if defined (HAVE_OPENMM)
     system = 0;
@@ -33,16 +30,8 @@ OpenMMIntegrator::OpenMMIntegrator() :
   }
 
 OpenMMIntegrator::
-OpenMMIntegrator(Real timestep, Real LangevinTemperature, Real gamma,
-                          int seed,
-                          bool bond, bool angle, bool nonbond,
-                          ForceGroup *overloadedForces) :
-  STSIntegrator(timestep, overloadedForces),
-  myLangevinTemperature(LangevinTemperature),
-  myGamma(gamma / (1000 * Constant::INV_TIMEFACTOR)),
-  // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
-  mySeed(seed),
-  HarmonicBondForce(bond), HarmonicAngleForce(angle), NonbondedForce(nonbond)
+OpenMMIntegrator(Real timestep, ForceGroup *overloadedForces) :
+  STSIntegrator(timestep, overloadedForces)
   {
 #if defined (HAVE_OPENMM)
     system = 0;
@@ -197,10 +186,27 @@ const {
 
 STSIntegrator *OpenMMIntegrator::doMake(const vector<Value> &values,
                                                  ForceGroup *fg) const {
-  return new OpenMMIntegrator(values[0], values[1], values[2],
-                                       values[3], 
-                                       values[4], values[5], values[6],
-                                       fg);
+  OpenMMIntegrator* myIntegP = new OpenMMIntegrator(values[0], fg);
+
+  std::vector<Value> myValues(values.begin() + 1, values.end());
+
+  myIntegP->setupValues(myValues);
+
+  return (STSIntegrator*)myIntegP;
+
+}
+
+void OpenMMIntegrator::setupValues(std::vector<Value> &values) {
+
+  //these must be in the same order as getParameters()
+  myLangevinTemperature = values[0];
+  myGamma = (Real)values[1] / (1000.0 * Constant::INV_TIMEFACTOR);
+  // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
+  mySeed = values[2];
+  HarmonicBondForce = values[3];
+  HarmonicAngleForce = values[4];
+  NonbondedForce = values[5];
+
 }
 
 // Constants for GROMACS-PROTOMOL conversion

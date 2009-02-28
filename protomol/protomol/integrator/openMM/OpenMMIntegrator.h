@@ -31,10 +31,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     OpenMMIntegrator();
-    OpenMMIntegrator(Real timestep, Real LangevinTemperature,
-                              Real gamma, int seed, 
-                              bool bond, bool angle, bool nonbond,  //openMM forces
-                              ForceGroup *overloadedForces);
+    OpenMMIntegrator(Real timestep, ForceGroup *overloadedForces);
     ~OpenMMIntegrator();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,6 +40,10 @@ namespace ProtoMol {
   public:
     virtual std::string getIdNoAlias() const {return keyword;}
     virtual void getParameters(std::vector<Parameter> &parameters) const;
+    virtual unsigned int getParameterSize() const{return 7;}
+
+  protected:
+    virtual void setupValues(std::vector<Value> &params);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Integrator
