@@ -40,13 +40,7 @@ namespace ProtoMol {
   void NormalModeOpenMM::initialize(ProtoMolApp* app){
     OpenMMIntegrator::initialize(app);
     initializeForces();
-    myPreviousNormalMode  = dynamic_cast<NormalModeUtilities*>(myPreviousIntegrator);
-    //Check if using complement of prev integrator, then copy all integrator paramiters
-    if(firstMode == -1 && numMode == -1){
-        firstMode = myPreviousNormalMode->firstMode; numMode = myPreviousNormalMode->numMode;
-        NormalModeUtilities::myGamma = myPreviousNormalMode->myGamma; NormalModeUtilities::mySeed = myPreviousNormalMode->mySeed; myTemp = myPreviousNormalMode->myTemp;
-    }
-    //NM initialization if OK
+    //NM initialization
     NormalModeUtilities::initialize((int)app->positions.size(), app->topology,
 				    myForces, NO_NM_FLAGS);
     //
@@ -67,14 +61,40 @@ namespace ProtoMol {
     //
     preStepModify();
     //
+#if defined (HAVE_OPENMM)
+    unsigned int sz = app->positions.size();
+
+    // do integration
+    integrator->step(numTimesteps);
+
+    // Retrive data
+    const OpenMM::State state = context->getState(OpenMM::State::Positions | 
+                                                  OpenMM::State::Velocities |
+                                                  OpenMM::State::Forces |
+                                                  OpenMM::State::Energy);
+    openMMpositions = state.getPositions();
+    openMMvelocities = state.getVelocities();
+    openMMforces = state.getForces();
+
+    for (int i = 0; i < sz; ++i){
+     for (int j = 0; j < 3; j++){
+       app->positions[i].c[j] = openMMpositions[i][j] * Constant::NM_ANGSTROM; //nm to A
+       app->velocities[i].c[j] = openMMvelocities[i][j];// * Constant::NM_ANGSTROM * Constant::TIMEFACTOR; //nm/ps to A/fs?
+       (*myForces)[i].c[j] = openMMforces[i][j] * Constant::NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
+      }
+    }
+
+#endif
+
+    //
     postStepModify();
   }  
 
   void NormalModeOpenMM::getParameters(vector<Parameter>& parameters) const {
     OpenMMIntegrator::getParameters(parameters);
 
-    parameters.push_back(Parameter("firstmode",Value(firstMode,ConstraintValueType::NoConstraints()),-1,Text("First mode to use in set")));
-    parameters.push_back(Parameter("numbermodes",Value(numMode,ConstraintValueType::NoConstraints()),-1,Text("Number of modes propagated")));
+    parameters.push_back(Parameter("firstmode",Value(firstMode,ConstraintValueType::NoConstraints()),1,Text("First mode to use in set")));
+    parameters.push_back(Parameter("numbermodes",Value(numMode,ConstraintValueType::NoConstraints()),1,Text("Number of modes propagated")));
     parameters.push_back(Parameter("gamma",Value(NormalModeUtilities::myGamma*(1000 * Constant::INV_TIMEFACTOR),ConstraintValueType::NotNegative()),80.0,Text("Langevin Gamma")));
     parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),300.0,Text("Langevin temperature")));
     parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
