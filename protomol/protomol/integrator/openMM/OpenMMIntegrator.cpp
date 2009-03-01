@@ -110,7 +110,11 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   }
 
   //openMM Initialize
-  integrator = new OpenMM::LangevinIntegrator(myLangevinTemperature, myGamma, getTimestep() * Constant::FS_PS); //ps
+  if( myIntegratorType == 1) {
+    integrator = new OpenMM::LangevinIntegrator(myLangevinTemperature, myGamma, getTimestep() * Constant::FS_PS); //ps
+  } else {
+    integrator = new OpenMM::NMLIntegrator(myLangevinTemperature, myGamma, getTimestep() * Constant::FS_PS, &app->eigenInfo); //ps
+  }
   context = new OpenMM::OpenMMContext(*system, *integrator);
 
   OpenMM::Vec3 openMMvecp, openMMvecv;
@@ -181,6 +185,7 @@ const {
   parameters.push_back(Parameter( "HarmonicBondForce", Value( HarmonicBondForce, ConstraintValueType::NoConstraints() ), false ));
   parameters.push_back(Parameter( "HarmonicAngleForce", Value( HarmonicAngleForce, ConstraintValueType::NoConstraints() ), false ));
   parameters.push_back(Parameter( "NonbondedForce", Value( NonbondedForce, ConstraintValueType::NoConstraints() ), false ));
+  parameters.push_back(Parameter( "IntegratorType", Value( myIntegratorType, ConstraintValueType::NotNegative() ), 1 ));
 
 }
 
@@ -206,6 +211,7 @@ void OpenMMIntegrator::setupValues(std::vector<Value> &values) {
   HarmonicBondForce = values[3];
   HarmonicAngleForce = values[4];
   NonbondedForce = values[5];
+  myIntegratorType = values[6];
 
 }
 

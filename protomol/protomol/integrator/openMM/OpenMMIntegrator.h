@@ -10,11 +10,16 @@
 #include "Vec3.h"
 #include "State.h"
 #include "System.h"
+//forces
 #include "HarmonicBondForce.h"
 #include "HarmonicAngleForce.h"
-#include "LangevinIntegrator.h"
-#include "OpenMMContext.h"
 #include "NonbondedForce.h"
+//integrators
+#include "Integrator.h"
+#include "LangevinIntegrator.h"
+#include "NMLIntegrator.h"
+//other
+#include "OpenMMContext.h"
 
 #endif
 
@@ -40,7 +45,7 @@ namespace ProtoMol {
   public:
     virtual std::string getIdNoAlias() const {return keyword;}
     virtual void getParameters(std::vector<Parameter> &parameters) const;
-    virtual unsigned int getParameterSize() const{return 7;}
+    virtual unsigned int getParameterSize() const{return 8;}
 
   protected:
     virtual void setupValues(std::vector<Value> &params);
@@ -88,14 +93,15 @@ namespace ProtoMol {
     OpenMM::HarmonicBondForce* bonds;
     OpenMM::HarmonicAngleForce* angles;
     OpenMM::NonbondedForce * nonbonded;
-    OpenMM::LangevinIntegrator *integrator;
+    OpenMM::Integrator *integrator;//Langevin
     OpenMM::OpenMMContext *context;
     vector<OpenMM::Vec3> openMMpositions, openMMvelocities, openMMforces;
 
 #endif
 
-    //OpenMM force parameters
+    //OpenMM force/integrator parameters
     bool HarmonicBondForce, HarmonicAngleForce, NonbondedForce;
+    int  myIntegratorType;
 
   };
   //____ INLINES
