@@ -6,6 +6,7 @@
 #include <protomol/integrator/IntegratorDefinition.h>
 #include <protomol/type/Real.h>
 
+#include <iostream>
 #include <string>
 #include <set>
 
@@ -47,6 +48,9 @@ namespace ProtoMol {
 
     //  Needed for calculating shadow Hamiltonian.
     virtual void updateBeta(Real /*timestep*/) {}
+
+    virtual void StreamRead( std::istream& inStream ) {}
+    virtual void StreamWrite( std::ostream& outStream ) {}
 
   public:
     /// Returns the time step of the actual integrator.
