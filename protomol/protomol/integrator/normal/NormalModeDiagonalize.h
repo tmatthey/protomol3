@@ -81,6 +81,8 @@ namespace ProtoMol
       // New methods of class NormalModeUtilities
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     protected:
+      virtual void streamRead( std::istream& inStream );
+      virtual void streamWrite( std::ostream& outStream ) const;
 
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // My data members

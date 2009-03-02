@@ -364,4 +364,22 @@ namespace ProtoMol
     calculateForces();
   }
 
+  //*************************************************************************************
+  //****Checkpointing********************************************************************
+  //*************************************************************************************
+  void NormalModeDiagonalize::streamRead( std::istream& inStream ) {
+
+    inStream >> diagAt;
+    checkpointUpdate = true;
+      
+  }
+  
+  void NormalModeDiagonalize::streamWrite( std::ostream& outStream ) const {    
+    
+    outStream.precision(15);
+    outStream << diagAt;
+
+  }
+
+
 }

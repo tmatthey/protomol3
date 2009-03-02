@@ -278,7 +278,7 @@ public:
 
 
     friend std::ostream &operator<<(std::ostream &OS, const Vector3DImpl &coords) {
-      OS << "(" << coords.c[0] << "," << coords.c[1] << "," << coords.c[2] << ")";
+      OS << coords.c[0] << " " << coords.c[1] << " " << coords.c[2] << " ";
       return OS;
     }
 

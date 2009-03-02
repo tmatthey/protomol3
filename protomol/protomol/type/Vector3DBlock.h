@@ -229,6 +229,33 @@ namespace ProtoMol {
 
     /// Compute regression plane by SVD
 
+    /// Streams
+    friend std::ostream &operator<<(std::ostream &OS, const Vector3DBlock &vblock) {
+      unsigned int blkSz = vblock.size();
+
+      OS << blkSz;
+
+      for (unsigned int i=0; i< blkSz; i++) 
+        OS << std::endl << vblock[i];
+
+      return OS;
+    }
+
+    friend std::istream &operator>>(std::istream &OS, Vector3DBlock &vblock) {
+      Vector3D coords;
+      unsigned int blkSz;
+
+      OS >> blkSz;
+
+      for (unsigned int i=0; i< blkSz; i++) {
+        OS >> coords.c[0] >> coords.c[1] >> coords.c[2];
+        vblock.push_back(coords);
+      }
+
+      return OS;
+    }
+
+
   public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
