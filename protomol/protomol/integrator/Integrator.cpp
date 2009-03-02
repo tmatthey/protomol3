@@ -20,11 +20,11 @@ const string Integrator::scope("Integrator");
 Real Integrator::myBeta = 0.;
 
 Integrator::Integrator() :
-  myPotEnergy(0), mhQ(0), app(0), myForces(0), myForcesToEvaluate(0),
+  myPotEnergy(0), app(0), myForces(0), myForcesToEvaluate(0),
   myForward(true), myOldForces(0) {}
 
 Integrator::Integrator(ForceGroup *forceGroup) :
-  myPotEnergy(0), mhQ(0), app(0), myForces(new Vector3DBlock),
+  myPotEnergy(0), app(0), myForces(new Vector3DBlock),
   myForcesToEvaluate(forceGroup), myForward(true),
   myOldForces(new Vector3DBlock) {}
 
@@ -131,7 +131,7 @@ void Integrator::backward() {
 }
 
 void Integrator::preStepModify() {
-  report << debug(10) << "[Integrator::preStepModify] (" << (long)this << ") " 
+  report << debug(10) << "[Integrator::preStepModify] (" << (long)this << ") "
          << (app ? app->topology->time : 0.0) << endr;
 
   for (iterator i = myPreStepModifiers.begin();
@@ -140,7 +140,7 @@ void Integrator::preStepModify() {
 }
 
 void Integrator::preDriftOrNextModify() {
-  report << debug(10) << "[Integrator::preDriftOrNextModify] (" << (long)this 
+  report << debug(10) << "[Integrator::preDriftOrNextModify] (" << (long)this
          << ") " << (app ? app->topology->time : 0.0) << endr;
 
   for (iterator i = myPreDriftOrNextModifiers.begin();
@@ -210,7 +210,7 @@ void Integrator::adoptPreStepModifier(Modifier *modifier) {
 }
 
 void Integrator::adoptPreDriftOrNextModifier(Modifier *modifier) {
-  report << debug(10) << "[Integrator::adoptPreDriftOrNextModifier] " 
+  report << debug(10) << "[Integrator::adoptPreDriftOrNextModifier] "
          << modifier->getId() << "(" << (long)modifier << ") "
          << (app ? app->topology->time : 0.0) << endr;
 
@@ -231,7 +231,7 @@ void Integrator::adoptPostDriftOrNextModifier(Modifier *modifier) {
 
 void Integrator::adoptPreForceModifier(Modifier *modifier) {
   report << debug(10) << "[Integrator::adoptPreForceModifier] "
-         << modifier->getId() << "(" << (long)modifier << ") " 
+         << modifier->getId() << "(" << (long)modifier << ") "
          << (app ? app->topology->time : 0.0) << endr;
 
   if (app) modifier->initialize(app, myForces);
@@ -241,7 +241,7 @@ void Integrator::adoptPreForceModifier(Modifier *modifier) {
 
 void Integrator::adoptMediForceModifier(Modifier *modifier) {
   report << debug(10) << "[Integrator::adoptMediForceModifier] "
-         << modifier->getId() << "(" << (long)modifier << ") " 
+         << modifier->getId() << "(" << (long)modifier << ") "
          << (app ? app->topology->time : 0.0) << endr;
 
   if (app) modifier->initialize(app, myForces);
@@ -260,7 +260,7 @@ void Integrator::adoptPostForceModifier(Modifier *modifier) {
 }
 
 void Integrator::adoptPostStepModifier(Modifier *modifier) {
-  report << debug(10) << "[Integrator::adoptPostStepModifier] " 
+  report << debug(10) << "[Integrator::adoptPostStepModifier] "
          << modifier->getId() << "(" << (long)modifier << ") "
          << (app ? app->topology->time : 0.0) << endr;
 
@@ -436,7 +436,7 @@ bool Integrator::removeModifier(const Modifier *modifier) {
 void Integrator::initializeModifiers() {
   report << debug(10) << "[Integrator::initializeModifiers] "
          << (app != 0 ? app->topology->time : 0.0) << endr;
-  
+
   for (iterator i = myListModifiers.begin(); i != myListModifiers.end(); ++i)
     (*i)->initialize(app, myForces);
 }

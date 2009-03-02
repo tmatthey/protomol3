@@ -175,11 +175,6 @@ namespace ProtoMol {
     static Real myBeta;
     Real myPotEnergy;
 
-    //  For use in NormModeInt.  This is a hack and should be fixed.
-    Real *mhQ;
-    Real maxEigval;
-    unsigned int numEigvects;
-
   protected:
     ProtoMolApp     *app;
     Vector3DBlock   *myForces;
