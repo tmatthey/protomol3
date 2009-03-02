@@ -18,37 +18,51 @@ using namespace ProtoMol;
 
 const string OutputCheckpoint::keyword( "Checkpoint" );
 
-OutputCheckpoint::OutputCheckpoint() : mName( "false" ), mCurrent( 0 ) {
+OutputCheckpoint::OutputCheckpoint() : mName( "false" ), mCurrent( 0 ),
+        mPosBase( "" ), mVelBase( "" ) {
     if ( mName == "true" || mName == "True" || mName == "TRUE" ) {
         isActive = true;
-    }else{
+    } else {
         isActive = false;
     }
 }
 
-OutputCheckpoint::OutputCheckpoint( const std::string& name, int freq, int start ) :
-        Output( freq ), mName( name ), mCurrent( start ) {
+OutputCheckpoint::OutputCheckpoint( const std::string& name, int freq,
+                                    int start, const std::string& posbase,
+                                    const std::string& velbase ) :
+        Output( freq ), mName( name ), mCurrent( start ),
+        mPosBase( posbase ), mVelBase( velbase ) {
+
     if ( mName == "true" || mName == "True" || mName == "TRUE" ) {
         isActive = true;
-    }else{
+    } else {
         isActive = false;
     }
 }
 
 void OutputCheckpoint::doInitialize() {
     if ( isActive ) {
-        const std::string temp = app->config["posfile"];
+        if ( mPosBase == "" ) {
+            const std::string temp = app->config["posfile"];
 
-        mBaseFile = temp.substr( 0, temp.rfind( '.' ) );
+            mPosBase = temp.substr( 0, temp.rfind( '.' ) + 1 );
+        }
 
-        std::cout << "Checkpointing: Active" << std::endl;
-        std::cout << "Checkpointing: Base " << mBaseFile << std::endl;
+        if ( mVelBase == "" ) {
+            if ( !app->config.valid( "velfile" ) ){
+                mVelBase = mPosBase;
+            }else{
+                const std::string temp = app->config["velfile"];
+
+                mVelBase = temp.substr( 0, temp.rfind( '.' ) + 1 );
+            }
+        }
     }
 }
 
 void OutputCheckpoint::doRun( int step ) {
-    if ( step != 0 ) {
-        if ( isActive ) {
+    if ( isActive ) {
+        if ( step != 0 ){
             ReadConfig();
             WritePositions( step );
             WriteVelocities( step );
@@ -66,7 +80,8 @@ void OutputCheckpoint::doFinalize( int step ) {
 }
 
 Output *OutputCheckpoint::doMake( const vector<Value> &values ) const {
-    return new OutputCheckpoint( values[0], values[1], values[2] );
+    return new OutputCheckpoint( values[0], values[1], values[2], values[3],
+                                 values[4] );
 }
 
 bool OutputCheckpoint::isIdDefined( const Configuration *config ) const {
@@ -85,6 +100,14 @@ void OutputCheckpoint::getParameters( vector<Parameter> &parameter ) const {
     parameter.push_back(
         Parameter( keyword + "Start",
                    Value( mCurrent, ConstraintValueType::NotNegative() ) ) );
+
+    parameter.push_back(
+        Parameter( keyword + "PosBase",
+                   Value( mPosBase, ConstraintValueType::NoConstraints() ) ) );
+
+    parameter.push_back(
+        Parameter( keyword + "VelBase",
+                   Value( mVelBase, ConstraintValueType::NoConstraints() ) ) );
 }
 
 bool OutputCheckpoint::adjustWithDefaultParameters( vector<Value> &values,
@@ -103,6 +126,15 @@ bool OutputCheckpoint::adjustWithDefaultParameters( vector<Value> &values,
         values[2] = 0;
     }
 
+    if ( !values[3].valid() ) {
+        values[3] = "";
+    }
+
+    if ( !values[4].valid() ) {
+        values[4] = "";
+    }
+
+
     return checkParameters( values );
 }
 
@@ -120,7 +152,7 @@ void OutputCheckpoint::ReadConfig( ) {
 }
 
 void OutputCheckpoint::WritePositions( int step ) {
-    std::string posFile = Append( mBaseFile + ".pos", mCurrent );
+    std::string posFile = Append( Append( mPosBase, mCurrent ), ".pos" );
 
     XYZWriter posWriter;
     if ( !posWriter.open( posFile ) ) {
@@ -137,7 +169,7 @@ void OutputCheckpoint::WritePositions( int step ) {
 }
 
 void OutputCheckpoint::WriteVelocities( int step ) {
-    std::string velFile = Append( mBaseFile + ".vel", mCurrent );
+    std::string velFile = Append( Append( mVelBase, mCurrent ), ".vel" );
 
     XYZWriter velWriter;
     if ( !velWriter.open( velFile ) ) {
@@ -153,7 +185,7 @@ void OutputCheckpoint::WriteVelocities( int step ) {
     }
 }
 
-void OutputCheckpoint::WriteConfig( int step ){
+void OutputCheckpoint::WriteConfig( int step ) {
     ofstream outFile( "checkpoint.dat" );
 
     if ( outFile ) {

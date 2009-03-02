@@ -124,6 +124,16 @@ bool ProtoMolApp::readCheckpoint( const std::string& path ){
     ifstream file ( path.c_str() );
 
     if ( file ){
+      std::string posbase = config["posfile"];
+      posbase = posbase.substr( 0, posbase.rfind('.') + 1 );
+
+      config["CheckpointPosBase"] = posbase;
+
+      std::string velbase = config["velfile"];
+      velbase = velbase.substr( 0, velbase.rfind('.') + 1 );
+
+      config["CheckpointVelBase"] = velbase;
+
       /* Read in latest id */
       int id;
       file >> id;
@@ -131,26 +141,30 @@ bool ProtoMolApp::readCheckpoint( const std::string& path ){
       config["CheckpointStart"] = id;
 
       /* Update the pos file */
-      std::string posFile = config["posfile"];
-
-      std::string resFile = posFile.substr( 0, posFile.find(".pos") + 4 );
-      resFile = Append( resFile, id );
-
-      config["posfile"] = resFile;
+      config["posfile"] = Append( Append( posbase, id ), ".pos" );
 
       /* Update the vel file */
-      std::string velFile = config["velfile"];
+      config["velfile"] = Append( Append( velbase, id ), ".vel" );
 
-      std::string resVelFile = velFile.substr( 0, velFile.find(".vel") + 4 );
-      resVelFile = Append( velFile, id );
+      /* Update the dcd file */
+      if (config.valid("DCDfile") ) {
+          std::string dcd = config["DCDfile"];
 
-      config["velfile"] = resVelFile;
+          std::string dcdFile = dcd.substr( 0, dcd.rfind( ".dcd" ) + 1 );
+
+          config["dcdfile"] = Append( Append( dcdFile, id ), ".dcd" );
+      }
+
+      /* Update the energy file */
+      if (config.valid("allEnergiesFile") ) {
+          config["allEnergiesFile"] = Append( config["allEnergiesFile"], id );
+      }
 
       /* Read in starting step */
       int steps;
       file >> steps;
 
-      config["firststep"] = steps;
+      config["firststep"] = toString( toInt( config["firststep"] ) + steps );
 
       config["numsteps"] = toString(
         toInt( config["numsteps"] ) - toInt( config["firststep"] )
