@@ -75,7 +75,7 @@ namespace ProtoMol {
     for (int i=0; i < ob.SHUFFLE_LEN; i++)
       stream << ob.shuffle_array[i] << ' ';
 
-    stream << ob.shuffle_val << ' ' << ob.intermediate_rand << "\n";
+    stream << ob.shuffle_val << ' ' << ob.intermediate_rand;
 
     return stream;
   }

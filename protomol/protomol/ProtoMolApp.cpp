@@ -96,89 +96,96 @@ bool ProtoMolApp::configure(int argc, char *argv[]) {
   return configure(vector<string>(argv, argv + argc));
 }
 
-bool ProtoMolApp::configure(const vector<string> &args) {
+bool ProtoMolApp::configure( const vector<string> &args ) {
   // Parse command line
-  if (cmdLine.parse(args)) return false;
+  if ( cmdLine.parse( args ) ) return false;
 
   // Read Config file
-  if (config.valid(InputConfig::keyword))
-    changeDirectory(config[InputConfig::keyword]);
-  else THROW("Configuration file not set.");
+  if ( config.valid( InputConfig::keyword ) )
+    changeDirectory( config[InputConfig::keyword] );
+  else THROW( "Configuration file not set." );
 
-  modManager->configure(this);
+  modManager->configure( this );
 
-  if( config.valid("Checkpoint") ){
-      if ( config["Checkpoint"] == "true" ){
-          if ( !readCheckpoint( "checkpoint.dat" ) ){
-            readCheckpoint( "checkpoint.last" );
-          }
+  if ( config.valid( "Checkpoint" ) ) {
+    if ( config["Checkpoint"] == "true" ) {
+      /* Store positon file base name */
+      std::string posbase = config["posfile"];
+      posbase = posbase.substr( 0, posbase.rfind( '.' ) + 1 );
+
+      config["CheckpointPosBase"] = posbase;
+
+      /* Store velocity file base name */
+      std::string velbase = config["velfile"];
+      velbase = velbase.substr( 0, velbase.rfind( '.' ) + 1 );
+
+      config["CheckpointVelBase"] = velbase;
+
+      /* Read checkpoint data */
+      if ( !readCheckpoint( "checkpoint.dat" ) ) {
+        readCheckpoint( "checkpoint.last" );
       }
+    }
   }
 
   return true;
 }
 
-bool ProtoMolApp::readCheckpoint( const std::string& path ){
-    bool retVal = true;
+bool ProtoMolApp::readCheckpoint( const std::string& path ) {
+  bool retVal = true;
 
-    ifstream file ( path.c_str() );
+  ifstream file ( path.c_str() );
 
-    if ( file ){
-      std::string posbase = config["posfile"];
-      posbase = posbase.substr( 0, posbase.rfind('.') + 1 );
+  if ( file ) {
+    int id = 0, step = 0;
+    std::string line;
 
-      config["CheckpointPosBase"] = posbase;
-
-      std::string velbase = config["velfile"];
-      velbase = velbase.substr( 0, velbase.rfind('.') + 1 );
-
-      config["CheckpointVelBase"] = velbase;
-
-      /* Read in latest id */
-      int id;
-      file >> id;
-
-      config["CheckpointStart"] = id;
-
-      /* Update the pos file */
-      config["posfile"] = Append( Append( posbase, id ), ".pos" );
-
-      /* Update the vel file */
-      config["velfile"] = Append( Append( velbase, id ), ".vel" );
-
-      /* Update the dcd file */
-      if (config.valid("DCDfile") ) {
-          std::string dcd = config["DCDfile"];
-
-          std::string dcdFile = dcd.substr( 0, dcd.rfind( ".dcd" ) + 1 );
-
-          config["dcdfile"] = Append( Append( dcdFile, id ), ".dcd" );
+    while ( std::getline( file, line ) ) {
+      if ( line.find( "#ID" ) != std::string::npos ){
+        file >> id;
       }
 
-      /* Update the energy file */
-      if (config.valid("allEnergiesFile") ) {
-          config["allEnergiesFile"] = Append( config["allEnergiesFile"], id );
+      if ( line.find( "#Step" ) != std::string::npos ) {
+        file >> step;
       }
 
-      /* Read in starting step */
-      int steps;
-      file >> steps;
-
-      config["firststep"] = toString( toInt( config["firststep"] ) + steps );
-
-      config["numsteps"] = toString(
-        toInt( config["numsteps"] ) - toInt( config["firststep"] )
-      );
-
-      /* Read in random states */
-      file >> Random::Instance();
-
-      Rand::isSeeded = true;
-    }else{
-        retVal = false;
+      if ( line.find( "#Random" ) != std::string::npos ) {
+        file >> Random::Instance();
+      }
     }
 
-    return retVal;
+    config["CheckpointStart"] = id;
+
+    /* Update the pos file */
+    config["posfile"] = Append( Append( config["CheckpointPosBase"], id ), ".pos" );
+
+    /* Update the vel file */
+    config["velfile"] = Append( Append( config["CheckpointVelBase"], id ), ".vel" );
+
+    /* Update the dcd file */
+    if ( config.valid( "DCDfile" ) ) {
+      std::string dcd = config["DCDfile"];
+
+      std::string dcdFile = dcd.substr( 0, dcd.rfind( ".dcd" ) + 1 );
+
+      config["dcdfile"] = Append( Append( dcdFile, id ), ".dcd" );
+    }
+
+    /* Update the energy file */
+    if ( config.valid( "allEnergiesFile" ) ) {
+      config["allEnergiesFile"] = Append( config["allEnergiesFile"], id );
+    }
+
+    config["firststep"] = toString( toInt( config["firststep"] ) + step );
+
+    config["numsteps"] = toString(
+       toInt( config["numsteps"] ) - toInt( config["firststep"] )
+     );
+  } else {
+    retVal = false;
+  }
+
+  return retVal;
 }
 
 void ProtoMolApp::build() {

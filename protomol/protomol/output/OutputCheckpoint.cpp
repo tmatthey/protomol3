@@ -189,8 +189,16 @@ void OutputCheckpoint::WriteConfig( int step ) {
     ofstream outFile( "checkpoint.dat" );
 
     if ( outFile ) {
+        outFile << "#ID" << std::endl;
         outFile << mCurrent << std::endl;
+
+        outFile << "#Step" << std::endl;
         outFile << step << std::endl;
+
+        outFile << "#Random" << std::endl;
         outFile << Random::Instance() << std::endl;
+
+        outFile << "#Integrator" << std::endl;
+        outFile << (*app->integrator) << std::endl;
     }
 }

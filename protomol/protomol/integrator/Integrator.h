@@ -49,8 +49,19 @@ namespace ProtoMol {
     //  Needed for calculating shadow Hamiltonian.
     virtual void updateBeta(Real /*timestep*/) {}
 
-    virtual void StreamRead( std::istream& inStream ) {}
-    virtual void StreamWrite( std::ostream& outStream ) {}
+    friend std::istream& operator>> (std::istream& i, Integrator& base){
+      base.streamRead( i );
+      return i;
+    }
+
+    friend std::ostream& operator<< (std::ostream& o, const Integrator& base){
+      base.streamWrite( o );
+      return o;
+    }
+
+  protected:
+    virtual void streamRead( std::istream& inStream ) {}
+    virtual void streamWrite( std::ostream& outStream ) const {}
 
   public:
     /// Returns the time step of the actual integrator.
