@@ -25,15 +25,15 @@ namespace ProtoMol {
   {
   }
 
-  NormalModeOpenMM::NormalModeOpenMM(Real timestep, int firstmode, int nummode, Real gamma, Real temperature, 
-      Real minimlim, ForceGroup *overloadedForces) 
+  NormalModeOpenMM::NormalModeOpenMM(Real timestep, int firstmode, int nummode, Real gamma, Real temperature,
+      Real minimlim, ForceGroup *overloadedForces)
     : OpenMMIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, gamma, 1234, temperature),
       minLim(minimlim)
   {
   }
 
-  NormalModeOpenMM::~NormalModeOpenMM() 
-  {  
+  NormalModeOpenMM::~NormalModeOpenMM()
+  {
 
   }
 
@@ -59,36 +59,10 @@ namespace ProtoMol {
     if(*Q == NULL)
         report << error << "No Eigenvectors for NormalMode integrator."<<endr;
     //
-    preStepModify();
-    //
-#if defined (HAVE_OPENMM)
-    unsigned int sz = app->positions.size();
 
-    // do integration
-    integrator->step(numTimesteps);
+    OpenMMIntegrator::run(numTimesteps);
 
-    // Retrive data
-    const OpenMM::State state = context->getState(OpenMM::State::Positions | 
-                                                  OpenMM::State::Velocities |
-                                                  OpenMM::State::Forces |
-                                                  OpenMM::State::Energy);
-    openMMpositions = state.getPositions();
-    openMMvelocities = state.getVelocities();
-    openMMforces = state.getForces();
-
-    for (int i = 0; i < sz; ++i){
-     for (int j = 0; j < 3; j++){
-       app->positions[i].c[j] = openMMpositions[i][j] * Constant::NM_ANGSTROM; //nm to A
-       app->velocities[i].c[j] = openMMvelocities[i][j];// * Constant::NM_ANGSTROM * Constant::TIMEFACTOR; //nm/ps to A/fs?
-       (*myForces)[i].c[j] = openMMforces[i][j] * Constant::NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
-      }
-    }
-
-#endif
-
-    //
-    postStepModify();
-  }  
+  }
 
   void NormalModeOpenMM::getParameters(vector<Parameter>& parameters) const {
     OpenMMIntegrator::getParameters(parameters);
@@ -110,7 +84,7 @@ namespace ProtoMol {
     NormalModeOpenMM* myIntegP = new NormalModeOpenMM(values[0],values[7],values[8],values[9],values[10],values[11],fg);
 
     myIntegP->OpenMMIntegrator::setupValues(ommValues);
-  
+
     return (STSIntegrator*)myIntegP;
 
   }
