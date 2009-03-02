@@ -34,7 +34,7 @@ namespace ProtoMol
 
   NormalModeDiagonalize::NormalModeDiagonalize() :
 	 MTSIntegrator(), NormalModeUtilities(), 
-	 hessianCounter( 0 ), rediagCounter( 0 ) {
+	 hessianCounter( 0 ), rediagCounter( 0 ), checkpointUpdate( false ) {
   }
 
   NormalModeDiagonalize::
@@ -48,7 +48,7 @@ namespace ProtoMol
     rediagCount( redi ), rediagHysteresis( redhy ),
     hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
-    residuesPerBlock( rpb ) {
+    residuesPerBlock( rpb ), checkpointUpdate( false ) {
 
     //find forces and parameters
     rHsn.findForces( overloadedForces );
@@ -138,7 +138,12 @@ namespace ProtoMol
     nextRediag = 0; //rediag first time
 
     //save positions where diagonalized for checkpoint save (assume I.C. if file)
-    diagAt = app->positions;
+    if(!checkpointUpdate) {
+      diagAt = app->positions;
+    } else {
+      firstDiag = true;
+    }
+
     newDiag = false;
 
     //timers/counters for diagnostics
@@ -168,12 +173,14 @@ namespace ProtoMol
 
         report << debug( 1 ) << "[NormalModeDiagonalize::run] Finding diagonalized Hessian." << endr;
 
-        //save positions where diagonalized for checkpoint save
-        diagAt = app->positions;
+        if(!(checkpointUpdate && firstDiag)) {
+          //save positions where diagonalized for checkpoint save
+          diagAt = app->positions;
 
-        //remove last random perturbation?
-        if ( removeRand ) {
-          app->positions.intoSubtract( myLastNormalMode->gaussRandCoord1 );
+          //remove last random perturbation?
+          if ( removeRand ) {
+            diagAt.intoSubtract( myLastNormalMode->gaussRandCoord1 );
+          }
         }
 
         //Diagonalize
@@ -186,7 +193,7 @@ namespace ProtoMol
           //Find Hessians
           blockDiag.hessianTime.start(); //time Hessian
           rHsn.clear();
-          rHsn.evaluate( &app->positions, app->topology, true ); //mass re-weighted hessian
+          rHsn.evaluate( &diagAt, app->topology, true ); //mass re-weighted hessian
           report << hint << "Hessian found." << endr;
 
           //stop timer
@@ -240,7 +247,7 @@ namespace ProtoMol
           //           eigenvectors are the first 'm' columns of BQ.                                   //
           //*******************************************************************************************//
           report << hint << "Start coarse diagonalization." << endr;
-          Real max_eigenvalue = blockDiag.findEigenvectors( &app->positions, app->topology,
+          Real max_eigenvalue = blockDiag.findEigenvectors( &diagAt, app->topology,
                                 *Q , _3N, _rfM,
                                 blockCutoffDistance, eigenValueThresh, blockVectorCols );
 
@@ -271,11 +278,6 @@ namespace ProtoMol
           }
 
           report << hint << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
-        }
-
-        //fix positions, Removed Rand?
-        if ( removeRand ) {
-          app->positions = diagAt; //back to original positions
         }
 
         //sift current velocities/forces

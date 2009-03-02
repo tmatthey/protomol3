@@ -108,6 +108,9 @@ namespace ProtoMol
 
       //Diagnostics
       unsigned int memory_Hessian, memory_eigenvector;
+
+      //Checkpointing
+      bool checkpointUpdate;
   };
 }
 
