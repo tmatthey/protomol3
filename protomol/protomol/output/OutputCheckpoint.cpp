@@ -62,7 +62,7 @@ void OutputCheckpoint::doInitialize() {
 
 void OutputCheckpoint::doRun( int step ) {
     if ( isActive ) {
-        if ( step != 0 ){
+        if ( step != app->config["firststep"] ){
             ReadConfig();
             WritePositions( step );
             WriteVelocities( step );
