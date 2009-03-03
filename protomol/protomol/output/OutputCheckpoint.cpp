@@ -18,7 +18,7 @@ using namespace ProtoMol;
 
 const string OutputCheckpoint::keyword( "Checkpoint" );
 
-OutputCheckpoint::OutputCheckpoint() : mName( "false" ), mCurrent( 0 ),
+OutputCheckpoint::OutputCheckpoint() : mCurrent( 0 ), mName( "false" ),
     mPosBase( "" ), mVelBase( "" ) {
   if ( mName == "true" || mName == "True" || mName == "TRUE" ) {
     isActive = true;
@@ -30,7 +30,7 @@ OutputCheckpoint::OutputCheckpoint() : mName( "false" ), mCurrent( 0 ),
 OutputCheckpoint::OutputCheckpoint( const std::string& name, int freq,
                                     int start, const std::string& posbase,
                                     const std::string& velbase ) :
-    Output( freq ), mName( name ), mCurrent( start ),
+    Output( freq ), mCurrent( start ), mName( name ),
     mPosBase( posbase ), mVelBase( velbase ) {
 
   if ( mName == "true" || mName == "True" || mName == "TRUE" ) {

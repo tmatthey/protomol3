@@ -178,7 +178,7 @@ namespace ProtoMol
   {
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
     // Transpose Q, LAPACK checks only first character N/V
-    char *transA = "N";
+    char transA = 'N';
 
     //sizes
     int m = _3N; int n = _rfM; int incxy = 1;
@@ -188,10 +188,10 @@ namespace ProtoMol
 #endif
 
 #if defined(HAVE_LAPACK)
-    dgemv_ ( transA, &m, &n, &alpha, ( *Q ), &m, tmpC, &incxy, &beta, iPos->c, &incxy );
+    dgemv_ ( &transA, &m, &n, &alpha, ( *Q ), &m, tmpC, &incxy, &beta, iPos->c, &incxy );
 #elif defined(HAVE_SIMTK_LAPACK)
     int len_transa = 1;       //length of transA
-    dgemv_ ( *transA, m, n, alpha, ( *Q ), m, tmpC, incxy, beta, iPos->c, incxy, len_transa );
+    dgemv_ ( transA, m, n, alpha, ( *Q ), m, tmpC, incxy, beta, iPos->c, incxy, len_transa );
 #endif
 
     //add ex0

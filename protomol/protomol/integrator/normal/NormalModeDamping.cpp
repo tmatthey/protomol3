@@ -181,17 +181,17 @@ namespace ProtoMol {
         }
         //c=hQ^T*M^{-1/2}*f
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-        char *transA = "T";							// Transpose Q, LAPACK checks only first character N/V
+        char transA = 'T';							// Transpose Q, LAPACK checks only first character N/V
         int m = _3N; int n = _rfM; int incxy = 1;	//sizes
         double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
 #endif
         //
 #if defined(HAVE_LAPACK)
-        dgemv_ (transA, &m, &n, &alpha, (*Q), &m, temp2V3DBlk.c, &incxy, &beta, tmpc, &incxy);
+        dgemv_ (&transA, &m, &n, &alpha, (*Q), &m, temp2V3DBlk.c, &incxy, &beta, tmpc, &incxy);
 #else
 #if defined(HAVE_SIMTK_LAPACK)
         int len_transa = 1;							//length of transA
-        dgemv_ (*transA, m, n, alpha, (*Q), m, temp2V3DBlk.c, incxy, beta, tmpc, incxy, len_transa);
+        dgemv_ (transA, m, n, alpha, (*Q), m, temp2V3DBlk.c, incxy, beta, tmpc, incxy, len_transa);
 #endif
 #endif
         //

@@ -8,7 +8,7 @@
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/PMConstants.h>
 
-using namespace std; 
+using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;
 
@@ -24,7 +24,7 @@ namespace ProtoMol {
   RMTIntegrator::RMTIntegrator(): STSIntegrator(),
                 myTemp(0.0),
                 myQ1(0.0), myQ2(0.0), myQ3(0.0), myQ4(0.0), myQ5(0.0),
-                myC2(0.0), myC3(0.0), myC4(0.0), myC5(0.0), 
+                myC2(0.0), myC3(0.0), myC4(0.0), myC5(0.0),
                 myNumStats(1), incTdof(true)
   {
       myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
@@ -40,15 +40,15 @@ namespace ProtoMol {
 
   RMTIntegrator::RMTIntegrator(Real timestep,
                 Real temp,
-                Real q1, Real q2, Real q3, Real q4, Real q5, 
-                Real c2, Real c3, Real c4, Real c5, 
+                Real q1, Real q2, Real q3, Real q4, Real q5,
+                Real c2, Real c3, Real c4, Real c5,
                 int numst, bool tdof,
                 ForceGroup *overloadedForces)
 
                 : STSIntegrator(timestep, overloadedForces),
-                myTemp(temp), 
-                myQ1(q1), myQ2(q2), myQ3(q3), myQ4(q4), myQ5(q5), 
-                myC2(c2), myC3(c3), myC4(c4), myC5(c5), 
+                myTemp(temp),
+                myQ1(q1), myQ2(q2), myQ3(q3), myQ4(q4), myQ5(q5),
+                myC2(c2), myC3(c3), myC4(c4), myC5(c5),
                 myNumStats(numst), incTdof(tdof)
   {
       myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
@@ -86,7 +86,7 @@ namespace ProtoMol {
     calculateForces();
     myh0 = app->energies.potentialEnergy() + kineticEnergy(app->topology,&app->velocities);
     report <<hint<<"[RMTIntegrator::initialize] mykt= "<<mykT<<" myNf= "<<myNf<<" MyTemp= "<<myTemp<<" myH0= "<<myh0<<endl;
-    totStep = 0;	
+    totStep = 0;
     avKE = avKEsq = 0.0;
   }
 
@@ -109,7 +109,7 @@ namespace ProtoMol {
       halfUpdtH3j(1);
       halfUpdtH31();
       halfUpdtH2(1);
-      step +=  1;	
+      step +=  1;
       for(int i=0;i<myNumStats;i++){
         myAvTKE[i] += 0.5*myPs[i]*myPs[i]/myQ[i];
         myAvS[i] += myS[i];
@@ -120,7 +120,7 @@ namespace ProtoMol {
     }
     //
     postStepModify();
-  }  
+  }
 
   void RMTIntegrator::getParameters(vector<Parameter>& parameters) const {
     STSIntegrator::getParameters(parameters);
@@ -149,7 +149,7 @@ namespace ProtoMol {
     int ii, tdof;
 
     Real timestep = getTimestep() * Constant::INV_TIMEFACTOR;
-    //  Calc Ps 
+    //  Calc Ps
     prodS = prodSs(1,myNumStats);
     ii = 1;
     sumSpot = 0.0;
@@ -169,14 +169,14 @@ namespace ProtoMol {
     }
     // Calculate Momenta, test for half of cycle as using SCALED velocities
     if(typ < 1){
-      for( unsigned int i = 0; i < app->positions.size(); i++) 
+      for( unsigned int i = 0; i < app->positions.size(); i++)
         app->velocities[i] += (*myForces)[i] * timestep * 0.5 / app->topology->atoms[i].scaledMass;
       //report <<hint<<"[RMTIntegrator::initialize] timest= "<<timestep<<endl;
       // Calc current product of s'
       myOldProdS = prodS*myS[0];
     }else{
       tempS = myOldProdS/(prodS*myS[0]);
-      for( unsigned int i = 0; i < app->positions.size(); i++) 
+      for( unsigned int i = 0; i < app->positions.size(); i++)
         app->velocities[i] = app->velocities[i]*tempS + (*myForces)[i] * timestep * 0.5 / app->topology->atoms[i].scaledMass;
       //report <<hint<<"[RMTIntegrator::initialize] tempS= "<<tempS<<" timest= "<<timestep<<endl;
     }
@@ -186,7 +186,7 @@ namespace ProtoMol {
     // H3j half step, dir=0 direction j=1...M, dir=1 direction j=M...1
     //def halfUpdtH3j(self,dir):
     int ii, kk, jj;
-    Real prodSlj, prodSgj, a, c; 
+    Real prodSlj, prodSgj, a, c;
 
     Real timestep = getTimestep() * Constant::INV_TIMEFACTOR;
     kk = 1;
@@ -194,7 +194,7 @@ namespace ProtoMol {
       if (dir > 0){
         jj = myNumStats - kk;
       }else{
-        jj = kk;  
+        jj = kk;
       }
       // 1/4 step for Ps1
       prodSlj = prodSs(0,jj);
@@ -309,26 +309,30 @@ namespace ProtoMol {
 
   //****Checkpointing********************************************************************
   void RMTIntegrator::streamRead( std::istream& inStream ) {
-
-    for (unsigned int i=0; i<MAX_THERMOSTAT; i++)
+    for (unsigned int i=0; i < MAX_THERMOSTAT; i++){
           inStream >> myS[i];
-    for (unsigned int i=0; i<MAX_THERMOSTAT; i++)
+    }
+
+    for (unsigned int i=0; i < MAX_THERMOSTAT; i++){
           inStream >> myPs[i];
-      
+    }
   }
-  
-  void RMTIntegrator::streamWrite( std::ostream& outStream ) const {    
-    
+
+  void RMTIntegrator::streamWrite( std::ostream& outStream ) const {
+    const unsigned int maxVal = MAX_THERMOSTAT - 1;
+
     outStream.precision(15);
 
-    for (unsigned int i=0; i<MAX_THERMOSTAT-1; i++)
+    for (unsigned int i=0; i < maxVal; i++){
           outStream << myS[i] << " ";
-    outStream << myS[MAX_THERMOSTAT] << std::endl;
-    for (unsigned int i=0; i<MAX_THERMOSTAT-1; i++)
+    }
+
+    outStream << myS[maxVal] << std::endl;
+
+    for (unsigned int i=0; i < maxVal; i++){
           outStream << myPs[i] << " ";
-    outStream << myPs[MAX_THERMOSTAT];
+    }
 
+    outStream << myPs[maxVal];
   }
-
-
 }

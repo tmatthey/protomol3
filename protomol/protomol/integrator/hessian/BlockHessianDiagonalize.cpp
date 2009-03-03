@@ -379,7 +379,7 @@ namespace ProtoMol {
    iwork = new int[10*dim];
    //Diagonalize
 #if defined(HAVE_LAPACK) || defined(HAVE_SIMTK_LAPACK)
-    char *jobz = "V"; char *range = "A"; char *uplo = "U"; /* LAPACK checks only first character N/V */
+    char jobz = 'V'; char range = 'A'; char uplo = 'U'; /* LAPACK checks only first character N/V */
     int n = dim;             /* order of coefficient matrix a  */
     int lda = dim;           /* leading dimension of a array*/
     double vl = 1.0;
@@ -390,24 +390,24 @@ namespace ProtoMol {
     int ldz = dim; int lwork = 26*dim; /* dimension of work array*///int m; 
     int liwork = 10*dim;						/* dimension of int work array*/
     //Recomended abstol for max precision
-    char *cmach = "safe min";
+    char cmach = 's';//String should be safe min but is shortened to remove warning
 #endif
     int info = 0;				/* output 0=success */
 	int m = 0;
     //call LAPACK 
     //	
 #if defined( HAVE_LAPACK )
-    abstol = dlamch_( cmach);	//find machine safe minimum  
+    abstol = dlamch_( &cmach);	//find machine safe minimum  
     //
-    dsyevr_( jobz, range, uplo, &n, hsnhessM, &lda, &vl, &vu, &il, &iu, &abstol, &m, eigValO, eigVecO, &ldz, isuppz, 
+    dsyevr_( &jobz, &range, &uplo, &n, hsnhessM, &lda, &vl, &vu, &il, &iu, &abstol, &m, eigValO, eigVecO, &ldz, isuppz, 
                 wrkSp, &lwork, iwork, &liwork, &info);
 #else
 #if defined( HAVE_SIMTK_LAPACK )
-    int len_cmach = 8;
+    int len_cmach = 1;
     int len_jobz = 1; int len_range = 1; int len_uplo = 1;
-    abstol = dlamch_( *cmach, len_cmach);	//find machine safe minimum  
+    abstol = dlamch_( cmach, len_cmach);	//find machine safe minimum  
     //
-    dsyevr_( *jobz, *range, *uplo, n, hsnhessM, lda, &vl, &vu, &il, &iu, &abstol, m, eigValO, eigVecO, ldz, isuppz, 
+    dsyevr_( jobz, range, uplo, n, hsnhessM, lda, &vl, &vu, &il, &iu, &abstol, m, eigValO, eigVecO, ldz, isuppz, 
                 wrkSp, lwork, iwork, &liwork, info, len_jobz, len_range, len_uplo);
 #endif
 #endif    
