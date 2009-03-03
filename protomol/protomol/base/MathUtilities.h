@@ -27,9 +27,6 @@
 #include <limits>
 #endif /* HAVE_NO_LIMITS */
 namespace ProtoMol {
-    namespace Rand{
-        static bool isSeeded = false;
-    }
 
 #ifdef _MSC_VER
   //___________________________________________________________________ isnan()

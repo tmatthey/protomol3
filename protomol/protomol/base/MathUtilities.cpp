@@ -4,6 +4,10 @@
 using namespace std;
 
 namespace ProtoMol {
+  namespace Rand{
+    bool isSeeded = false;
+  };
+
 //____ erf
   Real myerf(Real x) {
     // This function returns the error function ERF(x) with fractional
