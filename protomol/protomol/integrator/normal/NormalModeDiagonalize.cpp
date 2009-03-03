@@ -135,7 +135,7 @@ namespace ProtoMol
     memory_Hessian = memory_eigenvector = 0;
 
     //setup rediag counter in case valid
-    nextRediag = 0; //rediag first time
+    nextRediag = ( int )( app->topology->time / getTimestep() ); //rediag first time
 
     //save positions where diagonalized for checkpoint save (assume I.C. if file)
     if(!checkpointUpdate) {
