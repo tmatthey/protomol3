@@ -25,6 +25,13 @@ void Output::initialize(const ProtoMolApp *app) {
   myFirst = true;
   this->app = app;
 
+  if(myOutputFreq <= 0) {  //used for finalize only outputs
+    if( app->config.valid( InputOutputfreq::keyword ) ) 
+      myOutputFreq = app->config[InputOutputfreq::keyword];
+    else 
+      myOutputFreq = 1;
+  }
+
   if (app->config.valid(InputFirststep::keyword)) {
     myNextStep = app->config[InputFirststep::keyword];
     myFirstStep = app->config[InputFirststep::keyword];

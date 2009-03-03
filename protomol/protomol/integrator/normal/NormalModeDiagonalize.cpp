@@ -164,9 +164,11 @@ namespace ProtoMol
 
     //main loop
     app->energies.clear();
-    for ( int i = 0;i < numTimesteps;i++ ) {
+    for ( int i = 0;i < numTimesteps; ) {
+      //Current step
+      int currentStepNum = ( int )( app->topology->time / getTimestep() );
       //Full diagonalization
-      if ( ( rediagCount && ( int )( app->topology->time / getTimestep() ) >= nextRediag ) || firstDiag ) {
+      if ( ( rediagCount && currentStepNum >= nextRediag ) || firstDiag ) {
         nextRediag += rediagCount;
 
         newDiag = true;
@@ -261,8 +263,8 @@ namespace ProtoMol
 
           //set flags if firstDiag (firstDiag can now be coarse)
           if ( firstDiag ) {
-            //#####Fix, this should be the number of eigenvectors in set, _rfM?
-            numEigvectsu = _3N;
+            //Number of eigenvectors in set, _rfM
+            numEigvectsu = _rfM;
 
             //use 1000 for regression tests, set REGRESSION_T NE 0.
             if ( REGRESSION_T ) {
@@ -286,7 +288,9 @@ namespace ProtoMol
       }
 
       //run integrator
-      myNextIntegrator->run( 1 );//numTimesteps); //SHOULD DO 'rediagCount' STEPS HERE
+      int stepsToRun = min(nextRediag - currentStepNum, numTimesteps - i);
+      myNextIntegrator->run( stepsToRun );
+      i += stepsToRun;
 
       //remove diagonalization flags after inner integrator call
       newDiag = false;

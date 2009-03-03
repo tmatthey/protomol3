@@ -16,10 +16,10 @@ using namespace ProtoMol;
 const string OutputFinalXYZPos::keyword("finXYZPosFile");
 
 OutputFinalXYZPos::OutputFinalXYZPos() :
-  Output(1), filename(""), myMinimalImage(false) {}
+  Output(-1), filename(""), myMinimalImage(false) {}
 
 OutputFinalXYZPos::OutputFinalXYZPos(const string &filename, bool minimal) :
-  Output(1), filename(filename), myMinimalImage(minimal) {}
+  Output(-1), filename(filename), myMinimalImage(minimal) {}
 
 void OutputFinalXYZPos::doFinalize(int step) {
   XYZWriter writer;

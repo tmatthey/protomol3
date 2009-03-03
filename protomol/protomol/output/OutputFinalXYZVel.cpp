@@ -15,10 +15,10 @@ using namespace ProtoMol;
 const string OutputFinalXYZVel::keyword("finXYZVelFile");
 
 OutputFinalXYZVel::OutputFinalXYZVel() :
-  Output(1), filename("") {}
+  Output(-1), filename("") {}
 
 OutputFinalXYZVel::OutputFinalXYZVel(const string &filename) :
-  Output(1), filename(filename) {}
+  Output(-1), filename(filename) {}
 
 void OutputFinalXYZVel::doFinalize(int step) {
   XYZWriter writer;

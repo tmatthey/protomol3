@@ -16,11 +16,11 @@ using namespace ProtoMol;
 const string OutputFinalPDBPos::keyword("finPDBPosFile");
 
 OutputFinalPDBPos::OutputFinalPDBPos() :
-  Output(1), filename(""), myMinimalImage(false) {}
+  Output(-1), filename(""), myMinimalImage(false) {}
 
 OutputFinalPDBPos::OutputFinalPDBPos(const string &filename,
                                      bool minimal) :
-  Output(1), filename(filename), myMinimalImage(minimal) {}
+  Output(-1), filename(filename), myMinimalImage(minimal) {}
 
 void OutputFinalPDBPos::doFinalize(int step) {
   PDBWriter writer;
