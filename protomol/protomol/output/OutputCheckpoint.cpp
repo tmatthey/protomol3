@@ -139,15 +139,18 @@ bool OutputCheckpoint::adjustWithDefaultParameters( vector<Value> &values,
 }
 
 void OutputCheckpoint::ReadConfig( ) {
-    ifstream inFile( "checkpoint.dat" );
-    ofstream outFile( "checkpoint.last" );
+    ifstream inFile( Append( mPosBase, "dat").c_str() );
 
-    if ( inFile && outFile ) {
-        std::string line;
+    if ( inFile ) {
+      ofstream outFile( Append( mPosBase, "last").c_str() );
 
-        while ( std::getline( inFile, line ) ) {
-            outFile << line << '\n';
-        }
+      if ( outFile ){
+          std::string line;
+
+          while ( std::getline( inFile, line ) ) {
+              outFile << line << '\n';
+          }
+      }
     }
 }
 
@@ -186,7 +189,7 @@ void OutputCheckpoint::WriteVelocities( int step ) {
 }
 
 void OutputCheckpoint::WriteConfig( int step ) {
-    ofstream outFile( "checkpoint.dat" );
+    ofstream outFile( Append( mPosBase, "dat").c_str() );
 
     if ( outFile ) {
         outFile << "#ID" << std::endl;

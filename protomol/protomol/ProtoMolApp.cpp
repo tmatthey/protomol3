@@ -116,14 +116,18 @@ bool ProtoMolApp::configure( const vector<string> &args ) {
       config["CheckpointPosBase"] = posbase;
 
       /* Store velocity file base name */
-      std::string velbase = config["velfile"];
-      velbase = velbase.substr( 0, velbase.rfind( '.' ) + 1 );
+      if ( config.valid("velfile") ){
+        std::string velbase = config["velfile"];
+        velbase = velbase.substr( 0, velbase.rfind( '.' ) + 1 );
 
-      config["CheckpointVelBase"] = velbase;
+        config["CheckpointVelBase"] = velbase;
+      }else{
+        config["CheckpointVelBase"] = config["CheckpointPosBase"];
+      }
 
       /* Read checkpoint data */
-      if ( !readCheckpoint( "checkpoint.dat" ) ) {
-        readCheckpoint( "checkpoint.last" );
+      if ( !readCheckpoint( Append( config["CheckpointVelBase"], "dat" ) ) ) {
+        readCheckpoint( Append( config["CheckpointVelBase"], "last" ) );
       }
     }
   }
@@ -290,6 +294,38 @@ void ProtoMolApp::build() {
 
   topology->time =
     (Real)config[InputFirststep::keyword] * integrator->getTimestep();
+
+  /* If using checkpointing then load integrator data */
+  if ( config.valid( "Checkpoint" ) ) {
+    if ( config["Checkpoint"] == "true" ) {
+      std::ifstream infile;
+
+      infile.open( Append( config["CheckpointVelBase"], "dat" ).c_str() );
+
+      if ( infile ){
+        std::string line;
+
+        while ( std::getline( infile, line ) ) {
+          if ( line.find( "#Integrator" ) != std::string::npos ){
+            infile >> (*integrator);
+          }
+        }
+      }else{
+        infile.close();
+
+        infile.open( Append( config["CheckpointVelBase"], "last" ).c_str() );
+        if ( infile ){
+          std::string line;
+
+          while ( std::getline( infile, line ) ) {
+            if ( line.find( "#Integrator" ) != std::string::npos ){
+              infile >> (*integrator);
+            }
+          }
+        }
+      }
+    }
+  }
 
   integrator->initialize(this);
   outputs->initialize(this);

@@ -27,13 +27,13 @@ namespace ProtoMol {
   public:
     /* No change */
     Vector3DBlock()  : Proxy(), vec() {}
-    
+
     explicit Vector3DBlock(unsigned int n) : Proxy() {
       c = new Real[3*n];
       for (unsigned int i = 0; i < n; i++)
         vec.push_back(Vector3DB(c+3*i));
     }
-    
+
     Vector3DBlock(unsigned int n, const Vector3D &t) : Proxy() {
       c = new Real[3*n];
       for (unsigned int i = 0; i < n; i++)
@@ -65,7 +65,7 @@ namespace ProtoMol {
     const Vector3DB& operator[](unsigned int n) const {return vec[n];}
     void push_back(const Vector3D &t) {
       resize(size()+1, t);
-    } 
+    }
     //void pop_back() {return vec.pop_back();}
     void swap(Vector3DBlock &x) {
       vec.swap(x.vec);
@@ -118,7 +118,7 @@ namespace ProtoMol {
         if (currentsize != 0) delete c;
         // 6. Reset c to the new data
         c = newdata;
-        // 4. Point internal vector3d pointers to new data	
+        // 4. Point internal vector3d pointers to new data
         for (unsigned int i = currentsize; i < n; i++) {
           vec.push_back(Vector3DB(t.c[0], t.c[1], t.c[2], c+3*i));
         }
@@ -235,7 +235,7 @@ namespace ProtoMol {
 
       OS << blkSz;
 
-      for (unsigned int i=0; i< blkSz; i++) 
+      for (unsigned int i=0; i< blkSz; i++)
         OS << std::endl << vblock[i];
 
       return OS;
@@ -247,9 +247,9 @@ namespace ProtoMol {
 
       OS >> blkSz;
 
+      vblock.resize( blkSz );
       for (unsigned int i=0; i< blkSz; i++) {
-        OS >> coords.c[0] >> coords.c[1] >> coords.c[2];
-        vblock.push_back(coords);
+        OS >> vblock[i];
       }
 
       return OS;
