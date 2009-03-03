@@ -25,7 +25,7 @@ namespace ProtoMol {
                 myTemp(0.0),
                 myQ1(0.0), myQ2(0.0), myQ3(0.0), myQ4(0.0), myQ5(0.0),
                 myC2(0.0), myC3(0.0), myC4(0.0), myC5(0.0),
-                myNumStats(1), incTdof(true)
+                myNumStats(1), myh0(0), incTdof(true)
   {
       myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
       myC[1]=myC2; myC[2]=myC3; myC[3]=myC4; myC[4]=myC5;
@@ -49,7 +49,7 @@ namespace ProtoMol {
                 myTemp(temp),
                 myQ1(q1), myQ2(q2), myQ3(q3), myQ4(q4), myQ5(q5),
                 myC2(c2), myC3(c3), myC4(c4), myC5(c5),
-                myNumStats(numst), incTdof(tdof)
+                myNumStats(numst), myh0(0), incTdof(tdof)
   {
       myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
       myC[1]=myC2; myC[2]=myC3; myC[3]=myC4; myC[4]=myC5;
@@ -84,7 +84,8 @@ namespace ProtoMol {
     //if(myNf >= 3) myNf += 3;
     mykT = Constant::BOLTZMANN * myTemp;
     calculateForces();
-    myh0 = app->energies.potentialEnergy() + kineticEnergy(app->topology,&app->velocities);
+    if(!myh0)
+      myh0 = app->energies.potentialEnergy() + kineticEnergy(app->topology,&app->velocities);
     report <<hint<<"[RMTIntegrator::initialize] mykt= "<<mykT<<" myNf= "<<myNf<<" MyTemp= "<<myTemp<<" myH0= "<<myh0<<endl;
     totStep = 0;
     avKE = avKEsq = 0.0;
@@ -309,6 +310,9 @@ namespace ProtoMol {
 
   //****Checkpointing********************************************************************
   void RMTIntegrator::streamRead( std::istream& inStream ) {
+
+    inStream >> myh0;
+
     for (unsigned int i=0; i < MAX_THERMOSTAT; i++){
           inStream >> myS[i];
     }
@@ -322,6 +326,8 @@ namespace ProtoMol {
     const unsigned int maxVal = MAX_THERMOSTAT - 1;
 
     outStream.precision(15);
+
+    outStream << myh0 << std::endl;
 
     for (unsigned int i=0; i < maxVal; i++){
           outStream << myS[i] << " ";
