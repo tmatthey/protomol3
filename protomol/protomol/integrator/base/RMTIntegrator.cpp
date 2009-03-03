@@ -27,9 +27,15 @@ namespace ProtoMol {
                 myC2(0.0), myC3(0.0), myC4(0.0), myC5(0.0), 
                 myNumStats(1), incTdof(true)
   {
-     myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
-     myC[1]=myC2; myC[2]=myC3; myC[3]=myC4; myC[4]=myC5;
-     if(myNumStats>5 || myNumStats<1) myNumStats = 1;
+      myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
+      myC[1]=myC2; myC[2]=myC3; myC[3]=myC4; myC[4]=myC5;
+      if(myNumStats>5 || myNumStats<1) myNumStats = 1;
+
+      for(int i=0;i<MAX_THERMOSTAT;i++){
+        myS[i] = 1.0;
+        myPs[i] = 0.0;
+      }
+
   }
 
   RMTIntegrator::RMTIntegrator(Real timestep,
@@ -45,9 +51,15 @@ namespace ProtoMol {
                 myC2(c2), myC3(c3), myC4(c4), myC5(c5), 
                 myNumStats(numst), incTdof(tdof)
   {
-     myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
-     myC[1]=myC2; myC[2]=myC3; myC[3]=myC4; myC[4]=myC5;
-     if(myNumStats>5 || myNumStats<1) myNumStats = 1;
+      myQ[0]=myQ1; myQ[1]=myQ2; myQ[2]=myQ3; myQ[3]=myQ4; myQ[4]=myQ5;
+      myC[1]=myC2; myC[2]=myC3; myC[3]=myC4; myC[4]=myC5;
+      if(myNumStats>MAX_THERMOSTAT || myNumStats<1) myNumStats = 1;
+
+      for(int i=0;i<MAX_THERMOSTAT;i++){
+        myS[i] = 1.0;
+        myPs[i] = 0.0;
+      }
+
   }
 
   RMTIntegrator::~RMTIntegrator(){
@@ -58,9 +70,9 @@ namespace ProtoMol {
     initializeForces();
     //
     initializeForces();
-    for(int i=0;i<5;i++){
-      myS[i] = 1.0;
-      myPs[i] = 0.0;
+    for(int i=0;i<MAX_THERMOSTAT;i++){
+      //myS[i] = 1.0;
+      //myPs[i] = 0.0;
       myAvTKE[i] = 0.0;
       myAvS[i] = 0.0;
     }
@@ -294,5 +306,29 @@ namespace ProtoMol {
     }
     return(prodS);
   }
+
+  //****Checkpointing********************************************************************
+  void RMTIntegrator::streamRead( std::istream& inStream ) {
+
+    for (unsigned int i=0; i<MAX_THERMOSTAT; i++)
+          inStream >> myS[i];
+    for (unsigned int i=0; i<MAX_THERMOSTAT; i++)
+          inStream >> myPs[i];
+      
+  }
+  
+  void RMTIntegrator::streamWrite( std::ostream& outStream ) const {    
+    
+    outStream.precision(15);
+
+    for (unsigned int i=0; i<MAX_THERMOSTAT-1; i++)
+          outStream << myS[i] << " ";
+    outStream << myS[MAX_THERMOSTAT] << std::endl;
+    for (unsigned int i=0; i<MAX_THERMOSTAT-1; i++)
+          outStream << myPs[i] << " ";
+    outStream << myPs[MAX_THERMOSTAT];
+
+  }
+
 
 }

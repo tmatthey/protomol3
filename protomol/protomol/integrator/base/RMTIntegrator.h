@@ -17,6 +17,13 @@ namespace ProtoMol {
 
   class RMTIntegrator : public STSIntegrator {
 
+  private:
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Types and Enums
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    enum {MAX_THERMOSTAT = 5};
+
+
     //friend class ModifierFriction;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
@@ -33,7 +40,9 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class RMTIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private:
+  protected:
+      virtual void streamRead( std::istream& inStream );
+      virtual void streamWrite( std::ostream& outStream ) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable
@@ -73,12 +82,12 @@ namespace ProtoMol {
     const Real   myQ1, myQ2, myQ3, myQ4, myQ5;
     const Real   myC2, myC3, myC4, myC5;
     int        myNumStats;
-    Real       myQ[5];
-    Real       myC[5];
-    Real       myS[5];
-    Real       myPs[5];
-    Real		   myAvTKE[5];
-    Real		   myAvS[5];
+    Real       myQ[MAX_THERMOSTAT];
+    Real       myC[MAX_THERMOSTAT];
+    Real       myS[MAX_THERMOSTAT];
+    Real       myPs[MAX_THERMOSTAT];
+    Real		   myAvTKE[MAX_THERMOSTAT];
+    Real		   myAvS[MAX_THERMOSTAT];
     Real		   myh0;
     Real		   myOldProdS;
     Real		   mySn, myNf, mykT;
