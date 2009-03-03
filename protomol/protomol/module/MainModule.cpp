@@ -61,7 +61,15 @@ void MainModule::configure(ProtoMolApp *app) {
   int seed = config[InputSeed::keyword];
   Parallel::bcast(seed);
   config[InputSeed::keyword] = seed;
-  int randomtype = config[InputRandomType::keyword];
+
+  int randomtype;
+
+  if ( config.valid("Checkpoint") && config["checkpoint"] == "true" ){
+    randomtype = 1;
+  }else{
+    randomtype = config[InputRandomType::keyword];
+  }
+
   Parallel::bcast(randomtype);
   config[InputRandomType::keyword] = randomtype;
   randomNumber(seed, randomtype);
@@ -72,15 +80,15 @@ void MainModule::configure(ProtoMolApp *app) {
     report << debug(2) << "Undefined Keyword(s):" << endl
            << config.printUndefinedKeywords() << endr;
   }
-    
+
   if (!config[InputFirststep::keyword].valid())
     THROW("Firststep undefined.");
-  
+
   if (!config[InputNumsteps::keyword].valid())
     THROW("Numsteps undefined.");
 }
 
-void MainModule::postBuild(ProtoMolApp *app) {  
+void MainModule::postBuild(ProtoMolApp *app) {
   // Reduce image
   app->topology->minimalMolecularDistances =
     app->topology->checkMoleculePairDistances(app->positions);

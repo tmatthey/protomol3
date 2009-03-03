@@ -107,28 +107,26 @@ bool ProtoMolApp::configure( const vector<string> &args ) {
 
   modManager->configure( this );
 
-  if ( config.valid( "Checkpoint" ) ) {
-    if ( config["Checkpoint"] == "true" ) {
-      /* Store positon file base name */
-      std::string posbase = config["posfile"];
-      posbase = posbase.substr( 0, posbase.rfind( '.' ) + 1 );
+  if ( config.valid( "Checkpoint" ) && config["Checkpoint"] == "true" ) {
+    /* Store positon file base name */
+    std::string posbase = config["posfile"];
+    posbase = posbase.substr( 0, posbase.rfind( '.' ) + 1 );
 
-      config["CheckpointPosBase"] = posbase;
+    config["CheckpointPosBase"] = posbase;
 
-      /* Store velocity file base name */
-      if ( config.valid("velfile") ){
-        std::string velbase = config["velfile"];
-        velbase = velbase.substr( 0, velbase.rfind( '.' ) + 1 );
+    /* Store velocity file base name */
+    if ( config.valid("velfile") ){
+      std::string velbase = config["velfile"];
+      velbase = velbase.substr( 0, velbase.rfind( '.' ) + 1 );
 
-        config["CheckpointVelBase"] = velbase;
-      }else{
-        config["CheckpointVelBase"] = config["CheckpointPosBase"];
-      }
+      config["CheckpointVelBase"] = velbase;
+    }else{
+      config["CheckpointVelBase"] = config["CheckpointPosBase"];
+    }
 
-      /* Read checkpoint data */
-      if ( !readCheckpoint( Append( config["CheckpointVelBase"], "dat" ) ) ) {
-        readCheckpoint( Append( config["CheckpointVelBase"], "last" ) );
-      }
+    /* Read checkpoint data */
+    if ( !readCheckpoint( Append( config["CheckpointVelBase"], "dat" ) ) ) {
+      readCheckpoint( Append( config["CheckpointVelBase"], "last" ) );
     }
   }
 
@@ -296,31 +294,29 @@ void ProtoMolApp::build() {
     (Real)config[InputFirststep::keyword] * integrator->getTimestep();
 
   /* If using checkpointing then load integrator data */
-  if ( config.valid( "Checkpoint" ) ) {
-    if ( config["Checkpoint"] == "true" ) {
-      std::ifstream infile;
+  if ( config.valid( "Checkpoint" ) && config["Checkpoint"] == "true" ) {
+    std::ifstream infile;
 
-      infile.open( Append( config["CheckpointVelBase"], "dat" ).c_str() );
+    infile.open( Append( config["CheckpointVelBase"], "dat" ).c_str() );
 
+    if ( infile ){
+      std::string line;
+
+      while ( std::getline( infile, line ) ) {
+        if ( line.find( "#Integrator" ) != std::string::npos ){
+          infile >> (*integrator);
+        }
+      }
+    }else{
+      infile.close();
+
+      infile.open( Append( config["CheckpointVelBase"], "last" ).c_str() );
       if ( infile ){
         std::string line;
 
         while ( std::getline( infile, line ) ) {
           if ( line.find( "#Integrator" ) != std::string::npos ){
             infile >> (*integrator);
-          }
-        }
-      }else{
-        infile.close();
-
-        infile.open( Append( config["CheckpointVelBase"], "last" ).c_str() );
-        if ( infile ){
-          std::string line;
-
-          while ( std::getline( infile, line ) ) {
-            if ( line.find( "#Integrator" ) != std::string::npos ){
-              infile >> (*integrator);
-            }
           }
         }
       }
