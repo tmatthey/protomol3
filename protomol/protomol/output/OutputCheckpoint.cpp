@@ -123,8 +123,8 @@ bool OutputCheckpoint::adjustWithDefaultParameters( vector<Value> &values,
     values[0] = mName;
   }
 
-  if ( config->valid( InputMinimalImage::keyword ) && !values[1].valid() ) {
-    values[1] = ( *config )[InputMinimalImage::keyword];
+  if ( config->valid( InputOutputfreq::keyword ) && !values[1].valid() ) {
+    values[1] = ( *config )[InputOutputfreq::keyword];
   }
 
   if ( !values[2].valid() ) {
