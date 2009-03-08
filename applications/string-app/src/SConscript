@@ -1,0 +1,17 @@
+import glob
+import os
+Import('*')
+
+allsrc = glob.glob('*.cpp')
+
+for d in glob.glob('*'):
+    if os.path.isdir(d) and os.path.exists(d + '/SConscript'):
+        src = SConscript(d + '/SConscript')
+        for s in src:
+            allsrc.append(d + '/' + s)
+
+#allsrc.append('StringProtoMolApp.cpp')
+#allsrc.append('TMDApplication.cpp')
+#allsrc.append('stringmodules.cpp')
+
+Return('allsrc')

@@ -1,0 +1,2 @@
+file /afs/nd.edu/user10/schatter/Private/code/svn/trunk/applications/string-app/src/SConstruct,line 7:
+	Configure(confdir = .sconf_temp)
