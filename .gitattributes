@@ -57,6 +57,9 @@ applications/string-app/src/integrator/normal/NormalModeStringDiag.h -text
 applications/string-app/src/integrator/normal/NormalModeSubspaceSampling.cpp -text
 applications/string-app/src/integrator/normal/NormalModeSubspaceSampling.h -text
 applications/string-app/src/integrator/normal/SConscript -text
+applications/string-app/src/integrator/normal/StringModifierForceProjection.h -text
+applications/string-app/src/integrator/normal/StringNormalModeUtilities.cpp -text
+applications/string-app/src/integrator/normal/StringNormalModeUtilities.h -text
 applications/string-app/src/modifier/ModifierHarmNMRestForce.cpp -text
 applications/string-app/src/modifier/ModifierHarmNMRestForce.h -text
 applications/string-app/src/modifier/ModifierOutputIntermediatePoints.cpp -text
