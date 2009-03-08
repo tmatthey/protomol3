@@ -109,25 +109,32 @@ void StringNormalModeModule::read(ProtoMolApp *app) {
     eiValid = true;
   }
 
- // Eigenvalues file
+  // Eigenvalues file
   if (config.valid(InputEigenValues::keyword)) {
     // eigenvalues
-    //app->eigenInfo.myEigenvalues.resize(app->positions.size());
     XYZReader valReader;
+    Vector3DBlock tempEVal;
     if (!valReader.open(config[InputEigenValues::keyword])){
       THROWS(string("Can't open eigenvalue file '") +
         config[InputEigenValues::keyword].getString() + "'.");
     }
-
-    if (!(valReader >> app->eigenInfo.myEigenvalues)){
+ 
+    //if (!(valReader >> app->eigenInfo.myEigenvalues)){
+    if (!(valReader >> tempEVal)){
         THROWS(string("Could not parse eigenvalue file '") +
           config[InputEigenValues::keyword].getString() + "'. ");
     }
-
+ 
+    //copy data accross
+    int evsize = tempEVal.size() * 3;
+    for ( int i=0; i<evsize; i++ ){
+      app->eigenInfo.myEigenvalues.push_back(tempEVal.c[i]);
+    }
+ 
     report << plain << "Using eigvaluefile '"
            << config[InputEigenValues::keyword] << "' ("
            << app->eigenInfo.myEigenvalues.size() * 3 << ")." << endr;
-
+ 
   }
 
 }
@@ -135,8 +142,8 @@ void StringNormalModeModule::read(ProtoMolApp *app) {
 void StringNormalModeModule::postBuild(ProtoMolApp *app) {
   // Normal mode?
   // New method tries a dynamic cast, then updates the pointers from ei
-  NormalModeUtilities *nmint; // dynamic cast working
-  nmint  = dynamic_cast<NormalModeUtilities *>(app->integrator);
+  StringNormalModeUtilities *nmint; // dynamic cast working
+  nmint  = dynamic_cast<StringNormalModeUtilities *>(app->integrator);
   if (nmint) { // cast worked?
 	nmint->setIntegratorSetPointers(app->integrator, &app->eigenInfo, eiValid);
 	report << plain << "Using new Normal Mode integrator. " << endr;

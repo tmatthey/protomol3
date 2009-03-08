@@ -3,7 +3,7 @@
 #define NORMALMODEFEBROWNIAN_H
 
 #include <protomol/integrator/STSIntegrator.h>
-#include <protomol/integrator/normal/NormalModeUtilities.h>
+#include <src/integrator/normal/StringNormalModeUtilities.h>
 
 //####diagnostics
 #include <protomol/io/XYZTrajectoryWriter.h>
@@ -15,7 +15,7 @@ namespace ProtoMol {
 	class ForceGroup;
 
 	//__________________________________________________ NormalModeFEBrownian
-	class NormalModeFEBrownian : public STSIntegrator, public NormalModeUtilities {
+	class NormalModeFEBrownian : public STSIntegrator, public StringNormalModeUtilities {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Constructors, destructors, assignment
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

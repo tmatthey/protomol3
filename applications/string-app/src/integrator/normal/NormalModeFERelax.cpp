@@ -22,14 +22,14 @@ namespace ProtoMol {
 
   const string NormalModeFERelax::keyword( "NormalModeFERelax" );
 
-  NormalModeFERelax::NormalModeFERelax() : MTSIntegrator(), NormalModeUtilities()
+  NormalModeFERelax::NormalModeFERelax() : MTSIntegrator(), StringNormalModeUtilities()
   {
   }
 
   NormalModeFERelax::NormalModeFERelax(int cycles, Real minimlim, bool rediag, bool simplemin, bool dm,
                                     ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator)
     : MTSIntegrator(cycles, overloadedForces, nextIntegrator), 
-        NormalModeUtilities( 1, 1, 91.0, 1234, 300.0),
+        StringNormalModeUtilities( 1, 1, 91.0, 1234, 300.0),
             minLim(minimlim), reDiag(rediag), simpleMin(simplemin), doMin(dm)
   {
   }
@@ -46,11 +46,11 @@ namespace ProtoMol {
     //
     initializeForces();
     //
-    myPreviousNormalMode  = dynamic_cast<NormalModeUtilities*>(myPreviousIntegrator);
+    myPreviousNormalMode  = dynamic_cast<StringNormalModeUtilities*>(myPreviousIntegrator);
     //check valid eigenvectors
     firstMode = myPreviousNormalMode->firstMode; numMode = myPreviousNormalMode->numMode;
     //NM initialization if OK
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES); //last for complimentary forces
+    StringNormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES); //last for complimentary forces
     //
     app->energies.clear();	//Need this or initial error, due to inner integrator energy?
     //

@@ -8,7 +8,7 @@
 #include <protomol/base/PMConstants.h>
 #include <protomol/ProtoMolApp.h>
 
-#include <protomol/integrator/normal/ModifierForceProjection.h>
+#include <src/integrator/normal/StringModifierForceProjection.h>
 
 
 using namespace std;
@@ -24,7 +24,7 @@ namespace ProtoMol {
 
 	const string NormalModeFEBrownian::keyword( "NormalModeFEBrownian" );
 
-	NormalModeFEBrownian::NormalModeFEBrownian() : STSIntegrator(), NormalModeUtilities() 
+	NormalModeFEBrownian::NormalModeFEBrownian() : STSIntegrator(), StringNormalModeUtilities() 
 	{
 		myWriter = NULL;
 		myWriter2 = NULL;	
@@ -34,7 +34,7 @@ namespace ProtoMol {
 	NormalModeFEBrownian::NormalModeFEBrownian(Real timestep, int firstmode, int nummode, Real gamma, int seed, Real temperature,  
 		std::string avff, std::string inff,//####added avff, inff for diagnostics
 		ForceGroup *overloadedForces) 
-		: STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, gamma, seed, temperature), 
+		: STSIntegrator(timestep,overloadedForces), StringNormalModeUtilities( firstmode, nummode, gamma, seed, temperature), 
 		avForceFile(avff), inForceFile(inff) //####added avForceFile, inForceFile for diagnostics
 	{
 		myWriter = NULL;
@@ -51,7 +51,7 @@ namespace ProtoMol {
 			STSIntegrator::initialize(app);
 			initializeForces();
 			//NM initialization if OK
-			NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, NO_NM_FLAGS); //last for non-complimentary forces
+			StringNormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, NO_NM_FLAGS); //last for non-complimentary forces
 			//
 			//initialize minimizer noise vars
 			randStp = 0.0;
@@ -150,7 +150,7 @@ namespace ProtoMol {
 	}
 
 	void NormalModeFEBrownian::addModifierAfterInitialize(){
-		adoptPostForceModifier(new ModifierForceProjection(this));
+		adoptPostForceModifier(new StringModifierForceProjection(this));
 		STSIntegrator::addModifierAfterInitialize();
 	}
 

@@ -3,7 +3,7 @@
 #define NORMALMODESTRINGDIAG_H
 
 #include <protomol/integrator/MTSIntegrator.h>
-#include <protomol/integrator/normal/NormalModeUtilities.h>
+#include <src/integrator/normal/StringNormalModeUtilities.h>
 #include <protomol/integrator/hessian/Hessian.h>
 
 #include <protomol/type/Vector3DBlock.h>
@@ -17,7 +17,7 @@ namespace ProtoMol {
 
   //__________________________________________________ NormalModeStringDiag
   class NormalModeStringDiag :
-    public MTSIntegrator, public NormalModeUtilities {
+    public MTSIntegrator, public StringNormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,7 +70,7 @@ namespace ProtoMol {
   public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // New methods of class NormalModeUtilities
+    // New methods of class StringNormalModeUtilities
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   protected:  
     //void getNewEigs(double *eigVec, double *innerEigVec, int rfM);
@@ -96,7 +96,7 @@ namespace ProtoMol {
     int minSteps;
     Real minLim;
     bool validMaxEigv;
-    NormalModeUtilities *myNextNormalMode, *myLastNormalMode;
+    StringNormalModeUtilities *myNextNormalMode, *myLastNormalMode;
     int forceCalc;
     Real lastLambda;
     Real rediagThresh, rediagHyst, spdOff;

@@ -2,7 +2,7 @@
 #ifndef NORMALMODEPROJECTION_H
 #define NORMALMODEPROJECTION_H
 
-#include <protomol/integrator/normal/NormalModeUtilities.h>
+#include <src/integrator/normal/StringNormalModeUtilities.h>
 
 //
 // Does projection from cartesian space to the subspace and back for all 
@@ -12,7 +12,7 @@
 using namespace ProtoMol;
 
 
- class NormalModeProjection :  public NormalModeUtilities {
+ class NormalModeProjection :  public StringNormalModeUtilities {
 
    public:
      NormalModeProjection();

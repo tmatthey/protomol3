@@ -6,7 +6,7 @@ NormalModeProjection::NormalModeProjection() {
 
 NormalModeProjection::NormalModeProjection(int firstmode, int nummode, 
            Real gamma, int seed, Real temperature):
-         NormalModeUtilities(firstmode, nummode, gamma, seed, temperature) {
+         StringNormalModeUtilities(firstmode, nummode, gamma, seed, temperature) {
     mhQu = NULL;
 }
 

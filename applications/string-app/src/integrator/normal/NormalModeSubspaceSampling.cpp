@@ -8,7 +8,7 @@
 #include <protomol/base/PMConstants.h>
 #include <protomol/ProtoMolApp.h>
 
-#include <protomol/integrator/normal/ModifierForceProjection.h>
+#include <src/integrator/normal/StringModifierForceProjection.h>
 
 #include <fstream>
 using namespace std;
@@ -24,7 +24,7 @@ namespace ProtoMol {
 
   const string NormalModeSubspaceSampling::keyword( "NormalModeSubspaceSampling" );
 
-  NormalModeSubspaceSampling::NormalModeSubspaceSampling() : MTSIntegrator(), NormalModeUtilities()
+  NormalModeSubspaceSampling::NormalModeSubspaceSampling() : MTSIntegrator(), StringNormalModeUtilities()
   {
       ex0=NULL;//####diagnostics
   }
@@ -33,7 +33,7 @@ namespace ProtoMol {
                     bool instf, Real sl,
                         ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator) 
     : MTSIntegrator(cycles, overloadedForces, nextIntegrator), 
-        NormalModeUtilities( firstmode, nummode, 80.0, 1234 , temperature),     
+        StringNormalModeUtilities( firstmode, nummode, 80.0, 1234 , temperature),     
             instForce(instf), dh(sl)
 
   {
@@ -50,10 +50,10 @@ namespace ProtoMol {
     MTSIntegrator::initialize(app);
     //
     //point to bottom integrator, for average force
-    myBottomNormalMode  = dynamic_cast<NormalModeUtilities*>(bottom());
+    myBottomNormalMode  = dynamic_cast<StringNormalModeUtilities*>(bottom());
     //check valid eigenvectors
     //NM initialization if OK
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, NO_NM_FLAGS); //last for non-complimentary forces
+    StringNormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, NO_NM_FLAGS); //last for non-complimentary forces
     //
     //do first force calculation, and remove non sub-space part
     app->energies.clear();	//Need this or initial error, due to inner integrator energy?
@@ -165,7 +165,7 @@ namespace ProtoMol {
   }
 
   void NormalModeSubspaceSampling::addModifierAfterInitialize(){
-    adoptPostForceModifier(new ModifierForceProjection(this));
+    adoptPostForceModifier(new StringModifierForceProjection(this));
     MTSIntegrator::addModifierAfterInitialize();
   }
 

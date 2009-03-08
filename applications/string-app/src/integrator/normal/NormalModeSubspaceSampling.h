@@ -3,7 +3,7 @@
 #define NORMALMODESUBSPACESAMPLING_H
 
 #include <protomol/integrator/MTSIntegrator.h>
-#include <protomol/integrator/normal/NormalModeUtilities.h>
+#include <src/integrator/normal/StringNormalModeUtilities.h>
 
 #include <protomol/type/Vector3DBlock.h>
 
@@ -14,7 +14,7 @@ namespace ProtoMol {
   class ForceGroup;
 
   //__________________________________________________ NormalModeSubspaceSampling
-  class NormalModeSubspaceSampling : public MTSIntegrator, public NormalModeUtilities {
+  class NormalModeSubspaceSampling : public MTSIntegrator, public StringNormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,7 +63,7 @@ namespace ProtoMol {
     static const std::string keyword;
 
   private:
-    NormalModeUtilities *myBottomNormalMode;
+    StringNormalModeUtilities *myBottomNormalMode;
     //####diagnostics
     std::string modeOutput;
     Vector3DBlock* ex0;	

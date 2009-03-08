@@ -3,7 +3,7 @@
 #define NORMALMODEFERELAX_H
 
 #include <protomol/integrator/MTSIntegrator.h>
-#include <protomol/integrator/normal/NormalModeUtilities.h>
+#include <src/integrator/normal/StringNormalModeUtilities.h>
 
 #include <protomol/type/Vector3DBlock.h>
 
@@ -13,7 +13,7 @@ namespace ProtoMol {
   class ForceGroup;
 
   //__________________________________________________ NormalModeFERelax
-  class NormalModeFERelax : public MTSIntegrator, public NormalModeUtilities {
+  class NormalModeFERelax : public MTSIntegrator, public StringNormalModeUtilities {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,7 +63,7 @@ namespace ProtoMol {
   private:
     int minCount, forceCalc;
     Real minLim;
-    NormalModeUtilities *myPreviousNormalMode;
+    StringNormalModeUtilities *myPreviousNormalMode;
     Real lastLambda;
     bool reDiag, simpleMin;
     Real randStp;

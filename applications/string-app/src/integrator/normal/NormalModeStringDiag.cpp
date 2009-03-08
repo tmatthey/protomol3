@@ -33,7 +33,7 @@ namespace ProtoMol {
 
   const string NormalModeStringDiag::keyword( "NormalModeStringDiag" );
 
-  NormalModeStringDiag::NormalModeStringDiag() : MTSIntegrator(), NormalModeUtilities(), eigAlloc(false), hessianCounter(0), rediagCounter(0)
+  NormalModeStringDiag::NormalModeStringDiag() : MTSIntegrator(), StringNormalModeUtilities(), eigAlloc(false), hessianCounter(0), rediagCounter(0)
   {
         eigVal=NULL;eigIndx=NULL;innerEigVec=NULL;innerEigVal=NULL;innerHess=NULL;eigAlloc=false;
         T1=NULL;HQ=NULL;tempMxM=NULL;temp3NxM=NULL;w=NULL;
@@ -43,7 +43,7 @@ namespace ProtoMol {
   NormalModeStringDiag::NormalModeStringDiag(int cycles, int avs,  Real avss, int redi, bool fDiag, bool rRand, 
                                                     int mins, Real minl, Real redn, Real redhy, Real spd, int maxi, bool rBond,int doM,
                                                         ForceGroup *overloadedForces, StandardIntegrator *nextIntegrator) 
-    : MTSIntegrator(cycles, overloadedForces, nextIntegrator), NormalModeUtilities( 1, 1, 91.0, 1234, 300.0), eigAlloc(false), fullDiag(fDiag), removeRand(rRand), noAvStep(avs), 
+    : MTSIntegrator(cycles, overloadedForces, nextIntegrator), StringNormalModeUtilities( 1, 1, 91.0, 1234, 300.0), eigAlloc(false), fullDiag(fDiag), removeRand(rRand), noAvStep(avs), 
         avStep(avss), rediagCount(redi), minSteps(mins), minLim(minl), 
       rediagThresh(redn), rediagHyst(redhy), spdOff(spd), maxIterations(maxi), hessianCounter(0), rediagCounter(0), removeBondedEigs(rBond), doMin(doM)   //
   {
@@ -84,15 +84,15 @@ namespace ProtoMol {
   void NormalModeStringDiag::initialize(ProtoMolApp *app) {
     MTSIntegrator::initialize(app);
     //
-    myNextNormalMode  = dynamic_cast<NormalModeUtilities*>(myNextIntegrator);
+    myNextNormalMode  = dynamic_cast<StringNormalModeUtilities*>(myNextIntegrator);
     //Using complement of next integrator, so copy 
     firstMode = myNextNormalMode->firstMode; numMode = myNextNormalMode->numMode;
     //NM initialization, but fix dof, as set by next integrator
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES); //last for complimentary forces, no gen noise
+    StringNormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES); //last for complimentary forces, no gen noise
     _rfM = myNextNormalMode->_rfM;
     _idM = _rfM + 2; /* only used for traceMin */
     //
-    myLastNormalMode  = dynamic_cast<NormalModeUtilities*>(bottom());
+    myLastNormalMode  = dynamic_cast<StringNormalModeUtilities*>(bottom());
     //do first force calculation, and remove non sub-space part
     app->energies.clear();	//Need this or initial error, due to inner integrator energy?
     initializeForces();

@@ -7,7 +7,7 @@
 #include <protomol/parallel/Parallel.h>
 #include <protomol/topology/TopologyUtilities.h>
 #include <protomol/base/Report.h>
-#include <protomol/integrator/normal/NormalModeUtilities.h>
+#include <src/integrator/normal/StringNormalModeUtilities.h>
 #include <protomol/io/EigenvectorReader.h>
 #include <protomol/io/PDBReader.h>
 #include <src/base/CommonSpace.h>
@@ -35,14 +35,14 @@ namespace ProtoMol {
 
   template<class TBoundaryConditions>
   class HarmNMRestSystemForce :
-       public SystemForce, public NormalModeUtilities {
+       public SystemForce, public StringNormalModeUtilities {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
 
-      HarmNMRestSystemForce() : SystemForce(), NormalModeUtilities() {
+      HarmNMRestSystemForce() : SystemForce(), StringNormalModeUtilities() {
 
          kappaScale=1.0;
          doReadParams = 0;
@@ -78,7 +78,7 @@ namespace ProtoMol {
       }
 
       HarmNMRestSystemForce(Real ks, int fm, int nm, int doR, std::string evfile, std::string evfile_B, std::string pdbA, std::string pdbB, int t_p, int t_s, int do_c, Real n_s, int t_v, Real max_k, int start_common, Real th_hold, int rp_target) : 
-               SystemForce(), NormalModeUtilities(fm, nm,91.0,1234,300),kappaScale(ks), doReadParams(doR),
+               SystemForce(), StringNormalModeUtilities(fm, nm,91.0,1234,300),kappaScale(ks), doReadParams(doR),
                eigvecfile(evfile), eigvecfileB(evfile_B), pdbFileA(pdbA),pdbFileB(pdbB), target_point(t_p), target_steps(t_s),
                doCommonSpace(do_c), norm_epsilon(n_s), target_vector(t_v), max_kappa(max_k), start_common_mode(start_common),
                thres_hold(th_hold), reparam_target(rp_target) {
@@ -295,7 +295,7 @@ namespace ProtoMol {
   inline void HarmNMRestSystemForce<TBoundaryConditions>::initializeDataStructures(const Vector3DBlock *positions,
           const GenericTopology *topo, Vector3DBlock *forces, int nm_flags) {
 
-          //NormalModeUtilities::initialize((int)positions->size(), topo, forces, false);
+          //StringNormalModeUtilities::initialize((int)positions->size(), topo, forces, false);
 #if defined(HAVE_LAPACK)
 #else
 #if defined(HAVE_SIMTK_LAPACK)
@@ -513,7 +513,7 @@ namespace ProtoMol {
   inline Vector3DBlock *HarmNMRestSystemForce<TBoundaryConditions>::subspacePositionHalfProj(
            double *tempC, Vector3DBlock *iPos) {
 
-    //The code here is a variant of cartSpaceProj in NormalModeUtilities
+    //The code here is a variant of cartSpaceProj in StringNormalModeUtilities
         char *transA = "N";
         int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;
         double alpha = 1.0; double beta = 0.0;
