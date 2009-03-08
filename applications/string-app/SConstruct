@@ -76,15 +76,3 @@ allsrc.append('main.cpp')
 #print allsrc
 
 env.Program('stringapp',allsrc)
-
-n_src = []
-
-for s in subsrc:
-    n_src.append('#/src/' + s)
-
-n_src.append('main_string.cpp')
-
-#print n_src
-
-env.Program('stringProtoMol',n_src)
-
