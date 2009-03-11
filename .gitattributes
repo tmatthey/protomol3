@@ -872,6 +872,7 @@ protomol/protomol/force/bonded/DihedralSystemForce.h -text
 protomol/protomol/force/bonded/HarmDihedralSystemForce.h -text
 protomol/protomol/force/bonded/ImproperSystemForce.h -text
 protomol/protomol/force/bonded/MTorsionSystemForce.h -text
+protomol/protomol/force/bonded/RBDihedralSystemForce.h -text
 protomol/protomol/force/bonded/SConscript -text
 protomol/protomol/force/born/BornRadii.cpp -text
 protomol/protomol/force/born/BornRadii.h -text

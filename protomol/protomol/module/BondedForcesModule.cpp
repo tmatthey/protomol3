@@ -1,5 +1,6 @@
 #include <protomol/module/BondedForcesModule.h>
 
+#include <protomol/force/bonded/RBDihedralSystemForce.h>
 #include <protomol/force/bonded/DihedralSystemForce.h>
 #include <protomol/force/bonded/BondSystemForce.h>
 #include <protomol/force/bonded/AngleSystemForce.h>
@@ -24,6 +25,7 @@ void BondedForcesModule::registerForces(ProtoMolApp *app) {
     app->config[InputBoundaryConditions::keyword];
 
   if (equalNocase(boundConds, PeriodicBoundaryConditions::keyword)) {
+    f.registerExemplar(new RBDihedralSystemForce<PeriodicBoundaryConditions>());
     f.registerExemplar(new DihedralSystemForce<PeriodicBoundaryConditions>());
     f.registerExemplar(new BondSystemForce<PeriodicBoundaryConditions>());
     f.registerExemplar(new AngleSystemForce<PeriodicBoundaryConditions>());
@@ -32,6 +34,7 @@ void BondedForcesModule::registerForces(ProtoMolApp *app) {
                        HarmDihedralSystemForce<PeriodicBoundaryConditions>());
 
   } else if (equalNocase(boundConds, VacuumBoundaryConditions::keyword)) {
+    f.registerExemplar(new RBDihedralSystemForce<VacuumBoundaryConditions>());
     f.registerExemplar(new DihedralSystemForce<VacuumBoundaryConditions>());
     f.registerExemplar(new BondSystemForce<VacuumBoundaryConditions>());
     f.registerExemplar(new AngleSystemForce<VacuumBoundaryConditions>());

@@ -20,6 +20,9 @@ using namespace ProtoMol;
 
 const string OpenMMIntegrator::keyword("OpenMM");
 
+const Real OpenMMIntegrator::FudgeQQ = 0.8333;
+const Real OpenMMIntegrator::FudgeLJ = 0.5;
+
 OpenMMIntegrator::OpenMMIntegrator() :
   STSIntegrator()
   {
@@ -167,25 +170,36 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #endif
 
   if ( PeriodicTorsion ){
+
     unsigned int numPTor = app->topology->dihedrals.size();
-    PTorsion = new OpenMM::PeriodicTorsionForce(numPTor);
+    unsigned int totalNumPTor = 0;
+    for (unsigned int i = 0; i < numPTor; i++) 
+      totalNumPTor += app->topology->dihedrals[i].multiplicity;
+
+    PTorsion = new OpenMM::PeriodicTorsionForce(totalNumPTor);//numPTor);//
     system->addForce(PTorsion);
     for (unsigned int i = 0; i < numPTor; i++){
         unsigned int a1 = app->topology->dihedrals[i].atom1;
         unsigned int a2 = app->topology->dihedrals[i].atom2;
         unsigned int a3 = app->topology->dihedrals[i].atom3;
         unsigned int a4 = app->topology->dihedrals[i].atom4;
-        unsigned int mult = app->topology->dihedrals[i].periodicity[0];
-        Real phiA = app->topology->dihedrals[i].phaseShift[0];
-        Real cpA = app->topology->dihedrals[i].forceConstant[0] * Constant::KCAL_KJ;
 
-        //idef.iparams[type].pdihs.mult, idef.iparams[type].pdihs.phiA*M_PI/180.0, idef.iparams[type].pdihs.cpA
+        unsigned int multiplicity = app->topology->dihedrals[i].multiplicity;
+
+        for (unsigned int j = 0; j < multiplicity; j++){
+
+          unsigned int mult = app->topology->dihedrals[i].periodicity[j];
+          Real phiA = app->topology->dihedrals[i].phaseShift[j];
+          Real cpA = app->topology->dihedrals[i].forceConstant[j] * Constant::KCAL_KJ;
+
+          //idef.iparams[type].pdihs.mult, idef.iparams[type].pdihs.phiA*M_PI/180.0, idef.iparams[type].pdihs.cpA
 #ifdef DEBUG
-        mFile << a1 << " " << a2 << " " << a3 << " " << a4 << " " 
-            << mult << " " << phiA << " " << cpA << std::endl;   
+          mFile << a1 << " " << a2 << " " << a3 << " " << a4 << " " 
+              << mult << " " << phiA << " " << cpA << std::endl;   
 #endif
 
-        PTorsion->setTorsionParameters(i, a1, a2, a3, a4, mult, phiA, cpA);
+          PTorsion->setTorsionParameters(i, a1, a2, a3, a4, mult, phiA, cpA);
+        }
     }
   }
 
@@ -268,7 +282,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #endif
 
     //1-4 interactions	
-	std::vector<NBForce> mForces;
+	  std::vector<NBForce> mForces;
 
     for (unsigned int i = 0; i < exclSz; i++){
       if ( (app->topology->exclusions.getTable())[i].excl == EXCLUSION_MODIFIED) {
@@ -281,17 +295,17 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
                               app->topology->atomTypes[type2].sigma);
         Real epsilon = sqrt(app->topology->atomTypes[type1].epsilon * 
                               app->topology->atomTypes[type2].epsilon);//0.5
-        Real chargeij = 0.8333 * //app->topology->coulombScalingFactor *
+        Real chargeij =  FudgeQQ * //app->topology->coulombScalingFactor *FudgeQQ
                           (app->topology->atoms[atom1].scaledCharge / Constant::SQRTCOULOMBCONSTANT) *
-                            (app->topology->atoms[atom2].scaledCharge / Constant::SQRTCOULOMBCONSTANT); //0.8333=FudgeQQ
+                            (app->topology->atoms[atom2].scaledCharge / Constant::SQRTCOULOMBCONSTANT); 
 
-        Real c6 = 0.5 * (4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6); //0.5 = FudgeLJ
-        Real c12 = 0.5 * (4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12);
+        Real c6 =  FudgeLJ * (4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6); //FudgeLJ
+        Real c12 = FudgeLJ * (4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12);
 
         Real epsilon2 = (c6*c6)/(4.0*c12);
         Real sigma2 = pow(c12/c6,  (1.0/6.0));
 		
-		mForces.push_back( NBForce( atom1, atom2, chargeij, sigma2, epsilon2, c6, c12 ) );
+		    mForces.push_back( NBForce( atom1, atom2, chargeij, sigma2, epsilon2, c6, c12 ) );
 
         //mFile << i << " " << atom1 << " " << atom2 << " " << chargeij << " " << 
         //    sigma2 << " " << epsilon2 << " " << c6 << " " << c12 << std::endl;  
