@@ -1216,6 +1216,8 @@ protomol/protomol/type/ArrayNoPartialSpecialization.h -text
 protomol/protomol/type/BlockMatrix.cpp -text
 protomol/protomol/type/BlockMatrix.h -text
 protomol/protomol/type/EigenvectorInfo.h -text
+protomol/protomol/type/GromacsParameters.cpp -text
+protomol/protomol/type/GromacsParameters.h -text
 protomol/protomol/type/GromacsTopology.cpp -text
 protomol/protomol/type/GromacsTopology.h -text
 protomol/protomol/type/Matrix3By3.cpp -text
