@@ -136,6 +136,28 @@ namespace ProtoMol {
                                             const Improper &p);
     };
 
+    struct RBDihedral {
+
+      RBDihedral() {}
+      RBDihedral(int a, std::string b, std::string c, std::string d,
+           std::string e, Real cc0, Real cc1, Real cc2, Real cc3, Real cc4, Real cc5):
+           number(a), atom1(b), atom2(c), atom3(d), atom4(e),
+           C0(cc0), C1(cc1), C2(cc2), C3(cc3), C4(cc4), C5(cc5) {} 
+
+      int number;         ///< dihedral number
+      std::string atom1;  ///< atom 1 number
+      std::string atom2;  ///< atom 2 number
+      std::string atom3;  ///< atom 3 number
+      std::string atom4;  ///< atom 4 number
+      Real C0;
+      Real C1;
+      Real C2;
+      Real C3;
+      Real C4;
+      Real C5;
+
+    };
+
     //_________________________________________________________________Nonbonded
     /// This structure holds data for a nonbonded - including
     struct Nonbonded {
@@ -249,6 +271,10 @@ namespace ProtoMol {
     std::vector<PAR::Nonbonded> nonbondeds;
     std::vector<PAR::Nbfix> nbfixs;
     std::vector<PAR::Hbond> hbonds;
+
+    //for GROMACS
+    std::vector<PAR::RBDihedral> rb_dihedrals;
+
   };
 }
 #endif /* PAR_H */

@@ -67,6 +67,14 @@ namespace ProtoMol {
     const Real BOLTZMANN = 0.001987191;
     const Real PDBVELSCALINGFACTOR = 20.45482706;
 
+    // Constants for GROMACS-PROTOMOL conversion
+
+    const Real ANGSTROM_NM = 0.1;
+    const Real NM_ANGSTROM = 10.0;
+    const Real KCAL_KJ = 4.184;
+    const Real KJ_KCAL = 1.0 / 4.184;
+    const Real FS_PS = 0.001;
+
     namespace SI {
       const Real C = 299792458.0;    // [m/s]
       const Real COULOMB_FACTOR = C * C * 1e-7;       // [Vm/C]

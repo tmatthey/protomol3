@@ -3,8 +3,12 @@
 #include <protomol/io/PosVelReader.h>
 #include <protomol/io/PSFReader.h>
 #include <protomol/io/PARReader.h>
-#include <protomol/io/AMBERReader.h>
 
+//for GROMACS
+#include <protomol/io/gromacs/PortGromacsParameters.h>
+#include <protomol/type/GromacsTopology.h>
+#include <protomol/type/GromacsParameters.h>
+//
 #include <protomol/config/Configuration.h>
 #include <protomol/base/Exception.h>
 #include <protomol/ProtoMolApp.h>
@@ -28,7 +32,10 @@ defineInputValueWithAliases(InputPAR, "parfile", ("parameters"));
 defineInputValue(InputPDBScaling, "pdbScaling");
 defineInputValue(InputDihedralMultPSF, "dihedralMultPSF");
 defineInputValue(InputSCPISM, "scpismfile");
-defineInputValue(InputAMBER, "amberfile");
+
+//for GROMACS
+defineInputValue(InputGromacsTopo, "gromacstopologyfile");
+defineInputValue(InputGromacsParamPath, "gromacsparameterpath");
 
 void IOModule::init(ProtoMolApp *app) {
   Configuration *config = &app->config;
@@ -40,7 +47,10 @@ void IOModule::init(ProtoMolApp *app) {
   InputPDBScaling::registerConfiguration(config);
   InputDihedralMultPSF::registerConfiguration(config);  
   InputSCPISM::registerConfiguration(config);
-  InputAMBER::registerConfiguration(config);
+
+  //for GROMACS
+  InputGromacsTopo::registerConfiguration(config);
+  InputGromacsParamPath::registerConfiguration(config);
 
 }
 
@@ -116,21 +126,17 @@ void IOModule::read(ProtoMolApp *app) {
 
   } else THROW("Neither temperature nor velocity file specified.");
 
-  //AMBER input files
-  if (config.valid(InputAMBER::keyword)) {
-    //AMBER
-    AMBERReader amberReader;
-
-    if (!amberReader.open(config[InputAMBER::keyword]))
-      THROW(string("Can't open AMBER file '") +
-        config[InputAMBER::keyword].getString() + "'.");
-
-    if (!( amberReader.read(app->psf,app->par) ))
-      THROW(string("Could not parse AMBER file '") +
-        config[InputAMBER::keyword].getString() + "'.");
-
-    report << plain << "Using AMBER file '" << config[InputAMBER::keyword]
-           << "' (" << app->psf.atoms.size() << ")." << endr;
+  //Gromacs/AMBER input files
+  if (config.valid(InputGromacsTopo::keyword) && 
+        config.valid(InputGromacsParamPath::keyword)){
+     GromacsTopology gTopo;
+     GromacsParameters gParams;
+     PortGromacsParameters gromacs_port;
+       
+     if (!gromacs_port.Read_Gromacs_Parameters(app->psf,app->par, gTopo, gParams, 
+           (const string)config[InputGromacsTopo::keyword], (const string)config[InputGromacsParamPath::keyword])){
+            THROW(string("Cant read GROMACS parameters into PSF and PAR"));
+     }
 
   } else {
     // PSF

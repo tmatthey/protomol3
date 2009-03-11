@@ -1044,6 +1044,17 @@ protomol/protomol/io/XYZTrajectoryWriter.cpp -text
 protomol/protomol/io/XYZTrajectoryWriter.h -text
 protomol/protomol/io/XYZWriter.cpp -text
 protomol/protomol/io/XYZWriter.h -text
+protomol/protomol/io/gromacs/GromacsBondedParameterFileReader.cpp -text
+protomol/protomol/io/gromacs/GromacsBondedParameterFileReader.h -text
+protomol/protomol/io/gromacs/GromacsNonbondedParameterFileReader.cpp -text
+protomol/protomol/io/gromacs/GromacsNonbondedParameterFileReader.h -text
+protomol/protomol/io/gromacs/GromacsParameterFileReader.cpp -text
+protomol/protomol/io/gromacs/GromacsParameterFileReader.h -text
+protomol/protomol/io/gromacs/GromacsTopologyReader.cpp -text
+protomol/protomol/io/gromacs/GromacsTopologyReader.h -text
+protomol/protomol/io/gromacs/PortGromacsParameters.cpp -text
+protomol/protomol/io/gromacs/PortGromacsParameters.h -text
+protomol/protomol/io/gromacs/SConscript -text
 protomol/protomol/main.cpp -text
 protomol/protomol/modifier/Modifier.cpp -text
 protomol/protomol/modifier/Modifier.h -text
@@ -1189,6 +1200,7 @@ protomol/protomol/topology/LennardJonesParameters.h -text
 protomol/protomol/topology/Molecule.h -text
 protomol/protomol/topology/PeriodicBoundaryConditions.cpp -text
 protomol/protomol/topology/PeriodicBoundaryConditions.h -text
+protomol/protomol/topology/RBTorsion.h -text
 protomol/protomol/topology/SConscript -text
 protomol/protomol/topology/SemiGenericTopology.h -text
 protomol/protomol/topology/Topology.h -text
@@ -1204,6 +1216,8 @@ protomol/protomol/type/ArrayNoPartialSpecialization.h -text
 protomol/protomol/type/BlockMatrix.cpp -text
 protomol/protomol/type/BlockMatrix.h -text
 protomol/protomol/type/EigenvectorInfo.h -text
+protomol/protomol/type/GromacsTopology.cpp -text
+protomol/protomol/type/GromacsTopology.h -text
 protomol/protomol/type/Matrix3By3.cpp -text
 protomol/protomol/type/Matrix3By3.h -text
 protomol/protomol/type/PAR.cpp -text

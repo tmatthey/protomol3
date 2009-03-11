@@ -55,6 +55,9 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   topo->dihedrals.clear();
   topo->impropers.clear();
 
+  //Ryckert-Belleman
+  topo->rb_dihedrals.clear();
+
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Get the atoms
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -297,6 +300,15 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       if (currentdihedral == dihedralLookUpTable.end())
         currentdihedral = dihedralLookUpTable.find(
           "X," + dihedral3 + "," + dihedral2 + ",X");
+
+      //for GROMACS
+      if (currentdihedral == dihedralLookUpTable.end())
+         currentdihedral = dihedralLookUpTable.find(
+         "X," + dihedral2 + "," + dihedral3 + "," + dihedral4); 
+
+      if (currentdihedral == dihedralLookUpTable.end())
+         currentdihedral = dihedralLookUpTable.find(
+         "X," + string("X,") + dihedral3 + "," + dihedral4);
     }
 
     // if we still have not found this dihedral type in the PAR object, report
@@ -471,6 +483,86 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
     torsion.phaseShift.push_back(dtor(currentimproper->second->phaseShift));
     torsion.multiplicity = 1;
     topo->impropers.push_back(torsion);
+  }
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Ryckert-Belleman Dihedral
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  map<string, vector<PAR::RBDihedral>::const_iterator> rb_dihedralLookUpTable;
+
+  for (vector<PAR::RBDihedral>::const_iterator rbdihe = par.rb_dihedrals.begin();
+       rbdihe != par.rb_dihedrals.end(); ++rbdihe)
+    rb_dihedralLookUpTable[rbdihe->atom1 + "," + rbdihe->atom2 + "," +
+                        rbdihe->atom3 + "," + rbdihe->atom4] = rbdihe;
+
+  for (vector<PSF::RBDihedral>::const_iterator rb_dihe = psf.rb_dihedrals.begin();
+       rb_dihe != psf.rb_dihedrals.end(); ++rb_dihe) {
+
+    // store the ID numbers of the atoms in this dihedral
+    int atom1 = rb_dihe->atom1 - 1;
+    int atom2 = rb_dihe->atom2 - 1;
+    int atom3 = rb_dihe->atom3 - 1;
+    int atom4 = rb_dihe->atom4 - 1;
+
+    // store the type names of the atoms in this dihedral
+    string dihedral1 = topo->atomTypes[topo->atoms[atom1].type].name;
+    string dihedral2 = topo->atomTypes[topo->atoms[atom2].type].name;
+    string dihedral3 = topo->atomTypes[topo->atoms[atom3].type].name;
+    string dihedral4 = topo->atomTypes[topo->atoms[atom4].type].name;
+
+    map<string,
+        vector<PAR::RBDihedral>::const_iterator>::const_iterator
+    currentdihedral =
+      rb_dihedralLookUpTable.find(
+        dihedral1 + "," + dihedral2 + "," + dihedral3 + "," + dihedral4);
+
+    // if this dihedral type has not been found, try reversing the order of
+    // the atom types
+    if (currentdihedral == rb_dihedralLookUpTable.end())
+      currentdihedral = rb_dihedralLookUpTable.find(
+        dihedral4 + "," + dihedral3 + "," + dihedral2 + "," + dihedral1);
+
+    // Try wildcards if necessary
+    if (currentdihedral == rb_dihedralLookUpTable.end()) {
+      currentdihedral = rb_dihedralLookUpTable.find(
+        "X," + dihedral2 + "," + dihedral3 + ",X");
+      if (currentdihedral == rb_dihedralLookUpTable.end())
+        currentdihedral = rb_dihedralLookUpTable.find(
+          "X," + dihedral3 + "," + dihedral2 + ",X");
+
+     //for GROMACS
+      if (currentdihedral == rb_dihedralLookUpTable.end())
+         currentdihedral = rb_dihedralLookUpTable.find(
+         "X," + dihedral2 + "," + dihedral3 + "," + dihedral4);
+
+    }
+
+    // if we still have not found this dihedral type in the PAR object, report
+    // an error
+    if (currentdihedral == rb_dihedralLookUpTable.end())
+      THROWS(
+        "Could not find dihedral '" << dihedral1 << "'-'" << dihedral2
+                                    << "'-'" << dihedral3 << "'-'" <<
+        dihedral4 << "'.");
+
+    // if we have found this dihedral type then copy the
+    // dihedral parameters into the topology
+    RBTorsion rb_torsion;
+    rb_torsion.atom1 = atom1;
+    rb_torsion.atom2 = atom2;
+    rb_torsion.atom3 = atom3;
+    rb_torsion.atom4 = atom4;
+
+    rb_torsion.C0  = currentdihedral->second->C0;
+    rb_torsion.C1  = currentdihedral->second->C1;
+    rb_torsion.C2  = currentdihedral->second->C2;
+    rb_torsion.C3  = currentdihedral->second->C3;
+    rb_torsion.C4  = currentdihedral->second->C4;
+    rb_torsion.C5  = currentdihedral->second->C5;
+
+    topo->rb_dihedrals.push_back(rb_torsion);
+
   }
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -897,7 +989,8 @@ void ProtoMol::buildExclusionTable(GenericTopology *topo,
 
   const int numBonds = topo->bonds.size(),
     numAngles = topo->angles.size(),
-    numDihedrals = topo->dihedrals.size();
+    numDihedrals = topo->dihedrals.size(),
+    numRBDihedrals = topo->rb_dihedrals.size();
 
   //  Add excluded bonds.
   for (int i = 0; i < numBonds; i++)
@@ -910,10 +1003,10 @@ void ProtoMol::buildExclusionTable(GenericTopology *topo,
       topo->exclusions.add(topo->angles[i].atom1,
         topo->angles[i].atom3, EXCLUSION_FULL);
 
-    if (exclusionType != ExclusionType::ONE3)
+    if (exclusionType != ExclusionType::ONE3) {
 
       //  Add excluded dihedrals.
-      for (int i = 0; i < numDihedrals; i++)
+      for (int i = 0; i < numDihedrals; i++) {
 
         if (exclusionType == ExclusionType::ONE4)
           topo->exclusions.add(topo->dihedrals[i].atom1,
@@ -921,6 +1014,19 @@ void ProtoMol::buildExclusionTable(GenericTopology *topo,
         else
           topo->exclusions.add(topo->dihedrals[i].atom1,
             topo->dihedrals[i].atom4, EXCLUSION_MODIFIED);
+      }
+
+      //  Add excluded RB dihedrals.
+      for (int i = 0; i < numRBDihedrals; i++) {
+
+        if (exclusionType == ExclusionType::ONE4)
+          topo->exclusions.add(topo->rb_dihedrals[i].atom1,
+            topo->rb_dihedrals[i].atom4, EXCLUSION_FULL);
+        else
+          topo->exclusions.add(topo->rb_dihedrals[i].atom1,
+            topo->rb_dihedrals[i].atom4, EXCLUSION_MODIFIED);
+      }
+    }
 
   }
 

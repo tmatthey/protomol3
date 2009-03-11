@@ -14,6 +14,8 @@
 #include <protomol/topology/Molecule.h>
 #include <protomol/base/Zap.h>
 
+#include <protomol/topology/RBTorsion.h>
+
 #include <protomol/topology/LennardJonesParameterTable.h>
 #include <protomol/topology/BankLennardJonesParameterTable.h>
 
@@ -132,6 +134,9 @@ namespace ProtoMol {
     std::vector<Torsion>  dihedrals;
     std::vector<Torsion>  impropers;
     std::vector<Molecule> molecules;
+
+    //Ryckert-Belleman potential
+    std::vector<RBTorsion> rb_dihedrals;
 
     /// look-up table of exclusions
     ExclusionTable exclusions;

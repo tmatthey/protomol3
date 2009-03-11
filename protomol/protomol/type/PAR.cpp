@@ -15,4 +15,8 @@ void PAR::clear() {
   nonbondeds.clear();
   nbfixs.clear();
   hbonds.clear();
+
+  //Amber style dihedrals
+  rb_dihedrals.clear();
+
 }

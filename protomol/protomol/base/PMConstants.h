@@ -36,6 +36,14 @@ namespace ProtoMol {
     extern const Real EPS_GOURAUD_THRESHOLD;
     extern const Real EPS_SMOOTH_LINE_FACTOR;
 
+    // Constants for GROMACS-PROTOMOL conversion
+
+    extern const Real ANGSTROM_NM;
+    extern const Real NM_ANGSTROM;
+    extern const Real KCAL_KJ;
+    extern const Real KJ_KCAL;
+    extern const Real FS_PS;
+
     namespace SI {
       extern const Real C;
       extern const Real COULOMB_FACTOR;

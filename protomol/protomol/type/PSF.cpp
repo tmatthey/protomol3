@@ -13,5 +13,9 @@ void PSF::clear() {
   acceptors.clear();
   nonbondeds.clear();
   ngrp.clear();
+
+  //Amber style dihedrals
+  rb_dihedrals.clear();
+
 }
 

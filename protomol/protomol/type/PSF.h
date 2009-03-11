@@ -113,6 +113,21 @@ namespace ProtoMol {
       int atom4;      ///< improper atom 4 number
     };
 
+    struct RBDihedral {
+
+      RBDihedral() : number(0), atom1(0), atom2(0), atom3(0), atom4(0) {}
+      RBDihedral(int a, int b, int c, int d,
+               int e) : number(a), atom1(b), atom2(c), atom3(d), atom4(e) {}
+      
+
+     int number;     ///< dihedral number
+     int atom1;      ///< dihedral atom 1 number
+     int atom2;      ///< dihedral atom 2 number
+     int atom3;      ///< dihedral atom 3 number
+     int atom4;      ///< dihedral atom 4 number
+      
+    };
+
     //_____________________________________________________________________Donor
     /**
      * This structure holds data for a basic .psf donor.  The data stored
@@ -188,6 +203,10 @@ namespace ProtoMol {
     std::vector<PSF::Acceptor> acceptors;
     std::vector<PSF::Nonbonded> nonbondeds;
     std::vector<PSF::Ngrp> ngrp;
+
+    //Amber style dihedrals
+    std::vector<PSF::RBDihedral> rb_dihedrals;
+
   };
 }
 

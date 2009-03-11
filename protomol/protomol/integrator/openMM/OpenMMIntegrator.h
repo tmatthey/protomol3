@@ -14,10 +14,11 @@
 #include "HarmonicBondForce.h"
 #include "HarmonicAngleForce.h"
 #include "NonbondedForce.h"
+#include "RBTorsionForce.h"
+#include "PeriodicTorsionForce.h"
 //integrators
 #include "Integrator.h"
 #include "LangevinIntegrator.h"
-#include "NMLIntegrator.h"
 //other
 #include "OpenMMContext.h"
 
@@ -45,7 +46,7 @@ namespace ProtoMol {
   public:
     virtual std::string getIdNoAlias() const {return keyword;}
     virtual void getParameters(std::vector<Parameter> &parameters) const;
-    virtual unsigned int getParameterSize() const{return 8;}
+    virtual unsigned int getParameterSize() const{return 10;}
 
   protected:
     virtual void setupValues(std::vector<Value> &params);
@@ -92,6 +93,8 @@ namespace ProtoMol {
     OpenMM::System *system;
     OpenMM::HarmonicBondForce* bonds;
     OpenMM::HarmonicAngleForce* angles;
+    OpenMM::RBTorsionForce* RBDihedral;
+    OpenMM::PeriodicTorsionForce* PTorsion;
     OpenMM::NonbondedForce * nonbonded;
     OpenMM::Integrator *integrator;//Langevin
     OpenMM::OpenMMContext *context;
@@ -100,22 +103,12 @@ namespace ProtoMol {
 #endif
 
     //OpenMM force/integrator parameters
-    bool HarmonicBondForce, HarmonicAngleForce, NonbondedForce;
+    bool HarmonicBondForce, HarmonicAngleForce, NonbondedForce, RBDihedralForce, PeriodicTorsion;
     int  myIntegratorType;
 
   };
   //____ INLINES
 
-  // Constants for GROMACS-PROTOMOL conversion
-  namespace Constant {
-
-    extern const Real ANGSTROM_NM;
-    extern const Real NM_ANGSTROM;
-    extern const Real KCAL_KJ;
-    extern const Real KJ_KCAL;
-    extern const Real FS_PS;
-
-  }
 
 }
 #endif
