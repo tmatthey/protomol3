@@ -634,15 +634,33 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       Real epsilon14_i = par.nonbondeds[bi].epsilon14;
       Real epsilon14_j = par.nonbondeds[bj].epsilon14;
 
-      Real r_ij = sigma_i + sigma_j;
-      Real e_ij = sqrt(epsilon_i * epsilon_j);
-      Real r14_ij = sigma14_i + sigma14_j;
-      Real e14_ij = sqrt(epsilon14_i * epsilon14_j);
+      Real r_ij, e_ij, r14_ij, e14_ij;
 
-      paramsij.A = power<12>(r_ij) * e_ij;
-      paramsij.B = 2 * power<6>(r_ij) * e_ij;
-      paramsij.A14 = power<12>(r14_ij) * e14_ij;
-      paramsij.B14 = 2 * power<6>(r14_ij) * e14_ij;
+      switch(topo->forceFieldFlag) {
+
+        case GROMACS :  r_ij = 0.5 * sigma_i + sigma_j;
+                  e_ij = sqrt(epsilon_i * epsilon_j);
+                  r14_ij = 0.5 * sigma14_i + sigma14_j;
+                  e14_ij = sqrt(epsilon14_i * epsilon14_j);
+
+                  paramsij.A = power<12>(r_ij) * e_ij * 4.0;
+                  paramsij.B = power<6>(r_ij) * e_ij * 4.0;
+                  paramsij.A14 = power<12>(r14_ij) * e14_ij * 4.0;
+                  paramsij.B14 = 2 * power<6>(r14_ij) * e14_ij * 4.0;
+                  break;
+
+        default /*CHARMM*/:  r_ij = sigma_i + sigma_j;
+                  e_ij = sqrt(epsilon_i * epsilon_j);
+                  r14_ij = sigma14_i + sigma14_j;
+                  e14_ij = sqrt(epsilon14_i * epsilon14_j);
+
+                  paramsij.A = power<12>(r_ij) * e_ij;
+                  paramsij.B = 2 * power<6>(r_ij) * e_ij;
+                  paramsij.A14 = power<12>(r14_ij) * e14_ij;
+                  paramsij.B14 = 2 * power<6>(r14_ij) * e14_ij;
+                  break;
+
+      }
 
       topo->lennardJonesParameters.set(i, j, paramsij);
     }

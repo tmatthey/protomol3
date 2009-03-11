@@ -214,8 +214,9 @@ void PortGromacsParameters::PortPARBonds() {
      par_bond.atom1 = myGromacsParam->bondTypes[i].atom_typeA;
      par_bond.atom2 = myGromacsParam->bondTypes[i].atom_typeB;
 
-     par_bond.forceConstant = myGromacsParam->bondTypes[i].forceConstant*Constant::KJ_KCAL*0.5;
-     par_bond.distance = myGromacsParam->bondTypes[i].distance*Constant::NM_ANGSTROM;
+     par_bond.forceConstant = myGromacsParam->bondTypes[i].forceConstant
+                                * Constant::KJ_KCAL * Constant::INV_NM_ANGSTROM * Constant::INV_NM_ANGSTROM * 0.5;
+     par_bond.distance = myGromacsParam->bondTypes[i].distance * Constant::NM_ANGSTROM;
      myPAR->bonds.push_back(par_bond);
   }
 

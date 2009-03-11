@@ -49,6 +49,12 @@ namespace ProtoMol {
    * - measurement of distances must be non-virtual
    */
 
+  ///Available force fields
+  enum ForceFieldType {
+    CHARMM,
+    GROMACS
+  };
+    
   class GenericTopology : public Makeable<GenericTopology> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
@@ -164,6 +170,10 @@ namespace ProtoMol {
 
     // Flag for SCPISM
     int doSCPISM;
+
+    //flag for force field
+    ForceFieldType forceFieldFlag;
+
     /**
      * the number of degrees of freedom in the system
      * this number is needed to make sure we are properly computing the 

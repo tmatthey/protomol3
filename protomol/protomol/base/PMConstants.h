@@ -40,6 +40,8 @@ namespace ProtoMol {
 
     extern const Real ANGSTROM_NM;
     extern const Real NM_ANGSTROM;
+    extern const Real INV_ANGSTROM_NM;
+    extern const Real INV_NM_ANGSTROM;
     extern const Real KCAL_KJ;
     extern const Real KJ_KCAL;
     extern const Real FS_PS;

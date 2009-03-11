@@ -124,7 +124,8 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     for (unsigned int i = 0; i < numBonds; ++i){
 		unsigned int a1 = app->topology->bonds[i].atom1; unsigned int a2 = app->topology->bonds[i].atom2;
 		Real r_0 = app->topology->bonds[i].restLength  * Constant::ANGSTROM_NM;
-		Real k = app->topology->bonds[i].springConstant  * Constant::KCAL_KJ * 2.0; //times 2 as Amber is 1/2 k(b-b_0)^2
+		Real k = app->topology->bonds[i].springConstant  
+              * Constant::KCAL_KJ * Constant::INV_ANGSTROM_NM * Constant::INV_ANGSTROM_NM * 2.0; //times 2 as Amber is 1/2 k(b-b_0)^2
 	  
 #ifdef DEBUG
 	  if( (app->topology->atoms[ app->topology->bonds[i].atom1 ].name[0] != 'H') &&
@@ -391,7 +392,7 @@ void OpenMMIntegrator::run(int numTimesteps) {
    for (int j = 0; j < 3; j++){
      app->positions[i].c[j] = openMMpositions[i][j] * Constant::NM_ANGSTROM; //nm to A
      app->velocities[i].c[j] = openMMvelocities[i][j];// * Constant::NM_ANGSTROM * Constant::TIMEFACTOR; //nm/ps to A/fs?
-     (*myForces)[i].c[j] = openMMforces[i][j] * Constant::NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
+     (*myForces)[i].c[j] = openMMforces[i][j] * Constant::INV_NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
     }
   }
 

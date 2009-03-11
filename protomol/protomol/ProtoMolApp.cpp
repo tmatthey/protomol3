@@ -194,7 +194,6 @@ void ProtoMolApp::build() {
   // Read data
   modManager->read(this);
 
-
   // Build topology
   try {
     topology = topologyFactory.make(&config);
@@ -247,6 +246,12 @@ void ProtoMolApp::build() {
 
     SCPISMParameters->displayTable();
 
+  }
+
+  //find force field type before building topology
+  if (config.valid(InputGromacsTopo::keyword) && 
+    config.valid(InputGromacsParamPath::keyword)) {
+      topology->forceFieldFlag = GROMACS; 
   }
 
   // Build the topology

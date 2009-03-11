@@ -71,6 +71,8 @@ namespace ProtoMol {
 
     const Real ANGSTROM_NM = 0.1;
     const Real NM_ANGSTROM = 10.0;
+    const Real INV_ANGSTROM_NM = 10.0;
+    const Real INV_NM_ANGSTROM = 0.1;
     const Real KCAL_KJ = 4.184;
     const Real KJ_KCAL = 1.0 / 4.184;
     const Real FS_PS = 0.001;
