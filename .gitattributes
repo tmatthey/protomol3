@@ -1002,8 +1002,6 @@ protomol/protomol/integrator/openMM/NormalModeOpenMM.h -text
 protomol/protomol/integrator/openMM/OpenMMIntegrator.cpp -text
 protomol/protomol/integrator/openMM/OpenMMIntegrator.h -text
 protomol/protomol/integrator/openMM/SConscript -text
-protomol/protomol/io/AMBERReader.cpp -text
-protomol/protomol/io/AMBERReader.h -text
 protomol/protomol/io/ConfigurationReader.cpp -text
 protomol/protomol/io/ConfigurationReader.h -text
 protomol/protomol/io/DCDTrajectoryReader.cpp -text
