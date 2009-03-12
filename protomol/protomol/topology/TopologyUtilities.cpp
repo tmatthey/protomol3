@@ -695,6 +695,23 @@ namespace ProtoMol {
   void buildRattleShakeBondConstraintList(
     GenericTopology *topology, vector<Bond::Constraint> &
     bondConstraints) {
+
+    // H-X bonds only
+
+    bondConstraints.clear();
+
+    for (unsigned int i = 0; i < topology->bonds.size(); i++) {
+      //H-X?
+      if( (topology->atoms[ topology->bonds[i].atom1 ].name[0] == 'H') ||
+            (topology->atoms[ topology->bonds[i].atom2 ].name[0] == 'H') ){
+
+        bondConstraints.push_back(Bond::Constraint(topology->bonds[i].atom1,
+            topology->bonds[i].atom2, topology->bonds[i].restLength));
+      }
+    }
+
+
+#if 0
     // here we go through the bond list first, then the angle list to extract 
     // the possible third pair if they are both hydrogen. Thus, all bond 
     // lengths plus the third pair in the waters will be constrained. The 
@@ -769,6 +786,7 @@ namespace ProtoMol {
     if (bondConstraints.size() == topology->bonds.size())
       report << hint <<
       "No additional H-X-H SHAKE/RATTLE constraint contributions." << endr;
+#endif
   }
 
 //____getAtomsBondedtoDihedral

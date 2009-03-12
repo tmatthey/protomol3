@@ -76,6 +76,7 @@ namespace ProtoMol {
     const Real KCAL_KJ = 4.184;
     const Real KJ_KCAL = 1.0 / 4.184;
     const Real FS_PS = 0.001;
+    const Real PS_FS = 1000.0;
 
     namespace SI {
       const Real C = 299792458.0;    // [m/s]

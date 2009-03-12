@@ -118,33 +118,47 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #endif
 
   //Initialize system
-  system = new OpenMM::System(sz, numConstraints);//0);
+  system = new OpenMM::System(sz, numConstraints);
   for (unsigned int i = 0; i < sz; ++i)
     system->setParticleMass(i, app->topology->atoms[i].scaledMass);
 
   //openMM forces
   if ( HarmonicBondForce ){
     unsigned int numBonds = app->topology->bonds.size();
+
 #ifdef DEBUG
-  mFile << "Bonds " << numBonds << std::endl;
+  mFile << "Bonds " << numBonds - numConstraints << std::endl;
 #endif
-    bonds = new OpenMM::HarmonicBondForce(numBonds);
+
+    bonds = new OpenMM::HarmonicBondForce(numBonds - numConstraints);
     system->addForce(bonds);
 
+    unsigned int bondsIndex = 0;
+
     for (unsigned int i = 0; i < numBonds; ++i){
-    unsigned int a1 = app->topology->bonds[i].atom1; unsigned int a2 = app->topology->bonds[i].atom2;
-    Real r_0 = app->topology->bonds[i].restLength  * Constant::ANGSTROM_NM;
-    Real k = app->topology->bonds[i].springConstant  
-              * Constant::KCAL_KJ * Constant::INV_ANGSTROM_NM * Constant::INV_ANGSTROM_NM * 2.0; //times 2 as Amber is 1/2 k(b-b_0)^2
-    
+      unsigned int a1 = app->topology->bonds[i].atom1; unsigned int a2 = app->topology->bonds[i].atom2;
+      Real r_0 = app->topology->bonds[i].restLength  * Constant::ANGSTROM_NM;
+      Real k = app->topology->bonds[i].springConstant  
+                * Constant::KCAL_KJ * Constant::INV_ANGSTROM_NM * Constant::INV_ANGSTROM_NM * 2.0; //times 2 as Amber is 1/2 k(b-b_0)^2
+      if(numConstraints) {
+          if((app->topology->atoms[ app->topology->bonds[i].atom1 ].name[0] != 'H') &&
+            (app->topology->atoms[ app->topology->bonds[i].atom2 ].name[0] != 'H') ){
+   
 #ifdef DEBUG
-    if( (app->topology->atoms[ app->topology->bonds[i].atom1 ].name[0] != 'H') &&
-      (app->topology->atoms[ app->topology->bonds[i].atom2 ].name[0] != 'H') ){
-      mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
-    }
+            mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
 #endif
 
-    bonds->setBondParameters(i, a1, a2, r_0, k);
+            bonds->setBondParameters(bondsIndex++, a1, a2, r_0, k);
+          }
+      } else {
+
+#ifdef DEBUG
+        mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
+#endif
+
+        bonds->setBondParameters(i, a1, a2, r_0, k);
+
+      }
     }
   }
 
@@ -350,7 +364,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     std::sort( mForces.begin(), mForces.end() );
 
 #ifdef DEBUG
-    mFile << "NonBonded 14 Force " << exclSzMod << std::endl;
+    mFile << "NonBonded 1-4 Force " << exclSzMod << std::endl;
 
     for( unsigned int i = 0; i < mForces.size(); i++){
       const NBForce &temp = mForces[i];
@@ -398,7 +412,8 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   for (unsigned int i = 0; i < sz; ++i){
     for ( int j = 0; j < 3; j++){
       openMMvecp[j] = app->positions[i].c[j] * Constant::ANGSTROM_NM;
-      openMMvecv[j] = app->velocities[i].c[j] * Constant::ANGSTROM_NM * Constant::INV_TIMEFACTOR;
+      openMMvecv[j] = app->velocities[i].c[j] * Constant::ANGSTROM_NM 
+                        * Constant::INV_TIMEFACTOR * Constant::PS_FS;
     }
     openMMpositions.push_back(openMMvecp);
     openMMvelocities.push_back(openMMvecv);
@@ -442,7 +457,8 @@ void OpenMMIntegrator::run(int numTimesteps) {
   for (unsigned int i = 0; i < sz; ++i){
    for (int j = 0; j < 3; j++){
      app->positions[i].c[j] = openMMpositions[i][j] * Constant::NM_ANGSTROM; //nm to A
-     app->velocities[i].c[j] = openMMvelocities[i][j];// * Constant::NM_ANGSTROM * Constant::TIMEFACTOR; //nm/ps to A/fs?
+     app->velocities[i].c[j] = openMMvelocities[i][j] * Constant::NM_ANGSTROM * 
+       Constant::TIMEFACTOR * Constant::FS_PS; //nm/ps to A/fs?
      (*myForces)[i].c[j] = openMMforces[i][j] * Constant::INV_NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
     }
   }

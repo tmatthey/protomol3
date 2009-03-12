@@ -45,6 +45,7 @@ namespace ProtoMol {
     extern const Real KCAL_KJ;
     extern const Real KJ_KCAL;
     extern const Real FS_PS;
+    extern const Real PS_FS;
 
     namespace SI {
       extern const Real C;
