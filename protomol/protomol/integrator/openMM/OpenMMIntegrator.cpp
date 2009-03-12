@@ -487,7 +487,7 @@ void OpenMMIntegrator::run(int numTimesteps) {
             app->energies[ScalarStructure::IMPROPER] = 0.0;
 
   //save total potential energy
-  app->energies[ScalarStructure::OTHER] = state.getPotentialEnergy();
+  app->energies[ScalarStructure::OTHER] = state.getPotentialEnergy() * Constant::KJ_KCAL;
 
   //state.getKineticEnergy();
 
