@@ -102,22 +102,32 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   //openMM
 
 #if defined (HAVE_OPENMM)
+
+  //find system size
   unsigned int sz = app->positions.size();
+
+
+  //find constraint size
+  const std::vector<Bond::Constraint> *myListOfConstraints = 
+      &(app->topology->bondRattleShakeConstraints);
+
+  unsigned int numConstraints = (*myListOfConstraints).size();
 
 #ifdef DEBUG
   std::ofstream mFile ( "output.txt" );
 #endif
 
-  system = new OpenMM::System(sz, 0);
+  //Initialize system
+  system = new OpenMM::System(sz, numConstraints);//0);
   for (unsigned int i = 0; i < sz; ++i)
     system->setParticleMass(i, app->topology->atoms[i].scaledMass);
 
   //openMM forces
-#ifdef DEBUG
-  mFile << "Bonds" << std::endl;
-#endif
   if ( HarmonicBondForce ){
     unsigned int numBonds = app->topology->bonds.size();
+#ifdef DEBUG
+  mFile << "Bonds " << numBonds << std::endl;
+#endif
     bonds = new OpenMM::HarmonicBondForce(numBonds);
     system->addForce(bonds);
 
@@ -140,12 +150,15 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
 #ifdef DEBUG
   mFile << std::endl;
-
-  mFile << "Angles" << std::endl;
 #endif
 
   if ( HarmonicAngleForce ){
     unsigned int numAngles = app->topology->angles.size();
+
+#ifdef DEBUG
+  mFile << "Angles " << numAngles << std::endl;
+#endif
+
     angles = new OpenMM::HarmonicAngleForce(numAngles);
     system->addForce(angles);
     for (unsigned int i = 0; i < numAngles; i++){
@@ -166,8 +179,6 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
 #ifdef DEBUG
   mFile << std::endl;
-
-  mFile << "Periodic Force" << std::endl;
 #endif
 
   if ( PeriodicTorsion ){
@@ -176,6 +187,10 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     unsigned int totalNumPTor = 0;
     for (unsigned int i = 0; i < numPTor; i++) 
       totalNumPTor += app->topology->dihedrals[i].multiplicity;
+
+#ifdef DEBUG
+  mFile << "Periodic Force " << totalNumPTor << std::endl;
+#endif
 
     PTorsion = new OpenMM::PeriodicTorsionForce(totalNumPTor);//numPTor);//
     system->addForce(PTorsion);
@@ -206,12 +221,15 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
 #ifdef DEBUG
   mFile << std::endl;
-
-  mFile << "RBDihedrals" << std::endl;
 #endif
 
   if ( RBDihedralForce ){
     unsigned int numRBDih = app->topology->rb_dihedrals.size();
+
+#ifdef DEBUG
+  mFile << "RBDihedrals " << numRBDih << std::endl;
+#endif
+
     RBDihedral = new OpenMM::RBTorsionForce(numRBDih);
     system->addForce(RBDihedral);
     for (unsigned int i = 0; i < numRBDih; i++){
@@ -239,9 +257,8 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
 #ifdef DEBUG
   mFile << std::endl;
-
-  mFile << "Lenards Jones Force" << std::endl;
 #endif
+
 
   if ( NonbondedForce ){
 
@@ -251,6 +268,10 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     for (unsigned int i = 0; i < exclSz; i++){
       if ( (app->topology->exclusions.getTable())[i].excl == EXCLUSION_MODIFIED) exclSzMod++;
     }
+
+#ifdef DEBUG
+  mFile << "NonBonded Force " << sz << std::endl;
+#endif
 
     nonbonded = new OpenMM::NonbondedForce(sz, exclSzMod);//0);
     system->addForce(nonbonded);
@@ -278,7 +299,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
         nonbonded->setParticleParameters(i, charge, pow(c12/c6, (1.0/6.0)), c6*c6/(4.0*c12));
       }
 
-      system->setParticleMass(i, mass);
+      //system->setParticleMass(i, mass);
 
     }
 
@@ -329,7 +350,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     std::sort( mForces.begin(), mForces.end() );
 
 #ifdef DEBUG
-    mFile << "NonBonded 14 Force" << std::endl;
+    mFile << "NonBonded 14 Force " << exclSzMod << std::endl;
 
     for( unsigned int i = 0; i < mForces.size(); i++){
       const NBForce &temp = mForces[i];
@@ -344,13 +365,8 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   // Set constraints.
 
 #ifdef DEBUG
-  mFile << "Constraints" << std::endl;
+  mFile << "Constraints " << numConstraints << std::endl;
 #endif
-
-  const std::vector<Bond::Constraint> *myListOfConstraints = 
-      &(app->topology->bondRattleShakeConstraints);
-
-  unsigned int numConstraints = (*myListOfConstraints).size();
 
   for (unsigned int i = 0; i < numConstraints; ++i) {
 
