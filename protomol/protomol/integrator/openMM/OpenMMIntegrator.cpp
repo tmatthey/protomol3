@@ -239,12 +239,27 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
   if ( RBDihedralForce ){
     unsigned int numRBDih = app->topology->rb_dihedrals.size();
+    unsigned int numRBDihNz = 0;
+
+    for (unsigned int i = 0; i < numRBDih; i++){
+      if ( app->topology->rb_dihedrals[i].C0 != 0 ||
+            app->topology->rb_dihedrals[i].C1 != 0 ||
+            app->topology->rb_dihedrals[i].C2 != 0 ||
+            app->topology->rb_dihedrals[i].C3 != 0 ||
+            app->topology->rb_dihedrals[i].C4 != 0 ||
+            app->topology->rb_dihedrals[i].C5 != 0 ) {
+
+              numRBDihNz++;
+      }
+    }
 
 #ifdef DEBUG
-  mFile << "RBDihedrals " << numRBDih << std::endl;
+  mFile << "RBDihedrals " << numRBDihNz << std::endl;
 #endif
 
-    RBDihedral = new OpenMM::RBTorsionForce(numRBDih);
+    RBDihedral = new OpenMM::RBTorsionForce(numRBDihNz);
+
+    unsigned int rbdIndex = 0;
     system->addForce(RBDihedral);
     for (unsigned int i = 0; i < numRBDih; i++){
         unsigned int a1 = app->topology->rb_dihedrals[i].atom1;
@@ -263,9 +278,9 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
           mFile << a1 << " " << a2 << " " << a3 << " " << a4 << " " 
             << C0 << " " << C1 << " " << C2 << " " << C3 << " " << C4 << " " << C5 << std::endl;     
 #endif
+          RBDihedral->setTorsionParameters(rbdIndex++, a1, a2, a3, a4, C0, C1, C2, C3, C4, C5);
 
         }
-        RBDihedral->setTorsionParameters(i, a1, a2, a3, a4, C0, C1, C2, C3, C4, C5);
     }
   }
 
@@ -462,6 +477,22 @@ void OpenMMIntegrator::run(int numTimesteps) {
      (*myForces)[i].c[j] = openMMforces[i][j] * Constant::INV_NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
     }
   }
+
+  //clear old energies
+  app->energies[ScalarStructure::COULOMB] =
+    app->energies[ScalarStructure::LENNARDJONES] =
+      app->energies[ScalarStructure::BOND] = 
+        app->energies[ScalarStructure::ANGLE] =
+          app->energies[ScalarStructure::DIHEDRAL] =
+            app->energies[ScalarStructure::IMPROPER] = 0.0;
+
+  //save total potential energy
+  app->energies[ScalarStructure::OTHER] = state.getPotentialEnergy();
+
+  //state.getKineticEnergy();
+
+  //fix time as no forces calculated
+  app->topology->time += numTimesteps * getTimestep();
 
 #endif
 
