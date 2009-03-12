@@ -62,37 +62,37 @@ OpenMMIntegrator::~OpenMMIntegrator() {
 }
 
 struct NBForce{
-	int atom1;
-	int atom2;
-	Real charge;
-	Real sigma;
-	Real epsilon;
-	Real c6;
-	Real c12;
-	
-	NBForce( int a, int b, Real c, Real s, Real e, Real cs, Real ct ){
-		atom1 = a;
-		atom2 = b;
-		charge = c;
-		sigma = s;
-		epsilon = e;
-		c6 = cs;
-		c12 = ct;
-	}
-	
-	bool operator< ( const NBForce &other ) const{
-		if ( atom1 < other.atom1 ){
-			return true;
-		}
-		
-		if ( atom1 == other.atom1 ){
-			if ( atom2 < other.atom2 ){
-				return true;
-			}
-		}
-		
-		return false;
-	}
+  int atom1;
+  int atom2;
+  Real charge;
+  Real sigma;
+  Real epsilon;
+  Real c6;
+  Real c12;
+  
+  NBForce( int a, int b, Real c, Real s, Real e, Real cs, Real ct ){
+    atom1 = a;
+    atom2 = b;
+    charge = c;
+    sigma = s;
+    epsilon = e;
+    c6 = cs;
+    c12 = ct;
+  }
+  
+  bool operator< ( const NBForce &other ) const{
+    if ( atom1 < other.atom1 ){
+      return true;
+    }
+    
+    if ( atom1 == other.atom1 ){
+      if ( atom2 < other.atom2 ){
+        return true;
+      }
+    }
+    
+    return false;
+  }
 };
 
 void OpenMMIntegrator::initialize(ProtoMolApp *app) {
@@ -122,19 +122,19 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     system->addForce(bonds);
 
     for (unsigned int i = 0; i < numBonds; ++i){
-		unsigned int a1 = app->topology->bonds[i].atom1; unsigned int a2 = app->topology->bonds[i].atom2;
-		Real r_0 = app->topology->bonds[i].restLength  * Constant::ANGSTROM_NM;
-		Real k = app->topology->bonds[i].springConstant  
+    unsigned int a1 = app->topology->bonds[i].atom1; unsigned int a2 = app->topology->bonds[i].atom2;
+    Real r_0 = app->topology->bonds[i].restLength  * Constant::ANGSTROM_NM;
+    Real k = app->topology->bonds[i].springConstant  
               * Constant::KCAL_KJ * Constant::INV_ANGSTROM_NM * Constant::INV_ANGSTROM_NM * 2.0; //times 2 as Amber is 1/2 k(b-b_0)^2
-	  
+    
 #ifdef DEBUG
-	  if( (app->topology->atoms[ app->topology->bonds[i].atom1 ].name[0] != 'H') &&
-		  (app->topology->atoms[ app->topology->bonds[i].atom2 ].name[0] != 'H') ){
-		  mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
-	  }
+    if( (app->topology->atoms[ app->topology->bonds[i].atom1 ].name[0] != 'H') &&
+      (app->topology->atoms[ app->topology->bonds[i].atom2 ].name[0] != 'H') ){
+      mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
+    }
 #endif
 
-	  bonds->setBondParameters(i, a1, a2, r_0, k);
+    bonds->setBondParameters(i, a1, a2, r_0, k);
     }
   }
 
@@ -247,8 +247,12 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
     //get 1-4 interaction size
     unsigned int exclSz = app->topology->exclusions.getTable().size();
+    unsigned int exclSzMod = 0;
+    for (unsigned int i = 0; i < exclSz; i++){
+      if ( (app->topology->exclusions.getTable())[i].excl == EXCLUSION_MODIFIED) exclSzMod++;
+    }
 
-    nonbonded = new OpenMM::NonbondedForce(sz,0);//exclSz);
+    nonbonded = new OpenMM::NonbondedForce(sz, exclSzMod);//0);
     system->addForce(nonbonded);
 
     //normal interactions
@@ -269,9 +273,9 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #endif
 
       if (c12 <= 0){
-			  nonbonded->setParticleParameters(i, charge, 1.0, 0.0);
+        nonbonded->setParticleParameters(i, charge, 1.0, 0.0);
       }else{
-			  nonbonded->setParticleParameters(i, charge, pow(c12/c6, (1.0/6.0)), c6*c6/(4.0*c12));
+        nonbonded->setParticleParameters(i, charge, pow(c12/c6, (1.0/6.0)), c6*c6/(4.0*c12));
       }
 
       system->setParticleMass(i, mass);
@@ -283,7 +287,9 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #endif
 
     //1-4 interactions	
-	  std::vector<NBForce> mForces;
+    std::vector<NBForce> mForces;
+
+    unsigned int nonbonded14index = 0;
 
     for (unsigned int i = 0; i < exclSz; i++){
       if ( (app->topology->exclusions.getTable())[i].excl == EXCLUSION_MODIFIED) {
@@ -305,34 +311,63 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
         Real epsilon2 = (c6*c6)/(4.0*c12);
         Real sigma2 = pow(c12/c6,  (1.0/6.0));
-		
-		    mForces.push_back( NBForce( atom1, atom2, chargeij, sigma2, epsilon2, c6, c12 ) );
+        if (c12 <= 0) {
+          sigma2 = 1.0;
+          epsilon2 = 0.0;
+        }
+
+        mForces.push_back( NBForce( atom1, atom2, chargeij, sigma2, epsilon2, c6, c12 ) );
 
         //mFile << i << " " << atom1 << " " << atom2 << " " << chargeij << " " << 
         //    sigma2 << " " << epsilon2 << " " << c6 << " " << c12 << std::endl;  
 
-        if (c12 <= 0) {
-          //nonbonded->setNonbonded14Parameters(i, atom1, atom2, chargeij , 1.0, 0.0);
-        } else {
-          //nonbonded->setNonbonded14Parameters(i, atom1, atom2, chargeij, sigma2, epsilon2);
-        }
+        nonbonded->setNonbonded14Parameters(nonbonded14index++, atom1, atom2, chargeij, sigma2, epsilon2);
+
       }
     }
-	
-	std::sort( mForces.begin(), mForces.end() );
+  
+    std::sort( mForces.begin(), mForces.end() );
 
 #ifdef DEBUG
-	mFile << "NonBonded 14 Force" << std::endl;
+    mFile << "NonBonded 14 Force" << std::endl;
 
-	for( unsigned int i = 0; i < mForces.size(); i++){
-		const NBForce &temp = mForces[i];
-		
-		mFile  << temp.atom1 << " " << temp.atom2 << " " << temp.charge << " " << temp.sigma << " " << temp.epsilon << " " << temp.c6 << " " << temp.c12 << std::endl;
-	}
-	mFile << std::endl;
+    for( unsigned int i = 0; i < mForces.size(); i++){
+      const NBForce &temp = mForces[i];
+      
+      mFile  << temp.atom1 << " " << temp.atom2 << " " << temp.charge << " " << temp.sigma << " " << temp.epsilon << " " << temp.c6 << " " << temp.c12 << std::endl;
+    }
+    mFile << std::endl;
 #endif
 
   }
+
+  // Set constraints.
+
+#ifdef DEBUG
+  mFile << "Constraints" << std::endl;
+#endif
+
+  const std::vector<Bond::Constraint> *myListOfConstraints = 
+      &(app->topology->bondRattleShakeConstraints);
+
+  unsigned int numConstraints = (*myListOfConstraints).size();
+
+  for (unsigned int i = 0; i < numConstraints; ++i) {
+
+    int atom1 = (*myListOfConstraints)[i].atom1;
+    int atom2 = (*myListOfConstraints)[i].atom2;
+    Real restLength = (*myListOfConstraints)[i].restLength * Constant::ANGSTROM_NM;
+
+#ifdef DEBUG
+    mFile << i << " " << atom1 << " " << atom2 << " " << restLength << std::endl;  
+#endif
+
+    system->setConstraintParameters(i, atom1, atom2, restLength);
+  }
+
+#ifdef DEBUG
+  mFile << std::endl;
+#endif
 
 
   //openMM Initialize
