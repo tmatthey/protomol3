@@ -694,99 +694,86 @@ namespace ProtoMol {
 
   void buildRattleShakeBondConstraintList(
     GenericTopology *topology, vector<Bond::Constraint> &
-    bondConstraints) {
+    bondConstraints, bool waterOnly) {
 
-    // H-X bonds only
-
-    bondConstraints.clear();
-
-    for (unsigned int i = 0; i < topology->bonds.size(); i++) {
-      //H-X?
-      if( (topology->atoms[ topology->bonds[i].atom1 ].name[0] == 'H') ||
-            (topology->atoms[ topology->bonds[i].atom2 ].name[0] == 'H') ){
-
-        bondConstraints.push_back(Bond::Constraint(topology->bonds[i].atom1,
-            topology->bonds[i].atom2, topology->bonds[i].restLength));
-      }
-    }
-
-
-#if 0
-    // here we go through the bond list first, then the angle list to extract 
-    // the possible third pair if they are both hydrogen. Thus, all bond 
+    // here we go through the bond list for H-X first, then the angle list to extract 
+    // the possible third pair if they are both hydrogen. Thus, all H-X bond 
     // lengths plus the third pair in the waters will be constrained. The 
     // angles rather than H-(heavy)-H are left free of vibrations
 
     bondConstraints.clear();
 
-    for (unsigned int i = 0; i < topology->bonds.size(); i++)
-      bondConstraints.push_back(Bond::Constraint(topology->bonds[i].atom1,
-          topology->bonds[i].atom2, topology->bonds[i].restLength));
+    //H-O-H
+    vector<unsigned int> waterBonds;
 
-    // now we have used all the spaces allocated for bondConstraints.
-    // we will use push_back method for more constraints.
     for (unsigned int i = 0; i < topology->angles.size(); i++) {
-      int a1 = topology->angles[i].atom1;
-      int a2 = topology->angles[i].atom2;
-      int a3 = topology->angles[i].atom3;
+      int atoms[3] = {topology->angles[i].atom1,
+                      topology->angles[i].atom2,
+                      topology->angles[i].atom3};
+      int oxy = 0; int hyd = 0; unsigned int at[2] = { 0, 0}; unsigned int ato = 0;
 
-      PairIntSorted p1(a1, a2);
-      PairIntSorted p2(a2, a3);
-
-      Real M1 = topology->atoms[a1].scaledMass;
-      Real M3 = topology->atoms[a3].scaledMass;
-      // For regular water M3 = M1 = 1.008, and for heavy waters,
-      // M1 or M3 should be 2 ~ 3 times heavier
-      if ((M1 < 5) && (M3 < 5)) {
-        // this exclude (heavy atom)-H pairs and (heavy)-(heavy) pairs
-        //           sqrt( 2 * 0.957 * 0.957 * ( 1 - cos( 104.52 * 0.017453)));
-        //bondConstraints.push_back(Bond::Constraint(a1,a3,1.51356642665));
-
-        // ... properly retrieve the right length!
-        int b1 = -1;
-        int b2 = -1;
-        const vector<int> &mybonds1 = topology->atoms[a1].mybonds;
-        const vector<int> &mybonds3 = topology->atoms[a3].mybonds;
-
-        for (unsigned int j = 0; j < mybonds1.size(); j++) {
-          PairIntSorted s1(topology->bonds[mybonds1[j]].atom1,
-                           topology->bonds[mybonds1[j]].atom2);
-          if (p1 == s1)
-            for (unsigned int k = 0; k < mybonds3.size(); k++) {
-              PairIntSorted s2(topology->bonds[mybonds3[k]].atom1,
-                               topology->bonds[mybonds3[k]].atom2);
-              if (p2 == s2) {
-                if (b1 > -1 || b2 > -1)
-                  report << warning << "Found already two bonds (" << b1 <<
-                  "," << b2 << ") for angle " << i << "." << endr;
-                else {
-                  b1 = mybonds1[j];
-                  b2 = mybonds3[k];
-                }
-              }
-            }
-
+      for(unsigned int j=0; j<3; ++j) {
+        if(topology->atoms[ atoms[j] ].name[0] == 'H'){
+          at[hyd] = atoms[j];
+          hyd++;
         }
+        if(topology->atoms[ atoms[j] ].name[0] == 'O'){
+          ato = atoms[j];
+          oxy++;
+        }
+      }
+      if(hyd == 2 && oxy == 1){             
+        const vector<int> &mybonds1 = topology->atoms[at[0]].mybonds;
+        const vector<int> &mybonds2 = topology->atoms[at[1]].mybonds;
+     
+        Real b = topology->bonds[mybonds1[0]].restLength; //H has only 1 bond
+        Real c = topology->bonds[mybonds2[0]].restLength;
+        Real alpha = topology->angles[i].restAngle;
 
-        if (b1 > -1 && b2 > -1) {
-          Real b = topology->bonds[b1].restLength;
-          Real c = topology->bonds[b2].restLength;
-          Real alpha = topology->angles[i].restAngle;
-          bondConstraints.push_back(Bond::Constraint(a1, a3,
+        bondConstraints.push_back(Bond::Constraint(at[0], at[1],
               sqrt(b * b + c * c - 2 * b * c * cos(alpha))));
-          report << debug(10) << i << " \t :b=" << b << ", c=" << c <<
-          ", alpha=" << alpha << ", H-H r=" << sqrt(
-            b * b + c * c - 2 * b * c * cos(alpha)) << endr;
-        } else
-          report << debug(10) <<
-          "Could not find two matching bonds for angle " << i << "." << endr;
+        bondConstraints.push_back(Bond::Constraint(at[0],
+              ato, b));
+        bondConstraints.push_back(Bond::Constraint(at[1],
+              ato, c));
+
+        waterBonds.push_back(mybonds1[0]);
+        waterBonds.push_back(mybonds2[0]);
+
       }
     }
 
-    if (bondConstraints.size() == topology->bonds.size())
+    //sort vectors
+    sort( waterBonds.begin(), waterBonds.end() );
+
+    unsigned int hXSsize = bondConstraints.size();
+
+    // H-X bonds only?
+    unsigned int usedIndex = 0;
+
+    if(!waterOnly) {
+
+      for (unsigned int i = 0; i < topology->bonds.size(); i++) {
+        //already added?
+        if(waterBonds.size() && waterBonds[usedIndex] == i) {
+          if(usedIndex < waterBonds.size() - 1) usedIndex++;
+        } else {
+          //H-X?
+          if( (topology->atoms[ topology->bonds[i].atom1 ].name[0] == 'H') ||
+                (topology->atoms[ topology->bonds[i].atom2 ].name[0] == 'H') ){
+
+            bondConstraints.push_back(Bond::Constraint(topology->bonds[i].atom1,
+                topology->bonds[i].atom2, topology->bonds[i].restLength));
+          }
+        }
+      }
+
+    }
+
+    if (bondConstraints.size() == hXSsize)
       report << hint <<
-      "No additional H-X-H SHAKE/RATTLE constraint contributions." << endr;
-#endif
+      "No additional H-X SHAKE/RATTLE constraint contributions." << endr;
+
   }
 
 //____getAtomsBondedtoDihedral

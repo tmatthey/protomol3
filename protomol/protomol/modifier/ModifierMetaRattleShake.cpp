@@ -19,7 +19,7 @@ void ModifierMetaRattleShake::doInitialize() {
     app->topology->bondRattleShakeConstraints.size();
 
   buildRattleShakeBondConstraintList(app->topology,
-                                     app->topology->bondRattleShakeConstraints);
+                                     app->topology->bondRattleShakeConstraints, false);
   // this list contains bonded pairs, and UB-bonded pairs excluding
   // (heavy atom)-H pairs and (heavy)-(heavy) pairs
 
