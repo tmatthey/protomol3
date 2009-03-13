@@ -716,7 +716,7 @@ namespace ProtoMol {
         if(topology->atoms[ atoms[j] ].name[0] == 'H'){
           at[hyd] = atoms[j];
           hyd++;
-        }
+        } 
         if(topology->atoms[ atoms[j] ].name[0] == 'O'){
           ato = atoms[j];
           oxy++;
@@ -768,11 +768,12 @@ namespace ProtoMol {
         }
       }
 
+      if (bondConstraints.size() == hXSsize)
+        report << hint <<
+        "No additional H-X SHAKE/RATTLE constraint contributions." << endr;
+
     }
 
-    if (bondConstraints.size() == hXSsize)
-      report << hint <<
-      "No additional H-X SHAKE/RATTLE constraint contributions." << endr;
 
   }
 

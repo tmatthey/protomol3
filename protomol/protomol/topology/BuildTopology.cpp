@@ -647,8 +647,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
                   paramsij.A = power<12>(r_ij) * e_ij * 4.0;
                   paramsij.B = power<6>(r_ij) * e_ij * 4.0;
                   ///#### FudgeLJ=0.5 should be read from the parameter files
-                  paramsij.A14 = 0.5 * paramsij.A;//power<12>(r14_ij) * e14_ij * 4.0;
-                  paramsij.B14 = 0.5 * paramsij.B;//2 * power<6>(r14_ij) * e14_ij * 4.0;
+                  paramsij.A14 = topo->LJScalingFactor * paramsij.A;//power<12>(r14_ij) * e14_ij * 4.0;
+                  paramsij.B14 = topo->LJScalingFactor * paramsij.B;//2 * power<6>(r14_ij) * e14_ij * 4.0;
                   break;
 
         default /*CHARMM*/:  

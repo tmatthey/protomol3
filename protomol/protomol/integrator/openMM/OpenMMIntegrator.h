@@ -37,10 +37,6 @@ namespace ProtoMol {
 
   class OpenMMIntegrator : public STSIntegrator {
 
-  private:
-    static const Real FudgeQQ;
-    static const Real FudgeLJ;
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

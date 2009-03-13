@@ -20,9 +20,6 @@ using namespace ProtoMol;
 
 const string OpenMMIntegrator::keyword("OpenMM");
 
-const Real OpenMMIntegrator::FudgeQQ = 0.8333;
-const Real OpenMMIntegrator::FudgeLJ = 0.5;
-
 OpenMMIntegrator::OpenMMIntegrator() :
   STSIntegrator()
   {
@@ -365,13 +362,14 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
         Real sigma = 0.5 * (app->topology->atomTypes[type1].sigma +
                               app->topology->atomTypes[type2].sigma);
         Real epsilon = sqrt(app->topology->atomTypes[type1].epsilon * 
-                              app->topology->atomTypes[type2].epsilon);//0.5
-        Real chargeij =  FudgeQQ * //app->topology->coulombScalingFactor *FudgeQQ
+                              app->topology->atomTypes[type2].epsilon);
+        Real chargeij =  app->topology->coulombScalingFactor * //FudgeQQ
                           (app->topology->atoms[atom1].scaledCharge / Constant::SQRTCOULOMBCONSTANT) *
                             (app->topology->atoms[atom2].scaledCharge / Constant::SQRTCOULOMBCONSTANT); 
 
-        Real c6 =  FudgeLJ * (4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6); //FudgeLJ
-        Real c12 = FudgeLJ * (4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12);
+        Real fudgeLJ = app->topology->LJScalingFactor; //FudgeLJ
+        Real c6 =  fudgeLJ * (4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6);
+        Real c12 = fudgeLJ * (4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12);
 
         Real epsilon2 = (c6*c6)/(4.0*c12);
         Real sigma2 = pow(c12/c6,  (1.0/6.0));
