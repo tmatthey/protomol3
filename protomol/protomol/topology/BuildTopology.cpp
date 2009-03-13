@@ -638,18 +638,21 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
 
       switch(topo->forceFieldFlag) {
 
-        case GROMACS :  r_ij = 0.5 * sigma_i + sigma_j;
+        case GROMACS :  
+                  r_ij = 0.5 * sigma_i + sigma_j;
                   e_ij = sqrt(epsilon_i * epsilon_j);
                   r14_ij = 0.5 * sigma14_i + sigma14_j;
                   e14_ij = sqrt(epsilon14_i * epsilon14_j);
 
                   paramsij.A = power<12>(r_ij) * e_ij * 4.0;
                   paramsij.B = power<6>(r_ij) * e_ij * 4.0;
-                  paramsij.A14 = power<12>(r14_ij) * e14_ij * 4.0;
-                  paramsij.B14 = 2 * power<6>(r14_ij) * e14_ij * 4.0;
+                  ///#### FudgeLJ=0.5 should be read from the parameter files
+                  paramsij.A14 = 0.5 * paramsij.A;//power<12>(r14_ij) * e14_ij * 4.0;
+                  paramsij.B14 = 0.5 * paramsij.B;//2 * power<6>(r14_ij) * e14_ij * 4.0;
                   break;
 
-        default /*CHARMM*/:  r_ij = sigma_i + sigma_j;
+        default /*CHARMM*/:  
+                  r_ij = sigma_i + sigma_j;
                   e_ij = sqrt(epsilon_i * epsilon_j);
                   r14_ij = sigma14_i + sigma14_j;
                   e14_ij = sqrt(epsilon14_i * epsilon14_j);
