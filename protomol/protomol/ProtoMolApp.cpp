@@ -246,6 +246,9 @@ void ProtoMolApp::build() {
 
     SCPISMParameters->displayTable();
 
+    //set implicit solvent type
+    topology->implicitSolvent = SCPISM;
+
   }
 
   //find force field type before building topology
