@@ -55,7 +55,7 @@ namespace ProtoMol {
   public:
     virtual std::string getIdNoAlias() const {return keyword;}
     virtual void getParameters(std::vector<Parameter> &parameters) const;
-    virtual unsigned int getParameterSize() const{return 12;}
+    virtual unsigned int getParameterSize() const{return 13;}
 
   protected:
     virtual void setupValues(std::vector<Value> &params);
@@ -117,6 +117,7 @@ namespace ProtoMol {
     bool HarmonicBondForce, HarmonicAngleForce, NonbondedForce, RBDihedralForce, PeriodicTorsion;
     int  myIntegratorType;
     Real myGBSAEpsilon, myGBSASolvent; 
+    int myCommonMotionRate;
 
   };
   //____ INLINES

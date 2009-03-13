@@ -122,15 +122,29 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   for (unsigned int i = 0; i < sz; ++i)
     system->setParticleMass(i, app->topology->atoms[i].scaledMass);
 
+  //remove common motion?
+  if(myCommonMotionRate > 0)
+    system->addForce(new OpenMM::CMMotionRemover(myCommonMotionRate));
+
   //openMM forces
   if ( HarmonicBondForce ){
     unsigned int numBonds = app->topology->bonds.size();
 
+    unsigned int numConstBonds = 0;
+
+    if(numConstraints) {
+      for (unsigned int i = 0; i < numBonds; ++i) {
+        if((app->topology->atoms[ app->topology->bonds[i].atom1 ].name[0] == 'H') ||
+            (app->topology->atoms[ app->topology->bonds[i].atom2 ].name[0] == 'H') )
+              numConstBonds++;
+      }
+    }
+
 #ifdef DEBUG
-  mFile << "Bonds " << numBonds - numConstraints << std::endl;
+  mFile << "Bonds " << numBonds - numConstBonds << std::endl;
 #endif
 
-    bonds = new OpenMM::HarmonicBondForce(numBonds - numConstraints);
+    bonds = new OpenMM::HarmonicBondForce(numBonds - numConstBonds);
     system->addForce(bonds);
 
     unsigned int bondsIndex = 0;
@@ -557,6 +571,7 @@ const {
   //Implicit solvent parameters
   parameters.push_back(Parameter( "GBSAEpsilon", Value( myGBSAEpsilon, ConstraintValueType::NotNegative() ), 1.0 ));
   parameters.push_back(Parameter( "GBSASolvent", Value( myGBSASolvent, ConstraintValueType::NotNegative() ), 78.3 ));
+  parameters.push_back(Parameter( "commonmotion", Value( myCommonMotionRate, ConstraintValueType::NotNegative() ), 0.0 ));
 
 }
 
@@ -587,6 +602,7 @@ void OpenMMIntegrator::setupValues(std::vector<Value> &values) {
   myIntegratorType = values[8];
   myGBSAEpsilon = values[9];
   myGBSASolvent = values[10]; 
+  myCommonMotionRate = values[11]; 
 
 }
 
