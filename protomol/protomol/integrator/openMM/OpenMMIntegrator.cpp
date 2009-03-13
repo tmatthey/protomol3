@@ -391,6 +391,48 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
   }
 
+  // Add GBSA if needed.
+  
+  if (app->topology->implicitSolvent  == GBSA) {
+
+#ifdef DEBUG
+    mFile << "Generalised Borne " << sz << std::endl;
+#endif
+
+    gbsa = new OpenMM::GBSAOBCForce(sz);
+    system->addForce(gbsa);
+
+    gbsa->setSoluteDielectric(myGBSAEpsilon);//ir->epsilon_r);
+    gbsa->setSolventDielectric(myGBSASolvent);//ir->gb_epsilon_solvent);
+
+#ifdef DEBUG
+      mFile << "Epsilon r: " << myGBSAEpsilon << std::endl << "Epsilon Solvent: " << myGBSASolvent << std::endl;  
+#endif
+
+    vector<Real> scaleFactors;
+    getObcScaleFactors(scaleFactors);
+
+    for (unsigned int i = 0; i < sz; ++i) {
+
+      Real charge = app->topology->atoms[i].scaledCharge / Constant::SQRTCOULOMBCONSTANT;
+      unsigned int type = app->topology->atoms[i].type;
+      Real radius = app->topology->atomTypes[type].vdwR * Constant::ANGSTROM_NM; //0.1 factor in openMM, file in A
+
+
+#ifdef DEBUG
+      mFile << i << " " << charge << " " << radius << " " << scaleFactors[i] << std::endl;  
+#endif
+
+      gbsa->setParticleParameters(i, charge, radius, scaleFactors[i]);
+
+    }
+
+#ifdef DEBUG
+  mFile << std::endl;
+#endif
+
+  }
+
   // Set constraints.
 
 #ifdef DEBUG
@@ -413,7 +455,6 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #ifdef DEBUG
   mFile << std::endl;
 #endif
-
 
   //openMM Initialize
   if( myIntegratorType == 1) {
@@ -513,6 +554,9 @@ const {
   parameters.push_back(Parameter( "PeriodicTorsion", Value( PeriodicTorsion, ConstraintValueType::NoConstraints() ), false ));
   parameters.push_back(Parameter( "NonbondedForce", Value( NonbondedForce, ConstraintValueType::NoConstraints() ), false ));
   parameters.push_back(Parameter( "IntegratorType", Value( myIntegratorType, ConstraintValueType::NotNegative() ), 1 ));
+  //Implicit solvent parameters
+  parameters.push_back(Parameter( "GBSAEpsilon", Value( myGBSAEpsilon, ConstraintValueType::NotNegative() ), 1.0 ));
+  parameters.push_back(Parameter( "GBSASolvent", Value( myGBSASolvent, ConstraintValueType::NotNegative() ), 78.3 ));
 
 }
 
@@ -541,6 +585,43 @@ void OpenMMIntegrator::setupValues(std::vector<Value> &values) {
   PeriodicTorsion = values[6];
   NonbondedForce = values[7];
   myIntegratorType = values[8];
+  myGBSAEpsilon = values[9];
+  myGBSASolvent = values[10]; 
 
 }
+
+/**
+ * Figure out OBC scale factors based on the atomic masses.
+ */
+
+void OpenMMIntegrator::getObcScaleFactors(vector<Real>& scaleFactors) {
+
+  unsigned int numAtoms = app->positions.size();
+
+  scaleFactors.resize(numAtoms);
+  for( unsigned int atomI = 0; atomI < numAtoms; atomI++ ){
+
+      Real scaleFactor = 0.8;
+      Real mass        = app->topology->atoms[atomI].scaledMass;
+
+      if ( mass < 1.2 && mass >= 1.0 ){        // hydrogen
+         scaleFactor  = 0.85; 
+      } else if( mass > 11.8 && mass < 12.2 ){ // carbon
+         scaleFactor  = 0.72; 
+      } else if( mass > 14.0 && mass < 15.0 ){ // nitrogen
+         scaleFactor  = 0.79;
+      } else if( mass > 15.5 && mass < 16.5 ){ // oxygen
+         scaleFactor  = 0.85; 
+      } else if( mass > 31.5 && mass < 32.5 ){ // sulphur
+         scaleFactor  = 0.96;
+      } else if( mass > 29.5 && mass < 30.5 ){ // phosphorus
+         scaleFactor  = 0.86;
+      } else {
+         report << plain << " Warning: mass for atom with mass = " << mass << " not recognized." << endr;
+      }
+
+      scaleFactors[atomI] = scaleFactor;
+   }
+}
+
 

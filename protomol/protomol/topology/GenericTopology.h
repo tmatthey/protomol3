@@ -54,6 +54,13 @@ namespace ProtoMol {
     CHARMM,
     GROMACS
   };
+
+  ///Available implicit solvents
+  enum ImplicitSolventType {
+    NONE,
+    SCPISM,
+    GBSA
+  };
     
   class GenericTopology : public Makeable<GenericTopology> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -168,6 +175,8 @@ namespace ProtoMol {
     /// the # of molecules of each component
     std::vector<int> iSGNumMols;
 
+    //Implicit Solvent flags
+    ImplicitSolventType implicitSolvent;
     // Flag for SCPISM
     int doSCPISM;
 

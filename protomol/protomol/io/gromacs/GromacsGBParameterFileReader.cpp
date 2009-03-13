@@ -100,7 +100,7 @@ bool GromacsGBParameterFileReader::read_gromacs_GB_Parameters(string line) {
    ss >> s;
    gb_param.a_i =  toReal(s);
 
-   report << plain <<gb_param.atom_type_identifier<<" "<<gb_param.radius<<" "<<gb_param.igamma<<" "<<gb_param.ialpha<<" "<<gb_param.idelta<<" "<<gb_param.sgamma<<" "<<gb_param.salpha<<" "<< gb_param.sdelta<<" "<<gb_param.GBdistcorr<<" "<<gb_param.a_i<<endr;
+   report << debug(2) <<gb_param.atom_type_identifier<<" "<<gb_param.radius<<" "<<gb_param.igamma<<" "<<gb_param.ialpha<<" "<<gb_param.idelta<<" "<<gb_param.sgamma<<" "<<gb_param.salpha<<" "<< gb_param.sdelta<<" "<<gb_param.GBdistcorr<<" "<<gb_param.a_i<<endr;
 
    gParams->gb_parameters.push_back(gb_param);
 

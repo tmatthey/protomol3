@@ -132,7 +132,7 @@ void PortGromacsParameters::Port_GB_Parameters() {
 
      //pair<string,PAR::GB_gromacs> myPair(atom_type_name,gb);
 
-    report << plain <<atom_type_name << " "<<gb.radius<<endr;
+    report << debug(2) <<atom_type_name << " "<<gb.radius<<endr;
 
      myPAR->gb_parameters[atom_type_name] = gb;
   }

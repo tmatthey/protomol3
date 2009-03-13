@@ -10,12 +10,16 @@
 #include "Vec3.h"
 #include "State.h"
 #include "System.h"
+
 //forces
 #include "HarmonicBondForce.h"
 #include "HarmonicAngleForce.h"
 #include "NonbondedForce.h"
 #include "RBTorsionForce.h"
 #include "PeriodicTorsionForce.h"
+#include "GBSAOBCForce.h"
+#include "CMMotionRemover.h"
+
 //integrators
 #include "Integrator.h"
 #include "LangevinIntegrator.h"
@@ -51,7 +55,7 @@ namespace ProtoMol {
   public:
     virtual std::string getIdNoAlias() const {return keyword;}
     virtual void getParameters(std::vector<Parameter> &parameters) const;
-    virtual unsigned int getParameterSize() const{return 10;}
+    virtual unsigned int getParameterSize() const{return 12;}
 
   protected:
     virtual void setupValues(std::vector<Value> &params);
@@ -81,6 +85,7 @@ namespace ProtoMol {
     // New methods of class OpenMMIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
+    void getObcScaleFactors(vector<Real>& scaleFactors);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // My data members
@@ -101,6 +106,7 @@ namespace ProtoMol {
     OpenMM::RBTorsionForce* RBDihedral;
     OpenMM::PeriodicTorsionForce* PTorsion;
     OpenMM::NonbondedForce * nonbonded;
+    OpenMM::GBSAOBCForce* gbsa;
     OpenMM::Integrator *integrator;//Langevin
     OpenMM::OpenMMContext *context;
     vector<OpenMM::Vec3> openMMpositions, openMMvelocities, openMMforces;
@@ -110,6 +116,7 @@ namespace ProtoMol {
     //OpenMM force/integrator parameters
     bool HarmonicBondForce, HarmonicAngleForce, NonbondedForce, RBDihedralForce, PeriodicTorsion;
     int  myIntegratorType;
+    Real myGBSAEpsilon, myGBSASolvent; 
 
   };
   //____ INLINES

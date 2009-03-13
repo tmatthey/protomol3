@@ -668,6 +668,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
 
   //check if Gromacs GB data is available
   if (par.gb_parameters.size() > 0) {
+
+      topo->implicitSolvent = GBSA;
   
       unsigned int typesSize = topo->atomTypes.size();
 
@@ -679,7 +681,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
          if (gb_iterator != par.gb_parameters.end()) {
              tempatomtype->vdwR = gb_iterator->second.radius;
          }else {
-             THROW("vdwR for GB not found for atom type");
+             tempatomtype->vdwR = 0.00001;
+             report << hint << "vdwR for GB not found for atom " << name << endr;
          }
 
       }
