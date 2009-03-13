@@ -298,6 +298,9 @@ namespace ProtoMol {
     std::vector<PAR::RBDihedral> rb_dihedrals;
     std::map<std::string,PAR::GB_gromacs> gb_parameters;
 
+    Real fudgeLJ;
+    Real fudgeQQ;
+
   };
 }
 #endif /* PAR_H */

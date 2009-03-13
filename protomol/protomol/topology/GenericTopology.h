@@ -160,6 +160,9 @@ namespace ProtoMol {
     /// coulomb scaling factor for modified 1-4 exclusions
     Real coulombScalingFactor;
 
+    ///LJ scaling factor for Gromacs/AMBER force fields
+    Real LJScalingFactor;
+
     /// the actual time of the system, intended to by modified/incremented by
     /// an Observer (Modfier*)
     mutable Real time;

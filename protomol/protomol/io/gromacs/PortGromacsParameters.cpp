@@ -86,6 +86,14 @@ bool PortGromacsParameters::Read_Basic_Gromacs_Parameters(PSF &psf, PAR &par, Gr
     
   Port_Parameters();
 
+  if (myGromacsParam->defaults.size() == 0) {
+     report << plain <<"Cant find parameters for modifying the 1-4 interactions with"
+                <<" GROMACS/AMBER force field"<<endr;
+  }else {
+     par.fudgeQQ = myGromacsParam->defaults[0].fudgeQQ;
+     par.fudgeLJ = myGromacsParam->defaults[0].fudgeLJ;
+  }
+
   return true;
 
 }

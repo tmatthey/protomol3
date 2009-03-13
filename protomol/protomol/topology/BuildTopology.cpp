@@ -669,6 +669,15 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
     }
   }
 
+  //
+  //Add factors for modifying 1-4 interaction
+  //
+  if (topo->forceFieldFlag == GROMACS) {
+     topo->coulombScalingFactor = par.fudgeQQ;
+     topo->LJScalingFactor = par.fudgeLJ;
+  }
+
+
   //check if Gromacs GB data is available
   if (par.gb_parameters.size() > 0) {
 
