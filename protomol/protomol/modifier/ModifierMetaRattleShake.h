@@ -23,7 +23,7 @@ namespace ProtoMol {
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    ModifierMetaRattleShake(Real eps, int maxIter, int order);
+    ModifierMetaRattleShake(Real eps, int maxIter, bool all, int order);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class ModifierMetaRattleShake
@@ -47,6 +47,7 @@ namespace ProtoMol {
   protected:
     Real myEpsilon;
     int myMaxIter;
+    bool myAll;
 
     Vector3DBlock myLastPositions;
     const std::vector<Bond::Constraint> *myListOfConstraints;

@@ -10,9 +10,9 @@ using namespace ProtoMol::Report;
 using namespace ProtoMol;
 
 //____ ModifierRattle
-ModifierRattle::ModifierRattle() : ModifierMetaRattle(0, 0, 0) {}
-ModifierRattle::ModifierRattle(Real eps, int maxIter, int order) :
-  ModifierMetaRattle(eps, maxIter, order) {}
+ModifierRattle::ModifierRattle() : ModifierMetaRattle(0, 0, true, 0) {}
+ModifierRattle::ModifierRattle(Real eps, int maxIter, bool all, int order) :
+  ModifierMetaRattle(eps, maxIter, all, order) {}
 
 void ModifierRattle::doExecute(Integrator *i) {
   // estimate the current error in all velocity constraints

@@ -8,8 +8,8 @@ using namespace ProtoMol;
 
 //____ ModifierMetaRattleShake
 ModifierMetaRattleShake::ModifierMetaRattleShake(Real eps, int maxIter,
-                                                 int order) :
-  Modifier(order), myEpsilon(eps), myMaxIter(maxIter), myListOfConstraints(0) {}
+                                                 bool all, int order) :
+  Modifier(order), myEpsilon(eps), myMaxIter(maxIter), myAll(all), myListOfConstraints(0) {}
 
 void ModifierMetaRattleShake::doInitialize() {
   myLastPositions = app->positions;
@@ -19,7 +19,7 @@ void ModifierMetaRattleShake::doInitialize() {
     app->topology->bondRattleShakeConstraints.size();
 
   buildRattleShakeBondConstraintList(app->topology,
-                                     app->topology->bondRattleShakeConstraints, false);
+                                     app->topology->bondRattleShakeConstraints, myAll);
   // this list contains bonded pairs, and UB-bonded pairs excluding
   // (heavy atom)-H pairs and (heavy)-(heavy) pairs
 
@@ -39,4 +39,7 @@ getParameters(vector<Parameter> &parameters) const {
   parameters.push_back
     (Parameter("-maxIter",
                Value(myMaxIter, ConstraintValueType::NotNegative())));
+  parameters.push_back
+    (Parameter("-all",
+               Value(myAll, ConstraintValueType::NoConstraints())));
 }

@@ -694,7 +694,7 @@ namespace ProtoMol {
 
   void buildRattleShakeBondConstraintList(
     GenericTopology *topology, vector<Bond::Constraint> &
-    bondConstraints, bool waterOnly) {
+    bondConstraints, bool all) {
 
     // here we go through the bond list for H-X first, then the angle list to extract 
     // the possible third pair if they are both hydrogen. Thus, all H-X bond 
@@ -751,7 +751,7 @@ namespace ProtoMol {
     // H-X bonds only?
     unsigned int usedIndex = 0;
 
-    if(!waterOnly) {
+    if(all) {
 
       for (unsigned int i = 0; i < topology->bonds.size(); i++) {
         //already added?

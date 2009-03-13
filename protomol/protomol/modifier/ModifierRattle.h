@@ -15,7 +15,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     ModifierRattle();
-    ModifierRattle(Real eps, int maxIter, int order = Constant::MAX_INT - 400);
+    ModifierRattle(Real eps, int maxIter, bool all = true, int order = Constant::MAX_INT - 400);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable
@@ -23,7 +23,7 @@ namespace ProtoMol {
   public:
     virtual std::string getIdNoAlias() const {return "Rattle";}
     virtual Modifier *doMake(const std::vector<Value> &values) const {
-      return new ModifierRattle(values[0], values[1]);
+      return new ModifierRattle(values[0], values[1], values[2]);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

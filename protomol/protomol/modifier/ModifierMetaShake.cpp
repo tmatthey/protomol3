@@ -5,8 +5,8 @@
 using namespace ProtoMol;
 
 //____ ModifierMetaShake
-ModifierMetaShake::ModifierMetaShake(Real eps, int maxIter, int order) :
-  ModifierMetaRattleShake(eps, maxIter, order) {}
+ModifierMetaShake::ModifierMetaShake(Real eps, int maxIter, bool all, int order) :
+  ModifierMetaRattleShake(eps, maxIter, all, order) {}
 
 Real ModifierMetaShake::calcError() const {
   // the error is defined as < fabs(dist - restLength)/restLength >,

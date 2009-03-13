@@ -9,9 +9,9 @@ using namespace ProtoMol::Report;
 using namespace ProtoMol;
 
 //____ ModifierShake
-ModifierShake::ModifierShake() : ModifierMetaShake(0, 0, 0) {}
-ModifierShake::ModifierShake(Real eps, int maxIter, int order) :
-  ModifierMetaShake(eps, maxIter, order) {}
+ModifierShake::ModifierShake() : ModifierMetaShake(0, 0, true, 0) {}
+ModifierShake::ModifierShake(Real eps, int maxIter, bool all, int order) :
+  ModifierMetaShake(eps, maxIter, all, order) {}
 
 void ModifierShake::doExecute(Integrator *i) {
   // estimate the current error in all bond constraints

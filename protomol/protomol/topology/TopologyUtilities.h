@@ -223,7 +223,7 @@ namespace ProtoMol {
   void buildRattleShakeBondConstraintList(
     GenericTopology *topo,
     std::vector<Bond::Constraint> &
-    bondConstraints, bool waterOnly);
+    bondConstraints, bool all);
 
   void build_angle_list(const GenericTopology *topo,
                         const unsigned int atomID,

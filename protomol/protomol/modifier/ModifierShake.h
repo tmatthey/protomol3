@@ -15,14 +15,14 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     ModifierShake();
-    ModifierShake(Real eps, int maxIter, int order = Constant::MAX_INT - 400);
+    ModifierShake(Real eps, int maxIter, bool all = true, int order = Constant::MAX_INT - 400);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     virtual std::string getIdNoAlias() const {return "Shake";}
     virtual Modifier *doMake(const std::vector<Value> &values) const {
-      return new ModifierShake(values[0], values[1]);
+      return new ModifierShake(values[0], values[1], values[2]);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

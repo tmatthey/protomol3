@@ -26,9 +26,11 @@ defineInputValueWithAliasesAndText
 defineInputValue(InputShake, "shake");
 defineInputValue(InputShakeEpsilon, "shakeEpsilon");
 defineInputValue(InputShakeMaxIter, "shakeMaxIter");
+defineInputValue(InputShakeAll, "shakeAll");
 defineInputValue(InputRattle, "rattle");
 defineInputValue(InputRattleEpsilon, "rattleEpsilon");
 defineInputValue(InputRattleMaxIter, "rattleMaxIter");
+defineInputValue(InputRattleAll, "rattleAll");
 defineInputValue(InputShadow, "shadow");
 defineInputValue(InputShadowOrder, "shadoworder");
 defineInputValue(InputShadowFreq, "shadowfreq");
@@ -39,9 +41,11 @@ void ModifierModule::init(ProtoMolApp *app) {
   InputShake::registerConfiguration(&app->config, false);
   InputShakeEpsilon::registerConfiguration(&app->config, 1e-5);
   InputShakeMaxIter::registerConfiguration(&app->config, 30);
+  InputShakeAll::registerConfiguration(&app->config, true);
   InputRattle::registerConfiguration(&app->config, false);
   InputRattleEpsilon::registerConfiguration(&app->config, 1e-5);
   InputRattleMaxIter::registerConfiguration(&app->config, 30);
+  InputRattleAll::registerConfiguration(&app->config, true);
   InputShadow::registerConfiguration(&app->config, false);
   InputShadowOrder::registerConfiguration(&app->config, 2);
   InputShadowFreq::registerConfiguration(&app->config, 1);
@@ -103,8 +107,9 @@ void ModifierModule::addModifiers(ProtoMolApp *app) {
   bool shake = app->config[InputShake::keyword];
   Real shakeEpsilon = app->config[InputShakeEpsilon::keyword];
   int shakeMaxIter = app->config[InputShakeMaxIter::keyword];
+  bool shakeAll = app->config[InputShakeAll::keyword];
   if (shake && shakeEpsilon > 0.0 && shakeMaxIter > 0) {
-    modifier = new ModifierShake(shakeEpsilon, shakeMaxIter);
+    modifier = new ModifierShake(shakeEpsilon, shakeMaxIter, shakeAll);
     app->integrator->bottom()->adoptPostDriftOrNextModifier(modifier);
 
     report << plain << "Shake with epsilon " << shakeEpsilon << ", max "
@@ -115,8 +120,9 @@ void ModifierModule::addModifiers(ProtoMolApp *app) {
   bool rattle = app->config[InputRattle::keyword];
   Real rattleEpsilon = app->config[InputRattleEpsilon::keyword];
   int rattleMaxIter = app->config[InputRattleMaxIter::keyword];
+  bool rattleAll = app->config[InputRattleAll::keyword];
   if (rattle && rattleEpsilon > 0.0 && rattleMaxIter > 0) {
-    modifier = new ModifierRattle(rattleEpsilon, rattleMaxIter);
+    modifier = new ModifierRattle(rattleEpsilon, rattleMaxIter, rattleAll);
     app->integrator->bottom()->adoptPostStepModifier(modifier);
 
     report << plain << "Rattle with epsilon " << rattleEpsilon <<", max "

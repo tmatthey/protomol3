@@ -14,9 +14,13 @@ namespace ProtoMol {
   declareInputValue(InputRattle, BOOL, NOCONSTRAINTS);
   declareInputValue(InputRattleEpsilon, REAL, NOTNEGATIVE);
   declareInputValue(InputRattleMaxIter, INT, NOTNEGATIVE);
+  declareInputValue(InputRattleAll, BOOL, NOCONSTRAINTS);
+
   declareInputValue(InputShake, BOOL, NOCONSTRAINTS);
   declareInputValue(InputShakeEpsilon, REAL, NOTNEGATIVE);
   declareInputValue(InputShakeMaxIter, INT, NOTNEGATIVE);
+  declareInputValue(InputShakeAll, BOOL, NOCONSTRAINTS);
+
   declareInputValue(InputShadow, BOOL, NOCONSTRAINTS);
   declareInputValue(InputShadowOrder, INT, NOTNEGATIVE);
   declareInputValue(InputShadowFreq, INT, NOTNEGATIVE);

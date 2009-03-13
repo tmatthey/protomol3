@@ -13,7 +13,7 @@ namespace ProtoMol {
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    ModifierMetaShake(Real eps, int maxIter, int order);
+    ModifierMetaShake(Real eps, int maxIter, bool all, int order);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class ModifierMetaShakeShake

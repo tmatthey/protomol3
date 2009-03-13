@@ -6,8 +6,8 @@ using namespace std;
 using namespace ProtoMol;
 
 //____ ModifierMetaRattle
-ModifierMetaRattle::ModifierMetaRattle(Real eps, int maxIter, int order) :
-  ModifierMetaRattleShake(eps, maxIter, order) {}
+ModifierMetaRattle::ModifierMetaRattle(Real eps, int maxIter, bool all, int order) :
+  ModifierMetaRattleShake(eps, maxIter, all, order) {}
 
 Real ModifierMetaRattle::calcError() const {
   // the error for the RATTLE algorithm is defined as
