@@ -1045,6 +1045,8 @@ protomol/protomol/io/XYZWriter.cpp -text
 protomol/protomol/io/XYZWriter.h -text
 protomol/protomol/io/gromacs/GromacsBondedParameterFileReader.cpp -text
 protomol/protomol/io/gromacs/GromacsBondedParameterFileReader.h -text
+protomol/protomol/io/gromacs/GromacsGBParameterFileReader.cpp -text
+protomol/protomol/io/gromacs/GromacsGBParameterFileReader.h -text
 protomol/protomol/io/gromacs/GromacsNonbondedParameterFileReader.cpp -text
 protomol/protomol/io/gromacs/GromacsNonbondedParameterFileReader.h -text
 protomol/protomol/io/gromacs/GromacsParameterFileReader.cpp -text
