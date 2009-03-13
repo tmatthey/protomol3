@@ -1,2 +1,0 @@
-file /afs/nd.edu/user10/schatter/Private/string/protomol3/svn/trunk/applications/string-app/SConstruct,line 23:
-	Configure(confdir = .sconf_temp)
