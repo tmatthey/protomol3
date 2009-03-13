@@ -7,10 +7,18 @@
 #include <protomol/base/MathUtilities.h>
 
 #include <protomol/io/XYZWriter.h>
+#include <protomol/io/CheckpointConfigWriter.h>
 
 #include <sstream>
-#include <fstream>
 #include <iostream>
+
+#ifdef BUILD_FOR_FAH
+    #include <fah/core/ChecksumDevice.h>
+    typedef FAH::ChecksummedFile fileStream;
+#else
+    #include <fstream>
+    typedef std::fstream fileStream;
+#endif
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -144,19 +152,19 @@ bool OutputCheckpoint::adjustWithDefaultParameters( vector<Value> &values,
 }
 
 void OutputCheckpoint::ReadConfig( ) {
-  ifstream inFile( Append( mPosBase, "dat" ).c_str() );
+    fileStream inFile( Append( mPosBase, "dat" ).c_str(), std::ios::in );
 
-  if ( inFile ) {
-    ofstream outFile( Append( mPosBase, "last" ).c_str() );
+    if ( inFile ) {
+        fileStream outFile( Append( mPosBase, "last" ).c_str(), std::ios::out );
 
-    if ( outFile ) {
-      std::string line;
+        if ( outFile ) {
+            std::string line;
 
-      while ( std::getline( inFile, line ) ) {
-        outFile << line << '\n';
-      }
+            while ( std::getline( inFile, line ) ) {
+            outFile << line << std::endl;
+            }
+        }
     }
-  }
 }
 
 void OutputCheckpoint::WritePositions( int step ) {
@@ -194,19 +202,15 @@ void OutputCheckpoint::WriteVelocities( int step ) {
 }
 
 void OutputCheckpoint::WriteConfig( int step ) {
-  ofstream outFile( Append( mPosBase, "dat" ).c_str() );
+    std::string confFile = Append( mPosBase, "dat" );
+    
+    CheckpointConfigWriter confWriter;
+    if ( !confWriter.open( confFile ) ) {
+        THROW( string( "Can't open " ) + getId() + " '" + confFile + "'." );
+    }
 
-  if ( outFile ) {
-    outFile << "#ID" << std::endl;
-    outFile << mCurrent << std::endl;
-
-    outFile << "#Step" << std::endl;
-    outFile << step << std::endl;
-
-    outFile << "#Random" << std::endl;
-    outFile << Random::Instance() << std::endl;
-
-    outFile << "#Integrator" << std::endl;
-    outFile << ( *app->integrator ) << std::endl;
-  }
+    if ( !confWriter.write( mCurrent, step, Random::Instance(), app->integrator ) ) {
+        THROW( string( "Could not write " ) + getId() + " '" + confFile + "'." );
+    }
+    
 }

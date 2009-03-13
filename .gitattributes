@@ -945,6 +945,10 @@ protomol/protomol/integrator/openMM/NormalModeOpenMM.h -text
 protomol/protomol/integrator/openMM/OpenMMIntegrator.cpp -text
 protomol/protomol/integrator/openMM/OpenMMIntegrator.h -text
 protomol/protomol/integrator/openMM/SConscript -text
+protomol/protomol/io/CheckpointConfigReader.cpp -text
+protomol/protomol/io/CheckpointConfigReader.h -text
+protomol/protomol/io/CheckpointConfigWriter.cpp -text
+protomol/protomol/io/CheckpointConfigWriter.h -text
 protomol/protomol/io/ConfigurationReader.cpp -text
 protomol/protomol/io/ConfigurationReader.h -text
 protomol/protomol/io/DCDTrajectoryReader.cpp -text
