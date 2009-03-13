@@ -28,13 +28,17 @@ namespace ProtoMol {
       static const int RYCKERT_BELLEMAN_DIHEDRAL = 3;
 
     public:
-      PortGromacsParameters() {}
+      PortGromacsParameters();
        ~PortGromacsParameters() {}
 
-     bool Read_Gromacs_Parameters(PSF &psf, PAR &par, GromacsTopology &gTopo, GromacsParameters &gParams, 
+     bool Read_Basic_Gromacs_Parameters(PSF &psf, PAR &par, GromacsTopology &gTopo, GromacsParameters &gParams, 
             std::string filename, std::string pathname);
 
+     bool Read_Gromacs_GB_Parameters(std::string filename);
+
      void Port_Parameters();
+
+     void Port_GB_Parameters();
 
    private:
      void PortAtoms();

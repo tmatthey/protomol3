@@ -8,6 +8,7 @@
 #include <protomol/io/gromacs/GromacsParameterFileReader.h>
 #include <protomol/io/gromacs/GromacsBondedParameterFileReader.h>
 #include <protomol/io/gromacs/GromacsNonbondedParameterFileReader.h>
+#include <protomol/io/gromacs/GromacsGBParameterFileReader.h>
 
 #include <protomol/base/PMConstants.h>
 
@@ -17,12 +18,20 @@ using namespace std;
 using namespace ProtoMol;
 using namespace ProtoMol::Report;
 
-//typedef vector<GromacsParameters::AtomType>::iterator atomtype_iterator;
 typedef map<string, GromacsParameters::Atom_base>::iterator atomtype_iterator;
 
 typedef vector<GromacsParameters::Dihedral_base>::iterator dihedral_iterator;
 
-bool PortGromacsParameters::Read_Gromacs_Parameters(PSF &psf, PAR &par, GromacsTopology &gTopo, 
+PortGromacsParameters::PortGromacsParameters() {
+
+  myPSF = NULL;
+  myPAR = NULL;
+  myGromacsTopo = NULL;
+  myGromacsParam = NULL;
+
+}
+
+bool PortGromacsParameters::Read_Basic_Gromacs_Parameters(PSF &psf, PAR &par, GromacsTopology &gTopo, 
    GromacsParameters &gParams, string filename, string pathname) {
 
   myPSF = &psf;
@@ -79,6 +88,54 @@ bool PortGromacsParameters::Read_Gromacs_Parameters(PSF &psf, PAR &par, GromacsT
 
   return true;
 
+}
+
+bool PortGromacsParameters::Read_Gromacs_GB_Parameters(string filename) {
+
+  if (( myPAR == NULL) || (myGromacsParam == NULL)) {
+     report << error <<"PAR and GromacsParameter data structures not available"<<endr;
+     return false;
+  }
+
+  GromacsGBParameterFileReader gb_reader(filename);
+
+  if (!gb_reader.read(*myGromacsParam)) {
+     report << error <<"Error reading Generalized Born parameter file"<<endr;
+     return false;
+  }
+
+  Port_GB_Parameters();
+
+  return true;
+}
+
+void PortGromacsParameters::Port_GB_Parameters() {
+
+  unsigned int num_records = myGromacsParam->gb_parameters.size();
+
+  for (unsigned int i=0;i<num_records;i++) {
+     PAR::GB_gromacs gb;
+
+     string s = myGromacsParam->gb_parameters[i].atom_type_identifier;
+     string atom_type_name = myGromacsParam->atomTypes[s].bond_type;
+
+     gb.atom_name = atom_type_name;
+     gb.radius = myGromacsParam->gb_parameters[i].radius;
+     gb.igamma = myGromacsParam->gb_parameters[i].igamma;
+     gb.ialpha = myGromacsParam->gb_parameters[i].ialpha;
+     gb.idelta = myGromacsParam->gb_parameters[i].idelta;
+     gb.sgamma = myGromacsParam->gb_parameters[i].sgamma;
+     gb.salpha = myGromacsParam->gb_parameters[i].salpha;
+     gb.sdelta = myGromacsParam->gb_parameters[i].sdelta;
+     gb.GBdistcorr = myGromacsParam->gb_parameters[i].GBdistcorr;
+     gb.a_i = myGromacsParam->gb_parameters[i].a_i;
+
+     //pair<string,PAR::GB_gromacs> myPair(atom_type_name,gb);
+
+    report << plain <<atom_type_name << " "<<gb.radius<<endr;
+
+     myPAR->gb_parameters[atom_type_name] = gb;
+  }
 }
 
 void PortGromacsParameters::Port_Parameters() {

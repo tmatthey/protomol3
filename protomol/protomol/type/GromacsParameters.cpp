@@ -9,4 +9,5 @@ void GromacsParameters::clear() {
    angleTypes.clear();
    dihedralTypes.clear();
    atomTypes.clear();
+   gb_parameters.clear();
 }

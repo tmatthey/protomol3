@@ -107,37 +107,6 @@ namespace ProtoMol {
 
      };
 
-#if 0
-      struct DihedralType : public Dihedral_base {
-
-        DihedralType(): Dihedral_base() {}
-        DihedralType(int n, std::string typea, std::string typeb, std::string typec, std::string typed,
-           int f, Real ph, Real k, Real p): Dihedral_base(n, typea, typeb, typec, typed, f),
-           phase(ph), kd(k), pn(p) {}
-         
-        Real phase;
-        Real kd;
-        Real pn;
-       
-     };
-
-     struct DihedralType_RB : public Dihedral_base {
-        /* Ryckert-Bellemans dihedral type...impropers? */
-
-        DihedralType_RB() : Dihedral_base() {}
-        DihedralType_RB(int n, std::string typea, std::string typeb, std::string typec, std::string typed, int f,
-          Real cc0, Real cc1, Real cc2, Real cc3, Real cc4, Real cc5):
-          Dihedral_base(n, typea, typeb, typec, typed, f),
-          C0(cc0), C1(cc1), C2(cc2), C3(cc3), C4(cc4), C5(cc5) {}
-       
-        Real C0;
-        Real C1;
-        Real C2;
-        Real C3;
-        Real C4;
-        Real C5;
-     }; 
-#endif
 
      //Nonbonded LJ parameters
      struct Atom_base {
@@ -158,7 +127,32 @@ namespace ProtoMol {
    
      };
 
+
      typedef std::map<std::string, Atom_base> AtomType;
+
+     //Generalized Born parameters
+     struct GBParameters {
+
+       GBParameters() {}
+       GBParameters(std::string type, Real r , Real ig, Real ia, Real id,
+          Real sg, Real sa, Real sd, Real GBd, Real ai) :
+         atom_type_identifier(type), radius(r), igamma(ig), ialpha(ia),
+         idelta(id), sgamma(sg), salpha(sa), sdelta(sd), GBdistcorr(GBd),
+          a_i(ai) {}
+     
+       
+       std::string atom_type_identifier;
+       Real  radius;
+       Real  igamma;
+       Real  ialpha;
+       Real  idelta;
+       Real  sgamma;
+       Real  salpha;
+       Real  sdelta;
+       Real  GBdistcorr; 
+       Real  a_i;
+
+     };
 
      //methods
      void clear();
@@ -171,6 +165,8 @@ namespace ProtoMol {
     std::vector<GromacsParameters::AngleType> angleTypes; 
     std::vector<GromacsParameters::Dihedral_base> dihedralTypes;
     AtomType atomTypes; 
+
+    std::vector<GromacsParameters::GBParameters> gb_parameters;
 
   };
 

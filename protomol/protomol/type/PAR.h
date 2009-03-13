@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <protomol/type/Real.h>
 #include <protomol/base/Report.h>
@@ -158,6 +159,27 @@ namespace ProtoMol {
 
     };
 
+    struct GB_gromacs {
+
+      GB_gromacs() {}
+      GB_gromacs(std::string a,Real r , Real ig, Real id, Real ia, Real sg, Real sa, Real sd,
+               Real GBd, Real ai) : atom_name(a),
+         radius(r),igamma(ig),ialpha(ia),idelta(id),sgamma(sg),salpha(sa),
+         sdelta(sd), GBdistcorr(GBd), a_i(ai){} 
+
+       std::string atom_name;
+       Real  radius;
+       Real  igamma;
+       Real  ialpha;
+       Real  idelta;
+       Real  sgamma;
+       Real  salpha;
+       Real  sdelta;
+       Real  GBdistcorr;
+       Real  a_i;
+
+    };
+
     //_________________________________________________________________Nonbonded
     /// This structure holds data for a nonbonded - including
     struct Nonbonded {
@@ -274,6 +296,7 @@ namespace ProtoMol {
 
     //for GROMACS
     std::vector<PAR::RBDihedral> rb_dihedrals;
+    std::map<std::string,PAR::GB_gromacs> gb_parameters;
 
   };
 }

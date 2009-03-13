@@ -36,6 +36,7 @@ defineInputValue(InputSCPISM, "scpismfile");
 //for GROMACS
 defineInputValue(InputGromacsTopo, "gromacstopologyfile");
 defineInputValue(InputGromacsParamPath, "gromacsparameterpath");
+defineInputValue(InputGromacsGBParameterFile, "gromacsGBparameterfile");
 
 void IOModule::init(ProtoMolApp *app) {
   Configuration *config = &app->config;
@@ -51,6 +52,7 @@ void IOModule::init(ProtoMolApp *app) {
   //for GROMACS
   InputGromacsTopo::registerConfiguration(config);
   InputGromacsParamPath::registerConfiguration(config);
+  InputGromacsGBParameterFile::registerConfiguration(config);
 
 }
 
@@ -133,9 +135,17 @@ void IOModule::read(ProtoMolApp *app) {
      GromacsParameters gParams;
      PortGromacsParameters gromacs_port;
        
-     if (!gromacs_port.Read_Gromacs_Parameters(app->psf,app->par, gTopo, gParams, 
+     if (!gromacs_port.Read_Basic_Gromacs_Parameters(app->psf,app->par, gTopo, gParams, 
            (const string)config[InputGromacsTopo::keyword], (const string)config[InputGromacsParamPath::keyword])){
             THROW(string("Cant read GROMACS parameters into PSF and PAR"));
+     }
+
+     //check if Generalized Born Parameter file has been passed
+     if (config.valid(InputGromacsGBParameterFile::keyword)) {
+         if (!gromacs_port.Read_Gromacs_GB_Parameters(
+              (const string)config[InputGromacsGBParameterFile::keyword])){
+              THROW(string("Cant read Gromacs parameters for Generalized Born"));
+         }
      }
 
   } else {

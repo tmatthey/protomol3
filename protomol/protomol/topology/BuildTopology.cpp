@@ -666,6 +666,30 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
     }
   }
 
+  //check if Gromacs GB data is available
+  if (par.gb_parameters.size() > 0) {
+  
+      unsigned int typesSize = topo->atomTypes.size();
+
+      for (unsigned int i=0;i<typesSize;i++) {
+         AtomType *tempatomtype = &topo->atomTypes[i];
+         std::string name = tempatomtype->name;
+
+         map<string,PAR::GB_gromacs>::const_iterator gb_iterator = par.gb_parameters.find(name);
+         if (gb_iterator != par.gb_parameters.end()) {
+             tempatomtype->vdwR = gb_iterator->second.radius;
+         }else {
+             THROW("vdwR for GB not found for atom type");
+         }
+
+      }
+      for (unsigned int i=0;i<typesSize;i++) {
+         report << debug(2) <<"BuildTopology : atom_type_name "<<topo->atomTypes[i].name<<" vdwR = "<<topo->atomTypes[i].vdwR<<endr;
+      }
+
+
+  }
+
   // NbFix
   for (unsigned int k = 0; k < sizeNbfixs; ++k) {
     int ti = 0;

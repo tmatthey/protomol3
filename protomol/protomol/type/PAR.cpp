@@ -18,5 +18,6 @@ void PAR::clear() {
 
   //Amber style dihedrals
   rb_dihedrals.clear();
+  gb_parameters.clear();
 
 }

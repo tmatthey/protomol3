@@ -19,6 +19,7 @@ namespace ProtoMol {
 
   declareInputValue(InputGromacsTopo, STRING, NOTEMPTY);
   declareInputValue(InputGromacsParamPath, STRING, NOTEMPTY);
+  declareInputValue(InputGromacsGBParameterFile, STRING, NOTEMPTY);
 
   class IOModule : public Module {
   public:
