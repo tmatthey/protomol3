@@ -210,14 +210,16 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
     unsigned int numPTor = app->topology->dihedrals.size();
     unsigned int totalNumPTor = 0;
-    for (unsigned int i = 0; i < numPTor; i++) 
-      totalNumPTor += app->topology->dihedrals[i].multiplicity;
+
+    //currently openMM cannot do mutilicity > 1
+    //for (unsigned int i = 0; i < numPTor; i++) 
+    //  totalNumPTor += app->topology->dihedrals[i].multiplicity;
 
 #ifdef DEBUG
   mFile << "Periodic Force " << totalNumPTor << std::endl;
 #endif
 
-    PTorsion = new OpenMM::PeriodicTorsionForce(totalNumPTor);//numPTor);//
+    PTorsion = new OpenMM::PeriodicTorsionForce(numPTor);//totalNumPTor);
     system->addForce(PTorsion);
     for (unsigned int i = 0; i < numPTor; i++){
         unsigned int a1 = app->topology->dihedrals[i].atom1;
@@ -225,9 +227,9 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
         unsigned int a3 = app->topology->dihedrals[i].atom3;
         unsigned int a4 = app->topology->dihedrals[i].atom4;
 
-        unsigned int multiplicity = app->topology->dihedrals[i].multiplicity;
+        //unsigned int multiplicity = app->topology->dihedrals[i].multiplicity;
 
-        for (unsigned int j = 0; j < multiplicity; j++){
+        for (unsigned int j = 0; j < 1/*multiplicity*/; j++){
 
           unsigned int mult = app->topology->dihedrals[i].periodicity[j];
           Real phiA = app->topology->dihedrals[i].phaseShift[j];
