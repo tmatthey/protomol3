@@ -30,10 +30,6 @@ GUI/JMVwebPublic/src/org/allseeingeye/JMolecularViewer.java -text
 GUI/JMVwebPublic/src/org/allseeingeye/JOpenGL.java -text
 GUI/JMVwebPublic/src/org/allseeingeye/QuartView.java -text
 GUI/JProtomol/auto.conf -text
-GUI/JProtomol/auto.out.energy -text
-GUI/JProtomol/auto.out.energy.header -text
-GUI/JProtomol/auto.out.pos.xyz -text
-GUI/JProtomol/auto.out.vel.xyz -text
 GUI/JProtomol/blockdialanine.psf -text
 GUI/JProtomol/build.xml -text
 GUI/JProtomol/manifest.mf -text
