@@ -16,6 +16,7 @@
 #include <protomol/module/IntegratorOpenMMModule.h>
 
 #include <protomol/module/NonbondedCutoffForceModule.h>
+#include <protomol/module/NonbondedFullElectrostaticForceModule.h>
 #include <protomol/module/NonbondedFullForceModule.h>
 #include <protomol/module/NonbondedSimpleFullForceModule.h>
 
@@ -42,5 +43,6 @@ void moduleInitFunction(ModuleManager *manager) {
   manager->add(new NonbondedCutoffForceModule());
   manager->add(new NonbondedFullForceModule());
   manager->add(new NonbondedSimpleFullForceModule());
+  manager->add(new NonbondedFullElectrostaticForceModule());
 }
 

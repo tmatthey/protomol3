@@ -850,6 +850,9 @@ protomol/protomol/force/hessian/ReducedHessLennardJones.h -text
 protomol/protomol/force/hessian/SConscript -text
 protomol/protomol/force/nonbonded/NonbondedCutoffForce.h -text
 protomol/protomol/force/nonbonded/NonbondedCutoffSystemForce.h -text
+protomol/protomol/force/nonbonded/NonbondedFullEwaldSystemForce.h -text
+protomol/protomol/force/nonbonded/NonbondedFullEwaldSystemForceBase.cpp -text
+protomol/protomol/force/nonbonded/NonbondedFullEwaldSystemForceBase.h -text
 protomol/protomol/force/nonbonded/NonbondedFullSystemForce.h -text
 protomol/protomol/force/nonbonded/NonbondedSimpleFullSystemForce.h -text
 protomol/protomol/force/nonbonded/SConscript -text
@@ -1040,6 +1043,8 @@ protomol/protomol/module/ModifierModule.cpp -text
 protomol/protomol/module/ModifierModule.h -text
 protomol/protomol/module/NonbondedCutoffForceModule.cpp -text
 protomol/protomol/module/NonbondedCutoffForceModule.h -text
+protomol/protomol/module/NonbondedFullElectrostaticForceModule.cpp -text
+protomol/protomol/module/NonbondedFullElectrostaticForceModule.h -text
 protomol/protomol/module/NonbondedFullForceModule.cpp -text
 protomol/protomol/module/NonbondedFullForceModule.h -text
 protomol/protomol/module/NonbondedSimpleFullForceModule.cpp -text
