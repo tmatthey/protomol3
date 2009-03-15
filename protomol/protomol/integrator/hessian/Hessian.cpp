@@ -70,6 +70,7 @@ Hessian::Hessian(const Hessian &hess) {
   myBornSelf = hess.myBornSelf;
   myLennardJones = hess.myLennardJones;
   myDihedral = hess.myDihedral;
+  myRBDihedral = hess.myRBDihedral;
   myImproper = hess.myImproper;
   cCutoff = hess.cCutoff;
   cSwitchon = hess.cSwitchon;
@@ -107,7 +108,8 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
                                                        myDihedral =
                                                          myImproper = 
                                                            myBornRadii =
-                                                             myBornSelf = false;
+                                                             myBornSelf = 
+                                                               myRBDihedral = false;
 
   for (unsigned int i = 0; i < ListForces.size(); i++) {
 
@@ -253,6 +255,8 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
       }
     } else if (equalStartNocase("Dihedral", ListForces[i]->getId())) {
       myDihedral = true;
+    } else if (equalStartNocase("RBDihedral", ListForces[i]->getId())) {
+      myRBDihedral = true;
     } else if (equalStartNocase("Improper", ListForces[i]->getId())) {
       myImproper = true;
     } else if (equalStartNocase("BornRadii", ListForces[i]->getId())) {
@@ -341,6 +345,36 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
           }
 
       }
+    }
+  }
+
+  //RBDihedrals
+  if (myRBDihedral) {
+    HessDihedral hd;        //create dihedral hessian
+    for (unsigned int i = 0; i < myTopo->rb_dihedrals.size(); i++) {
+      RBTorsion rbt = myTopo->rb_dihedrals[i];
+      bool nonZForce = false;       //test for force constants
+
+      if (rbt.C0 || rbt.C1 || rbt.C2 || rbt.C3 || rbt.C4 || rbt.C5) nonZForce = true;
+
+      if (nonZForce) {
+        int aout[4];
+        aout[0] = rbt.atom1; aout[1] = rbt.atom2;
+        aout[2] = rbt.atom3; aout[3] = rbt.atom4;
+        //
+        hd.evaluate(rbt, (*myPositions)[aout[0]],
+                    (*myPositions)[aout[1]], (*myPositions)[aout[2]],
+                    (*myPositions)[aout[3]]);
+        //output sparse matrix
+        for (int ii = 0; ii < 4; ii++)
+          for (int kk = 0; kk < 4; kk++) {
+            Matrix3By3 rhd = hd(ii, kk);
+            outputSparseMatrix(aout[ii], aout[kk], myTopo->atoms[aout[ii]].scaledMass,
+                myTopo->atoms[aout[kk]].scaledMass, rhd, mrw, sz, hessM);
+          }
+
+      }
+
     }
   }
 

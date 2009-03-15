@@ -81,6 +81,7 @@ namespace ProtoMol {
     bool myLennardJones;
     bool myDihedral;
     bool myImproper;
+    bool myRBDihedral;
     Real cCutoff, cSwitchon, cSwitch, cOrder, cSwitchoff;   //switch data
     Real lCutoff, lSwitchon, lSwitch, lOrder, lSwitchoff;
     Real D, S, epsi;

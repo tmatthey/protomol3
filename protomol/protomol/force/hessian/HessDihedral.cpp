@@ -12,6 +12,13 @@ HessDihedral::HessDihedral(const Torsion &currTorsion, //torsion data
   // call the evaluate function
 }
 
+HessDihedral::HessDihedral(const RBTorsion &currRBTorsion, //torsion data
+                           const Vector3D &a1, const Vector3D &a2,  //positions
+                           const Vector3D &a3, const Vector3D &a4) {
+  evaluate(currRBTorsion, a1, a2, a3, a4);
+  // call the evaluate function
+}
+
 //extract single 3X3 matrix from 4X4 array
 Matrix3By3 HessDihedral::operator()(unsigned int i, unsigned int j) const{
   int mi = i * 36 + j * 3;            //kk * 36 + ii*3;
@@ -26,6 +33,90 @@ Matrix3By3 HessDihedral::operator()(unsigned int i, unsigned int j) const{
 void HessDihedral::evaluate(const Torsion &currTorsion, const Vector3D &a1,
                             const Vector3D &a2, const Vector3D &a3,
                             const Vector3D &a4) {
+
+  //Rotation vector
+  double aRot[9];
+  //intermediate variables
+  Real x21, x43, y43, z21, z43, r23;
+  Real phi;
+  //find angle
+  if(rotateAndCalcPhi(a1, a2, a3, a4,
+    x21, x43, y43, z21, z43, r23, aRot, phi)) {
+    //Find dF/dphi and d^2F/dphi^2
+    double fact1 = 0.0;
+    double fact2 = 0.0;
+    for (int dm = 0; dm < currTorsion.multiplicity; dm++) { //Dihedrals
+      if (currTorsion.periodicity[dm] > 0) {
+        fact1 += -currTorsion.forceConstant[dm] *
+                 sin(currTorsion.periodicity[dm] * phi +
+                     currTorsion.phaseShift[dm]) *
+                 currTorsion.periodicity[dm];
+        fact2 += -currTorsion.forceConstant[dm] *
+                 cos(currTorsion.periodicity[dm] * phi +
+                     currTorsion.phaseShift[dm]) *
+                 currTorsion.periodicity[dm] * currTorsion.periodicity[dm];
+      } else {    //Impropers
+        Real diff = phi - currTorsion.phaseShift[dm];
+        if (diff < -M_PI)
+          diff += 2 * M_PI;
+        else if (diff > M_PI)
+          diff -= 2 * M_PI;
+        fact1 += 2.0 * currTorsion.forceConstant[dm] * diff;
+        fact2 += 2.0 * currTorsion.forceConstant[dm];
+      }
+    }
+
+    //
+    outputHessian(fact1, fact2, x21, x43, y43, z21, z43, r23, aRot);
+  }
+
+}
+
+void HessDihedral::evaluate(const RBTorsion &currRBTorsion, const Vector3D &a1,
+                            const Vector3D &a2, const Vector3D &a3,
+                            const Vector3D &a4) {
+
+  //Rotation vector
+  double aRot[9];
+  //intermediate variables
+  Real x21, x43, y43, z21, z43, r23;
+  Real phi;
+  //find angle
+  if(rotateAndCalcPhi(a1, a2, a3, a4,
+    x21, x43, y43, z21, z43, r23, aRot, phi)) {
+    //Find dF/dphi and d^2F/dphi^2
+    double fact1 = 0.0;
+    double fact2 = 0.0;
+    Real Cn[6] = {currRBTorsion.C0, currRBTorsion.C1, currRBTorsion.C2, 
+                  currRBTorsion.C3, currRBTorsion.C4, currRBTorsion.C5 };
+    Real cosPsi = cos(phi - M_PI);
+    Real sinPsi = sin(phi - M_PI);
+    Real sin2Psi = sinPsi * sinPsi;
+    Real cosNm1 = 1.;
+
+    for(int i=1; i<6; i++) {
+
+      fact1 -= (Real)i * Cn[i] * sinPsi * cosNm1;
+
+      fact2 += (Real)(i * (i-1)) * Cn[i] * sin2Psi * cosNm1 / cosPsi;
+
+      cosNm1 *= cosPsi;
+
+      fact2 -= (Real)i * Cn[i] * cosNm1;
+
+    }
+
+    //
+    outputHessian(fact1, fact2, x21, x43, y43, z21, z43, r23, aRot);
+  }
+
+}
+
+//Rotates the dihedral into a bi-planar configuration, calculates phi and projection
+bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2, 
+                              const Vector3D &a3, const Vector3D &a4,
+                              Real &x21, Real &x43, Real &y43, Real &z21, Real &z43, Real &r23, 
+                              double *aRot, Real &phi) {
   //actual positions
   double a[9] = {
     a1[0], a2[0], a3[0], a1[1], a2[1], a3[1], a1[2], a2[2], a3[2]
@@ -39,7 +130,7 @@ void HessDihedral::evaluate(const Torsion &currTorsion, const Vector3D &a1,
     for (int i = 0; i < 144; i++) hessD[i] = 0.0;
 
     //clear Hessian
-    return;
+    return false;
   }
   //Vector3D rxy // Vector from atom a to atom b
   Vector3D r12(a2 - a1);
@@ -92,7 +183,7 @@ void HessDihedral::evaluate(const Torsion &currTorsion, const Vector3D &a1,
   for (int i = 0; i < 9; i++) ia[i] /= dta;
 
   //rotation matrix
-  double aRot[9];
+  //double aRot[9];
   for (int i = 0; i < 9; i++) aRot[i] = 0.0;
 
   for (int i = 0; i < 9; i++)
@@ -110,42 +201,30 @@ void HessDihedral::evaluate(const Torsion &currTorsion, const Vector3D &a1,
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) out4[i] += aRot[i * 3 + j] * in4[j];
 
+  // Calculate phi
+  phi = atan2((out4[1] - opC[5]), -(out4[0] - opC[2]));
+
+
+  //Setup variables
+  x21 = opC[1] - opC[0]; x43 = out4[0] - opC[2]; y43 = out4[1] - opC[5];
+  z21 = opC[7] - opC[6]; z43 = out4[2] - opC[8]; r23 = r23v.norm();
+
+  return true;
+}
+
+//Calculates reduced Hessian and rotates back.
+void HessDihedral::outputHessian(const double fact1, const double fact2, 
+                                 const Real x21, const Real x43, const Real y43, const Real z21, const Real z43, const Real r23, 
+                                 const double *aRot) {
+
+  //Setup variables
   double dgd[12] = {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
   };
-  // Calculate phi
-  //#######################
-  double g;
-  g = atan2((out4[1] - opC[5]), -(out4[0] - opC[2]));
 
-  //multiplicity
-  double fact1 = 0.0;
-  double fact2 = 0.0;
-  for (int dm = 0; dm < currTorsion.multiplicity; dm++)  //Dihedrals
-    if (currTorsion.periodicity[dm] > 0) {
-      fact1 += -currTorsion.forceConstant[dm] *
-               sin(currTorsion.periodicity[dm] * g +
-                   currTorsion.phaseShift[dm]) *
-               currTorsion.periodicity[dm];
-      fact2 += -currTorsion.forceConstant[dm] *
-               cos(currTorsion.periodicity[dm] * g +
-                   currTorsion.phaseShift[dm]) *
-               currTorsion.periodicity[dm] * currTorsion.periodicity[dm];
-    } else {    //Impropers
-      Real diff = g - currTorsion.phaseShift[dm];
-      if (diff < -M_PI)
-        diff += 2 * M_PI;
-      else if (diff > M_PI)
-        diff -= 2 * M_PI;
-      fact1 += 2.0 * currTorsion.forceConstant[dm] * diff;
-      fact2 += 2.0 * currTorsion.forceConstant[dm];
-    }
+  Real x21_2, x43_2, x43_3, x43_4, x43_5, y43_2, y43_3, 
+       z21_2, z43_2, r23_2;
 
-  //Setup variables
-  Real x21, x21_2, x43, x43_2, x43_3, x43_4, x43_5, y43, y43_2, y43_3, z21,
-       z21_2, z43, z43_2, r23, r23_2;
-  x21 = opC[1] - opC[0]; x43 = out4[0] - opC[2]; y43 = out4[1] - opC[5];
-  z21 = opC[7] - opC[6]; z43 = out4[2] - opC[8]; r23 = r23v.norm();
   x21_2 = x21 * x21; x43_2 = x43 * x43; y43_2 = y43 * y43;  r23_2 = r23 * r23;
   z21_2 = z21 * z21; z43_2 = z43 * z43;
   x43_3 = x43_2 * x43; y43_3 = y43_2 * y43; x43_4 = x43_2 * x43_2; x43_5 =
@@ -355,7 +434,7 @@ void HessDihedral::evaluate(const Torsion &currTorsion, const Vector3D &a1,
 }
 
 //Use aRot to rotate the vector back into real space
-double *HessDihedral::rotateV3D(double *aRot, double *mf) {
+double *HessDihedral::rotateV3D(const double *aRot, double *mf) {
   double out[3] = {
     0.0, 0.0, 0.0
   };
