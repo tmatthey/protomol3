@@ -151,7 +151,7 @@ namespace ProtoMol {
    * everywhere less than 1.2*10-7.
    */
   Real myerf(Real x);
-#ifdef WIN32
+#ifdef _WIN32
   inline Real erf(Real x) {
     return myerf(x);
   }
