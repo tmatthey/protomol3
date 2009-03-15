@@ -4,10 +4,13 @@
 #include <protomol/base/SystemUtilities.h>
 #include <protomol/base/StringUtilities.h>
 
+#ifdef BUILD_FOR_FAH
+    typedef FAH::Exception Exception;
+#endif
+
 using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;
-
 
 DCDTrajectoryReader::DCDTrajectoryReader() : Reader(ios::binary), xyz(0), first(true) {}
 
@@ -88,27 +91,27 @@ void DCDTrajectoryReader::doRead(Vector3DBlock &xyz) {
 	  << hint << "[DCDTrajectoryReader::read] Reading "
 	  << (ISLITTLEENDIAN ? "big" : "little") << "endian input on "
 	  << (ISLITTLEENDIAN ? "little" : "big") << "endian machine." << endr;
-	
+
       } else swap = false;
-      
+
       // Get file size
       file.seekg(0, ios::end);
       ios::pos_type filesize = file.tellg();
       file.seekg(0, ios::beg);
       if (filesize < 104) THROWS("Invalid file size = " << filesize);
-      
-      
+
+
       fortranRead((char *)&header, sizeof(header), "header");
       if (swap) {
 	swapBytes(header.frames);
 	swapBytes(header.freeIndexes);
       }
-      
-      
+
+
       // Check header
       if (string(header.cord, 4) != "CORD") THROW("Header invalid");
-      
-      
+
+
       // Read comment
       unsigned int size = 0;
       char *commentData = fortranReadX(0, size, "comment");
@@ -117,8 +120,8 @@ void DCDTrajectoryReader::doRead(Vector3DBlock &xyz) {
 	memcpy(&comment[0], commentData, size);
 	comment[size] = 0;
       }
-      
-      
+
+
       // Read number of atoms
       natoms = 0;
       fortranRead((char *)&natoms, sizeof(int32), "# atoms");
@@ -128,20 +131,20 @@ void DCDTrajectoryReader::doRead(Vector3DBlock &xyz) {
     // Skip free indexes
     if (header.freeIndexes > 0)
       file.seekg(4 * (natoms - header.freeIndexes + 2), ios::cur);
-    
+
     if (file.fail())
       THROWS("Error skipping " << header.freeIndexes << "free indexes");
-    
-    
+
+
     // Read next frame
     std::vector<float4> x(natoms);
     std::vector<float4> y(natoms);
-    std::vector<float4> z(natoms); 
+    std::vector<float4> z(natoms);
     //float4 x, y, z;
-    
+
     xyz.resize(natoms);
     //xyz.resize(header.frames);
-    
+
     //    for (int i = 0; i < header.frames; i++) {
     fortranRead((char *)&x[0], natoms * 4, "X dimension");
     fortranRead((char *)&y[0], natoms * 4, "Y dimension");

@@ -13,7 +13,7 @@
 #include <iostream>
 
 #ifdef BUILD_FOR_FAH
-    #include <fah/core/ChecksumDevice.h>
+    #include <fah/core/chksum/ChecksumDevice.h>
     typedef FAH::ChecksummedFile fileStream;
 #else
     #include <fstream>
@@ -203,7 +203,7 @@ void OutputCheckpoint::WriteVelocities( int step ) {
 
 void OutputCheckpoint::WriteConfig( int step ) {
     std::string confFile = Append( mPosBase, "dat" );
-    
+
     CheckpointConfigWriter confWriter;
     if ( !confWriter.open( confFile ) ) {
         THROW( string( "Can't open " ) + getId() + " '" + confFile + "'." );
@@ -212,5 +212,5 @@ void OutputCheckpoint::WriteConfig( int step ) {
     if ( !confWriter.write( mCurrent, step, Random::Instance(), app->integrator ) ) {
         THROW( string( "Could not write " ) + getId() + " '" + confFile + "'." );
     }
-    
+
 }

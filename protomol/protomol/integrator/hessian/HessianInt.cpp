@@ -13,10 +13,9 @@
 #include <stdio.h>
 
 #ifdef BUILD_FOR_FAH
-#include <fah/core/ChecksumDevice.h>
-
+    #include <fah/core/chksum/ChecksumDevice.h>
 #else
-#include <fstream>
+    #include <fstream>
 #endif
 
 #if defined (HAVE_LAPACK)
@@ -59,7 +58,7 @@ HessianInt::HessianInt(Real timestep, string evec_s, string eval_s,
 HessianInt::~HessianInt() {
   int info;
 
-  info = 0;       
+  info = 0;
   int numModes = numberOfModes;
   //fix summed Hessian to average
   if (hsn.hessM != 0 && totStep > 1 && fullDiag)
@@ -71,12 +70,12 @@ HessianInt::~HessianInt() {
       (evecfile != "" || evalfile != "" || hessfile != "")) {
 
     if(evecfile != "" || evalfile != ""){
-      if(fullDiag){ 
+      if(fullDiag){
         if(hsn.hessM != 0) {
           //Full diagonalize
           report << hint << "[HessianInt::run] diagonalizing Hessian." << endr;
           //info = diagHessian(eigVec, eigVal);
-          int numFound;                
+          int numFound;
           blockDiag.rediagTime.start();
           info = blockDiag.diagHessian(eigVec, blockDiag.eigVal, hsn.hessM, sz, numFound);
           if (info == 0) {
@@ -86,13 +85,13 @@ HessianInt::~HessianInt() {
 
             //if(numneg) numneg--;
             report << hint << "[HessianInt::run] diagonalized! Number of negative "
-              "eigenvalues = " << numneg << "." << endr;  
-            for (unsigned int i = 0; i < sz; i++) blockDiag.eigIndx[i] = i;    
+              "eigenvalues = " << numneg << "." << endr;
+            for (unsigned int i = 0; i < sz; i++) blockDiag.eigIndx[i] = i;
             //if (sortOnAbs) absSort();
-            if (sortOnAbs) blockDiag.absSort(eigVec, blockDiag.eigVal, blockDiag.eigIndx, sz);                
+            if (sortOnAbs) blockDiag.absSort(eigVec, blockDiag.eigVal, blockDiag.eigIndx, sz);
             blockDiag.rediagTime.stop();
             //output nose value if eigvals available
-            if (noseMass) report << hint << "[HessianInt::run] Nose Mass, Q = " << 
+            if (noseMass) report << hint << "[HessianInt::run] Nose Mass, Q = " <<
                                     calcQ() << "." << endr;
           }else{
               report << hint << "[HessianInt::run] error info = " << info << endr;
@@ -104,7 +103,7 @@ HessianInt::~HessianInt() {
         report << hint << "[HessianInt::run] " << numModes << " approximate eigenvectors found. Maximum eigenvalue " << max_eigenvalue << "." << endr;
 
       }
-    }      
+    }
     if(info == 0){
           //output eigenvec matrix/ eigenval vector/ Hessian
           outputDiagHess(numModes);
@@ -136,7 +135,7 @@ void HessianInt::initialize(ProtoMolApp *app) {
   if (evecfile != "" || evalfile != "")
     THROW("Hessian diagonalization requires Lapack libraries.");
 #endif
-#endif  
+#endif
   //creat hessian arrays and initialize sz
   int _N = app->positions.size();
   sz = 3 * _N;
@@ -146,10 +145,10 @@ void HessianInt::initialize(ProtoMolApp *app) {
     numberOfModes = 3*(int)sqrt((float)sz);
     residuesPerBlock = (int)pow((double)_N,0.6) / 15;
     blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
-    blockCutoffDistance = hsn.cutOff;  
+    blockCutoffDistance = hsn.cutOff;
     report << hint << "[HessianInt::initialize] Auto parameters: numberOfModes " << numberOfModes <<
-                    ", residuesPerBlock " << residuesPerBlock << 
-                    ", blockVectorCols " << blockVectorCols << 
+                    ", residuesPerBlock " << residuesPerBlock <<
+                    ", blockVectorCols " << blockVectorCols <<
                     ", blockCutoffDistance " << blockCutoffDistance << "." << endr;
   }
   //number modes correct?
@@ -158,7 +157,7 @@ void HessianInt::initialize(ProtoMolApp *app) {
   if(fullDiag){
     hsn.initialData(sz);
     hsn.clear();
-  }else{      
+  }else{
     //assign hessian array for residues, and clear.
     bool fullE = false;
     if(blockCutoffDistance == 0.0) fullE = true;
@@ -169,7 +168,7 @@ void HessianInt::initialize(ProtoMolApp *app) {
   if(!fullDiag) vecSize = sz * numberOfModes;
   try{
     eigVec = new double[vecSize];
-  }catch(bad_alloc&){    
+  }catch(bad_alloc&){
       report << error << "[HessianInt::initialize] Cannot allocate memory for "
              << "Eigenvectors." << endr;
   }
@@ -196,9 +195,9 @@ void HessianInt::run(int numTimesteps) {
         doKickdoDrift();
         calculateForces();
         //true for mass re-weight;
-        if(fullDiag){                
+        if(fullDiag){
           blockDiag.hessianTime.start();	//time Hessian
-          hsn.evaluate(&app->positions, app->topology, massWeight);                
+          hsn.evaluate(&app->positions, app->topology, massWeight);
           blockDiag.hessianTime.stop();	//stop timer
           totStep++;
         }
@@ -207,9 +206,9 @@ void HessianInt::run(int numTimesteps) {
     }
     else {
       //true for mass re-weight;
-      if(fullDiag){                
+      if(fullDiag){
         blockDiag.hessianTime.start();	//time Hessian
-        hsn.evaluate(&app->positions, app->topology, massWeight);                
+        hsn.evaluate(&app->positions, app->topology, massWeight);
         blockDiag.hessianTime.stop();	//stop timer
         totStep++;
       }
@@ -221,14 +220,14 @@ void HessianInt::run(int numTimesteps) {
     //Find current Hessian
     totStep++;
     //true for mass re-weight;
-    if(fullDiag){ //Full diagonalize                
+    if(fullDiag){ //Full diagonalize
       blockDiag.hessianTime.start();	//time Hessian
-      hsn.evaluate(&app->positions, app->topology, massWeight);                
+      hsn.evaluate(&app->positions, app->topology, massWeight);
       blockDiag.hessianTime.stop();	//stop timer
-    }else{        //coarse diagonalize       
-      max_eigenvalue = blockDiag.findEigenvectors(&app->positions, app->topology, 
-                                                  eigVec, sz, numberOfModes, 
-                                                  blockCutoffDistance, eigenValueThresh, 
+    }else{        //coarse diagonalize
+      max_eigenvalue = blockDiag.findEigenvectors(&app->positions, app->topology,
+                                                  eigVec, sz, numberOfModes,
+                                                  blockCutoffDistance, eigenValueThresh,
                                                   blockVectorCols);
       residues_total_eigs = blockDiag.residues_total_eigs;
     }
@@ -240,7 +239,7 @@ void HessianInt::run(int numTimesteps) {
 //Nose mass calculation based on Chris Sweet's Thesis
 Real HessianInt::calcQ() {
     Real Q, sumF;
-    
+
     if(sz > 6){
         sumF = 0;
         for(unsigned int i=6; i< sz;i++){
@@ -274,7 +273,7 @@ void HessianInt::outputDiagHess(int numModes) {
     }else{
       //Output block Hessians
       for(int ii=0;ii<hsn.num_blocks;ii++){
-        int b_max = hsn.blocks_max[ii]*3; 
+        int b_max = hsn.blocks_max[ii]*3;
         int start_r = hsn.blocks[ii].RowStart;
         int start_c = hsn.blocks[ii].ColumnStart;
         for(int jj=0;jj<b_max*b_max;jj++){
@@ -431,21 +430,21 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
   parameters.push_back
     (Parameter("fullDiag",
                Value(fullDiag, ConstraintValueType::NoConstraints()), false,
-               Text("Full diagonalization?")));    
+               Text("Full diagonalization?")));
   parameters.push_back
     (Parameter("eigenValueThresh",
                Value(eigenValueThresh,ConstraintValueType::NotNegative()),5.0,
-               Text("'Inner' eigenvalue inclusion threshold.")));    
+               Text("'Inner' eigenvalue inclusion threshold.")));
   parameters.push_back
     (Parameter("blockVectorCols",
                Value(blockVectorCols,ConstraintValueType::NotNegative()),0,
                Text("Target number of block eigenvector columns.")));
   parameters.push_back
-    (Parameter("residuesPerBlock", 
+    (Parameter("residuesPerBlock",
                Value(residuesPerBlock,ConstraintValueType::NotNegative()),1,
                Text("Residues per block.")));
   parameters.push_back
-    (Parameter("blockCutoffDistance", 
+    (Parameter("blockCutoffDistance",
                Value(blockCutoffDistance,ConstraintValueType::NotNegative()),10,
                Text("Block cutoff distance for electrostatic forces.")));
   parameters.push_back
@@ -465,7 +464,7 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
 STSIntegrator *HessianInt::doMake(const vector<Value> &values,
                                   ForceGroup *fg) const {
   return new HessianInt(values[0], values[1], values[2], values[3], values[4],
-                        values[5], values[6], values[7], values[8], values[9], 
+                        values[5], values[6], values[7], values[8], values[9],
                         values[10], values[11], values[12], values[13], values[14], fg);
 }
 

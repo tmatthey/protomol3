@@ -7,7 +7,7 @@
 #include <protomol/base/Timer.h>
 
 #ifdef BUILD_FOR_FAH
-#include <fah/core/ChecksumDevice.h>
+#include <fah/core/chksum/ChecksumDevice.h>
 
 #else
 #include <fstream>

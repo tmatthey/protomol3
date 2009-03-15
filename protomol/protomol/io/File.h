@@ -6,19 +6,18 @@
 #include <vector>
 
 #ifdef BUILD_FOR_FAH
-#include <fah/core/ChecksumDevice.h>
-
+#include <fah/core/chksum/ChecksumDevice.h>
+#include <fah/Exception.h>
 #else
 #include <fstream>
-#endif
-
 #include <protomol/base/Exception.h>
+#endif
 
 namespace ProtoMol {
   //_________________________________________________________________ File
   /**
-   * Abstract base class for all I/O; readers and writers. The readers and 
-   * writes are intend to act STL alike to stream into or from a supported 
+   * Abstract base class for all I/O; readers and writers. The readers and
+   * writes are intend to act STL alike to stream into or from a supported
    * structure or container.
    *
    * NB:

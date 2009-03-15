@@ -5,6 +5,10 @@
 #include <protomol/io/Reader.h>
 #include <protomol/type/XYZ.h>
 
+#ifdef BUILD_FOR_FAH
+    typedef FAH::Exception Exception;
+#endif
+
 namespace ProtoMol {
   //_________________________________________________________________XYZReader
   /**
