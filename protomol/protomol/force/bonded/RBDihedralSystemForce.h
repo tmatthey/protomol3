@@ -111,7 +111,7 @@ namespace ProtoMol {
 
         for(int i=1; i<6; i++) {
 
-          dpotdphi -= Cn[i] * sinPsi * cosNm1;
+          dpotdphi -= (Real)i * Cn[i] * sinPsi * cosNm1;
 
           cosNm1 *= cosPsi;
 
