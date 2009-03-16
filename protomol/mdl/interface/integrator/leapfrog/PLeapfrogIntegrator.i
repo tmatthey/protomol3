@@ -33,7 +33,9 @@ ProtoMolApp* appInit(GenericTopology* topo,
    app->velocities.vec = velocities.vec;
    app->velocities.c = velocities.c;
    app->energies = energies;
+   cout << "P INIT" << endl;
    self->initialize(app);
+   cout << "DONE P INIT" << endl;
    app->integrator = self;
    app->outputCache.initialize(app);
    return app;

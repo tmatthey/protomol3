@@ -323,7 +323,8 @@ class Propagator:
           for ff in forcefield:
              if (ff.dirty): ff.build()
        else:
-          if (forcefield.dirty): forcefield.build()
+          if (forcefield.dirty): 
+              forcefield.build()
        if (self.io.dirty):
           self.io.build()
        if (propFactory.getType(outerscheme) == "method"):

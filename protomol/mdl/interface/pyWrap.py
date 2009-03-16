@@ -22,6 +22,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
               'force/nonbonded':['SimpleFullForce', 'CutoffForce'],
               'force/system':['PySystemForce'],
               'force':['ForceGroup'],
+              './force/nonbonded':['EwaldForce'],
               './':['ProtoMolApp']
 	     }
 

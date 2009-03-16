@@ -157,7 +157,7 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
         # all new force objects by changing params.
         #FTSM.setConstraint(phi=z[(p+1)%numpoints][0], psi=z[(p+1)%numpoints][1], kappa=kappa, forcefield=ff)
 
-    z = FTSM.reparamTrevor(z)
+    z = FTSM.reparam(z)
 
 
     #if (iter % 10 == 0):

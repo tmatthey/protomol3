@@ -25,7 +25,7 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
                              'cutoff':8.0}
 
 # OUTPUT
-io.plots = {'totalenergy':2}
+#io.plots = {'totalenergy':2}
 io.screen = 1
 
 # EXECUTE

@@ -19,7 +19,7 @@ ff = forces.makeForceField(phys)
 ff.bondedForces("ba")
 
 # OUTPUT
-io.plots = {'totalenergy':2000}
+#io.plots = {'totalenergy':2000}
 io.screen = 4000
 
 # PROPAGATION

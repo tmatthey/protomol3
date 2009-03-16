@@ -21,7 +21,7 @@ ff.params['LennardJonesCoulomb'] = {'algorithm':'Cutoff',
                                     'cutoff':8.0}
 
 # OUTPUT
-io.plots = {'potentialenergy':4}
+#io.plots = {'potentialenergy':4}
 io.screen = 2
 
 # PROPAGATION

@@ -654,7 +654,6 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      print TopologyUtilities.temperature(phys.myTop, phys.velvec)
       self.plotQuantity(step,
                         TopologyUtilities.temperature(phys.myTop, phys.velvec), 'temperature')
 
@@ -845,7 +844,7 @@ class IO:
             elif (output == 'xyztrajvel'):
                self.myOutputs.append(OutputXYZTrajectoryVel.OutputXYZTrajectoryVel(filename, freq))
             elif (output == 'gui'):
-               self.myOutputs.append(OutputFAHGUI.OutputFAHGUI(filename, freq, 52753, 1, 'MDL_3.0'))
+               self.myOutputs.append(OutputFAHGUI.OutputFAHGUI(filename, freq, 52753, 1, 'MDL_3.0', 0.0, 0))
 
       if (self.screen != -1):
          self.myOutputs.append(OutputScreen.OutputScreen(self.screen))
@@ -910,4 +909,3 @@ class IO:
 
        self.runOutput(phys, forces, step, ts, *args)
        self.runPlots(phys, forces, step, ts)
-    

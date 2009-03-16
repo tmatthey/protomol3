@@ -27,7 +27,7 @@ ff.bondedForces("badi")
 ff.nonbondedForces("l")
 
 # PYTHON FORCES
-hd = HDForce(phys, forces, 3.14/2.0, 0, 5.0)
+hd = HDForce(phys, forces, 3.14/2.0, 1, 5.0)
 ff.addPythonForce(hd)
 
 es = ElectrostaticForce(phys, forces)
@@ -35,7 +35,7 @@ ff.addPythonForce(es)
 
 # IO
 io.screen = 1
-io.plots = {'kineticenergy':2}
+#io.plots = {'kineticenergy':2}
 
 # EXECUTE
 prop = Propagator(phys, forces, io)

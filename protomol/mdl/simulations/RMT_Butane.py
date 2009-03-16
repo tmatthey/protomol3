@@ -14,17 +14,21 @@ phys.temperature = 300
 
 # FORCES
 forces = Forces()
+print "FF"
+#ff = forces.makeForceField(phys)
 ff = forces.makeForceField(phys, "charmm")
-
+print "GG"
 
 # OUTPUT
-io.plots = {'kineticenergy':4}
+#io.plots = {'kineticenergy':4}
+print "HH"
 io.screen = 2
 
-
+print "II"
 # PROPAGATION
+print "SS"
 prop = Propagator(phys, forces, io)
-#print "PROPAGATE"
+print "PROPAGATE"
 prop.propagate(scheme="RMT", steps=200, dt=0.5, forcefield=ff)
 
 

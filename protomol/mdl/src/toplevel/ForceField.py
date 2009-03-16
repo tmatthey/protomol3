@@ -210,9 +210,7 @@ class ForceField(ForceGroup):
       forces.forcevec.zero()
       phys.app.energies.clear()
       #phys.posvec.setC(phys.positions)
-      #print "FORCES A: ", forces.force
       self.evaluateSystemForces(phys.app, forces.forcevec)
-      #print "FORCES B: ", forces.force
       #sys.exit(1)
       self.evaluateExtendedForces(phys.app, forces.forcevec)
 
@@ -224,7 +222,6 @@ class ForceField(ForceGroup):
     # 1. Have a build() member of the ForceField class.
     # 2. Make the ForceFactory a singleton.
     # 3. Give the ForceFactory a method which maps force characters to creation functions.  In this way there are multiple mapping levels.
-    print "BUILDING"
  
     self.forceFactory.hd = 0
 
@@ -237,7 +234,6 @@ class ForceField(ForceGroup):
 
     bornflag=-1
     for forcetype in self.forcetypes:
-          print forcetype
           if (forcetype == 'b'):
               self.forcearray.append(self.forceFactory.createBondForce(self.bc))
           elif (forcetype == 'a'):
@@ -250,7 +246,6 @@ class ForceField(ForceGroup):
               self.forcearray.append(self.forceFactory.createLennardJonesForce(self.bc, self.params['LennardJones']))
           elif (forcetype == 'c'):
               if (self.params['Coulomb']['algorithm'] == 'SCPISM'):
-                 print "DOING SCPISM"
                  self.phys.myTop.doSCPISM = 1
                  self.phys.build()
                  #if (not self.params['Coulomb'].has_key('NoBorn')):
@@ -259,8 +254,6 @@ class ForceField(ForceGroup):
                  #   bornflag = len(self.forcearray)-1
                  #else:
                  #    print "NOT CREATING BORN FORCE"
-              else:
-                 print "ALGORITHM IS NOT SCPISM"
               if (not self.params['Coulomb'].has_key('OnlyBorn')):      
                  self.forcearray.append(self.forceFactory.createCoulombForce(self.bc, self.params['Coulomb']))
           elif (forcetype == 'e'):

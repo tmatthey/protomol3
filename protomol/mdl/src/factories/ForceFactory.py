@@ -6,7 +6,7 @@ import HarmDihedralForce
 import ImproperForce
 import SimpleFullForce
 import CutoffForce
-
+import EwaldForce
     
 class ForceFactory:
   def __init__(self):
@@ -79,14 +79,18 @@ class ForceFactory:
                                               'C2':CutoffForce.NCSF_CCM_OAPVBC_C2SF_CSCPF,
                                               'Cn':CutoffForce.NCSF_CCM_OAPVBC_CNSF_CSCPF,
                                               'CmpCnCn':CutoffForce.NCSF_CCM_OAPVBC_CCNSF_CSCPF,
-                                              'Cutoff':CutoffForce.NCSF_CCM_OAPVBC_CSF_CSCPF}},
+                                              'Cutoff':CutoffForce.NCSF_CCM_OAPVBC_CSF_CSCPF},
+                                    'Ewald':{'Cutoff':EwaldForce.EWALD_V_TTT_CUTOFF,
+                                             'C1':EwaldForce.EWALD_V_TTT_C1}},
                           
                           'Periodic':{'SimpleFull':{'Universal':SimpleFullForce.NSFSF_P_U_C},
                                       'Cutoff':{'C1':CutoffForce.NCSF_CCM_OAPPBC_C1SF_CF,
                                                 'C2':CutoffForce.NCSF_CCM_OAPPBC_C2SF_CF,
                                                 'Cutoff':CutoffForce.NCSF_CCM_OAPPBC_CSF_CF,
                                                 'Cn':CutoffForce.NCSF_CCM_OAPPBC_CNSF_CF,
-                                                'ComplementCn':CutoffForce.NCSF_CCM_OAPPBC_CCNCNSF_CF}}
+                                                'ComplementCn':CutoffForce.NCSF_CCM_OAPPBC_CCNCNSF_CF},
+                                      'Ewald':{'Cutoff':EwaldForce.EWALD_P_TTT_CUTOFF,
+                                               'C1':EwaldForce.EWALD_P_TTT_C1}}
                                       
 
                           } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  
@@ -437,6 +441,14 @@ class ForceFactory:
                                               self.getParameter(params, 'switchon'),
                                               self.getParameter(params, 'switchoff'),
                                               self.getParameter(params, 'order', 2))      
+      elif (alg == "Ewald"):
+         alpha = self.getParameter(params, 'alpha', -1)
+         accuracy = self.getParameter(params, 'accuracy', 0)
+         expansionfactor = self.getParameter(params, 'expansionFactor', 0)
+         if (bc == "Periodic"):
+            newforce = newforce.makeNew(alpha, accuracy)
+         else:
+            newforce = newforce.makeNew(alpha, accuracy, expansionfactor)
       else:
         if (alg == "SimpleFull"):
           newforce = newforce.makeNew(self.getParameter(params, 'blocksize', 32))

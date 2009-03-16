@@ -108,14 +108,10 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
         # FROM TARGETS
         zp0 = z[p][0]
         z[p][0] -= (kappa/gamma)*dt*(FTSM.M(x[p], PHI, PHI)*(z[p][0]-y[p].angle(PHI)) + FTSM.M(x[p], PHI, PSI)*(z[p][1] - y[p].angle(PSI)))
-        z[p][1] -= (kappa/gamma)*dt*(FTSM.M(x[p], PSI, PHI)*(z[p][0]-y[p].angle(PHI)) + FTSM.M(x[p], PSI, PSI)*(z[p][1] - y[p].angle(PSI)))
+        z[p][1] -= (kappa/gamma)*dt*(FTSM.M(x[p], PSI, PHI)*(zp0-y[p].angle(PHI)) + FTSM.M(x[p], PSI, PSI)*(z[p][1] - y[p].angle(PSI)))
         
         
         # UPDATE CARTESIAN
-        # Dr. Izaguirre: I have checked and this constraint
-        # is correct.  The energy is harmonic, but the force (the gradient)
-        # is not harmonic.  In fact it is exactly what is in the paper.
-        
         prop[p][0].propagate(scheme="velocityscale", steps=1, dt=dt, forcefield=ff, params={'T0':300})
 
         prop[p][1].propagate(scheme="velocityscale", steps=1, dt=dt, forcefield=ff, params={'T0':300})
@@ -126,7 +122,7 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
         # all new force objects by changing params.
         #FTSM.setConstraint(phi=z[(p+1)%numpoints][0], psi=z[(p+1)%numpoints][1], kappa=kappa, forcefield=ff)
 
-    z = FTSM.reparamTrevor(z)
+    z = FTSM.reparam(z)
 
     print "\nI"+str(iter+1)+": ",z
     #io.plotVector(prop[0][0],stringgraph,z, rangex=[-numpy.pi, numpy.pi], rangey=[-numpy.pi, numpy.pi])

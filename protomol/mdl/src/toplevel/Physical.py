@@ -132,7 +132,6 @@ class Physical:
       # THESE ARE NUMPY ARRAY WRAPPERS
       # USER SHOULD ACCESS THROUGH
       # self.positions and self.velocities
-      print "INITIALIZING TOPOLOGY" 
       self.__dict__['myTop'] = GenericTopology.T_Periodic()
       self.__dict__['posvec'] = Vector3DBlock.Vector3DBlock()
       self.__dict__['velvec'] = Vector3DBlock.Vector3DBlock()
@@ -147,7 +146,6 @@ class Physical:
       #self.velocities = numpy.ndarray(0)  #: Atomic velocity vector
 
       self.dirty = 1   #: Dirty bit
-
    
    # Copy which avoids object assignment
    def copy(self):

@@ -52,13 +52,11 @@ io.files = {'gui':('MDL', 1)}
 prop = Propagator(phys, forces, io)
 
 prop.propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalModeMinimizer'],
-                       steps=2000,
+                       steps=2,
                        cyclelength=[1,1],
                        dt=4.0,
                        forcefield=[ff, ff2, ff3],
                        params={'NormalModeDiagonalize':{'reDiagFrequency':100,
-                                                        'minSteps':20,
-                                                        'minLim':0.1,
                                                         'removeRand':1},
                                'NormalModeLangevin':{'firstmode':1,
                                                      'numbermodes':22,
