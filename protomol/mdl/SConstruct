@@ -89,10 +89,10 @@ if (os.environ.has_key('PROTOMOL_HOME')):
    pmhome=os.getenv('PROTOMOL_HOME')
 else:
    pmhome=pwd+'/../'
-execfile(pmhome+'/compiler.py')
+execfile(pmhome+os.sep+'compiler.py')
 
 # Command Line Options
-opts = Options(pmhome+'/options.py')
+opts = Options(pmhome+os.sep+'options.py')
 Export('opts')
 
 opts.AddOptions(
@@ -117,7 +117,7 @@ Export('conf')
 
 
 # Import subdir build files
-subsrc = SConscript(pmhome+'/protomol/SConscript')
+subsrc = SConscript(pmhome+os.sep+'protomol'+os.sep+'SConscript')
 
 # Get options
 fah = int(env.get('fah', 0))
@@ -148,18 +148,16 @@ libs.append(libname)
 
 if not env.GetOption('clean'):
     os.chdir(pmhome)
-    execfile(pmhome+'/package_h.py')
-    execfile(pmhome+'/config.py')
-    execfile(pmhome+'/configfah.py')
-
-    if (have_bzip2 and have_boost_iostreams and have_libfah):
-      env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
-      have_libfah=1
-
+    execfile(pmhome+os.sep+'package_h.py')
+    execfile(pmhome+os.sep+'config.py')
 
     # Folding@Home library version
     if fah:
-      if not (have_libfah and have_bzip2 and have_boost_iostreams):
+      execfile(pmhome+os.sep+'configfah.py')
+
+      if (have_libfah and have_bzip2 and have_boost_iostreams):
+	env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+      else:
         print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
         Exit(1)
 
@@ -170,20 +168,17 @@ if not env.GetOption('clean'):
 
 
 if fah:
-    libsrc.append(pmhome+'/protomol/modules.cpp')
+    libsrc.append(pmhome+os.sep+'protomol'+os.sep+'modules.cpp')
 
 
 # Get source
 for s in subsrc:
-    libsrc.append('#/protomol/' + s)
+    libsrc.append('#/protomol' + os.sep+ s)
 
-src = [pmhome+'protomol/main.cpp', pmhome+'protomol/modules.cpp']
-
-
+src = [pmhome+'protomol'+os.sep+'main.cpp', pmhome+os.sep+'protomol'+os.sep+'modules.cpp']
 
 # Build Protomol
 env.Append(LIBPATH = ['.'])
-
 
 libsrc2 = []
 for s in subsrc:
@@ -191,7 +186,7 @@ for s in subsrc:
      # compilation - it's only used if HAVE_MPI is true, which
      # will never be true for MDL.
      if (s != 'parallel/FFTComplex.cpp'):
-        libsrc2.append(pmhome+'/protomol/'+s)
+        libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
    env.Prepend(LIBS = [libname2])
@@ -201,32 +196,6 @@ else:
 os.chdir(pwd)
 pyWrap(env, pmhome)
 Default('.')
-
-#if env['PLATFORM'] == 'win32':
-#  if debug: variant = 'Debug'
-#  else: variant = 'Release'
-
-#  src = []
-#  def add_hdrs(arg, dir, files):
-#    global src
-#    for file in files:
-#      if file.endswith(arg):
-#        src += [dir + os.sep + file]
-
-#  os.path.walk('protomol', add_hdrs, '.h')
-#  inc = src
-#  src = []
-#  os.path.walk('protomol', add_hdrs, '.cpp')
-   
-
-
-  #print sl
-  #env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
-  #                srcs = [], incs = libsrc2,
-  #                auto_build_solution = 0,
-  #                buildtarget = sl,
-  #                variant = 'Release')
-
 
 # Tidy
 #env.Command('tidy', '', 'rm -f config.log $$(find . -name \*~ -o -name \#*)')
