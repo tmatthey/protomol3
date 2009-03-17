@@ -599,7 +599,10 @@ protomol/mdl/interface/force/nonbonded/FullForce.i -text
 protomol/mdl/interface/force/nonbonded/Grid.h -text
 protomol/mdl/interface/force/nonbonded/Hermite.cpp -text
 protomol/mdl/interface/force/nonbonded/Hermite.h -text
+protomol/mdl/interface/force/nonbonded/MultiGrid.h -text
+protomol/mdl/interface/force/nonbonded/MultiGridForce.i -text
 protomol/mdl/interface/force/nonbonded/NonbondedFullEwaldSystemForce.h -text
+protomol/mdl/interface/force/nonbonded/NonbondedMultiGridSystemForce.h -text
 protomol/mdl/interface/force/nonbonded/NonbondedPMEwaldSystemForce.h -text
 protomol/mdl/interface/force/nonbonded/PMEForce.i -text
 protomol/mdl/interface/force/nonbonded/SimpleFullForce.i -text
