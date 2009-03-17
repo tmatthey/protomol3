@@ -18,6 +18,7 @@ if (sys.platform == 'win32'):
  sys.path.append(pwd+'/interface/integrator/base')
  sys.path.append(pwd+'/interface/integrator/hessian')
  sys.path.append(pwd+'/interface/integrator/normal')
+ sys.path.append(pwd+'/interface/integrator/openMM')
  sys.path.append(pwd+'/interface/integrator/leapfrog')
  sys.path.append(pwd+'/interface/topology')
  sys.path.append(pwd+'/interface/io')
@@ -44,6 +45,7 @@ else:
  sys.path.append(pwd+'/interface/integrator/base/')
  sys.path.append(pwd+'/interface/integrator/hessian/')
  sys.path.append(pwd+'/interface/integrator/normal/')
+ sys.path.append(pwd+'/interface/integrator/openMM/')
  sys.path.append(pwd+'/interface/integrator/leapfrog/')
  sys.path.append(pwd+'/interface/topology/')
  sys.path.append(pwd+'/interface/io/')
@@ -66,7 +68,10 @@ else:
 
 
 os.environ['MDLROOT'] = pwd
-os.system('export LD_LIBRARY_PATH='+pythondir+'/lib/'+pyversion+':$LD_LIBRARY_PATH')
+if (sys.platform == "win32"):
+   os.system('set LD_LIBRARY_PATH='+pythondir+'/lib/'+pyversion+';%LD_LIBRARY_PATH%')
+else:
+   os.system('export LD_LIBRARY_PATH='+pythondir+'/lib/'+pyversion+':$LD_LIBRARY_PATH')
 
 if (not os.environ.has_key('PROTOMOL_HOME')):
     os.environ['PROTOMOL_HOME'] = pwd+'/../'
@@ -79,7 +84,7 @@ class Prompt:
   def __str__(self):
     return self.str
     
-sys.ps1 = Prompt("\033[1;31m[MDL] \033[0m")
+sys.ps1 = Prompt("[MDL] ")
 
 
 from Physical import *
