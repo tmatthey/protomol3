@@ -598,6 +598,8 @@ protomol/mdl/interface/force/nonbonded/EwaldForce.i -text
 protomol/mdl/interface/force/nonbonded/FullForce.i -text
 protomol/mdl/interface/force/nonbonded/Hermite.cpp -text
 protomol/mdl/interface/force/nonbonded/Hermite.h -text
+protomol/mdl/interface/force/nonbonded/NonbondedFullEwaldSystemForce.h -text
+protomol/mdl/interface/force/nonbonded/NonbondedPMEwaldSystemForce.h -text
 protomol/mdl/interface/force/nonbonded/PMEForce.i -text
 protomol/mdl/interface/force/nonbonded/SimpleFullForce.i -text
 protomol/mdl/interface/force/nonbonded/fft.c -text
