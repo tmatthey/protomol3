@@ -596,6 +596,7 @@ protomol/mdl/interface/force/nonbonded/BSpline.h -text
 protomol/mdl/interface/force/nonbonded/CutoffForce.i -text
 protomol/mdl/interface/force/nonbonded/EwaldForce.i -text
 protomol/mdl/interface/force/nonbonded/FullForce.i -text
+protomol/mdl/interface/force/nonbonded/Grid.h -text
 protomol/mdl/interface/force/nonbonded/Hermite.cpp -text
 protomol/mdl/interface/force/nonbonded/Hermite.h -text
 protomol/mdl/interface/force/nonbonded/NonbondedFullEwaldSystemForce.h -text
