@@ -591,9 +591,16 @@ protomol/mdl/interface/force/bonded/BondForce.i -text
 protomol/mdl/interface/force/bonded/DihedralForce.i -text
 protomol/mdl/interface/force/bonded/HarmDihedralForce.i -text
 protomol/mdl/interface/force/bonded/ImproperForce.i -text
+protomol/mdl/interface/force/nonbonded/BSpline.cpp -text
+protomol/mdl/interface/force/nonbonded/BSpline.h -text
 protomol/mdl/interface/force/nonbonded/CutoffForce.i -text
+protomol/mdl/interface/force/nonbonded/EwaldForce.i -text
 protomol/mdl/interface/force/nonbonded/FullForce.i -text
+protomol/mdl/interface/force/nonbonded/Hermite.cpp -text
+protomol/mdl/interface/force/nonbonded/Hermite.h -text
+protomol/mdl/interface/force/nonbonded/PMEForce.i -text
 protomol/mdl/interface/force/nonbonded/SimpleFullForce.i -text
+protomol/mdl/interface/force/nonbonded/fft.c -text
 protomol/mdl/interface/force/system/PySystemForce.h -text
 protomol/mdl/interface/force/system/PySystemForce.i -text
 protomol/mdl/interface/integrator/MTSIntegrator.i -text
