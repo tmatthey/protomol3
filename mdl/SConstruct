@@ -1,0 +1,207 @@
+import os
+import sys
+
+
+mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator'],
+              'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
+	      'integrator/base':['LangevinImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
+              'type':['Vector3DBlock', 'ScalarStructure'],
+	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax'],
+              'integrator/hessian':['HessianInt'],
+              'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
+              'output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
+              'base':['MathUtilities'],
+	      'topology':['TopologyUtilities', 'GenericTopology'],
+	      'force/bonded':['BondForce','AngleForce','DihedralForce','HarmDihedralForce','ImproperForce'],
+              'force/nonbonded':['SimpleFullForce', 'CutoffForce'],
+              'force/system':['PySystemForce'],
+              'force':['ForceGroup'],
+              './force/nonbonded':['EwaldForce'],
+              './':['ProtoMolApp']
+	     }
+
+
+def pyWrap(env, pmhome):
+  import distutils.sysconfig
+  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509', '-I'+pmhome],
+                     CPPPATH=[distutils.sysconfig.get_python_inc()],
+                     SHLIBPREFIX=""#,
+                     #ENV={'PATH':os.environ['PATH']})
+                     )
+
+  pyvers = "python%d.%d" % sys.version_info[:2]
+  if (env['PLATFORM'] == 'win32'):
+     numpypath = sys.exec_prefix+"/Lib/site-packages/numpy/core/include/numpy/"
+  else:
+     numpypath = sys.exec_prefix+"/lib/"+pyvers+"/site-packages/numpy/core/include/numpy/"
+
+  #env['ARFLAGS'] = "rcS"
+  env.Append(CPPPATH = '#')
+  if (env['PLATFORM'] != 'darwin'):
+     env.Append(LINKFLAGS=' -Wl,-E')
+  if (env['PLATFORM'] == 'win32'):
+     env['LIBS'] = ''
+     env.Append(CXXFLAGS='-I\"'+pmhome+'\"')
+     env.Append(SHCXXFLAGS=' -I\"'+numpypath+'\"')
+     env.Append(SHCXXFLAGS='-I\"'+pmhome+'\"')
+     env.Append(LIBPATH='C:\Python25\libs')
+     env.Append(CPPPATH='C:\Python25\include')
+     #env.Append(SHCXXFLAGS='mdl.dll')
+     #env['LIBSUFFIX'] = '.dll'
+     env.Prepend(LIBS = [libname2])
+  elif (env['PLATFORM'] == 'darwin'):
+     env['LIBS'] = ''
+     env.Append(CXXFLAGS='-I'+pmhome)
+     env.Append(SHCXXFLAGS=' -I'+numpypath)
+     env.Append(SHCXXFLAGS='-I'+pmhome)
+     env.Append(LIBPATH=sys.exec_prefix+'/lib/python'+sys.version[0:3]+'/config/')
+     env.Append(CPPPATH=sys.exec_prefix+'/include')
+     env.Prepend(LIBS = ['blas', 'lapack', 'python2.5', libname2])
+  else:
+     env.Append(CXXFLAGS=' -fPIC')
+     env.Append(CXXFLAGS='-I'+pmhome)
+     env.Append(SHCXXFLAGS=' -I'+numpypath)
+     env.Append(SHCXXFLAGS='-I'+pmhome)
+  if (env['PLATFORM'] != 'darwin'):
+     env.Append(SHLINKFLAGS=' -Wl,-E')
+  env.Append(_LIBDIRFLAGS="-L.")
+
+  if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
+    env.Append(SWIGFLAGS='-DHAVE_GUI')
+  for dir in mdlmodules.iterkeys():
+    modulelist = mdlmodules[dir]
+    for i in range(0, len(modulelist)):
+       module = modulelist[i]
+       if (env['PLATFORM'] == 'win32'):  
+          env['SWIG'] = r'C:\Swig\swigwin-1.3.33\swig.exe'
+          swigObject = env.SharedObject([os.getcwd()+'/interface/'+dir+'/'+module+'.i'])
+          newlib = env.SharedLibrary(os.getcwd()+'/interface/'+dir+'/_'+module+'.dll', [os.getcwd()+'/interface/'+dir+'/'+module+'_wrap.cc', swigObject])
+          copyToPYD = Copy(os.getcwd()+'/interface/'+dir+'/_'+module+'.pyd', os.getcwd()+'/interface/'+dir+'/_'+module+'.dll')
+          env.AddPostAction(os.getcwd()+'/interface/'+dir+'/_'+module+'.dll', copyToPYD)
+       else:
+          env.SharedLibrary(target='interface/'+dir+'/_'+module+'.so', source=['interface/'+dir+'/'+module+'.i'], SHLIBPREFIX="")
+
+
+
+
+pwd = os.getcwd()
+if (os.environ.has_key('PROTOMOL_HOME')):
+   pmhome=os.getenv('PROTOMOL_HOME')
+else:
+   pmhome=pwd+'/../protomol/'
+execfile(pmhome+os.sep+'compiler.py')
+
+# Command Line Options
+opts = Options(pmhome+os.sep+'options.py')
+Export('opts')
+
+opts.AddOptions(
+    BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
+    BoolOption('lapack', 'Use LAPACK', 1),
+    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
+    )
+
+
+
+compiler_add_opts()
+
+# Create environment and import external PATH
+env = Environment(options = opts, ENV = os.environ)
+
+Export('env')
+
+ 
+# Configure
+conf = Configure(env)
+Export('conf')
+
+
+# Import subdir build files
+subsrc = SConscript(pmhome+os.sep+'protomol'+os.sep+'SConscript')
+
+# Get options
+fah = int(env.get('fah', 0))
+
+use_lapack = int(env.get('lapack', 0))
+use_simtk_lapack = int(env.get('simtk_lapack', 0))
+
+
+# Configure compiler
+compiler_configure()
+
+
+# Include protomol
+env.Append(CPPPATH = '#')
+
+
+# Generate Help
+Help(opts.GenerateHelpText(env))
+
+
+# libprotomol
+libname = 'protomol'
+if fah: libname = libname + '-fah'
+libsrc = []
+libs = []
+libs.append(libname)
+
+
+if not env.GetOption('clean'):
+    os.chdir(pmhome)
+    execfile(pmhome+os.sep+'package_h.py')
+    execfile(pmhome+os.sep+'config.py')
+
+    # Folding@Home library version
+    if fah:
+      execfile(pmhome+os.sep+'configfah.py')
+
+      if (have_libfah and have_bzip2 and have_boost_iostreams):
+	env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+      else:
+        print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
+        Exit(1)
+
+      env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
+
+
+    env = conf.Finish()
+
+
+if fah:
+    libsrc.append(pmhome+os.sep+'protomol'+os.sep+'modules.cpp')
+
+
+# Get source
+for s in subsrc:
+    libsrc.append('#/protomol' + os.sep+ s)
+
+src = [pmhome+'protomol'+os.sep+'main.cpp', pmhome+os.sep+'protomol'+os.sep+'modules.cpp']
+
+# Build Protomol
+env.Append(LIBPATH = ['.'])
+
+libsrc2 = []
+for s in subsrc:
+     # I am removing this file from the shared object
+     # compilation - it's only used if HAVE_MPI is true, which
+     # will never be true for MDL.
+     if (s != 'parallel/FFTComplex.cpp'):
+        libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
+libname2 = 'mdl'
+if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
+   env.Prepend(LIBS = [libname2])
+   sl = env.SharedLibrary(libname2, libsrc2)
+else:
+   sl = env.StaticLibrary(libname2, libsrc2, LIBSUFFIX=env['LIBSUFFIX'], LIBS=env['LIBS'])
+os.chdir(pwd)
+pyWrap(env, pmhome)
+Default('.')
+
+# Tidy
+#env.Command('tidy', '', 'rm -f config.log $$(find . -name \*~ -o -name \#*)')
+
+
+
+
+
+
