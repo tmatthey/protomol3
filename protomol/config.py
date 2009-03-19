@@ -9,26 +9,31 @@ if env['CC'] == 'gcc':
     else:
         env.Append(LIBPATH = ['/usr/lib/atlas'])
 
-if globals().has_key('use_openmm') and use_openmm:
+if use_openmm:
     if os.environ.has_key('OPENMM_HOME') == False:
         print 'OPENMM_HOME is not set'
     else:
-        openmm_home = os.environ['OPENMM_HOME']
-
-        env.Append(CPPPATH = [openmm_home + '/include'])
-        env.Append(LIBPATH = [openmm_home + '/lib/'   ])
-
         have_openmm = 0
 
-        if globals().has_key('use_openmm_reference') and use_openmm_reference:
+        openmm_home = os.environ['OPENMM_HOME']
+        env.Append(CPPPATH = [openmm_home + os.sep +'include'])
+        env.Append(LIBPATH = [openmm_home + os.sep + 'lib'   ])
+
+        if use_openmm_reference or use_openmm_cuda:
             if conf.CheckLib('OpenMM_d'):
                 env.Append(CPPDEFINES = ['HAVE_OPENMM'])
                 have_openmm = 1
 
-        if globals().has_key('use_openmm_cuda') and use_openmm_cuda:
-            if conf.CheckLib('OpenMMCuda_d'):
-                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
-                have_openmm = 1
+        if use_openmm_cuda:
+            if os.environ.has_key('CUDA_HOME') == False:
+                print 'CUDA_HOME is not set'
+            else:
+                openmm_home = os.environ['CUDA_HOME']
+                env.Append(LIBPATH = [openmm_home + os.sep + 'lib'])
+            
+                if conf.CheckLib('cudart') and conf.CheckLib('OpenMMCuda_d'):
+                    env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+                    have_openmm = 1
 
 # LAPACK
 if globals().has_key('use_lapack') and use_lapack:

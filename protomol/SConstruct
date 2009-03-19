@@ -43,6 +43,7 @@ else:
     if ( openmm_type == 'reference' ):
         use_openmm_reference = 1
     elif ( openmm_type == 'cuda' ):
+        use_openmm_reference = 0
         use_openmm_cuda = 1
 
 # Configure compiler
