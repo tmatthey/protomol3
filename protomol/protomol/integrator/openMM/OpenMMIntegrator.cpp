@@ -495,7 +495,6 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   //print platform
   report << plain << "OpenMM platform is: '" << context->getPlatform().getName() << "'." << endr;
 
-  mFile.close();
 #else
 
   //print platform
