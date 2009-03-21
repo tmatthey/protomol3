@@ -838,7 +838,14 @@ public class MainFrame extends javax.swing.JFrame {
             if(!notWindows) autoConfStr = mainFolder + "\\auto.conf";
             else autoConfStr = mainFolder + "/auto.conf";
             //load old conf if available
-            loadConf( true );
+            if(!loadConf( true )){
+                pos[1] = vel[1] = par[1] = psf[1] = top[1] = "";
+                jTextField2.setText("");
+                jTextField3.setText("");
+                jTextField4.setText("");
+                jTextField5.setText("");
+                jTextField11.setText("");
+            }
         }else{
             if(result != JFileChooser.CANCEL_OPTION)
                 JOptionPane.showMessageDialog(this, "Error selecting folder.");
@@ -1105,7 +1112,7 @@ private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
                 (!jCheckBox12.isSelected() && (par[1].length() == 0 || psf[1].length() == 0)) ||
                 (jCheckBox12.isSelected() && top[1].length() == 0)
                     ){
-            JOptionPane.showMessageDialog(this, "Require position, PAR and PSF files!");
+            JOptionPane.showMessageDialog(this, "Require position and PAR/PSF or TOP files!");
             return false;
         }
 
@@ -1164,8 +1171,12 @@ private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
             //Forces
             if(jCheckBox1.isSelected()) bufferedWriter.write("    force Bond\n");
             if(jCheckBox2.isSelected()) bufferedWriter.write("    force Angle\n");
-            if(jCheckBox3.isSelected()) bufferedWriter.write("    force Dihedral\n");
-            if(jCheckBox8.isSelected()) bufferedWriter.write("    force Improper\n");
+            if(jCheckBox3.isSelected()){
+                if(jCheckBox12.isSelected()) bufferedWriter.write("    force RBDihedral\n");
+                else bufferedWriter.write("    force Dihedral\n");
+            }
+            if(jCheckBox8.isSelected() && !jCheckBox12.isSelected())
+                bufferedWriter.write("    force Improper\n");
             //if(jCheckBox4.isSelected()) bufferedWriter.write("    force LennardJones\n      -algorithm NonbondedSimpleFull\n");
             if(jCheckBox4.isSelected()) bufferedWriter.write("    force LennardJones\n"+LJSwitch);
             if(jCheckBox5.isSelected()) bufferedWriter.write("    force Coulomb\n"+CoulombSwitch);
