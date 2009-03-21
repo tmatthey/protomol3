@@ -51,7 +51,6 @@ GUI/JProtomol/src/JProtomol/nonBondedSwitches.form -text
 GUI/JProtomol/src/JProtomol/nonBondedSwitches.java -text
 GUI/JProtomol/src/Thumbs.db -text
 GUI/JProtomol/src/icon.gif -text
-GUI/build.xml -text
 GUI/manifest.mf -text
 applications/dcd-reader/SConstruct -text
 applications/dcd-reader/dcd-reader.cpp -text
