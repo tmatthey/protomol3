@@ -53,11 +53,6 @@ GUI/JProtomol/src/Thumbs.db -text
 GUI/JProtomol/src/icon.gif -text
 GUI/build.xml -text
 GUI/manifest.mf -text
-GUI/nbproject/build-impl.xml -text
-GUI/nbproject/genfiles.properties -text
-GUI/nbproject/private/private.properties -text
-GUI/nbproject/project.properties -text
-GUI/nbproject/project.xml -text
 GUI/src/icon.gif -text
 GUI/src/jpmolconfig/JPmolConfig.java -text
 GUI/src/jpmolconfig/RestrictedFilter.java -text
