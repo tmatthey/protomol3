@@ -53,13 +53,6 @@ GUI/JProtomol/src/Thumbs.db -text
 GUI/JProtomol/src/icon.gif -text
 GUI/build.xml -text
 GUI/manifest.mf -text
-GUI/src/icon.gif -text
-GUI/src/jpmolconfig/JPmolConfig.java -text
-GUI/src/jpmolconfig/RestrictedFilter.java -text
-GUI/src/jpmolconfig/configJPanel.form -text
-GUI/src/jpmolconfig/configJPanel.java -text
-GUI/src/jpmolconfig/nonBondedSwitches.form -text
-GUI/src/jpmolconfig/nonBondedSwitches.java -text
 applications/dcd-reader/SConstruct -text
 applications/dcd-reader/dcd-reader.cpp -text
 applications/dcd-reader/modules.cpp -text
