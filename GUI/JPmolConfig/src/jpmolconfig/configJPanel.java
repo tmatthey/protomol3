@@ -659,8 +659,12 @@ private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
 // TODO add your handling code here:
-        createConf();
-        loadConf( false );  //print to box
+        String [] tmp = new String[3];
+        tmp = findFiles("Save configuration file");
+        if(!tmp[1].equals("")){
+            createConf(tmp[2]);
+            loadConf( false );  //print to box
+        }
 }//GEN-LAST:event_jButton7ActionPerformed
 
 private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
@@ -821,8 +825,8 @@ private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         final JFileChooser chooser = new JFileChooser(mainFolder);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-        //Windows crazy paths dont work!
-        if(!notWindows) {
+        //Windows crazy paths dont work! All for now
+        if(true) { //!notWindows) {
             chooser.setAcceptAllFileFilterUsed(false);  
             chooser.setFileFilter(new RestrictedFilter());  
             final File defaultFolder = chooser.getCurrentDirectory();  
@@ -847,6 +851,8 @@ private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             //if( (chooser.getCurrentDirectory()+"").equals(mainFolder)){
             fileData[1] = chooser.getName(posFile);
             fileData[2] =  chooser.getSelectedFile().getAbsolutePath();
+            System.out.println( fileData[2] );
+
         }else{
             if(result != JFileChooser.CANCEL_OPTION)
                 JOptionPane.showMessageDialog(this, "Selection Error!");
@@ -856,7 +862,7 @@ private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     }
 
 
-    public boolean createConf() {
+    public boolean createConf(String fname) {
 
         if(pos[1].length() == 0 || 
                 (!jCheckBox12.isSelected() && (par[1].length() == 0 || psf[1].length() == 0)) ||
@@ -866,8 +872,11 @@ private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             return false;
         }
 
+        //default to auto.conf
+        if(fname.equals("")) fname = autoConfStr;
+        
         try{
-            FileWriter fileWriter = new FileWriter(autoConfStr,false);//"auto.conf",false); //(mainFolder + "\\auto.conf"false for not append
+            FileWriter fileWriter = new FileWriter(fname,false);//"auto.conf",false); //(mainFolder + "\\auto.conf"false for not append
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             //header

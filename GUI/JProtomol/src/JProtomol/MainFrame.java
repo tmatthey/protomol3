@@ -217,7 +217,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if(configJPanel1.createConf()){
+        if(configJPanel1.createConf("")){
             jButton1.setEnabled(false);
             jButton13.setEnabled(true);
             pmolCanRun=true;
