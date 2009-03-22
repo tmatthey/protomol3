@@ -64,6 +64,7 @@ public class configJPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
@@ -520,14 +521,18 @@ public class configJPanel extends javax.swing.JPanel {
 
         jPanel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        buttonGroup1.add(jRadioButton1);
         jRadioButton1.setSelected(true);
         jRadioButton1.setText("Langevin thermostat (NVT ensemble)");
 
+        buttonGroup1.add(jRadioButton2);
         jRadioButton2.setText("Verlet/Leapfrog (NVE ensemble)");
 
+        buttonGroup1.add(jRadioButton3);
         jRadioButton3.setText("Normal Mode Langevin (NVT ensemble)");
         jRadioButton3.setEnabled(false);
 
+        buttonGroup1.add(jRadioButton4);
         jRadioButton4.setText("Recursive Multiple Thermostats (NVT  ensemble)");
 
         jTextField10.setText("0.3");
@@ -1050,6 +1055,7 @@ private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
