@@ -9,7 +9,7 @@ if env['CC'] == 'gcc':
     else:
         env.Append(LIBPATH = ['/usr/lib/atlas'])
 
-if use_openmm:
+if globals().has_key('use_openmm') and use_openmm:
     if os.environ.has_key('OPENMM_HOME') == False:
         print 'OPENMM_HOME is not set'
     else:
@@ -19,12 +19,12 @@ if use_openmm:
         env.Append(CPPPATH = [openmm_home + os.sep +'include'])
         env.Append(LIBPATH = [openmm_home + os.sep + 'lib'   ])
 
-        if use_openmm_reference or use_openmm_cuda:
+        if (globals().has_key('use_openmm_reference') and use_openmm_reference) or (globals().has_key('use_openmm_cuda') and use_openmm_cuda):
             if conf.CheckLib('OpenMM_d'):
                 env.Append(CPPDEFINES = ['HAVE_OPENMM'])
                 have_openmm = 1
 
-        if use_openmm_cuda:
+        if globals().has_key('use_openmm_cuda') and use_openmm_cuda:
             if os.environ.has_key('CUDA_HOME') == False:
                 print 'CUDA_HOME is not set'
             else:

@@ -33,8 +33,7 @@ if not env.GetOption('clean'):
     print 'Need Blas';
     Exit(1)
   if not conf.CheckLib('g2c'):
-    print 'Need G2C';
-    Exit(1)
+    print 'Need G1C';
     
   use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
