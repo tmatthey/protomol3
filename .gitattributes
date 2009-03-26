@@ -613,11 +613,8 @@ protomol-test/MDLTests/data/EnergiesTest.return.expect -text
 protomol-test/MDLTests/data/EnergiesTest.stderr.expect -text
 protomol-test/MDLTests/data/EnergiesTest.stdout.expect -text
 protomol-test/MDLTests/data/HessianIntTest.py -text
-protomol-test/MDLTests/data/HessianIntTest.return -text
 protomol-test/MDLTests/data/HessianIntTest.return.expect -text
-protomol-test/MDLTests/data/HessianIntTest.stderr -text
 protomol-test/MDLTests/data/HessianIntTest.stderr.expect -text
-protomol-test/MDLTests/data/HessianIntTest.stdout -text
 protomol-test/MDLTests/data/HessianIntTest.stdout.expect -text
 protomol-test/MDLTests/data/HessianIntTest.xyz.orig -text
 protomol-test/MDLTests/data/ImproperForceTest.py -text
