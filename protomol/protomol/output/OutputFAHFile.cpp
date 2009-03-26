@@ -23,7 +23,7 @@ void OutputFAHFile::doRun(int step) {
 
   if (is_open()) {
     string str;
-    str = String(app->positions.size()) + '\t' + "Alanine" + "\n";
+    str = String(app->positions.size()) + '\t' + "ProtoMol" + "\n";
     file.write(str.c_str(), str.length());
 
     for (unsigned int i = 0; i < app->positions.size(); i++) {
@@ -60,7 +60,7 @@ void OutputFAHFile::getParameters(vector<Parameter> &parameter) const {
 }
 
 bool OutputFAHFile::adjustWithDefaultParameters(vector<Value> &values,
-                                               const Configuration *config)
+                                                const Configuration *config)
 const {
   if (!checkParameterTypes(values)) return false;
 

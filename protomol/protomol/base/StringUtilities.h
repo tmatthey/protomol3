@@ -176,16 +176,4 @@ namespace ProtoMol {
   }
 }
 
-#define THROWS(msgs) {                          \
-    std::ostringstream errMsg;                  \
-    errMsg << msgs;                             \
-    THROW(errMsg.str());                        \
-  }
-
-#define THROWSC(msgs, cause) {                  \
-    std::ostringstream errMsg;                  \
-    errMsg << msgs;                             \
-    THROWC(errMsg.str(), cause);                \
-  }
-
 #endif

@@ -3,6 +3,7 @@
 #define OUTPUTFILE_H
 
 #include <protomol/output/Output.h>
+#include <protomol/base/Exception.h>
 #include <protomol/base/StringUtilities.h>
 #include <protomol/base/Timer.h>
 

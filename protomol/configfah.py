@@ -2,14 +2,16 @@
 if os.environ.has_key('BOOST_HOME'):
     env.Append(CPPPATH = [os.environ['BOOST_HOME']])
 
-boost_configure(conf, ['version', 'iostreams/stream'], ['iostreams'])
+boost_configure(conf, ['version', 'iostreams/stream'],
+                ['iostreams', 'system', 'filesystem'])
 
 have_libfah=0
 if os.environ.has_key('LIBFAH_HOME'):
     env.Append(CPPPATH = [os.environ['LIBFAH_HOME']])
     env.Append(LIBPATH = [os.environ['LIBFAH_HOME']])
 
-if (conf.CheckLib('fah') and conf.CheckCXXHeader('fah/core/chksum/ChecksumDevice.h')):
+if (conf.CheckLib('fah') and
+    conf.CheckCXXHeader('fah/core/chksum/ChecksumDevice.h')):
     env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
     have_libfah=1
 

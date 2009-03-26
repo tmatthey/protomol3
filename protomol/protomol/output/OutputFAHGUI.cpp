@@ -213,7 +213,8 @@ void OutputFAHGUI::setAtoms() {
   for (unsigned int i = 0; i < (app->topology->atoms).size(); i++) {
     // Determine diamiter/ set name
     int atomNameLen = app->topology->atoms[i].name.length();
-    for(int j=0;j<min(atomNameLen,4);j++) server->atoms[i].type[j] = (app->topology->atoms[i].name.c_str())[j];
+    for(int j=0;j<min(atomNameLen,4);j++)
+      server->atoms[i].type[j] = (app->topology->atoms[i].name.c_str())[j];
     if(atomNameLen < 4)
         for(int j=atomNameLen;j<4;j++) server->atoms[i].type[j] = 0;
     switch(server->atoms[i].type[0]){

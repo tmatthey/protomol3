@@ -4,13 +4,12 @@
 
 #include <string>
 #include <vector>
+#include <protomol/base/Exception.h>
 
 #ifdef BUILD_FOR_FAH
 #include <fah/core/chksum/ChecksumDevice.h>
-#include <fah/Exception.h>
 #else
 #include <fstream>
-#include <protomol/base/Exception.h>
 #endif
 
 namespace ProtoMol {

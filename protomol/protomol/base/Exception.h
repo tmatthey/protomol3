@@ -42,6 +42,12 @@
 #include <string>
 #include <iostream>
 
+#ifdef HAVE_NO_SSTREAM
+#include <protomol/base/sstream_local.h>
+#else
+#include <sstream>
+#endif
+
 #if defined(HAVE_DEBUGGER) || defined(HAVE_BACKTRACE)
 #define HAVE_STACK_TRACE
 #endif
@@ -249,6 +255,18 @@ namespace ProtoMol {
 #define THROWC(msg, cause) \
   throw ProtoMol::Exception((msg), FILE_LOCATION, (cause))
 #define ASSERT_OR_THROW(msg, condition) {if (!(condition)) THROW(msg);}
-#endif
+
+#define THROWS(msgs) {                          \
+    std::ostringstream errMsg;                  \
+    errMsg << msgs;                             \
+    THROW(errMsg.str());                        \
+  }
+
+#define THROWSC(msgs, cause) {                  \
+    std::ostringstream errMsg;                  \
+    errMsg << msgs;                             \
+    THROWC(errMsg.str(), cause);                \
+  }
+#endif // THROW
 
 #endif

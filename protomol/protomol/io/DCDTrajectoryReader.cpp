@@ -2,11 +2,7 @@
 
 #include <protomol/base/Report.h>
 #include <protomol/base/SystemUtilities.h>
-#include <protomol/base/StringUtilities.h>
-
-#ifdef BUILD_FOR_FAH
-    typedef FAH::Exception Exception;
-#endif
+#include <protomol/base/Exception.h>
 
 using namespace std;
 using namespace ProtoMol::Report;
