@@ -2,10 +2,10 @@
 #include <protomol/base/ModuleManager.h>
 #include <protomol/module/MainModule.h>
 #include <protomol/base/Exception.h>
-
 #include <protomol/config.h>
-#include <fah/core/main.h>
+
 #include <fah/core/Core.h>
+#include <fah/Exception.h>
 #include <fah/String.h>
 
 #include <iostream>
@@ -16,11 +16,13 @@ using namespace FAH;
 
 extern void moduleInitFunction(ModuleManager *);
 
-extern "C" int core_main(Core &core, const vector<string> &args) {
+extern "C" int core_main(int argc, char *argv[]) {
   try {
 #ifdef DEBUG
-    ProtoMol::Debugger::initStackTrace(args[0]);
+    ProtoMol::Debugger::initStackTrace(argv[0]);
 #endif
+
+    FAH::Core &core = *FAH::Core::getInstance();
 
     ModuleManager modManager;
     moduleInitFunction(&modManager);
@@ -29,7 +31,7 @@ extern "C" int core_main(Core &core, const vector<string> &args) {
 
     app.splash(cout);
 
-    vector<string> moreArgs(args);
+    vector<string> moreArgs(argv + 1, argv + argc);
     moreArgs.push_back("protomol.conf");
     if (!app.configure(moreArgs)) return 1;
 
@@ -52,6 +54,13 @@ extern "C" int core_main(Core &core, const vector<string> &args) {
 
       // Update shared info file.
       core.updateSharedInfo(app.currentStep);
+
+      if (core.doCheckpoint()) {
+        std::cout << "Checkpointing..." << std::flush;
+        // TODO save checkpoint here
+        core.checkpoint();
+        std::cout << "done" << std::endl;
+      }
     }
       
     app.finalize();
@@ -76,5 +85,34 @@ extern "C" int core_main(Core &core, const vector<string> &args) {
 }
 
 int main(int argc, char *argv[]) {
-  return fah_main(argc, argv, core_main);
+  int ret;
+
+  try {
+    Core core;
+
+    ret = core.init(argc, argv);
+    if (ret) return ret;
+
+    // TODO checkpointing setup here
+
+    if (core_main(core.args.size() - 1, &core.args[0]))
+      return UNKNOWN_ERROR;
+
+    ret = core.finalize();
+
+  } catch (const FAH::Exception &e) {
+    cerr << "Core ERROR: " << e << endl;
+
+    if (e.getCode() == BAD_ARGUMENTS) Core::usage(argv[0]);
+
+    if (e.getCode()) return e.getCode();
+    else return UNKNOWN_ERROR;
+
+  } catch (const ProtoMol::Exception &e) {
+    cerr << "Core ERROR: " << e << endl;
+
+    return UNKNOWN_ERROR;
+  }
+
+  return ret;
 }
