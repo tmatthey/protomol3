@@ -18,7 +18,6 @@
 #include <protomol/config/Configuration.h>
 
 #include <protomol/io/ConfigurationReader.h>
-#include <protomol/io/CheckpointConfigReader.h>
 
 #include <protomol/factory/TopologyFactory.h>
 #include <protomol/factory/OutputFactory.h>
@@ -97,45 +96,16 @@ bool ProtoMolApp::configure(int argc, char *argv[]) {
   return configure(vector<string>(argv, argv + argc));
 }
 
-std::string ProtoMolApp::WithoutExt( const std::string& path ){
-    return path.substr( 0, path.rfind( "." ) + 1 );
-}
-
-bool ProtoMolApp::configure( const vector<string> &args ) {
+bool ProtoMolApp::configure(const vector<string> &args) {
   // Parse command line
-  if ( cmdLine.parse( args ) ) return false;
+  if (cmdLine.parse(args)) return false;
 
   // Read Config file
-  if ( config.valid( InputConfig::keyword ) )
-    changeDirectory( config[InputConfig::keyword] );
-  else THROW( "Configuration file not set." );
+  if (config.valid(InputConfig::keyword))
+    changeDirectory(config[InputConfig::keyword]);
+  else THROW("Configuration file not set.");
 
-  modManager->configure( this );
-
-  if ( config.valid( "Checkpoint" ) && config["Checkpoint"] == "true" ) {
-    config["CheckpointPosBase"] = WithoutExt( config["posfile"] );
-
-    if ( config.valid( "velfile" ) ){
-        config["CheckpointVelBase"] = WithoutExt( config["velfile"] );
-    }else{
-        config["CheckpointVelBase"] = config["CheckpointPosBase"];
-    }
-    
-    bool bOpen = false;
-    
-    CheckpointConfigReader confReader;
-    if ( confReader.open( Append( config["CheckpointPosBase"], "dat" ) ) ){
-      bOpen = true;
-    }else{
-      if ( confReader.open( Append( config["CheckpointPosBase"], "last" ) ) ){
-        bOpen = true;
-      }
-    }
-
-    if( bOpen ){
-      confReader.readBase( config, Random::Instance() );
-    }
-  }
+  modManager->configure(this);
 
   return true;
 }
@@ -176,7 +146,8 @@ void ProtoMolApp::build() {
        topology->doSCPISM = config[InputDoSCPISM::keyword];
 
     if ((topology->doSCPISM < 1 || topology->doSCPISM > 3) && !SCPISMParameters)
-      THROW("doscpism should be between 1 and 3 or an input file should be used.");
+      THROW("doscpism should be between 1 and 3 or an input file should be "
+            "used.");
 
     if(SCPISMParameters) {
        if(!config[InputDoSCPISM::keyword]) topology->doSCPISM = 4;
@@ -205,7 +176,8 @@ void ProtoMolApp::build() {
   }
 
   // Build the topology
-  buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword], SCPISMParameters);
+  buildTopology(topology, psf, par, config[InputDihedralMultPSF::keyword],
+                SCPISMParameters);
 
 
   // Register Forces
@@ -247,24 +219,6 @@ void ProtoMolApp::build() {
 
   topology->time =
     (Real)config[InputFirststep::keyword] * integrator->getTimestep();
-
-  /* If using checkpointing then load integrator data */
-  if ( config.valid( "Checkpoint" ) && config["Checkpoint"] == "true" ) {
-    bool bOpen = false;
-
-    CheckpointConfigReader confReader;
-    if ( confReader.open( Append( config["CheckpointPosBase"], "dat" ) ) ){
-      bOpen = true;
-    }else{
-      if ( confReader.open( Append( config["CheckpointPosBase"], "last" ) ) ){
-        bOpen = true;
-      }
-    }
-
-    if( bOpen ){
-      confReader.readIntegrator( integrator );
-    }
-  }
 
   integrator->initialize(this);
   outputs->initialize(this);

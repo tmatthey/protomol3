@@ -1047,6 +1047,8 @@ protomol/protomol/modifier/ModifierShake.h -text
 protomol/protomol/modifier/SConscript -text
 protomol/protomol/module/BondedForcesModule.cpp -text
 protomol/protomol/module/BondedForcesModule.h -text
+protomol/protomol/module/CheckpointModule.cpp -text
+protomol/protomol/module/CheckpointModule.h -text
 protomol/protomol/module/CommandLineModule.cpp -text
 protomol/protomol/module/CommandLineModule.h -text
 protomol/protomol/module/ConfigurationModule.cpp -text

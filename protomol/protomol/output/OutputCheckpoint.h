@@ -24,6 +24,9 @@ namespace ProtoMol {
             void WriteVelocities( int step );
             void WriteConfig( int step );
 
+        public:
+            void doIt( int step );
+
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             //  From class Output
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

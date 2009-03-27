@@ -68,22 +68,25 @@ void OutputCheckpoint::doInitialize() {
   }
 }
 
+void OutputCheckpoint::doIt( int step ) {
+  ReadConfig();
+  WritePositions( step );
+  WriteVelocities( step );
+  WriteConfig( step );
+  
+  mCurrent += 1;
+  
+  std::cout << "Checkpointing: Step " << step << std::endl;
+}
+
 void OutputCheckpoint::doRun( int step ) {
   if ( isActive ) {
     const int firstStep = toInt( app->config["firststep"] );
     const int finalStep = firstStep + toInt( app->config["numsteps"] );
 
     if ( step != firstStep && step != finalStep ) {
-      if ( ( step % myOutputFreq ) == 0 ) {
-        ReadConfig();
-        WritePositions( step );
-        WriteVelocities( step );
-        WriteConfig( step );
-
-        mCurrent += 1;
-
-        std::cout << "Checkpointing: Step " << step << std::endl;
-      }
+      if ( myOutputFreq > 0 && ( step % myOutputFreq ) == 0 )
+        doIt( step );
     }
   }
 }

@@ -18,8 +18,6 @@
 #include <protomol/output/OutputFAHFile.h>
 #include <protomol/output/OutputScreen.h>
 
-#include <protomol/output/OutputCheckpoint.h>
-
 using namespace std;
 using namespace ProtoMol;
 
@@ -36,7 +34,6 @@ void OutputModule::init(ProtoMolApp *app) {
   f.registerExemplar(new OutputXYZTrajectoryPos());
   f.registerExemplar(new OutputXYZTrajectoryVel());
   f.registerExemplar(new OutputEnergies());
-  f.registerExemplar(new OutputCheckpoint());
 #if defined (HAVE_GUI) || defined (HAVE_LIBFAH)
   f.registerExemplar(new OutputFAHGUI());
 #endif

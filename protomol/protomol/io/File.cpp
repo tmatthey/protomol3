@@ -26,11 +26,11 @@ bool File::open() {
   if (is_open()) close();
   file.clear();
 
-  #ifdef BUILD_FOR_FAH
-    file.open(FAH::ChecksumDevice(filename.c_str(), mode), 0);
-  #else
-    file.open(filename.c_str(), mode);
-  #endif
+#ifdef BUILD_FOR_FAH
+  file.open(FAH::ChecksumDevice(filename, mode), 0);
+#else
+  file.open(filename.c_str(), mode);
+#endif
 
   return is_open();
 }

@@ -26,6 +26,7 @@ defineInputValueAndText(InputVirialCalc, "virialCalc",
                         "Required for constant pressure simulations.");
 defineInputValueAndText(InputMolVirialCalc, "molVirialCalc",
                         "Required for constant pressure simulations.");
+// TODO These should be in output module
 defineInputValue(InputOutputfreq,"outputfreq");
 defineInputValue(InputOutput,"output");
 defineInputValueAndText(InputMinimalImage, "minimalImage",
@@ -64,7 +65,7 @@ void MainModule::configure(ProtoMolApp *app) {
 
   int randomtype;
 
-  if ( config.valid("Checkpoint") && config["checkpoint"] == "true" ){
+  if (config.valid("Checkpoint") && config["Checkpoint"] == "true") {
     randomtype = 1;
   }else{
     randomtype = config[InputRandomType::keyword];

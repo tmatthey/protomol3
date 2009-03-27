@@ -8,6 +8,7 @@
 #include <protomol/module/BondedForcesModule.h>
 #include <protomol/module/ModifierModule.h>
 #include <protomol/module/IOModule.h>
+#include <protomol/module/CheckpointModule.h>
 
 #include <protomol/module/IntegratorBaseModule.h>
 #include <protomol/module/NormalModeModule.h>
@@ -30,6 +31,7 @@ void moduleInitFunction(ModuleManager *manager) {
   manager->add(new OutputModule());
   manager->add(new ModifierModule());
   manager->add(new IOModule());
+  manager->add(new CheckpointModule());
 
   // Integrators
   manager->add(new IntegratorBaseModule());

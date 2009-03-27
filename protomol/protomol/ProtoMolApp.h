@@ -67,9 +67,6 @@ namespace ProtoMol {
     void print(std::ostream &stream);
     bool step();
     void finalize();
-
-    /* Checkpoint utility function */
-    std::string WithoutExt( const std::string& path );
   };
 };
 #endif // PROTOMOLAPP_H
