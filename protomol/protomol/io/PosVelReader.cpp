@@ -84,6 +84,16 @@ PosVelReader &ProtoMol::operator>>(PosVelReader &posReader, XYZ &xyz) {
     posReader.myOk = (xyzReader >> xyz ? true : false);
     posReader.myType = PosVelReaderType::XYZ;
   }
+
+  // XYZ binary
+  if (!posReader.myOk) {
+    XYZBinReader xyzBinReader(posReader.filename);
+    if (xyzBinReader.tryFormat()) {
+      posReader.myOk = (xyzBinReader >> xyz ? true : false);
+      posReader.myType = PosVelReaderType::XYZBIN;
+    }
+  }
+
   // PDB
   if (!posReader.myOk) {
     PDBReader pdbReader(posReader.filename);
@@ -97,7 +107,7 @@ PosVelReader &ProtoMol::operator>>(PosVelReader &posReader, XYZ &xyz) {
 }
 
 PosVelReader &ProtoMol::operator>>(PosVelReader &posReader,
-                         Vector3DBlock &coords) {
+                                   Vector3DBlock &coords) {
   posReader.myType = PosVelReaderType::UNDEFINED;
 
   // XYZ
@@ -107,6 +117,7 @@ PosVelReader &ProtoMol::operator>>(PosVelReader &posReader,
     posReader.myOk = (xyzReader >> coords ? true : false);
     posReader.myType = PosVelReaderType::XYZ;
   }
+
   // XYZ binary
   if (!posReader.myOk) {
     XYZBinReader xyzBinReader(posReader.filename);

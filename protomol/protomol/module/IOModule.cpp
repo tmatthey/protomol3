@@ -67,21 +67,21 @@ void IOModule::read(ProtoMolApp *app) {
 
   if (reader.tryFormat(PosVelReaderType::PDB)) {
     PDB pdb;
-	if (!(reader >> pdb)){
+	if (!(reader >> pdb)) {
       THROW(string("Could not parse PDB position file '") +
         config[InputPositions::keyword].getString() + "'.");
 	}
     
-    // TMC: Can no longer do std::swap, must use swap function
-    // of Vector3DBlock
-    //swap(app->positions, pdb.coords);
+    // Use swap function of Vector3DBlock
     app->positions.swap(pdb.coords);
+
     // Add to output cache
     app->outputCache.add(pdb.atoms);
 
-  } else if (reader.tryFormat(PosVelReaderType::XYZ)){
+  } else if (reader.tryFormat(PosVelReaderType::XYZ) ||
+             reader.tryFormat(PosVelReaderType::XYZBIN)) {
 	  XYZ xyz;
-	  if (!(reader >> xyz)){
+	  if (!(reader >> xyz)) {
 		THROW(string("Could not parse position file '") +
 		  config[InputPositions::keyword].getString() +
 		  "'. Supported formats are : " +
@@ -89,7 +89,8 @@ void IOModule::read(ProtoMolApp *app) {
 	  }
 
 	  app->positions.swap(xyz.coords);
-  }
+
+  } else THROW("Error reading positions file");
 
   report << plain << "Using " << reader.getType() << " posfile '"
          << config[InputPositions::keyword] << "' ("
@@ -128,23 +129,25 @@ void IOModule::read(ProtoMolApp *app) {
 
   } else THROW("Neither temperature nor velocity file specified.");
 
-  //Gromacs/AMBER input files
+  // Gromacs/AMBER input files
   if (config.valid(InputGromacsTopo::keyword) && 
         config.valid(InputGromacsParamPath::keyword)){
      GromacsTopology gTopo;
      GromacsParameters gParams;
      PortGromacsParameters gromacs_port;
        
-     if (!gromacs_port.Read_Basic_Gromacs_Parameters(app->psf,app->par, gTopo, gParams, 
-           (const string)config[InputGromacsTopo::keyword], (const string)config[InputGromacsParamPath::keyword])){
-            THROW(string("Cant read GROMACS parameters into PSF and PAR"));
+     if (!gromacs_port.Read_Basic_Gromacs_Parameters
+         (app->psf,app->par, gTopo, gParams, 
+          (const string)config[InputGromacsTopo::keyword],
+          (const string)config[InputGromacsParamPath::keyword])){
+       THROW(string("Cant read GROMACS parameters into PSF and PAR"));
      }
 
      //check if Generalized Born Parameter file has been passed
      if (config.valid(InputGromacsGBParameterFile::keyword)) {
-         if (!gromacs_port.Read_Gromacs_GB_Parameters(
-              (const string)config[InputGromacsGBParameterFile::keyword])){
-              THROW(string("Cant read Gromacs parameters for Generalized Born"));
+         if (!gromacs_port.Read_Gromacs_GB_Parameters
+             ((const string)config[InputGromacsGBParameterFile::keyword])){
+           THROW(string("Cant read Gromacs parameters for Generalized Born"));
          }
      }
 
@@ -194,9 +197,11 @@ void IOModule::read(ProtoMolApp *app) {
     SCPISMReader mReader(config[InputSCPISM::keyword]);
 
     if(!mReader.read( app->SCPISMParameters->myData ))
-      report << error << "Invalid SCPISM parameter file " << config[InputSCPISM::keyword] << "." << endr;
+      report << error << "Invalid SCPISM parameter file "
+             << config[InputSCPISM::keyword] << "." << endr;
 
-    report << plain << "Using SCPISM file '" << config[InputSCPISM::keyword] << "'." << endr;
+    report << plain << "Using SCPISM file '" << config[InputSCPISM::keyword]
+           << "'." << endr;
 
 
   }
@@ -204,6 +209,8 @@ void IOModule::read(ProtoMolApp *app) {
   // Test input
   if (app->positions.size() != app->velocities.size() ||
       app->positions.size() != app->psf.atoms.size())
-    THROW("Positions, velocities and PSF input have different number "
-          "of atoms.");  
+    THROWS("Positions, velocities and PSF input have different number "
+           "of atoms. positions=" << app->positions.size()
+           << " velocities=" << app->velocities.size()
+           << " atoms=" << app->psf.atoms.size());
 }
