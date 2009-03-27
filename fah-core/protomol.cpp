@@ -6,10 +6,14 @@
 #include <protomol/config.h>
 
 #include <fah/core/Core.h>
+#include <fah/core/chksum/ChecksumManager.h>
 #include <fah/Exception.h>
 #include <fah/String.h>
 
 #include <iostream>
+
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -39,7 +43,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     app.config["FAHGUI"] = name;
 
     // Setup checkpointing
-    app.config["Checkpoint"] = "true";
+    app.config["Checkpoint"] = "checkpt";
     app.config["CheckpointFreq"] = -1; // Disable
 
 
@@ -105,6 +109,14 @@ int main(int argc, char *argv[]) {
 
     ret = core.init(argc, argv);
     if (ret) return ret;
+
+    // Validate checkpoint file
+    struct stat buf;
+    if (!stat("checkpt", &buf) && !ChecksumManager::instance().has("checkpt")) {
+      // Checksum not valid
+      cerr << "Guru Meditation: checkpt sum" << endl;
+      return BAD_FRAME_CHECKSUM;
+    }
 
     // Add config file
     core.args.push_back((char *)"protomol.conf");

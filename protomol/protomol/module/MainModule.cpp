@@ -65,7 +65,7 @@ void MainModule::configure(ProtoMolApp *app) {
 
   int randomtype;
 
-  if (config.valid("Checkpoint") && config["Checkpoint"] == "true") {
+  if (config.valid("Checkpoint")) {
     randomtype = 1;
   }else{
     randomtype = config[InputRandomType::keyword];

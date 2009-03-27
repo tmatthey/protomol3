@@ -37,10 +37,7 @@ bool PSFReader::read() {
 }
 
 bool PSFReader::read(PSF &psf) {
-  if (!tryFormat())
-    return false;
-  if (!open())
-    return false;
+  if (!tryFormat() || !open()) return false;
   psf.clear();
 
   // Find header

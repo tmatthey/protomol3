@@ -26,11 +26,10 @@ bool File::open() {
   if (is_open()) close();
   file.clear();
 
-#ifdef BUILD_FOR_FAH
-  file.open(FAH::ChecksumDevice(filename, mode), 0);
-#else
-  file.open(filename.c_str(), mode);
-#endif
+  try {
+    file.open(filename.c_str(), mode);
+    file.seekg(0); // Work around a boost::iostreams bug for F@H core
+  } catch (const ios::failure &e) {}
 
   return is_open();
 }

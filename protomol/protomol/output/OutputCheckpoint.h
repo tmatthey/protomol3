@@ -19,7 +19,6 @@ namespace ProtoMol {
             OutputCheckpoint( const std::string &name, int freq, int start,
                               const std::string& posbase, const std::string& velbase );
         private:
-            void ReadConfig( );
             void WritePositions( int step );
             void WriteVelocities( int step );
             void WriteConfig( int step );
@@ -55,7 +54,6 @@ namespace ProtoMol {
 
         private:
             int mCurrent;
-            bool isActive;
             std::string mName;
             std::string mPosBase, mVelBase;
     };

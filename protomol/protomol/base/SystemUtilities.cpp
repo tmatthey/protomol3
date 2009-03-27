@@ -32,6 +32,10 @@
 #include <fstream>
 #include <sys/stat.h>
 
+#ifdef BUILD_FOR_FAH
+#include <fah/core/chksum/overrides.h>
+#endif
+
 using namespace std;
 
 namespace ProtoMol {
@@ -188,6 +192,23 @@ namespace ProtoMol {
     strcpy(tmp, path.c_str());
 
     return string(buf) + "/" + basename(tmp);
+#endif
+  }
+
+  bool SystemUtilities::unlink(const string &path) {
+#ifdef BUILD_FOR_FAH
+    return fah_unlink(path.c_str()) == 0;
+#else
+    return ::unlink(path.c_str()) == 0;
+#endif
+  }
+
+  void SystemUtilities::rename(const string &src, const string &dst) {
+    unlink(dst);
+#ifdef BUILD_FOR_FAH
+    fah_rename(src.c_str(), dst.c_str());
+#else
+    ::rename(src.c_str(), dst.c_str());
 #endif
   }
 }

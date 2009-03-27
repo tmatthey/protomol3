@@ -155,14 +155,14 @@ void IOModule::read(ProtoMolApp *app) {
     // PSF
     PSFReader psfReader;
     if (!psfReader.open(config[InputPSF::keyword]))
-      THROW(string("Can't open PSF file '") +
-        config[InputPSF::keyword].getString() + "'.");
+      THROWS("Can't open PSF file '"
+             << (string)config[InputPSF::keyword] << "'.");
 
     if (!(psfReader >> app->psf))
-      THROW(string("Could not parse PSF file '") +
-        config[InputPSF::keyword].getString() + "'.");
+      THROWS("Could not parse PSF file '"
+             << (string)config[InputPSF::keyword] << "'.");
 
-    report << plain << "Using PSF file '" << config[InputPSF::keyword]
+    report << plain << "Using PSF file '" << (string)config[InputPSF::keyword]
            << "' (" << app->psf.atoms.size() << ")." << endr;
 
     // PAR

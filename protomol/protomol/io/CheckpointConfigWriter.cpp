@@ -21,7 +21,7 @@ bool CheckpointConfigWriter::write( const int& id, const int& steps, const Rando
         return false;
     }
 
-    file << "!Configuration File!" << std::endl;
+    file << "!Checkpoint File!" << std::endl;
 
     file << "#ID" << std::endl;
     file << id << std::endl;

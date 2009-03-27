@@ -18,11 +18,9 @@ void CheckpointModule::init(ProtoMolApp *app) {
 void CheckpointModule::configure(ProtoMolApp *app) {
   Configuration &config = app->config;
 
-  enabled = config.valid("Checkpoint") && config["Checkpoint"] == "true";
+  if (!(enabled = config.valid("Checkpoint"))) return;
 
-  if (!enabled) return;
-
-   config["CheckpointPosBase"] = WithoutExt(config[InputPositions::keyword]);
+  config["CheckpointPosBase"] = WithoutExt(config[InputPositions::keyword]);
   
   if (config.valid(InputVelocities::keyword))
     config["CheckpointVelBase"] = WithoutExt(config[InputVelocities::keyword]);
@@ -35,8 +33,7 @@ void CheckpointModule::read(ProtoMolApp *app) {
   Configuration &config = app->config;
   
   CheckpointConfigReader confReader;
-  if (confReader.open(Append(config["CheckpointPosBase"], "dat")) ||
-      confReader.open(Append(config["CheckpointPosBase"], "last")))
+  if (confReader.open(config["Checkpoint"], ios::in))
     confReader.readBase(config, Random::Instance());
 }
 
@@ -47,8 +44,7 @@ void CheckpointModule::postBuild(ProtoMolApp *app) {
   
   // Load integrator data
   CheckpointConfigReader confReader;
-  if (confReader.open(Append(config["CheckpointPosBase"], "dat")) ||
-      confReader.open(Append(config["CheckpointPosBase"], "last")))
+  if (confReader.open(config["Checkpoint"], ios::in))
     confReader.readIntegrator(app->integrator);
 }
 

@@ -20,17 +20,6 @@ namespace ProtoMol {
     CheckpointConfigReader(const std::string &filename);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // From class File
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  public:
-    virtual bool open() {return File::open();}
-    virtual bool open(const std::string &filename) {
-        std::cout << "Checkpoint Reader: " << filename << std::endl;
-        return File::open(filename);
-    }
-    virtual bool open(const char *filename) {return File::open(filename);}
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Reader
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:

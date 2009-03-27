@@ -14,7 +14,7 @@ namespace ProtoMol {
     CheckpointModule() : enabled(false) {}
 
     const std::string getName() const {return "Checkpoint";}
-    int getPriority() const {return 0;}
+    int getPriority() const {return -10;}
     const std::string getHelp() const {return "Provides checkpointing support";}
 
     void init(ProtoMolApp *app);

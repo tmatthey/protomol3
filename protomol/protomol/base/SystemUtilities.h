@@ -72,5 +72,10 @@ namespace ProtoMol {
   /// Shrinks the capacity of a container explicitly
   template<typename T> inline
   void shrink(T &t) {T tmp(t); t.swap(tmp);}
+
+  namespace SystemUtilities {
+    bool unlink(const std::string &path);
+    void rename(const std::string &src, const std::string &dst);
+  };
 }
 #endif /* SYSTEMUTILITIES_H */
