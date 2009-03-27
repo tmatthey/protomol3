@@ -1,7 +1,8 @@
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/ModuleManager.h>
-#include <protomol/module/MainModule.h>
 #include <protomol/base/Exception.h>
+#include <protomol/output/OutputCollection.h>
+#include <protomol/output/OutputCheckpoint.h>
 #include <protomol/config.h>
 
 #include <fah/core/Core.h>
@@ -31,35 +32,47 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     app.splash(cout);
 
-    vector<string> moreArgs(argv + 1, argv + argc);
-    moreArgs.push_back("protomol.conf");
-    if (!app.configure(moreArgs)) return 1;
-
+    // Add outputs FAHFile and FAHGUI
     string name = "ProtoMol Project";
     name += core.unit->project_id;
-
-    // Add outputs FAHFile and FAHGUI
     app.config["FAHFile"] = "../current.xyz";
     app.config["FAHGUI"] = name;
 
+    // Setup checkpointing
+    app.config["Checkpoint"] = "true";
+    app.config["CheckpointFreq"] = -1; // Disable
+
+
+    if (!app.configure(argc, argv)) return 1;
     app.build();
+
+    // Find CheckpointOutput
+    OutputCheckpoint *oCheckpt = 0;
+    OutputCollection::const_iterator it;
+    const OutputCollection *outputs = app.outputs;
+    for (it = outputs->begin(); it != outputs->end(); it++)
+      if ((oCheckpt = dynamic_cast<OutputCheckpoint *>(*it))) break;
+
+    if (!oCheckpt) THROW("Could not find OutputCheckpoint");
+
     app.print(cout);
+
 
     // FAH Core setup
     // Initialize shared file
     core.initSharedInfo(name, app.lastStep, 1);
 
+    int outputFreq = toInt(app.config["outputfreq"]);
     while (app.step()) {
-      cout << "Step: " << app.currentStep << endl;
+      if (app.currentStep % outputFreq == 0)
+        cout << "Step: " << app.currentStep << endl;
 
       // Update shared info file.
       core.updateSharedInfo(app.currentStep);
 
       if (core.doCheckpoint()) {
-        std::cout << "Checkpointing..." << std::flush;
-        // TODO save checkpoint here
+        oCheckpt->doIt(app.currentStep);
         core.checkpoint();
-        std::cout << "done" << std::endl;
       }
     }
       
@@ -93,9 +106,10 @@ int main(int argc, char *argv[]) {
     ret = core.init(argc, argv);
     if (ret) return ret;
 
-    // TODO checkpointing setup here
+    // Add config file
+    core.args.push_back((char *)"protomol.conf");
 
-    if (core_main(core.args.size() - 1, &core.args[0]))
+    if (core_main(core.args.size(), &core.args[0]))
       return UNKNOWN_ERROR;
 
     ret = core.finalize();
