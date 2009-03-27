@@ -63,7 +63,7 @@ namespace ProtoMol {
   private:
     std::string name;
     int myPort, myPortRange;
-    std::string myProjName;  
+    std::string myProjName;
     Real myTimeout;
     bool myPause;
     Timer guiTimer;

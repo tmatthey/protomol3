@@ -25,12 +25,14 @@ const string OutputFAHGUI::keyword("FAHGUI");
 const string OutputFAHGUI::keyword("Gui");
 #endif
 
-OutputFAHGUI::OutputFAHGUI() : name("ProtoMol"), server() {}
+OutputFAHGUI::OutputFAHGUI() :
+  name("ProtoMol"), myPort(0), myPortRange(0), myTimeout(0), myPause(0),
+  server(0) {}
 
-OutputFAHGUI::OutputFAHGUI(const string &name, int freq, 
-                           int port, int prange, const string &projn, double timeout, bool pause) :
-  Output(freq), name(name), myPort(port), myPortRange(prange), myProjName(projn), 
-  myTimeout(timeout), myPause(pause), server(0) {
+OutputFAHGUI::OutputFAHGUI(const string &name, int freq, int port, int prange,
+                           const string &projn, double timeout, bool pause) :
+  Output(freq), name(name), myPort(port), myPortRange(prange),
+  myProjName(projn), myTimeout(timeout), myPause(pause), server(0) {
 
     //default pause timeout to 10 seconds
     if(myPause && !myTimeout) myTimeout = 10;
