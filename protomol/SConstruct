@@ -30,12 +30,20 @@ Export('conf')
 subsrc = SConscript('protomol/SConscript')
 
 # Get options
+
+# GUI Options
 gui = int(env.get('gui', 0))
+if gui:
+    env.Append(CCFLAGS = '-DHAVE_GUI')
+
+# FAH Options
 fah = int(env.get('fah', 0))
 
+# LAPACK Options
 use_lapack = int(env.get('lapack', 0))
 use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
+# OpenMM Options
 openmm_type = env.get('openmm')
 if( openmm_type == 'none' ):
     use_openmm = 0
