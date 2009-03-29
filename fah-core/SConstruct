@@ -3,7 +3,11 @@ import os
 execfile('../protomol/boost.py')
 
 opts = Options('options.py')
-opts.AddOptions( BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0) )
+
+opts.AddOptions(
+    BoolOption('lapack', 'Use LAPACK', 0),
+    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0)
+)
 
 env = Environment(options = opts, ENV = os.environ)
 conf = Configure(env, custom_tests = {'BoostVersion' : boost_check_version})
@@ -28,7 +32,8 @@ if not env.GetOption('clean'):
   if not conf.CheckLib('protomol-fah'):
     print 'Need protomol >= 3.0 please set PROTOMOL_HOME';
     Exit(1)
-    
+  
+  use_lapack = int(env.get('lapack', 0))
   use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
   execfile(PROTOMOL_HOME + os.sep + 'config.py')
