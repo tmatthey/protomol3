@@ -20,7 +20,6 @@ def compiler_add_opts():
                                      'sun')))
 
     opts.Add('static', 'Link to static libraries', 0)
-    opts.Add('num_jobs', 'Set the concurrency level.', -1)
 
 
 def compiler_configure(c99_mode = 1):
@@ -188,15 +187,3 @@ def compiler_configure(c99_mode = 1):
     if ccache:
         env.Replace(CC = 'ccache ' + env['CC'])
         env.Replace(CXX = 'ccache ' + env['CXX'])
-
-
-    # Num jobs
-    if num_jobs == -1:
-        if os.environ.has_key('SCONS_JOBS'):
-            num_jobs = int(os.environ.get('SCONS_JOBS', num_jobs))
-        else:
-            num_jobs = default_num_jobs
-
-    SetOption('num_jobs', num_jobs)
-    print "running with -j", GetOption('num_jobs')
-

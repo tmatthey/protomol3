@@ -8,6 +8,7 @@ opts = Options('options.py')
 Export('opts')
 
 opts.AddOptions(
+    BoolOption('gui', 'Set to 1 if using the GUI', 0),
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
     BoolOption('lapack', 'Use LAPACK', 0),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
@@ -29,6 +30,7 @@ Export('conf')
 subsrc = SConscript('protomol/SConscript')
 
 # Get options
+gui = int(env.get('gui', 0))
 fah = int(env.get('fah', 0))
 
 use_lapack = int(env.get('lapack', 0))
