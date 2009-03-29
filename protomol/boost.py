@@ -32,14 +32,14 @@ def boost_check_version(context, version):
     if len(v_arr) > 2: version_n += int(v_arr[2])
 
     ret = context.TryRun("""#include <boost/version.hpp>
-     int main() {return BOOST_VERSION == %d ? 0 : 1;}
+     int main() {return BOOST_VERSION >= %d ? 0 : 1;}
      \n""" % version_n, '.cpp')[0]
 
     context.Result(ret)
     return ret
 
 
-def boost_configure(conf, hdrs, libs, version = '1.38', lib_suffix = ''):
+def boost_configure(conf, hdrs, libs, version = '1.35', lib_suffix = ''):
     env = conf.env
 
     boost_inc = None
