@@ -39,7 +39,7 @@ namespace ProtoMol
 
   NormalModeDiagonalize::
   NormalModeDiagonalize(int cycles, int redi, bool fDiag, bool rRand,
-                        Real redhy, Real eTh, int bvc, int rpb, Real dTh,
+                        Real redhy, Real eTh, int bvc, int rpb, Real dTh, bool apar,
                         ForceGroup *overloadedForces,
                         StandardIntegrator *nextIntegrator ) :
     MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
@@ -48,10 +48,13 @@ namespace ProtoMol
     rediagCount( redi ), rediagHysteresis( redhy ),
     hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
-    residuesPerBlock( rpb ), checkpointUpdate( false ) {
+    residuesPerBlock( rpb ), checkpointUpdate( false ),  autoParmeters(apar)
+ {
+
 
     //find forces and parameters
     rHsn.findForces( overloadedForces );
+
   }
 
   NormalModeDiagonalize::~NormalModeDiagonalize()
@@ -104,6 +107,17 @@ namespace ProtoMol
     if ( fullDiag ) {
       rHsn.initialData( _3N );
     } else {
+
+      //automatically generate parameters?
+      if(autoParmeters){
+        residuesPerBlock = (int)pow((double)_N,0.6) / 15;
+        blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
+        blockCutoffDistance = rHsn.cutOff;
+        report << hint << "[NormalModeDiagonalize::initialize] Auto parameters: residuesPerBlock " << residuesPerBlock <<
+                        ", blockVectorCols " << blockVectorCols <<
+                        ", blockCutoffDistance " << blockCutoffDistance << "." << endr;
+      }
+
       //assign hessian array for residues, and clear.
       rHsn.initialResidueData( app->topology, residuesPerBlock, ( blockCutoffDistance == 0.0 ) );
     }
@@ -348,13 +362,19 @@ namespace ProtoMol
                                      10,
                                      Text( "Block cutoff distance for electrostatic forces." ) ) );
 
+    parameters.push_back( Parameter( "autoParmeters",
+                                     Value(autoParmeters, ConstraintValueType::NoConstraints()   ),
+                                     false, 
+                                     Text("Automatically generate diagonalization parameters.") ) );
+
+
   }
 
   MTSIntegrator* NormalModeDiagonalize::doMake( const vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator ) const
   {
     return new NormalModeDiagonalize( values[0], values[1], values[2],
                                       values[3], values[4], values[5],
-                                      values[6], values[7], values[8],
+                                      values[6], values[7], values[8], values[9],
                                       fg, nextIntegrator               );
   }
 

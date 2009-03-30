@@ -276,7 +276,9 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
 
   }      
   //set maxiumum cutoff value
+  Real tempCoff = max(cCutoff, lCutoff);
   cutOff = max(cSwitchoff, lSwitchoff);
+  cutOff = max(cutOff, tempCoff);
 }
 
 void Hessian::evaluate(const Vector3DBlock *myPositions,
