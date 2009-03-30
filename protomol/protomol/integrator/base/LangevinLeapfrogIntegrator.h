@@ -60,7 +60,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     static const std::string keyword;
-  private:
+  protected:
     Real myLangevinTemperature;
     Real myGamma;
     int mySeed;
