@@ -123,7 +123,7 @@ void NormalModeModule::read(ProtoMolApp *app) {
 
     report << plain << "Using eigvaluefile '"
            << config[InputEigenValues::keyword] << "' ("
-           << app->eigenInfo.myEigenvalues.size() * 3 << ")." << endr;
+           << app->eigenInfo.myEigenvalues.size() << ")." << endr;
 
   }
 }
