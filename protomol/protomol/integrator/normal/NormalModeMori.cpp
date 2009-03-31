@@ -53,7 +53,7 @@ namespace ProtoMol {
     myBottomNormalMode  = dynamic_cast<NormalModeUtilities*>(bottom());
     //check valid eigenvectors
     //NM initialization if OK
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, NO_NM_FLAGS); //last for non-complimentary forces
+    NormalModeUtilities::initialize((int)app->positions.size(), app, myForces, NO_NM_FLAGS); //last for non-complimentary forces
     //
     //do first force calculation, and remove non sub-space part
     app->energies.clear();	//Need this or initial error, due to inner integrator energy?

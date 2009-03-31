@@ -51,7 +51,7 @@ namespace ProtoMol {
 			STSIntegrator::initialize(app);
 			initializeForces();
 			//NM initialization if OK
-			NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, NO_NM_FLAGS); //last for non-complimentary forces
+			NormalModeUtilities::initialize((int)app->positions.size(), app, myForces, NO_NM_FLAGS); //last for non-complimentary forces
 			//
 			//initialize minimizer noise vars
 			randStp = 0.0;

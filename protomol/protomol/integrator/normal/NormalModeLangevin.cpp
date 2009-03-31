@@ -45,7 +45,7 @@ void NormalModeLangevin::initialize(ProtoMolApp *app) {
   if (genCompNoise) nm_flags |= GEN_COMP_NOISE;
   
   //last int for no complimentary forces or gen noise: GEN_COMP_NOISE
-  NormalModeUtilities::initialize((int)app->positions.size(), app->topology,
+  NormalModeUtilities::initialize((int)app->positions.size(), app,
                                   myForces, nm_flags);
   //
   //do first force calculation, and remove non sub-space part

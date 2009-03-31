@@ -52,7 +52,7 @@ namespace ProtoMol {
         myGamma = myPreviousNormalMode->myGamma; mySeed = myPreviousNormalMode->mySeed; myTemp = myPreviousNormalMode->myTemp;
     }
     //NM initialization if OK
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology,
+    NormalModeUtilities::initialize((int)app->positions.size(), app,
 				    myForces, COMPLIMENT_FORCES); //last for complimentary forces, no gen noise
     //
     //initialize minimizer noise vars

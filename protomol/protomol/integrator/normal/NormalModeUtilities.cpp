@@ -35,7 +35,7 @@ namespace ProtoMol {
       if(sqrtMass!=NULL) delete [] sqrtMass;
   }
 
-  void NormalModeUtilities::initialize(int sz, GenericTopology *myTopo, Vector3DBlock * myForces, int nm_flags){
+  void NormalModeUtilities::initialize(int sz, ProtoMolApp *app, Vector3DBlock * myForces, int nm_flags){
 
 #if defined(HAVE_LAPACK)
 #else
@@ -44,6 +44,16 @@ namespace ProtoMol {
     report << error << "Normal Mode integrators require Lapack libraries."<<endr;
 #endif
 #endif
+
+    //Set up eigenvector pointers
+    numEigvectsu = app->eigenInfo.myNumEigenvectors;
+    eigVecChangedP = &app->eigenInfo.myEigVecChanged;
+    eigValP = &app->eigenInfo.myMaxEigenvalue;
+    Q = &app->eigenInfo.myEigenvectors;
+
+    //find topology pointer
+    GenericTopology *myTopo = app->topology;
+
     //local force pointer
     myForcesP = myForces;
     //type

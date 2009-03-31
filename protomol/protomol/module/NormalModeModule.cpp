@@ -70,7 +70,6 @@ void NormalModeModule::read(ProtoMolApp *app) {
 
       report << plain << "Using eigfile '" << config[InputEigTextFile::keyword]
              << "' (" << app->eigenInfo.myEigenvectorLength << ")." << endr;
-      eiValid = true;
     }
 
   } else if (config.valid(InputEigenVectors::keyword)) {
@@ -96,7 +95,6 @@ void NormalModeModule::read(ProtoMolApp *app) {
            << config[InputEigenVectors::keyword] << "' ("
            << app->eigenInfo.myEigenvectorLength << ")." << endr;
 
-    eiValid = true;
   }
 
   // Eigenvalues file
@@ -128,16 +126,3 @@ void NormalModeModule::read(ProtoMolApp *app) {
   }
 }
 
-void NormalModeModule::postBuild(ProtoMolApp *app) {
-  // Normal mode?
-  // New method tries a dynamic cast, then updates the pointers from ei
-  NormalModeUtilities *nmint; // dynamic cast working
-  nmint  = dynamic_cast<NormalModeUtilities *>(app->integrator);
-  if (nmint) { // cast worked?
-	nmint->setIntegratorSetPointers(app->integrator, &app->eigenInfo, eiValid);
-	report << plain << "Using new Normal Mode integrator. " << endr;
-
-  } else if (eiValid)
-    report << plain << "Warning: Eigenvector file defined but using "
-           << "non-Normal Mode integrator!" << endr;
-}

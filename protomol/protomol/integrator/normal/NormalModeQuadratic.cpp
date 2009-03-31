@@ -66,7 +66,7 @@ namespace ProtoMol
       myPreviousNormalMode = 0;
     }
     //NM initialization if OK //last for complimentary forces, no gen noise
-    NormalModeUtilities::initialize( ( int )app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES );
+    NormalModeUtilities::initialize( ( int )app->positions.size(), app, myForces, COMPLIMENT_FORCES );
 
     //modes
     cPos = new double[_3N];

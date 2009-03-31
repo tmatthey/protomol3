@@ -94,7 +94,7 @@ namespace ProtoMol
     numMode   = myNextNormalMode->numMode;
 
     //NM initialization, but fix dof, as set by next integrator, use complementry forces and dont generate noise
-    NormalModeUtilities::initialize( ( int )app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES );
+    NormalModeUtilities::initialize( ( int )app->positions.size(), app, myForces, COMPLIMENT_FORCES );
     _rfM = myNextNormalMode->_rfM;
 
     myLastNormalMode  = dynamic_cast<NormalModeUtilities*>( bottom() );

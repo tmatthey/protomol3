@@ -4,6 +4,7 @@
 
 #include <protomol/type/Vector3DBlock.h>
 #include <protomol/topology/GenericTopology.h>
+#include <protomol/ProtoMolApp.h>
 
 #include <protomol/type/EigenvectorInfo.h>
 #include <protomol/integrator/Integrator.h>
@@ -59,7 +60,7 @@ namespace ProtoMol {
         void subSpaceSift(Vector3DBlock *velocities, Vector3DBlock *forces);
       //double *vector3DBlockTOvect(Vector3DBlock* blkDat, double* vecDat);
       //Vector3DBlock *vectTOvector3DBlock(double* vecDat, Vector3DBlock* blkDat);
-        void initialize(int sz, GenericTopology *myTopo, Vector3DBlock *myForces, int nm_flags);
+        void initialize(int sz, ProtoMolApp *app, Vector3DBlock *myForces, int nm_flags);
         virtual void forceProjection();
         void setIntegratorSetPointers(Integrator *integrator, EigenvectorInfo *eipt, bool eiValid);
         Vector3DBlock *cartSpaceProj(double *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0);

@@ -45,7 +45,7 @@ namespace ProtoMol {
     //NM initialization if OK
     int nm_flags = NO_NM_FLAGS;
     if(genCompNoise) nm_flags |= GEN_COMP_NOISE;
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, nm_flags); //last int for no complimentary forces or gen noise: GEN_COMP_NOISE
+    NormalModeUtilities::initialize((int)app->positions.size(), app, myForces, nm_flags); //last int for no complimentary forces or gen noise: GEN_COMP_NOISE
     //
     //do first force calculation, and remove non sub-space part
     app->energies.clear();	//Need this or initial error, due to inner integrator energy?

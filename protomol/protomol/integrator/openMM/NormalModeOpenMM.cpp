@@ -41,7 +41,7 @@ namespace ProtoMol {
     OpenMMIntegrator::initialize(app);
     initializeForces();
     //NM initialization
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology,
+    NormalModeUtilities::initialize((int)app->positions.size(), app,
 				    myForces, NO_NM_FLAGS);
     //
 

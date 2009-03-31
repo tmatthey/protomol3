@@ -50,7 +50,7 @@ namespace ProtoMol {
     //check valid eigenvectors
     firstMode = myPreviousNormalMode->firstMode; numMode = myPreviousNormalMode->numMode;
     //NM initialization if OK
-    NormalModeUtilities::initialize((int)app->positions.size(), app->topology, myForces, COMPLIMENT_FORCES); //last for complimentary forces
+    NormalModeUtilities::initialize((int)app->positions.size(), app, myForces, COMPLIMENT_FORCES); //last for complimentary forces
     //
     app->energies.clear();	//Need this or initial error, due to inner integrator energy?
     //

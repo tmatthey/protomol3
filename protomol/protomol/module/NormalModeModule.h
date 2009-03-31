@@ -14,16 +14,15 @@ namespace ProtoMol {
   declareInputValue(InputEigenValues, STRING, NOTEMPTY);
 
   class NormalModeModule : public Module {
-    bool eiValid;
+
   public:
-    NormalModeModule() : eiValid(false) {}
+    NormalModeModule() {}
 
     const std::string getName() const {return "NormalMode";}
     int getPriority() const {return 5;} // Must be after IOModule
 
     void init(ProtoMolApp *app);
     void read(ProtoMolApp *app);
-    void postBuild(ProtoMolApp *app);
   };
 };
 
