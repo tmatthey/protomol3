@@ -47,6 +47,9 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     // NonbondedSimpleFullSystemForce CoulombForce
     f.reg(new SimpleFullSystem<OneAtomPair<PBC, Universal, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<PBC, C1, CoulombForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new SimpleFullSystem<OneAtomPair<PBC, C2, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<PBC, Complement<C1>,
           CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<PBC, Complement<C2>,
@@ -75,8 +78,16 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
           LennardJonesForce, Complement<C1>, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, C2, LennardJonesForce,
           Universal, CoulombForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, C2, LennardJonesForce,
+          C1, CoulombForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, C2, LennardJonesForce,
+          C2, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, Cn, LennardJonesForce,
           Universal, CoulombForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<PBC, Cn, LennardJonesForce,
+          Cn, CoulombForce> >());
 
     // SCPISM
     f.reg(new SimpleFullSystem<OneAtomPair<PBC, C1, CoulombSCPISMForce> >());
@@ -100,6 +111,9 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     // NonbondedSimpleFullSystemForce CoulombForce
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, C1, CoulombForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, C2, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Complement<C1>,
           CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Complement<C2>,
@@ -111,6 +125,9 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal,
           CoulombForceDiElec> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, C1, CoulombForceDiElec> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, C2, CoulombForceDiElec> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Complement<C1>,
           CoulombForceDiElec> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Complement<C2>,
@@ -133,6 +150,12 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     // NonbondedSimpleFullSystemForce LennardJonesForce CoulombForce
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Universal,
           LennardJonesForce, Universal, CoulombForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2,
+          LennardJonesForce, C1, CoulombForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2,
+          LennardJonesForce, C2, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Complement<C2>,
           LennardJonesForce, Complement<C1>, CoulombForce> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Complement<Cn>,
@@ -141,6 +164,12 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     // NonbondedSimpleFullSystemForce LennardJonesForce CoulombForceDiElec
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Universal,
           LennardJonesForce, Universal, CoulombForceDiElec> >());
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2,
+          LennardJonesForce, C1, CoulombForceDiElec> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2,
+          LennardJonesForce, C2, CoulombForceDiElec> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Complement<C2>,
           LennardJonesForce, Complement<C1>, CoulombForceDiElec> >());
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, Complement<Cn>,

@@ -69,6 +69,10 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
     // NonbondedCutoffSystemForce LennardJonesForce CoulombForce
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, C2, LennardJonesForce,
           C1, CoulombForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, C2, LennardJonesForce,
+          C2, CoulombForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, C2, LennardJonesForce,
           Cn, CoulombForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<PBC, Cn, LennardJonesForce,
@@ -119,6 +123,11 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
     // NonbondedCutoffSystemForce LennardJonesForce CoulombForce
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, C2, LennardJonesForce, C1,
           CoulombForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+
+    f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, C2, LennardJonesForce, C2,
+          CoulombForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, C2, LennardJonesForce, Cn,
           CoulombForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, Cn, LennardJonesForce, Cn,
@@ -139,7 +148,12 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
           CoulombSCPISMForce> >());
 
     // OneAtomPairThree (forces): LennardJonesForce CoulombSCPISMForce BornRadii
+
     f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, C2, LennardJonesForce, C1,
+          CoulombSCPISMForce, Cutoff, BornRadii > >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
+    f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, C2, LennardJonesForce, C2,
           CoulombSCPISMForce, Cutoff, BornRadii > >());
     f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, C2, LennardJonesForce, Cn,
           CoulombSCPISMForce, Cutoff, BornRadii > >());
@@ -150,6 +164,8 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
     // OneAtomPairTwo
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, C2, LennardJonesForce, C1,
           CoulombSCPISMForce> >());
+    // this option should be used with switchon = 0 for Coulomb
+    // C2 continuity needed when computing Hessians:
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, C2, LennardJonesForce, C2,
           CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPairTwo<VBC, Cn, LennardJonesForce, Cn,
