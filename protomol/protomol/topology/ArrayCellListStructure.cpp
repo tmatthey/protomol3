@@ -52,7 +52,8 @@ void ArrayCellListStructure::initialize(const Vector3D &max,
     	report << error <<
         "[ArrayCellListStructure::initialize] Could not allocate memory for "
         "CellListStructure[" << myNX << "][" << myNY << "][" << myNZ << "]." 
-	<< endr;
+	<< '\n' << "Try adjusting your integration parameters (time step, "
+	<< "number of modes (NML), etc.)" << endr;
     }
 
     int max2 = Constant::MAX_INT_2;
