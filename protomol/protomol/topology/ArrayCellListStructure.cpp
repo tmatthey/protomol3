@@ -1,5 +1,6 @@
 #include <protomol/topology/ArrayCellListStructure.h>
 #include <protomol/base/Report.h>
+#include <exception>
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -45,12 +46,14 @@ void ArrayCellListStructure::initialize(const Vector3D &max,
     myNY = ny;
     myNZ = nz;
 
-    if (!myArray.resize(ArraySizes(myNX) (myNY) (myNZ)))
-      report << error
-             <<
+    try{
+    	myArray.resize(ArraySizes(myNX) (myNY) (myNZ));
+    }catch( std::bad_alloc& e ){
+    	report << error <<
         "[ArrayCellListStructure::initialize] Could not allocate memory for "
-        "CellListStructure["
-             << myNX << "][" << myNY << "][" << myNZ << "]." << endr;
+        "CellListStructure[" << myNX << "][" << myNY << "][" << myNZ << "]." 
+	<< endr;
+    }
 
     int max2 = Constant::MAX_INT_2;
     myMaxNX = max2 - max2 % nx;
