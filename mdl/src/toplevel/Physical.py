@@ -530,7 +530,7 @@ class Physical:
       @type T: float
       @param T: Kelvin temperature.
       """
-      _topologyutilities.randomVelocity(T, self.myTop, self.velvec, self.seed)
+      TopologyUtilities.randomVelocity(T, self.myTop, self.velvec, self.seed)
 
       
    def updateCOM_Momenta(self):
