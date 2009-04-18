@@ -456,7 +456,7 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
                Value(noseMass, ConstraintValueType::NoConstraints()),
                false, Text("Calculate Nose Mass?")));
   parameters.push_back
-    (Parameter("autoParmeters",
+    (Parameter("autoParameters",
                Value(autoParmeters, ConstraintValueType::NoConstraints()),
                false, Text("Automatically generate diagonalization parameters.")));
 }
