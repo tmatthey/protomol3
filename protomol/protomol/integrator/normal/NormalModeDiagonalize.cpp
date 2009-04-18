@@ -362,7 +362,7 @@ namespace ProtoMol
                                      10,
                                      Text( "Block cutoff distance for electrostatic forces." ) ) );
 
-    parameters.push_back( Parameter( "autoParmeters",
+    parameters.push_back( Parameter( "autoParameters",
                                      Value(autoParmeters, ConstraintValueType::NoConstraints()   ),
                                      false, 
                                      Text("Automatically generate diagonalization parameters.") ) );

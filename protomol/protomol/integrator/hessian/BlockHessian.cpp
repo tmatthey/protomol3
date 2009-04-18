@@ -145,7 +145,7 @@ void BlockHessian::initialResidueData(const GenericTopology *myTopo, int res_per
       residues_max[i] = res_idx;	//set max number of atoms per residue
       if(residues_alpha_c[i] == -1) report << error << "Alpha Carbon not found for residue "<<
           myTopo->atoms[i].residue_name<<", "<<residue_id[i]<<"."<<endr;
-      report << debug(1) << "residue "<<residue_id[i]<<", valid "<<residues_alpha_c[i]<<", max "<<residues_max[i]<<
+      report << debug(2) << "residue "<<residue_id[i]<<", valid "<<residues_alpha_c[i]<<", max "<<residues_max[i]<<
           ", total "<<num_residues<<", alpha "<<myTopo->atoms[residues_alpha_c[i]].name<<endr;
   }
   //Find N,H for \phis and C,O for \psis
@@ -168,10 +168,10 @@ void BlockHessian::initialResidueData(const GenericTopology *myTopo, int res_per
       }
   }
   for(int i=0;i<num_residues;i++){	//diags
-      report << debug(1) << "residue "<<i<<", phi N "<<residues_phi_n[i]<<
+      report << debug(2) << "residue "<<i<<", phi N "<<residues_phi_n[i]<<
           ", psi C "<<residues_psi_c[i]<<", alpha C "<<residues_alpha_c[i]<<endr;
       if(residues_phi_n[i] == -1 || residues_psi_c[i] == -1)
-          report << error << "Phi/Psi paramiter not found!" << endr;
+          report << error << "Phi/Psi parameter not found!" << endr;
   }
   //test atoms are in the correct order (if not we need to implement eigenvector row swapping)
   int i_res = 0;
@@ -670,7 +670,7 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
         if(abs(atom_block[rac_a] - atom_block[rac_b]) >= 2 &&
           (ac_dist = ((*myPositions)[rac_a] - (*myPositions)[rac_b]).norm()) < cutoffDistance){
           bCount++;
-          report << debug(1) << "Residues " << res_a << ", " << res_b << ", distance " << ac_dist << "." << endl;
+          report << debug(2) << "Residues " << res_a << ", " << res_b << ", distance " << ac_dist << "." << endl;
           //
           int a0 = residues[res_a*MAX_ATOMS_PER_RES];
           int a1 = residues[res_b*MAX_ATOMS_PER_RES];
@@ -727,7 +727,7 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
         }
       }
     }
-    report << debug(1) << " Total blocks " << bCount <<"."<<endl;
+    report << debug(2) << " Total blocks " << bCount <<"."<<endl;
   }else{
     //Do full calculation if set
     evaluateInterBlocks(myPositions, myTopo);
