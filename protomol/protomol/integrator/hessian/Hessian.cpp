@@ -101,6 +101,7 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
   //
   lCutoff = lSwitchon = lSwitch = cCutoff = cSwitchon = cSwitch = 0.0;
   lOrder = cOrder = lSwitchoff = cSwitchoff = 0.0;
+  Real mCutoff = 0.0;
   D = 78.0; S = 0.3; epsi = 1.0;
   myBornSwitch = 3; myDielecConst = 80.0;
   myBond = myAngle = myCoulomb = myCoulombDielec = myCoulombSCPISM =
@@ -127,7 +128,18 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
       ListForces[i]->getParameters(Fparam);
       for (unsigned int j = 0; j < Fparam.size(); j++) {
         if (equalNocase(Fparam[j].keyword, "-cutoff")) {
-          if(!last_was_cutoff) curr_force++;
+          //get outer cuttoff for C1/C2 switches
+          if(curr_force == 0){
+            cCutoff = Fparam[j].value;
+          }else if(curr_force == 1){          
+            lCutoff = Fparam[j].value;
+          }
+          if(!last_was_cutoff){
+            curr_force++;
+          }else{
+            //if two cuttoffs in sequence then outer value
+            mCutoff = Fparam[j].value;
+          }
           last_was_cutoff = true;
         } else {
           last_was_cutoff = false;
@@ -277,6 +289,9 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
   }      
   //set maxiumum cutoff value
   Real tempCoff = max(cCutoff, lCutoff);
+  //allow for 'outer' cutoff
+  tempCoff = max(mCutoff, tempCoff);
+
   cutOff = max(cSwitchoff, lSwitchoff);
   cutOff = max(cutOff, tempCoff);
 }
