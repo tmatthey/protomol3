@@ -152,7 +152,8 @@ namespace ProtoMol {
 		unsigned int count = myForces->size();
 		if((*Q) != NULL){
 			// myForces has total forces
-			for( unsigned int i=0;i < count; i++) temp2V3DBlk[i] = (*myForces)[i];
+                       temp2V3DBlk.resize(count);
+                       temp2V3DBlk.intoAssign(*myForces);
 			// project myForces onto fast subspace 
 			subspaceForce(myForces, myForces);
 			// difference between old myForces stored in temp2V3DBlk and myForces
