@@ -19,11 +19,12 @@ namespace ProtoMol
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EigenvectorInfo() : myEigenvectorLength ( 0 ), myNumEigenvectors ( 0 ), 
-        myEigenvectors ( 0 ), mySingleEigs( 0 ),  
-        myEigVecChanged( true ), myMinimumLimit( 0.5 ), currentMode( -1 ) {};
+        myEigenvectors ( 0 ), myOrigCEigval( 0.0 ), myNewCEigval( 0.0 ), myOrigTimestep( 0.0 ), 
+        mySingleEigs( 0 ), myEigVecChanged( true ), myMinimumLimit( 0.5 ), currentMode( -1 ) {};
 
     EigenvectorInfo( unsigned int n, unsigned int m ) : myEigenvectorLength( n ), myNumEigenvectors( m ),
-        myMaxEigenvalue( 0.0 ), myEigenvectors ( new double[n * m * 3] ), mySingleEigs( 0 ),
+        myMaxEigenvalue( 0.0 ), myEigenvectors ( new double[n * m * 3] ), 
+        myOrigCEigval( 0.0 ), myNewCEigval( 0.0 ), myOrigTimestep( 0.0 ), mySingleEigs( 0 ),
         myEigVecChanged( true ), myMinimumLimit( 0.5 ), currentMode( -1 ) {}
 
     ~EigenvectorInfo() {
@@ -95,7 +96,12 @@ namespace ProtoMol
     unsigned int myNumEigenvectors;
     double myMaxEigenvalue;
     double *myEigenvectors;
-
+    
+    //Current and original max subspace eigenvalue, 
+    //for adaptive timestep
+    double myOrigCEigval, myNewCEigval;
+    double myOrigTimestep;
+    
     //OpenMM single precision interface
     float *mySingleEigs;
     bool myEigVecChanged;

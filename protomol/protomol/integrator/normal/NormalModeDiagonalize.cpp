@@ -8,6 +8,7 @@
 #include <protomol/topology/TopologyUtilities.h>
 #include <protomol/base/PMConstants.h>
 #include <protomol/ProtoMolApp.h>
+#include <protomol/integrator/STSIntegrator.h>
 
 #include<iostream>
 #include<fstream>
@@ -39,7 +40,8 @@ namespace ProtoMol
 
   NormalModeDiagonalize::
   NormalModeDiagonalize(int cycles, int redi, bool fDiag, bool rRand,
-                        Real redhy, Real eTh, int bvc, int rpb, Real dTh, bool apar,
+                        Real redhy, Real eTh, int bvc, int rpb, Real dTh, 
+                        bool apar, bool adts,
                         ForceGroup *overloadedForces,
                         StandardIntegrator *nextIntegrator ) :
     MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
@@ -48,7 +50,8 @@ namespace ProtoMol
     rediagCount( redi ), rediagHysteresis( redhy ),
     hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
-    residuesPerBlock( rpb ), checkpointUpdate( false ),  autoParmeters(apar)
+    residuesPerBlock( rpb ), checkpointUpdate( false ),  
+    autoParmeters(apar), adaptiveTimestep( adts )
  {
 
 
@@ -241,6 +244,9 @@ namespace ProtoMol
 
           blockDiag.absSort( *Q , blockDiag.eigVal, blockDiag.eigIndx, _3N );
 
+          //set new max eigenvalue in C
+          app->eigenInfo.myNewCEigval = fabs(blockDiag.eigVal[_rfM]); //safe as eigval set t length sz=_3N >= _rfM
+
           //flag update to eigenvectors
           *eigVecChangedP = true;
 
@@ -251,9 +257,17 @@ namespace ProtoMol
           if ( firstDiag ) {
             numEigvectsu = _3N;
             *eigValP = blockDiag.eigVal[_3N-1];
+            
+            //first max eigenvalue in C, save original timestep for adaptive use
+            if(!checkpointUpdate){
+              app->eigenInfo.myOrigCEigval = app->eigenInfo.myNewCEigval;
+              app->eigenInfo.myOrigTimestep = bottom()->getTimestep();
+            }
+            
             validMaxEigv = true;
             firstDiag = false;
           }
+          
         } else {
           //****Coarse method**************************************************************************//
           // Process:  Finds isolated 'minimized' block (of residues) Hessians   [evaluateResidues]    //
@@ -271,6 +285,9 @@ namespace ProtoMol
           rediagCounter++; hessianCounter++;
           memory_Hessian = ( rHsn.memory_base + rHsn.memory_blocks ) * sizeof( Real ) / 1000000;
           memory_eigenvector = blockDiag.memory_footprint * sizeof( Real ) / 1000000;
+          
+          //set new max eigenvalue in C
+          app->eigenInfo.myNewCEigval = fabs(blockDiag.eigVal[_rfM]); //safe as eigval set t length sz=_3N >= _rfM
 
           //flag update to eigenvectors
           *eigVecChangedP = true;
@@ -289,11 +306,36 @@ namespace ProtoMol
               *eigValP = max_eigenvalue;
             }
 
+            //first max eigenvalue in C, save original timestep for adaptive use
+            if(!checkpointUpdate){
+              app->eigenInfo.myOrigCEigval = app->eigenInfo.myNewCEigval;
+              app->eigenInfo.myOrigTimestep = bottom()->getTimestep();
+            }
+            
+            //flags
             validMaxEigv = true;
             firstDiag = false;
           }
 
           report << hint << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
+        }
+        
+        //adaptive timestep?
+        const double newCEig = app->eigenInfo.myNewCEigval;
+        const double oldCEig = app->eigenInfo.myOrigCEigval;
+        const double baseTimestep = app->eigenInfo.myOrigTimestep;
+        
+        if(adaptiveTimestep && baseTimestep > 0 && newCEig > 0 && newCEig != oldCEig){
+          
+          const double tRatio = sqrt(oldCEig / newCEig);
+          
+          const double oldTimestep = bottom()->getTimestep();
+          
+          ((STSIntegrator*)bottom())->setTimestep(baseTimestep * tRatio);
+          
+          report << hint << "Adaptive time-step change, base " << baseTimestep << 
+                            ", new " << baseTimestep * tRatio << ", old " << oldTimestep << "." << endr;
+          
         }
 
         //sift current velocities/forces
@@ -367,14 +409,19 @@ namespace ProtoMol
                                      false, 
                                      Text("Automatically generate diagonalization parameters.") ) );
 
-
+    parameters.push_back( Parameter( "adaptiveTimestep",
+                                    Value(adaptiveTimestep, ConstraintValueType::NoConstraints()   ),
+                                    false, 
+                                    Text("Adapt time-step to latest diagonalization eigenvalues.") ) );
+    
   }
 
   MTSIntegrator* NormalModeDiagonalize::doMake( const vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator ) const
   {
     return new NormalModeDiagonalize( values[0], values[1], values[2],
                                       values[3], values[4], values[5],
-                                      values[6], values[7], values[8], values[9],
+                                      values[6], values[7], values[8], 
+                                      values[9], values[10],
                                       fg, nextIntegrator               );
   }
 
@@ -394,6 +441,11 @@ namespace ProtoMol
   void NormalModeDiagonalize::streamRead( std::istream& inStream ) {
 
     inStream >> diagAt;
+    
+    //adaptive timestep
+    inStream >> app->eigenInfo.myOrigCEigval;
+    inStream >> app->eigenInfo.myOrigTimestep;
+    
     checkpointUpdate = true;
       
   }
@@ -402,7 +454,11 @@ namespace ProtoMol
     
     outStream.precision(15);
     outStream << diagAt;
-
+    
+    //adaptive timestep
+    outStream << std::endl << app->eigenInfo.myOrigCEigval;
+    outStream << " " << app->eigenInfo.myOrigTimestep;
+    
   }
 
 
