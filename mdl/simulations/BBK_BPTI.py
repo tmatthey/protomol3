@@ -22,10 +22,16 @@ phys.temperature = 300
 # FORCES
 forces = Forces()
 ff = forces.makeForceField(phys, "charmm")
-ff.params['Coulomb'] = {'algorithm':'PME',
+#ff.params['Coulomb'] = {'algorithm':'PME',
+#                        'switching':'Cutoff',
+#                        'gridsize':15,
+#                        'cutoff':12}
+
+ff.params['Coulomb'] = {'algorithm':'MultiGrid',
                         'switching':'Cutoff',
                         'gridsize':15,
-                        'cutoff':12}
+                        'smoothdist':1.0,
+                        'levels':3}
 
 # OUTPUT
 io.screen = 1

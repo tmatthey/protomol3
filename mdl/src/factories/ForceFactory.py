@@ -8,7 +8,9 @@ import SimpleFullForce
 import CutoffForce
 import EwaldForce
 import PMEForce 
-   
+import MultiGridForce   
+
+
 class ForceFactory:
   def __init__(self):
     """
@@ -84,8 +86,9 @@ class ForceFactory:
                                     'Ewald':{'Cutoff':EwaldForce.EWALD_V_TTT_CUTOFF,
                                              'C1':EwaldForce.EWALD_V_TTT_C1},
                                     'PME':{'Cutoff':PMEForce.PME_V_TTT_B,
-                                           'C1':PMEForce.PME_V_TTT_B_C1}},
-                          
+                                           'C1':PMEForce.PME_V_TTT_B_C1},
+                                    'MultiGrid':{'Cutoff':MultiGridForce.MG_V_TTT}},
+
                           'Periodic':{'SimpleFull':{'Universal':SimpleFullForce.NSFSF_P_U_C},
                                       'Cutoff':{'C1':CutoffForce.NCSF_CCM_OAPPBC_C1SF_CF,
                                                 'C2':CutoffForce.NCSF_CCM_OAPPBC_C2SF_CF,
@@ -95,7 +98,8 @@ class ForceFactory:
                                       'Ewald':{'Cutoff':EwaldForce.EWALD_P_TTT_CUTOFF,
                                                'C1':EwaldForce.EWALD_P_TTT_C1},
                                       'PME':{'Cutoff':PMEForce.PME_P_TTT_B,
-                                             'C1':PMEForce.PME_P_TTT_B_C1}}
+                                             'C1':PMEForce.PME_P_TTT_B_C1},
+                                      'MultiGrid':{'Cutoff':MultiGridForce.MG_P_TTT}}
                                       
 
                           } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  
@@ -465,6 +469,20 @@ class ForceFactory:
             newforce = newforce.makeNew(gridsize, cutoff, order, alpha, accuracy)
          else:
             newforce = newforce.makeNew(gridsize, cutoff, order, alpha, accuracy, expfactor)
+      elif (alg == "MultiGrid"):
+         s = self.getParameter(params, 'smoothdist')
+         if (bc == "Periodic"):
+            gridsize = self.getParameter(params, 'gridsize')
+         else:
+            h = self.getParameter(params, 'h', 4)
+            o = self.getParameter(params, 'o', 0)
+         levels = self.getParameter(params, 'levels')
+         order = self.getParameter(params, 'order', 4)
+         ratio = self.getParameter(params, 'ratio', 2)
+         if (bc == "Periodic"):
+            newforce = newforce.makeNew(s, gridsize, levels, order, ratio)
+         else:
+            newforce = newforce.makeNew(s, h, o, levels, order, ratio)
       else:
         if (alg == "SimpleFull"):
           newforce = newforce.makeNew(self.getParameter(params, 'blocksize', 32))
