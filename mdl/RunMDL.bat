@@ -1,5 +1,3 @@
-#! /bin/sh
-
 set PYTHONPATH=%CD%
 set LD_LIBRARY_PATH=%CD%;%LD_LIBRARY_PATH%
 

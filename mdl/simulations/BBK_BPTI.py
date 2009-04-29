@@ -22,8 +22,10 @@ phys.temperature = 300
 # FORCES
 forces = Forces()
 ff = forces.makeForceField(phys, "charmm")
-ff.params['Coulomb'] = {'algorithm':'Ewald',
-                        'switching':'Cutoff'}
+ff.params['Coulomb'] = {'algorithm':'PME',
+                        'switching':'Cutoff',
+                        'gridsize':15,
+                        'cutoff':12}
 
 # OUTPUT
 io.screen = 1
@@ -31,5 +33,4 @@ io.screen = 1
 
 # PROPAGATION
 prop = Propagator(phys, forces, io)
-print "GATOR"
 gamma = prop.propagate(scheme="BBK", steps=10000, dt=1.0, forcefield=ff)

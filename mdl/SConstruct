@@ -16,7 +16,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
               'force/nonbonded':['SimpleFullForce', 'CutoffForce'],
               'force/system':['PySystemForce'],
               'force':['ForceGroup'],
-              './force/nonbonded':['EwaldForce', 'PMEForce'],
+              './force/nonbonded':['EwaldForce', 'PMEForce', 'MultiGridForce'],
               './':['ProtoMolApp']
 	     }
 
@@ -180,13 +180,17 @@ src = [pmhome+'protomol'+os.sep+'main.cpp', pmhome+os.sep+'protomol'+os.sep+'mod
 # Build Protomol
 env.Append(LIBPATH = ['.'])
 
-libsrc2 = []
+libsrc2 = [
+pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'BSpline.cpp',
+pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'Hermite.cpp',
+pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'fft.c',
+]
 for s in subsrc:
      # I am removing this file from the shared object
      # compilation - it's only used if HAVE_MPI is true, which
      # will never be true for MDL.
-     if (s != 'parallel/FFTComplex.cpp'):
-        libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
+     #if (s != 'parallel/FFTComplex.cpp'):
+     libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
    env.Prepend(LIBS = [libname2])

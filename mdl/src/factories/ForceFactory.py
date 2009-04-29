@@ -7,7 +7,8 @@ import ImproperForce
 import SimpleFullForce
 import CutoffForce
 import EwaldForce
-    
+import PMEForce 
+   
 class ForceFactory:
   def __init__(self):
     """
@@ -81,7 +82,9 @@ class ForceFactory:
                                               'CmpCnCn':CutoffForce.NCSF_CCM_OAPVBC_CCNSF_CSCPF,
                                               'Cutoff':CutoffForce.NCSF_CCM_OAPVBC_CSF_CSCPF},
                                     'Ewald':{'Cutoff':EwaldForce.EWALD_V_TTT_CUTOFF,
-                                             'C1':EwaldForce.EWALD_V_TTT_C1}},
+                                             'C1':EwaldForce.EWALD_V_TTT_C1},
+                                    'PME':{'Cutoff':PMEForce.PME_V_TTT_B,
+                                           'C1':PMEForce.PME_V_TTT_B_C1}},
                           
                           'Periodic':{'SimpleFull':{'Universal':SimpleFullForce.NSFSF_P_U_C},
                                       'Cutoff':{'C1':CutoffForce.NCSF_CCM_OAPPBC_C1SF_CF,
@@ -90,7 +93,9 @@ class ForceFactory:
                                                 'Cn':CutoffForce.NCSF_CCM_OAPPBC_CNSF_CF,
                                                 'ComplementCn':CutoffForce.NCSF_CCM_OAPPBC_CCNCNSF_CF},
                                       'Ewald':{'Cutoff':EwaldForce.EWALD_P_TTT_CUTOFF,
-                                               'C1':EwaldForce.EWALD_P_TTT_C1}}
+                                               'C1':EwaldForce.EWALD_P_TTT_C1},
+                                      'PME':{'Cutoff':PMEForce.PME_P_TTT_B,
+                                             'C1':PMEForce.PME_P_TTT_B_C1}}
                                       
 
                           } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  
@@ -449,6 +454,17 @@ class ForceFactory:
             newforce = newforce.makeNew(alpha, accuracy)
          else:
             newforce = newforce.makeNew(alpha, accuracy, expansionfactor)
+      elif (alg == "PME"):
+         alpha = self.getParameter(params, 'alpha', -1)
+         accuracy = self.getParameter(params, 'accuracy', 0.000001)
+         order = self.getParameter(params, 'order', 4)
+         cutoff = self.getParameter(params, 'cutoff')
+         gridsize = self.getParameter(params, 'gridsize')
+         expfactor = self.getParameter(params, 'expfactor', 3)
+         if (bc == "Periodic"):
+            newforce = newforce.makeNew(gridsize, cutoff, order, alpha, accuracy)
+         else:
+            newforce = newforce.makeNew(gridsize, cutoff, order, alpha, accuracy, expfactor)
       else:
         if (alg == "SimpleFull"):
           newforce = newforce.makeNew(self.getParameter(params, 'blocksize', 32))
