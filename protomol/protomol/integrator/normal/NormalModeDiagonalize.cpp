@@ -116,7 +116,7 @@ namespace ProtoMol
         residuesPerBlock = (int)pow((double)_N,0.6) / 15;
         blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
         blockCutoffDistance = rHsn.cutOff;
-        report << hint << "[NormalModeDiagonalize::initialize] Auto parameters: residuesPerBlock " << residuesPerBlock <<
+        report << debug(1) << "[NormalModeDiagonalize::initialize] Auto parameters: residuesPerBlock " << residuesPerBlock <<
                         ", blockVectorCols " << blockVectorCols <<
                         ", blockCutoffDistance " << blockCutoffDistance << "." << endr;
       }
@@ -207,13 +207,13 @@ namespace ProtoMol
           //****Full method**********************************************************************//
           // Uses BLAS/LAPACK to do 'brute force' diagonalization                                //
           //*************************************************************************************//
-          report << hint << "Start diagonalization." << endr;
+          report << debug(2) << "Start diagonalization." << endr;
 
           //Find Hessians
           blockDiag.hessianTime.start(); //time Hessian
           rHsn.clear();
           rHsn.evaluate( &diagAt, app->topology, true ); //mass re-weighted hessian
-          report << hint << "Hessian found." << endr;
+          report << debug(2) << "Hessian found." << endr;
 
           //stop timer
           blockDiag.hessianTime.stop();
@@ -276,7 +276,7 @@ namespace ProtoMol
           //           Diagonalizes S to get eigenvectors Q, then approximate                          //
           //           eigenvectors are the first 'm' columns of BQ.                                   //
           //*******************************************************************************************//
-          report << hint << "Start coarse diagonalization." << endr;
+          report << debug(2) << "Start coarse diagonalization." << endr;
           Real max_eigenvalue = blockDiag.findEigenvectors( &diagAt, app->topology,
                                 *Q , _3N, _rfM,
                                 blockCutoffDistance, eigenValueThresh, blockVectorCols );
@@ -317,7 +317,7 @@ namespace ProtoMol
             firstDiag = false;
           }
 
-          report << hint << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
+          report << debug(2) << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
         }
         
         //adaptive timestep?
@@ -330,11 +330,14 @@ namespace ProtoMol
           const double tRatio = sqrt(oldCEig / newCEig);
           
           const double oldTimestep = bottom()->getTimestep();
-          
+	  
+          if (baseTimestep * tRatio < oldTimestep) 
+	    {
           ((STSIntegrator*)bottom())->setTimestep(baseTimestep * tRatio);
           
-          report << hint << "Adaptive time-step change, base " << baseTimestep << 
+          report << debug(1) << "Adaptive time-step change, base " << baseTimestep << 
                             ", new " << baseTimestep * tRatio << ", old " << oldTimestep << "." << endr;
+	  }
           
         }
 

@@ -136,7 +136,7 @@ namespace ProtoMol {
     //find coarse block eigenvectors 
     Real max_eigenvalue = findCoarseBlockEigs(eigenValueThresh, blockVectorCols);
     //
-    report << hint << "[BlockHessianDiagonalize::findEigenvectors] Average residue eigenvalues "<<residues_total_eigs/bHess->num_blocks<<
+    report << debug(2) << "[BlockHessianDiagonalize::findEigenvectors] Average residue eigenvalues "<<residues_total_eigs/bHess->num_blocks<<
               ", for "<<bHess->num_blocks<<" blocks."<<endr;
     //**** Find 'inner' Hessian H *********************************************
     //Find local block Hessian, and inter block Hessian within distance 'blockCutoffDistance'
