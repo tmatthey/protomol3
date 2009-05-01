@@ -582,6 +582,12 @@ class PropagatorFactory:
                        ('temp', 300, 
                         'inertia', 0.5,
                         'bathpos', 1.0))
+      self.registerPMObject("NPTVerlet",
+                       ('temperature', 300,
+		        'pressure', 1.0,
+			'tauT', 1.0,
+			'tauV', 1.0,
+			'tauP', 1.0))
       self.registerPMObject("NumericalDifferentiation",
 			    ('epsilon', 1))
       self.registerPMObject("PLeapfrog", ())
