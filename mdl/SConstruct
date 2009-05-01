@@ -79,7 +79,7 @@ def pyWrap(env, pmhome):
           copyToPYD = Copy(os.getcwd()+'/interface/'+dir+'/_'+module+'.pyd', os.getcwd()+'/interface/'+dir+'/_'+module+'.dll')
           env.AddPostAction(os.getcwd()+'/interface/'+dir+'/_'+module+'.dll', copyToPYD)
        else:
-          env.SharedLibrary(target='interface/'+dir+'/_'+module+'.so', source=['interface/'+dir+'/'+module+'.i'], SHLIBPREFIX="")
+          env.SharedLibrary(target='interface/'+dir+'/_'+module+'.so', source=['interface/'+dir+'/'+module+'.i'], SHLIBPREFIX="", LIBS=['mdl']+env['LIBS'])
 
 
 
@@ -193,8 +193,8 @@ for s in subsrc:
      libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
-   env.Prepend(LIBS = [libname2])
-   sl = env.SharedLibrary(libname2, libsrc2)
+   #env.Prepend(LIBS = [libname2])
+   sl = env.SharedLibrary(libname2, libsrc2, env['LIBS'])
 else:
    sl = env.StaticLibrary(libname2, libsrc2, LIBSUFFIX=env['LIBSUFFIX'], LIBS=env['LIBS'])
 os.chdir(pwd)
