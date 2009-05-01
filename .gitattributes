@@ -218,6 +218,17 @@ mdl/interface/integrator/hessian/HessianInt.i -text
 mdl/interface/integrator/leapfrog/DMDLeapfrogIntegrator.i -text
 mdl/interface/integrator/leapfrog/LeapfrogIntegrator.i -text
 mdl/interface/integrator/leapfrog/LeapfrogTruncatedShadow.i -text
+mdl/interface/integrator/leapfrog/ModifierNPTRattle.cpp -text
+mdl/interface/integrator/leapfrog/ModifierNPTRattle.h -text
+mdl/interface/integrator/leapfrog/ModifierNPTShake.cpp -text
+mdl/interface/integrator/leapfrog/ModifierNPTShake.h -text
+mdl/interface/integrator/leapfrog/ModifierPostForceBarostat.h -text
+mdl/interface/integrator/leapfrog/ModifierPostForceThermostat.h -text
+mdl/interface/integrator/leapfrog/ModifierPreForceBarostat.h -text
+mdl/interface/integrator/leapfrog/ModifierPreForceThermostat.h -text
+mdl/interface/integrator/leapfrog/NPTVerletIntegrator.cpp -text
+mdl/interface/integrator/leapfrog/NPTVerletIntegrator.h -text
+mdl/interface/integrator/leapfrog/NPTVerletIntegrator.i -text
 mdl/interface/integrator/leapfrog/NoseNVTLeapfrogIntegrator.i -text
 mdl/interface/integrator/leapfrog/PLeapfrogIntegrator.i -text
 mdl/interface/integrator/normal/NormalModeBrownian.i -text
