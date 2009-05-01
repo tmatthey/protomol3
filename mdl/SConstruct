@@ -2,7 +2,7 @@ import os
 import sys
 
 
-mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator'],
+mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator', 'NPTVerletIntegrator'],
               'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
 	      'integrator/base':['LangevinImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
               'type':['Vector3DBlock', 'ScalarStructure'],
@@ -184,6 +184,9 @@ libsrc2 = [
 pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'BSpline.cpp',
 pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'Hermite.cpp',
 pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'fft.c',
+pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'NPTVerletIntegrator.cpp',
+pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'ModifierNPTShake.cpp',
+pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'ModifierNPTRattle.cpp',
 ]
 for s in subsrc:
      # I am removing this file from the shared object
