@@ -18,6 +18,11 @@ import _GenericTopology
 import numpy
 import sys
 
+def deepcopy(a, b):
+   for i in range (0, len(a)):
+      b[i] = a[i]
+
+
 class Atom:
    """
    An atom in the system.
@@ -189,7 +194,7 @@ class Physical:
    # TO GET DATA FROM WRAPPERS
    def __getattr__(self, name):
       if (name == 'positions'):
-         return self.__dict__['posvec'].getC()
+	 return self.__dict__['posvec'].getC()
       elif (name == 'velocities'):
          return self.__dict__['velvec'].getC()
       elif (name == 'time'):
@@ -203,9 +208,9 @@ class Physical:
       firsttime = False
       if (not self.__dict__.has_key(name)):
          firsttime = True
-      if (name == 'positions' and not firsttime):
+      if (name == 'positions'):
          self.__dict__['posvec'].setC(val)
-      elif (name == 'velocities' and not firsttime):
+      elif (name == 'velocities'):
          self.__dict__['velvec'].setC(val)
       elif (name == 'bc'):
          self.__dict__['bc'] = val         
