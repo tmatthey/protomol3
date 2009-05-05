@@ -10,6 +10,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
               'type':['Vector3DBlock', 'ScalarStructure'],
 	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax'],
               'integrator/hessian':['HessianInt'],
+              'integrator/openMM':['OpenMMIntegrator'],
               'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
               'output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
               'base':['MathUtilities'],
@@ -68,8 +69,10 @@ def pyWrap(env, pmhome):
      env.Append(SHLINKFLAGS=' -Wl,-E')
   env.Append(_LIBDIRFLAGS="-L.")
 
-  if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
-    env.Append(SWIGFLAGS='-DHAVE_GUI')
+  #if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
+  #  env.Append(SWIGFLAGS='-DHAVE_GUI')
+  #if (str(env['CCFLAGS']).find('HAVE_OPENMM') != -1):
+  #  env.Append(SWIGFLAGS='-DHAVE_OPENMM')
   for dir in mdlmodules.iterkeys():
     modulelist = mdlmodules[dir]
     for i in range(0, len(modulelist)):
@@ -98,9 +101,11 @@ opts = Options(pmhome+os.sep+'options.py')
 Export('opts')
 
 opts.AddOptions(
+    BoolOption('gui', 'Set to 1 if using the GUI', 0),
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
     BoolOption('lapack', 'Use LAPACK', 1),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
+    EnumOption('openmm', 'Build with OpenMM', 'none', allowed_values=('none', 'reference', 'cuda'))
     )
 
 
@@ -127,6 +132,30 @@ fah = int(env.get('fah', 0))
 use_lapack = int(env.get('lapack', 0))
 use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
+gui = int(env.get('gui', 0))
+if gui:
+    env.Append(CCFLAGS = '-DHAVE_GUI')
+
+# FAH Options
+fah = int(env.get('fah', 0))
+
+# LAPACK Options
+use_lapack = int(env.get('lapack', 0))
+use_simtk_lapack = int(env.get('simtk_lapack', 0))
+
+# OpenMM Options
+openmm_type = env.get('openmm')
+if( openmm_type == 'none' ):
+    use_openmm = 0
+else:
+    use_openmm = 1
+
+    if ( openmm_type == 'reference' ):
+        use_openmm_reference = 1
+        use_openmm_cuda = 0
+    elif ( openmm_type == 'cuda' ):
+        use_openmm_reference = 0
+        use_openmm_cuda = 1
 
 # Configure compiler
 compiler_configure()
