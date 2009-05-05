@@ -449,7 +449,11 @@ class PropagatorFactory:
 	    objects[len(objects)-1].thisown=0
 	    # Now append to the list
 	    arglist += (objects[len(objects)-1],)
-         return apply(regprop['constructor'], arglist)
+	 if (args[0] == "OpenMM"):
+	    retval = apply(regprop['constructor'], ())
+	    return retval.setParams(*arglist)
+	 else:
+            return apply(regprop['constructor'], arglist)
       elif (regprop['type'] == "object"):
          if (len(args) <= 4):
             objects.append(apply(regprop['constructor'], (args[1], args[2])))
@@ -597,6 +601,19 @@ class PropagatorFactory:
                         'temp', 300,
                         'seed', 1234
                        ))
+      self.registerPMObject("OpenMM",
+                       ('temp', 300,
+      		        'gamma', 2,
+      			'seed', 1234,
+      			'HarmonicBondForce', False,
+      			'HarmonicAngleForce', False,
+      			'RBDihedralForce', False,
+      			'PeriodicTorsion', False,
+      			'NonbondedForce', False,
+      			'IntegratorType', 1,
+      			'GBSAEpsilon', 1.0,
+                        'GBSASolvent', 78.3,
+                        'commonmotion', 0))
 
    
 
