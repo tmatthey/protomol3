@@ -85,6 +85,10 @@ namespace ProtoMol
   {
     MTSIntegrator::initialize( app );
 
+    // Setup adaptive timestep data from checkpoint
+    app->eigenInfo.myOrigCEigval = origCEigVal;
+    app->eigenInfo.myOrigTimestep = origTimestep;
+
     //test topmost integrator
     if ( top() != this ) {
       report << error << "NormalModeDiagonalize not top integrator." << endr;
@@ -445,17 +449,16 @@ namespace ProtoMol
   void NormalModeDiagonalize::streamRead( std::istream& inStream ) {
 
     inStream >> diagAt;
-    
+ 
     //adaptive timestep
-    inStream >> app->eigenInfo.myOrigCEigval;
-    inStream >> app->eigenInfo.myOrigTimestep;
+    inStream >> origCEigVal;    
+    inStream >> origTimestep;
     
     checkpointUpdate = true;
       
   }
   
   void NormalModeDiagonalize::streamWrite( std::ostream& outStream ) const {    
-    
     outStream.precision(15);
     outStream << diagAt;
     
