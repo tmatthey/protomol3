@@ -183,7 +183,8 @@ namespace ProtoMol
     app->energies.clear();
     for ( int i = 0;i < numTimesteps; ) {
       //Current step
-      int currentStepNum = ( int )( app->topology->time / getTimestep() );
+      int currentStepNum = app->currentStep; 
+      
       //Full diagonalization
       if ( ( rediagCount && currentStepNum >= nextRediag ) || firstDiag ) {
         nextRediag += rediagCount;
