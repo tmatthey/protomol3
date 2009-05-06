@@ -336,7 +336,7 @@ namespace ProtoMol
           
           const double oldTimestep = bottom()->getTimestep();
 	  
-          if (baseTimestep * tRatio < oldTimestep) 
+	  //          if (baseTimestep * tRatio < oldTimestep) 
 	    {
           ((STSIntegrator*)bottom())->setTimestep(baseTimestep * tRatio);
           
