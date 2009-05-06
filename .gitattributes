@@ -238,6 +238,7 @@ mdl/interface/integrator/normal/NormalModeMinimizer.i -text
 mdl/interface/integrator/normal/NormalModeMori.i -text
 mdl/interface/integrator/normal/NormalModeRelax.i -text
 mdl/interface/integrator/normal/NormalModeUtilities.i -text
+mdl/interface/integrator/openMM/OpenMMIntegrator.i -text
 mdl/interface/io/DCDTrajectoryReader.i -text
 mdl/interface/io/EigenvectorReader.i -text
 mdl/interface/io/EigenvectorTextReader.i -text
