@@ -251,6 +251,9 @@ mdl/interface/io/XYZReader.i -text
 mdl/interface/io/XYZTrajectoryReader.i -text
 mdl/interface/io/XYZTrajectoryWriter.i -text
 mdl/interface/io/XYZWriter.i -text
+mdl/interface/io/gromacs/GromacsParameterFileReader.i -text
+mdl/interface/io/gromacs/GromacsTopologyReader.i -text
+mdl/interface/io/gromacs/PortGromacsParameters.i -text
 mdl/interface/output/OutputCache.i -text
 mdl/interface/output/OutputDCDTrajectory.i -text
 mdl/interface/output/OutputDCDTrajectoryVel.i -text
