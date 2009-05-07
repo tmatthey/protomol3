@@ -793,7 +793,9 @@ namespace ProtoMol {
                 }else{
                     (*myPositions).intoWeightedAdd(-lambda,posTemp);		//reset positions
                     (*Q) = NULL;	//force rediagonalization
+                    report <<debug(1)<<"[NormalModeUtilities::minimizer] REDIAGONALIZING! PE fail  lambda= "<<lambda<<endl;
                     return -1;				//flag aborted
+
                 }
             }
         }else{

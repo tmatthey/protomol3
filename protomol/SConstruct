@@ -8,7 +8,7 @@ opts = Options('options.py')
 Export('opts')
 
 opts.AddOptions(
-    BoolOption('gui', 'Set to 1 if using the GUI', 1),
+    BoolOption('gui', 'Set to 1 if using the GUI', 0),
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
     BoolOption('lapack', 'Use LAPACK', 1),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
