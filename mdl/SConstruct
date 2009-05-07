@@ -6,12 +6,13 @@ import sys
 
 mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator', 'NPTVerletIntegrator'],
               'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
-	      'integrator/base':['LangevinImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
+	      'integrator/base':['LangevinImpulseIntegrator', 'ImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
               'type':['Vector3DBlock', 'ScalarStructure'],
-	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax'],
+	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator'],
               'integrator/hessian':['HessianInt'],
               'integrator/openMM':['OpenMMIntegrator'],
               'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
+	      'io/gromacs':['GromacsParameterFileReader', 'GromacsTopologyReader', 'PortGromacsParameters'],
               'output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
               'base':['MathUtilities'],
 	      'topology':['TopologyUtilities', 'GenericTopology'],
@@ -212,12 +213,14 @@ src = [pmhome+'protomol'+os.sep+'main.cpp', pmhome+os.sep+'protomol'+os.sep+'mod
 env.Append(LIBPATH = ['.'])
 
 libsrc2 = [
-pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'BSpline.cpp',
-pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'Hermite.cpp',
-pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'fft.c',
-pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'NPTVerletIntegrator.cpp',
-pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'ModifierNPTShake.cpp',
-pmhome+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'ModifierNPTRattle.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'BSpline.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'Hermite.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded'+os.sep+'fft.c',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'base'+os.sep+'ImpulseIntegrator.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'normal'+os.sep+'BBKIntegrator.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'NPTVerletIntegrator.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'ModifierNPTShake.cpp',
+pmhome+os.sep+'..'+os.sep+'mdl'+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog'+os.sep+'ModifierNPTRattle.cpp',
 ]
 for s in subsrc:
      # I am removing this file from the shared object
