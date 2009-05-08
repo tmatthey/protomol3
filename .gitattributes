@@ -232,6 +232,7 @@ mdl/interface/integrator/leapfrog/NPTVerletIntegrator.h -text
 mdl/interface/integrator/leapfrog/NPTVerletIntegrator.i -text
 mdl/interface/integrator/leapfrog/NoseNVTLeapfrogIntegrator.i -text
 mdl/interface/integrator/leapfrog/PLeapfrogIntegrator.i -text
+mdl/interface/integrator/normal/BBKIntegrator.i -text
 mdl/interface/integrator/normal/NormalModeBrownian.i -text
 mdl/interface/integrator/normal/NormalModeDiagonalize.i -text
 mdl/interface/integrator/normal/NormalModeLangevin.i -text
