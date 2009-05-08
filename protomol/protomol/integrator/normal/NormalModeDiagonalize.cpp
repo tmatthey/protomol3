@@ -41,7 +41,7 @@ namespace ProtoMol
   NormalModeDiagonalize::
   NormalModeDiagonalize(int cycles, int redi, bool fDiag, bool rRand,
                         Real redhy, Real eTh, int bvc, int rpb, Real dTh, 
-                        bool apar, bool adts,
+                        bool apar, bool adts, bool pdm, Real ml,
                         ForceGroup *overloadedForces,
                         StandardIntegrator *nextIntegrator ) :
     MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
@@ -51,7 +51,8 @@ namespace ProtoMol
     hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
     residuesPerBlock( rpb ), checkpointUpdate( false ),  
-    autoParmeters(apar), adaptiveTimestep( adts )
+    autoParmeters(apar), adaptiveTimestep( adts ), 
+    postDiagonalizeMinimize(pdm), minLim(ml)
  {
 
 
@@ -326,6 +327,17 @@ namespace ProtoMol
           report << debug(2) << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
         }
         
+        //post diag minimize?
+        if(postDiagonalizeMinimize){
+          
+          Real lastLambda; int forceCalc = 0; //diagnostic/effective gamma
+
+          //do minimization with local forces, max loop 100, set subSpace minimization true
+          int itrs = minimizer(minLim, 100, true, false, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
+          report << debug(2) << "[NormalModeDiagonalize::run] iterations = "<< itrs << " force calcs = " << forceCalc << endr;
+
+        }
+
         //adaptive timestep?
         const double newCEig = app->eigenInfo.myNewCEigval;
         const double oldCEig = app->eigenInfo.myOrigCEigval;
@@ -423,6 +435,16 @@ namespace ProtoMol
                                     Value(adaptiveTimestep, ConstraintValueType::NoConstraints()   ),
                                     false, 
                                     Text("Adapt time-step to latest diagonalization eigenvalues.") ) );
+
+    parameters.push_back( Parameter( "postDiagonalizeMinimize",
+                                    Value(postDiagonalizeMinimize, ConstraintValueType::NoConstraints()   ),
+                                    false, 
+                                    Text("Minimize after diagonalization.") ) );
+
+    parameters.push_back( Parameter( "minimlim",
+                                    Value(minLim,ConstraintValueType::NotNegative() ),
+                                    0.1,
+                                    Text("Minimizer target PE difference kcal mole^{-1}") ) );
     
   }
 
@@ -431,7 +453,8 @@ namespace ProtoMol
     return new NormalModeDiagonalize( values[0], values[1], values[2],
                                       values[3], values[4], values[5],
                                       values[6], values[7], values[8], 
-                                      values[9], values[10],
+                                      values[9], values[10], values[11],
+                                      values[12],
                                       fg, nextIntegrator               );
   }
 

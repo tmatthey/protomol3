@@ -38,7 +38,7 @@ namespace ProtoMol
       NormalModeDiagonalize( int cycles, int redi, bool fDiag,
                              bool rRand,
                              Real redhy, Real eTh, int bvc, int rpb, Real dTh, 
-                             bool apar, bool adts,
+                             bool apar, bool adts, bool pdm, Real ml,
                              ForceGroup *overloadedForces,
                              StandardIntegrator *nextIntegrator );
       ~NormalModeDiagonalize();
@@ -57,7 +57,7 @@ namespace ProtoMol
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public:
       virtual std::string getIdNoAlias() const {return keyword;}
-      virtual unsigned int getParameterSize() const {return 11;}
+      virtual unsigned int getParameterSize() const {return 13;}
       virtual void getParameters( std::vector<Parameter>& parameters ) const;
 
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,6 +121,11 @@ namespace ProtoMol
     
       //adaptive timestep
       bool adaptiveTimestep;
+
+      //post diagonalize minimize
+      bool postDiagonalizeMinimize;
+      Real minLim;
+
   };
 }
 
