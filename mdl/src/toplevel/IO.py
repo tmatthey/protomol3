@@ -9,7 +9,9 @@ import DCDTrajectoryReader
 import EigenvectorReader
 import PDBWriter
 import XYZWriter
-
+import GromacsTopologyReader
+import GromacsParameterFileReader
+import PortGromacsParameters
 
 import OutputCache
 import OutputEnergies
@@ -185,6 +187,27 @@ class IO:
         PARReader.PARReader(self.checkPath(parname),0).read(phys.myPAR)
         phys.myPAR.readFlag = 1
         phys.build()
+
+   def readGromacs(self, phys, topname, parname):
+        """
+	Read Gromacs input files, and convert them
+
+	@type phys: Physical
+        @param phys: The physical system.
+
+	@type topname: string
+	@param topname: Topology file name.
+
+	@type parname: string
+	@param parname: AMBER parameter file name.
+	"""
+
+	groTop = GromacsTopologyReader.GromacsTopology()
+	groPar = GromacsParameterFileReader.GromacsParameters()
+	portGro = PortGromacsParameters.PortGromacsParameters()
+	portGro.Read_Basic_Gromacs_Parameters(phys.myPSF, phys.myPAR, groTop, groPar, self.checkPath(topname), self.checkPath(parname))
+	phys.myPAR.readFlag = 1
+	phys.build()
 
    def readPDBPos(self,phys,pdbname):
         """
