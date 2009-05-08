@@ -18,7 +18,7 @@ namespace ProtoMol {
   public:
     NormalModeMinimizer();
     NormalModeMinimizer(Real timestep, int firstmode, int nummode, Real gamma, int seed, Real temperature, 
-                            Real minimlim, int rforce, bool simplemin,  ForceGroup *overloadedForces);
+                            Real minimlim, int rforce, bool red, bool simplemin,  ForceGroup *overloadedForces);
     ~NormalModeMinimizer(); 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +31,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     virtual std::string getIdNoAlias() const{return keyword;}
-    virtual unsigned int getParameterSize() const{return 9;}
+    virtual unsigned int getParameterSize() const{return 10;}
     virtual void getParameters(std::vector<Parameter>& parameters) const;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

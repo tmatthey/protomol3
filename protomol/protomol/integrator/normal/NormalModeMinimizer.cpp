@@ -28,9 +28,9 @@ namespace ProtoMol {
   }
 
   NormalModeMinimizer::NormalModeMinimizer(Real timestep, int firstmode, int nummode, Real gamma, int seed, Real temperature, 
-      Real minimlim, int rforce, bool simplemin, ForceGroup *overloadedForces) 
+      Real minimlim, int rforce, bool red, bool simplemin, ForceGroup *overloadedForces) 
     : STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, gamma, seed, temperature),
-      numSteps(0), minLim(minimlim), randforce(rforce),  simpleMin(simplemin)
+      numSteps(0), minLim(minimlim), randforce(rforce), reDiag(red), simpleMin(simplemin)
   {
   }
 
@@ -82,45 +82,51 @@ namespace ProtoMol {
     if(randforce) app->positions.intoSubtract(gaussRandCoord1);
     //(*myPositions).intoWeightedAdd(-randStp,gaussRandCoord1);
     //do minimization with local forces, max loop 100, set subSpace minimization true
-    itrs = minimizer(minLim, 100, simpleMin, false, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
+    itrs = minimizer(minLim, 100, simpleMin, reDiag, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
     numSteps++;
     avItrs += itrs;
     avMinForceCalc += forceCalc;
     report <<debug(5)<<"[NormalModeMinimizer::run] iterations = "<<itrs<<" average = "<<
                 (float)avItrs/(float)numSteps<<" force calcs = "<<forceCalc<<" average = "<<(float)avMinForceCalc/(float)numSteps<<endl;
     if(randforce && itrs != -1 && lastLambda > 0){	//add random force, but not if rediagonalizing
-		//Real lambda;
-        //add random force
-        if(myPreviousNormalMode->genCompNoise) gaussRandCoord1 = myPreviousNormalMode->tempV3DBlk;
-        else genProjGauss(&gaussRandCoord1, app->topology);
-        //lambda = eUFactor / *eigValP;	//user factor
-        randStp = sqrt(2 * Constant::BOLTZMANN * myTemp * lastLambda);	//step length
-        //(*myPositions).intoWeightedAdd(randStp,gaussRandCoord1);
-        gaussRandCoord1.intoWeighted(randStp,gaussRandCoord1);
-        app->positions.intoAdd(gaussRandCoord1);
-    }else{
-        gaussRandCoord1.zero(-1);
-    }
-    //additional random steps?
-    eUFactor = 0.5;
-    if(randforce > 1){
+
+      //add random force
+      if(myPreviousNormalMode->genCompNoise) gaussRandCoord1 = myPreviousNormalMode->tempV3DBlk;
+      else genProjGauss(&gaussRandCoord1, app->topology);
+      //lambda = eUFactor / *eigValP;	//user factor
+      randStp = sqrt(2 * Constant::BOLTZMANN * myTemp * lastLambda);	//step length
+      //(*myPositions).intoWeightedAdd(randStp,gaussRandCoord1);
+      gaussRandCoord1.intoWeighted(randStp,gaussRandCoord1);
+      app->positions.intoAdd(gaussRandCoord1);
+
+      //additional random steps?
+      if(randforce > 1){
+        eUFactor = 0.5;
         Real lambda;
         for(int i=1;i<randforce;i++){
-            utilityCalculateForces();
-            nonSubspaceForce(myForces, myForces);
-            for(int j=0;j<_N;j++) (*myForces)[j] /= app->topology->atoms[j].scaledMass;
-            lambda = eUFactor / *eigValP;	//user factor
-            //update positions
-            app->positions.intoWeightedAdd(lambda,*myForces);
-            gaussRandCoord1.intoWeightedAdd(lambda,*myForces); //add to grc1 so can be removed at the next step
-            //random force
-            genProjGauss(&gaussRandCoord2, app->topology);
-            randStp = sqrt(2 * Constant::BOLTZMANN * myTemp * lambda);
-            app->positions.intoWeightedAdd(randStp,gaussRandCoord2);
-            //add to grc1 so can be removed at the next step
-            gaussRandCoord1.intoWeightedAdd(randStp,gaussRandCoord2); 
+          utilityCalculateForces();
+          nonSubspaceForce(myForces, myForces);
+          for(int j=0;j<_N;j++) (*myForces)[j] /= app->topology->atoms[j].scaledMass;
+          lambda = eUFactor / *eigValP;	//user factor
+          //update positions
+          app->positions.intoWeightedAdd(lambda,*myForces);
+          gaussRandCoord1.intoWeightedAdd(lambda,*myForces); //add to grc1 so can be removed at the next step
+          //random force
+          genProjGauss(&gaussRandCoord2, app->topology);
+          randStp = sqrt(2 * Constant::BOLTZMANN * myTemp * lambda);
+          app->positions.intoWeightedAdd(randStp,gaussRandCoord2);
+          //add to grc1 so can be removed at the next step
+          gaussRandCoord1.intoWeightedAdd(randStp,gaussRandCoord2); 
         }
+      }
+
+    }else{
+        gaussRandCoord1.zero(-1);
+
+        //flag re-diagonalize if detected
+        if(itrs == -1) app->eigenInfo.reDiagonalize = true;
     }
+
     //
     postStepModify();
   }  
@@ -134,14 +140,14 @@ namespace ProtoMol {
     parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),300.0,Text("Langevin temperature")));
     parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
     parameters.push_back(Parameter("randforce",Value(randforce,ConstraintValueType::NotNegative()),1,Text("Add random force/EM steps")));
-    //parameters.push_back(Parameter("rediag",Value(reDiag,ConstraintValueType::NoConstraints()),false,Text("Force re-digonalize")));
+    parameters.push_back(Parameter("rediag",Value(reDiag,ConstraintValueType::NoConstraints()),false,Text("Force re-digonalize")));
     parameters.push_back(Parameter("simplemin",Value(simpleMin,ConstraintValueType::NoConstraints()),true,Text("Simple minimizer or exact minima projection.")));
-    //parameters.push_back(Parameter("eUFactor",Value(eUFactor,ConstraintValueType::NotNegative()),1.0,Text("Euler Maruyama factor")));
 
   }
 
   STSIntegrator* NormalModeMinimizer::doMake(const vector<Value>& values,ForceGroup* fg)const{
-    return new NormalModeMinimizer(values[0],values[1],values[2],values[3],values[4],values[5],values[6],values[7],values[8],fg);
+    return new NormalModeMinimizer(values[0],values[1],values[2],values[3],values[4],values[5],
+                                   values[6],values[7],values[8],values[9],fg);
   }
 
   //void NormalModeMinimizer::addModifierAfterInitialize(){

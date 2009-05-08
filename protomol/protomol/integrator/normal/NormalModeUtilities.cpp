@@ -507,11 +507,11 @@ namespace ProtoMol {
     int ldz = dim; int lwork = 26*dim; /* dimension of work array*///int m;
     int liwork = 10*dim;						/* dimension of int work array*/
     
-	//Recomended abstol for max precision
+  //Recomended abstol for max precision
     char cmach = 's'; //String is actualy safe min but it is shortened to remove the warning
 #endif
     int info = 0;				/* output 0=success */
-	int m = 0;
+  int m = 0;
     //call LAPACK
     //
 #if defined( HAVE_LAPACK )
@@ -530,7 +530,7 @@ namespace ProtoMol {
                 wrkSp, lwork, iwork, &liwork, info, len_jobz, len_range, len_uplo);
 #endif
 #endif
-	numFound = m;
+  numFound = m;
     //delete arrays
     delete [] iwork;
     delete [] isuppz;
@@ -573,10 +573,10 @@ namespace ProtoMol {
                 tmpVect[j] = eigVec[i*dim+j];
                 eigVec[i*dim+j] = eigVec[eigIndx[i]*dim+j];
             }
-			//
-			tmpEval = eigVal[i];
-			eigVal[i] = eigVal[eigIndx[i]];
-			//
+      //
+      tmpEval = eigVal[i];
+      eigVal[i] = eigVal[eigIndx[i]];
+      //
             eigIndx[i] = -1;								//flag swapped
             ii = i;
             do{
@@ -587,11 +587,11 @@ namespace ProtoMol {
                     tmpVect[j] = eigVec[k*dim+j];
                     eigVec[k*dim+j] = tmpElt;
                 }
-				//
-				tmpElt = tmpEval;
-				tmpEval = eigVal[k];
-				eigVal[k] = tmpElt;
-				//
+        //
+        tmpElt = tmpEval;
+        tmpEval = eigVal[k];
+        eigVal[k] = tmpElt;
+        //
                 eigIndx[k] = -1;							//flag swapped
                 ii = k;
             }while(k<dim);
@@ -767,36 +767,36 @@ namespace ProtoMol {
         numLambda++;
         //test for end, too large lambda test first
         if((oldPot - myEnergies->potentialEnergy()) < 0){
-	  if(rsCG>4) report << error << "[NormalModeUtilities::minimizer] Minimization failed, Aborting. "<<rsCG <<endr;
-            else{
-                if(!reDiag){  //allow minimization if mode at angle to sub-space
-                    //calc optimum lambda from first slope
-                    Real a1;
-                    a1 = (myEnergies->potentialEnergy() - oldPot - lambdaSlp1 * lambda) / (lambda * lambda);
-                    lambda1 = -lambdaSlp1 / (2 * a1);
-                    //Test that the quadratic solution gives a predicted PE value
-                    //where the difference from the old PE value is bounded by the difference
-                    //from the last succesful step, else solve quadratic for the last difference.
-                    Real calcPE = a1*lambda1*lambda1+lambdaSlp1*lambda1+oldPot;
-                    if(oldPot - calcPE > lastDiff && lambdaSlp1 != 0.0){
-                        lambda1 = (-lastDiff * 2.0) / lambdaSlp1;
-                    }
-                    (*myPositions).intoWeightedAdd(-lambda,posTemp);		//reset positions
-                    *lastLambda -= lambda;
-                    numLambda--;
-                    utilityCalculateForces();
-                    (*forceCalc)++;
-                    if(lambda1 > 0.0 && lambda1 < lambda) lambda = lambda1;
-                    else lambda /= 2.0;
-                    rsCG++;
-                    report <<debug(1)<<"[NormalModeUtilities::minimizer] Reset CG, PE fail. Cycle= "<<rsCG<<" lambda= "<<lambda<<endl;
-                }else{
-                    (*myPositions).intoWeightedAdd(-lambda,posTemp);		//reset positions
-                    (*Q) = NULL;	//force rediagonalization
-                    report <<debug(1)<<"[NormalModeUtilities::minimizer] REDIAGONALIZING! PE fail  lambda= "<<lambda<<endl;
-                    return -1;				//flag aborted
+          if(rsCG>4){
+            report << error << "[NormalModeUtilities::minimizer] Minimization failed, Aborting. "<<rsCG <<endr;
+          }else{
+              if(!reDiag){  //allow minimization if mode at angle to sub-space
+                  //calc optimum lambda from first slope
+                  Real a1;
+                  a1 = (myEnergies->potentialEnergy() - oldPot - lambdaSlp1 * lambda) / (lambda * lambda);
+                  lambda1 = -lambdaSlp1 / (2 * a1);
+                  //Test that the quadratic solution gives a predicted PE value
+                  //where the difference from the old PE value is bounded by the difference
+                  //from the last succesful step, else solve quadratic for the last difference.
+                  Real calcPE = a1*lambda1*lambda1+lambdaSlp1*lambda1+oldPot;
+                  if(oldPot - calcPE > lastDiff && lambdaSlp1 != 0.0){
+                      lambda1 = (-lastDiff * 2.0) / lambdaSlp1;
+                  }
+                  (*myPositions).intoWeightedAdd(-lambda,posTemp);		//reset positions
+                  *lastLambda -= lambda;
+                  numLambda--;
+                  utilityCalculateForces();
+                  (*forceCalc)++;
+                  if(lambda1 > 0.0 && lambda1 < lambda) lambda = lambda1;
+                  else lambda /= 2.0;
+                  rsCG++;
+                  report <<debug(1)<<"[NormalModeUtilities::minimizer] Reset CG, PE fail. Cycle= "<<rsCG<<" lambda= "<<lambda<<endl;
+              }else{
+                  (*myPositions).intoWeightedAdd(-lambda,posTemp);		//reset positions
+                  report <<debug(1)<<"[NormalModeUtilities::minimizer] REDIAGONALIZING! PE fail  lambda= "<<lambda<<endl;
+                  return -1;				//flag aborted
 
-                }
+              }
             }
         }else{
             rsCG = 0;

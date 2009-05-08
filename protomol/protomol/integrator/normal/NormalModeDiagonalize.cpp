@@ -191,8 +191,9 @@ namespace ProtoMol
     app->energies.clear();
     for ( int i = 0;i < numTimesteps; ) {
 
-      //Full diagonalization
-      if ( ( rediagCount && currentStepNum >= nextRediag ) || firstDiag ) {
+      //Diagonalization if repetitive, first for forced
+      if ( ( rediagCount && currentStepNum >= nextRediag ) || firstDiag || app->eigenInfo.reDiagonalize) {
+
         nextRediag += rediagCount;
 
         newDiag = true;
@@ -360,6 +361,9 @@ namespace ProtoMol
 
         //sift current velocities/forces
         myNextNormalMode->subSpaceSift( &app->velocities, myForces );
+
+        //clear re-diag flag
+        app->eigenInfo.reDiagonalize = false;
 
       }
 

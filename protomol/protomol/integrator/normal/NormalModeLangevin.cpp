@@ -89,8 +89,8 @@ void NormalModeLangevin::run(int numTimesteps) {
     //run minimizer if any remaining modes
     //cyclelength
     if (testRemainingModes()) myNextIntegrator->run(myCycleLength);
-    if (*Q == 0) {   //rediagonalize?
-      app->topology->time = actTime - (i - numTimesteps) * getTimestep();
+    if (app->eigenInfo.reDiagonalize) {   //rediagonalize?
+      app->topology->time = actTime + (i - numTimesteps) * getTimestep();
       if (myPreviousIntegrator == 0)
         report
           << error << "[NormalModeLangevin::Run] Re-diagonalization forced "

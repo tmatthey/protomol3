@@ -88,8 +88,8 @@ namespace ProtoMol {
       app->energies.clear();
       //run minimizer if any remaining modes
       if(testRemainingModes()) myNextIntegrator->run(myCycleLength); //cyclelength 
-      if(*Q == NULL){	//rediagonalize?
-            app->topology->time = actTime - (i - numTimesteps) * getTimestep();
+      if(app->eigenInfo.reDiagonalize){	//rediagonalize?
+            app->topology->time = actTime + (i - numTimesteps) * getTimestep();
             if(myPreviousIntegrator == NULL) 
                 report << error << "[NormalModeLangLf::Run] Re-diagonalization forced with NormalModeLangLf as outermost Integrator. Aborting."<<endr;
             return;
