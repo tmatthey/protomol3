@@ -222,6 +222,7 @@ mdl/interface/integrator/PySTSIntegrator.h -text
 mdl/interface/integrator/PySTSIntegrator.i -text
 mdl/interface/integrator/STSIntegrator.i -text
 mdl/interface/integrator/base/CGMinimizerIntegrator.i -text
+mdl/interface/integrator/base/ImpulseIntegrator.h -text
 mdl/interface/integrator/base/ImpulseIntegrator.i -text
 mdl/interface/integrator/base/LangevinImpulseIntegrator.i -text
 mdl/interface/integrator/base/NumericalDifferentiation.i -text
