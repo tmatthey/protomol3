@@ -31,7 +31,8 @@ using namespace ProtoMol;
       if (!(PyArrayObject*)(self->c)) {
 	delete self->c;
       }
-      self->c = (Real*)(((PyArrayObject*)rhs)->data); 
+      self->c = (Real*)(((PyArrayObject*)rhs)->data);
+      (*self)[0].c = self->c;
    }
 
    PyObject* getC() {
