@@ -307,9 +307,9 @@ mdl/src/forces/__init__.py -text
 mdl/src/modifiers/__init__.py -text
 mdl/src/modifiers/friction.py -text
 mdl/src/propagators/__init__.py -text
-mdl/src/propagators/classes/BBK.py -text
+mdl/src/propagators/classes/BBKMDL.py -text
 mdl/src/propagators/classes/HMC.py -text
-mdl/src/propagators/classes/Impulse.py -text
+mdl/src/propagators/classes/ImpulseMDL.py -text
 mdl/src/propagators/classes/LeapfrogMDL.py -text
 mdl/src/propagators/classes/MTS.py -text
 mdl/src/propagators/classes/NosePoincGL.py -text

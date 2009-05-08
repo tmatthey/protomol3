@@ -5,7 +5,7 @@ import Constants
 import _TopologyUtilities
 import numpy
 
-class BBK(STS):
+class BBKMDL(STS):
     """
     Implements BBK propagation.
     cf. A. Brunger, C. B. Brooks and M. Karplus.  Stochastic
@@ -52,7 +52,7 @@ class BBK(STS):
        phys.velocities += forces.force*0.5*self.dt*phys.invmasses   # second first kick
        phys.velocities *= (1.0/(1.0+0.5*self.dt*self.gamma))
 
-name="BBK"  #: Name of propagation scheme
+name="BBKMDL"  #: Name of propagation scheme
 parameters=("temp", 300,
             "gamma", 2,
             "seed", 1234) #: Parameter names and defaults
