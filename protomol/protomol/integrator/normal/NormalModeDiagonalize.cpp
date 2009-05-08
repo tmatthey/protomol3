@@ -34,8 +34,8 @@ namespace ProtoMol
   const string NormalModeDiagonalize::keyword( "NormalModeDiagonalize" );
 
   NormalModeDiagonalize::NormalModeDiagonalize() :
-	 MTSIntegrator(), NormalModeUtilities(), 
-	 hessianCounter( 0 ), rediagCounter( 0 ), checkpointUpdate( false ) {
+   MTSIntegrator(), NormalModeUtilities(), 
+   hessianCounter( 0 ), rediagCounter( 0 ), checkpointUpdate( false ) {
   }
 
   NormalModeDiagonalize::
@@ -156,7 +156,7 @@ namespace ProtoMol
     memory_Hessian = memory_eigenvector = 0;
 
     //setup rediag counter in case valid
-    nextRediag = ( int )( app->topology->time / getTimestep() ); //rediag first time
+    nextRediag = app->currentStep;//( int )( app->topology->time / getTimestep() ); //rediag first time
 
     //save positions where diagonalized for checkpoint save (assume I.C. if file)
     if(!checkpointUpdate) {
@@ -183,12 +183,13 @@ namespace ProtoMol
       return;
     }
 
+    //Current step at start
+    int currentStepNum = app->currentStep; 
+
     //main loop
     app->energies.clear();
     for ( int i = 0;i < numTimesteps; ) {
-      //Current step
-      int currentStepNum = app->currentStep; 
-      
+
       //Full diagonalization
       if ( ( rediagCount && currentStepNum >= nextRediag ) || firstDiag ) {
         nextRediag += rediagCount;
@@ -335,14 +336,13 @@ namespace ProtoMol
           const double tRatio = sqrt(oldCEig / newCEig);
           
           const double oldTimestep = bottom()->getTimestep();
-	  
-	  if (baseTimestep * tRatio <= baseTimestep) 
-	    {
-          ((STSIntegrator*)bottom())->setTimestep(baseTimestep * tRatio);
-          
-          report << debug(1) << "Adaptive time-step change, base " << baseTimestep << 
-                            ", new " << baseTimestep * tRatio << ", old " << oldTimestep << "." << endr;
-	    }
+    
+          if (baseTimestep * tRatio <= baseTimestep) {
+                ((STSIntegrator*)bottom())->setTimestep(baseTimestep * tRatio);
+                
+                report << debug(1) << "Adaptive time-step change, base " << baseTimestep << 
+                                  ", new " << baseTimestep * tRatio << ", old " << oldTimestep << "." << endr;
+          }
           
         }
 
@@ -353,8 +353,10 @@ namespace ProtoMol
 
       //run integrator
       int stepsToRun = min(nextRediag - currentStepNum, numTimesteps - i);
+
       myNextIntegrator->run( stepsToRun );
       i += stepsToRun;
+      currentStepNum += stepsToRun;
 
       //remove diagonalization flags after inner integrator call
       newDiag = false;

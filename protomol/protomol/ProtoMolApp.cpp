@@ -264,13 +264,15 @@ bool ProtoMolApp::step() {
 
   int inc = outputs->getNext() - currentStep;
   inc = std::min(lastStep, currentStep + inc) - currentStep;
-  currentStep += inc;
 
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].start();
 
   integrator->run(inc);
 
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].stop();
+
+  //moved so that current step valid in integrator
+  currentStep += inc;
 
   return true;
 }
