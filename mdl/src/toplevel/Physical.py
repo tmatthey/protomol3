@@ -589,8 +589,8 @@ class Physical:
              self.myTop.setBC(self.cB1[0],self.cB1[1],self.cB1[2],self.cB2[0],self.cB2[1],self.cB2[2],self.cB3[0],self.cB3[1],self.cB3[2],self.cO[0],self.cO[1],self.cO[2])
       self.myTop.setExclusion(self.exclude)
       if (self.myPSF.numAtoms() > 0 and hasattr(self.myPAR, 'readFlag')):
-         GenericTopology.buildTopology(self.myTop, self.myPSF, self.myPAR, 0, self.myTop.makeSCPISM())
-         if (numpy.size(self.velocities) == 0):
+	 GenericTopology.buildTopology(self.myTop, self.myPSF, self.myPAR, 0, self.myTop.makeSCPISM())
+	 if (numpy.size(self.velocities) == 0):
             # This function actually returns a value, since it is
             # unused the runtime environment detects a memory leak.
             # disown() removes this concern.
@@ -599,14 +599,12 @@ class Physical:
             # IT MAY EFFECT RANDOM NUMBER CONSISTENCY
             #aaa = MathUtilities.randomNumberFirst(self.seed, 1)
             TopologyUtilities.randomVelocity(self.temperature, self.myTop, self.velvec, self.seed)
-         if (self.remcom >= 0):
-           TopologyUtilities.removeLinearMomentum(self.velvec, self.myTop).disown()
-           #print dir(self.lmom)
+	 if (self.remcom >= 0):
+	   TopologyUtilities.removeLinearMomentum(self.velvec, self.myTop).disown()
          if (self.remang >= 0):
-           TopologyUtilities.removeAngularMomentum(self.posvec, self.velvec, self.myTop).disown()
+	   TopologyUtilities.removeAngularMomentum(self.posvec, self.velvec, self.myTop).disown()
       if (self.bc == "Periodic"):
            self.myTop.setCellSize(self.cellsize)
-
       # COMPUTE INV MASS MATRIX
       temp = list()
       ii = 0
