@@ -512,6 +512,11 @@ class PropagatorFactory:
       """
       Register all SWIG-wrapped propagators.
       """
+      self.registerPMObject("BBK",
+                       ('temp', 300,
+                        'gamma', 2,
+                        'seed', 1234))
+      self.registerPMObject("Impulse", ())
       self.registerPMObject("LangevinImpulse",
                        ('temp', 300,
                         'gamma', 2,
