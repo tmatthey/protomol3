@@ -39,4 +39,4 @@ io.screen = 1
 
 # PROPAGATION
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate(scheme="BBK", steps=10000, dt=1.0, forcefield=ff)
+gamma = prop.propagate(scheme="BBKMDL", steps=10000, dt=1.0, forcefield=ff)
