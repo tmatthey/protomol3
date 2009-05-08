@@ -114,6 +114,16 @@ mdl/data/alanDipeptideVac/alan_mineq.psf -text
 mdl/data/alanDipeptideVac/eigVmC7eq -text
 mdl/data/alanDipeptideVac/minC7eq.pdb -text
 mdl/data/alanDipeptideVac/par_all27_prot_lipid.inp -text
+mdl/data/alanine_gromacs/alanine.pdb -text
+mdl/data/alanine_gromacs/alanine.top -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96-c.tdb -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96-n.tdb -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96.atp -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96.hdb -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96.itp -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96.rtp -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96bon.itp -text
+mdl/data/alanine_gromacs/ffamber96/ffamber96nb.itp -text
 mdl/data/argon_280/argon.par -text
 mdl/data/argon_280/argon.psf -text
 mdl/data/argon_280/argon_eq.vel -text
