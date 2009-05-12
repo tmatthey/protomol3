@@ -3,7 +3,7 @@ import types
 import os
 import Constants
 import TopologyUtilities
-
+import copy
 #import dl
 #import os
 #if os.name == 'posix':
@@ -37,16 +37,20 @@ def setPropagator(prop, phys, forces, obj, levelswitch=False):
            forces.forcevec = obj.getForces()
 	   if (dir(obj).count('setIntegratorSetPointers') != 0):
 		   obj.setIntegratorSetPointers(obj, phys.myEig, 1)
-           phys.app = obj.appInit(phys.myTop,phys.posvec,phys.velvec,forces.energies)
+           if (not hasattr(phys, 'app')):
+	      phys.app = obj.appInit(phys.myTop,phys.posvec,phys.velvec,forces.energies)
+	   else:
+	      obj.initialize(phys.app)
            phys.app.energies = forces.energies
            #obj.initialize(phys.myTop,phys.posvec,phys.velvec,forces.energies)
         # Do not perform garbage collection if we are setting our propagator
 	# to something else, and aren't simply changing levels in the hierarchy
+	
 	if (prop.myPropagator != 0 and (not levelswitch)):
-	    prop.myPropagator.thisown = 0
-	#   del(prop.myPropagator)
+	    del(prop.myPropagator)
+	
 	prop.myPropagator = obj
-        if (prop.isMDL(prop.myPropagator)):
+	if (prop.isMDL(prop.myPropagator)):
            prop.runModifiers(prop.myPropagator.preinitmodifiers, phys, forces, prop, prop.myPropagator)
            prop.myPropagator.init(phys, forces, prop)
            prop.runModifiers(prop.myPropagator.postinitmodifiers, phys, forces, prop, prop.myPropagator)
@@ -92,9 +96,9 @@ def executePropagator(prop, phys, forces, io, numsteps):
 		 phys.myTop.time = prop.myStep*prop.myPropagator.getTimestep()
 		 io.run(phys, forces, prop.myStep, prop.myTimestep, prop.myPropagator)
 	      if (phys.remcom >= 0):
-                 TopologyUtilities.removeLinearMomentum(phys.velvec, phys.myTop).disown()
+                 TopologyUtilities.remLin(phys.velvec, phys.myTop)
               if (phys.remang >= 0):
-	         TopologyUtilities.removeAngularMomentum(phys.posvec, phys.velvec, phys.myTop).disown()
+	         TopologyUtilities.remAng(phys.posvec, phys.velvec, phys.myTop)
       if (prop.isMDL(prop.myPropagator)):
            prop.runModifiers(prop.myPropagator.postrunmodifiers, phys, forces, prop, prop.myPropagator)
            prop.myPropagator.finish(phys, forces, prop)
@@ -440,7 +444,7 @@ class PropagatorFactory:
             else:
                 arglist += (regprop['defaults'][ii+1],)
             ii += 2                     
-         arglist += (args[2],)
+	 arglist += (args[2],)
          if (args.__len__() > 4):
 	    # Python referencing - we must save the object we create
 	    # in a temporary array; otherwise when it loses scope it gets
