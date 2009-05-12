@@ -60,7 +60,7 @@ class ForceField(ForceGroup):
       # Upon each rebuild this bit is cleared, upon each changing
       # of any of the above parameters the bit is set.
       self.dirty = 1  #: Dirty bit, allows for lazy building of force objects upon system propagation
-
+      self.gbsa = False #: Flag telling whether or not to do generalized Born
          
       ##################################################
       # USER-ACCESSIBLE STRUCTURES

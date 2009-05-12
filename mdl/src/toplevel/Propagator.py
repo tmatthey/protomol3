@@ -338,11 +338,15 @@ class Propagator:
        if ((str(type(forcefield)))[7:len(str(type(forcefield)))-2] == 'list'):
           for ff in forcefield:
              if (ff.dirty): ff.build()
+	     if (ff.gbsa): self.phys.myTop.implicitSolvent = 2
        else:
           if (forcefield.dirty): 
               forcefield.build()
+	  if (forcefield.gbsa):
+	      self.phys.myTop.implicitSolvent = 2
        if (self.io.dirty):
           self.io.build()
+        
        if (propFactory.getType(outerscheme) == "method"):
           # Calculate the forces, store them in force.
           if (not hasattr(self.phys, 'app')):
