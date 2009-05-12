@@ -1,6 +1,6 @@
 from ForceGroup import *
 import sys
-from PySystemForce import *
+import PySystemForce
 class ForceField(ForceGroup):
    """
    A holder for the following data:
@@ -12,11 +12,12 @@ class ForceField(ForceGroup):
    # DEFAULT DESTRUCTOR WILL DELETE FORCE ARRAY
    # THIS DESTRUCTION IS HANDLED IN THE BACK END
    # SO WE DON'T DO IT AGAIN
-   def __del__(self):
-      """
-      Destructor.
-      """
-      pass
+   #def __del__(self):
+   #   """
+   #   Destructor.
+   #   """
+   #   print "DEF DEL"
+   #   pass
 
    def setDefaults(self):
       """
@@ -263,8 +264,11 @@ class ForceField(ForceGroup):
           elif (forcetype == 'h'):
               self.forcearray.append(self.forceFactory.createHarmDihedralForce(self.bc, self.params['HarmonicDihedral']))
           self.addForce(self.forcearray[len(self.forcearray)-1])
+	  import ForceGroup
+	  ForceGroup._swig_setattr_nondynamic(self.forcearray[len(self.forcearray)-1], ForceGroup.Force, "thisown", 0)
 
     if (bornflag != -1): self.forcetypes.insert(bornflag, 'c')
     for pyforce in self.pythonforces:
-         self.forcearray.append(PySystemForce(pyforce))
+         self.forcearray.append(PySystemForce.PySystemForce(pyforce))
+	 PySystemForce._swig_setattr_nondynamic(self.forcearray[len(self.forcearray)-1], PySystemForce.PySystemForce, "thisown", 0)
          self.addSystemForce(self.forcearray[len(self.forcearray)-1])
