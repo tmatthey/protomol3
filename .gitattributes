@@ -284,6 +284,7 @@ mdl/interface/output/OutputXYZTrajectoryPos.i -text
 mdl/interface/output/OutputXYZTrajectoryVel.i -text
 mdl/interface/pyWrap.py -text
 mdl/interface/topology/GenericTopology.i -text
+mdl/interface/topology/Topo.h -text
 mdl/interface/topology/TopologyUtilities.i -text
 mdl/interface/type/ScalarStructure.i -text
 mdl/interface/type/Vector3DBlock.i -text
