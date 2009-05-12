@@ -85,9 +85,10 @@ class Forces:
       ff.bc = phys.bc
       ff.setDefaults()
       self.energies.initialize(phys)
-      #ff.thisown = 0
-      self.myForceFields.append(ff)
-      return self.myForceFields[self.myForceFields.__len__()-1]
+      ff.thisown = 0
+      #self.myForceFields.append(ff)
+      return ff
+      #return self.myForceFields[self.myForceFields.__len__()-1]
 
 
    # NOTE: THIS WILL PERMANENTLY DELETE THE PASSED FORCE FIELD OBJECT
@@ -101,8 +102,8 @@ class Forces:
       """
       for i in range(0, self.myForceFields.__len__()):
          if (self.myForceFields[i] == ff):
-            self.myForceFields.erase(ff)
-
+	    self.myForceFields.remove(ff)
+            break
 
    def randomForce(self, phys, seed):
         """
