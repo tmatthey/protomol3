@@ -5,6 +5,7 @@ import Constants
 import TopologyUtilities
 import numpy
 import ProtoMolApp
+import copy
 
 class Propagator:
    """
@@ -240,6 +241,21 @@ class Propagator:
          self.myPropagator.finish(phys, forces, prop)
       self.myPropagator = tempI
 
+   def deepCopyForce(self, ff):
+      p = ff.params
+      if (ff.charmm):
+         ff2 = self.forces.makeForceField(self.phys, "charmm")
+      else:
+         ff2 = self.forces.makeForceField(self.phys)
+      for ii in ff.forcetypes:
+         ff2.forcetypes.append(ii)
+      ff2.params = p
+      ff2.build()
+      #self.forces.removeForceField(ff)
+      import ForceGroup
+      ForceGroup._swig_setattr_nondynamic(ff2, ForceGroup.ForceGroup, "thisown", 0)
+      return ff2
+
    # PROPAGATE THE SYSTEM
    # USE METHOD "name"
    # arg1 = NUMBER OF STEPS
@@ -290,7 +306,7 @@ class Propagator:
           # OF PROPAGATION LEVELS
           if (len(forcefield) != levels):
              print "[MDL] Error in propagate(): ", levels, " levels of propagation with ", len(forcefield), " force fields."
-          outerforcefield = forcefield[0]
+          outerforcefield = self.deepCopyForce(forcefield[0])
 
           if (str(type(scheme))[7:11] != 'list'):
              chain += (params,)
@@ -306,7 +322,7 @@ class Propagator:
                 chain += (cyclelength[i],)
              else:
                 chain += (dt,)
-	     chain += (forcefield[i],)
+	     chain += (self.deepCopyForce(forcefield[i]),)
              if params.has_key(scheme[i]):
                 chain += (params[scheme[i]],)
              else:
@@ -314,7 +330,7 @@ class Propagator:
        else: #STS
           outertime = dt
           outerscheme = scheme
-          outerforcefield = forcefield
+          outerforcefield = self.deepCopyForce(forcefield)
           chain += (params,)
        # Build force fields.
        # Tricky, because we could be dealing with
@@ -343,7 +359,7 @@ class Propagator:
              self.io.run(self.phys, self.forces, ii, outertime)
              self.phys.updateCOM_Momenta()
        else: # Object
-          setPropagator(self, self.phys, self.forces, propFactory.applyModifiers(propFactory.create(1, outerscheme, outertime, outerforcefield, *chain), outerscheme))
+	  setPropagator(self, self.phys, self.forces, propFactory.applyModifiers(propFactory.create(1, outerscheme, outertime, outerforcefield, *chain), outerscheme))
           shake = False
           if (params.has_key('shake') and params['shake'] == 'on'):
               shake = True
@@ -360,6 +376,4 @@ class Propagator:
           if (rattle):
              self.myPropagator.removeModifier(rattleMod)
        self.phys.updateCOM_Momenta()
-
-
            
