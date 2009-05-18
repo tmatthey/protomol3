@@ -4,6 +4,7 @@ import os
 import Constants
 import TopologyUtilities
 import copy
+import numpy
 #import dl
 #import os
 #if os.name == 'posix':
@@ -83,21 +84,27 @@ def executePropagator(prop, phys, forces, io, numsteps):
            prop.runModifiers(prop.myPropagator.prerunmodifiers, phys, forces, prop, prop.myPropagator)
       ii = 0
 
+      #prop.myPropagator.run(numsteps)
+      #return
       while (ii < numsteps):
+              nextstop = int(numpy.minimum(numsteps, io.computeNext(ii, phys.remcom, phys.remang)))
+
               if (prop.isMDL(prop.myPropagator)):
-                 prop.myPropagator.run(phys, forces, prop)
+                 while (ii < nextstop):
+		    prop.myPropagator.run(phys, forces, prop)
+		    ii += 1
                  phys.myTop.time = prop.myStep*prop.myPropagator.getTimestep()*Constants.invTimeFactor()
                  phys.updateCOM_Momenta()
               else:
-                 prop.myPropagator.run(1)
-              ii = ii + 1
+                 prop.myPropagator.run(nextstop-ii)
+                 ii = nextstop
               if (prop.myLevel == 0):
-                 prop.myStep += 1
+                 prop.myStep = nextstop
 		 phys.myTop.time = prop.myStep*prop.myPropagator.getTimestep()
 		 io.run(phys, forces, prop.myStep, prop.myTimestep, prop.myPropagator)
-	      if (phys.remcom >= 0):
+	      if (phys.remcom > 0 and ii % phys.remcom == 0):
                  TopologyUtilities.remLin(phys.velvec, phys.myTop)
-              if (phys.remang >= 0):
+              if (phys.remang > 0 and ii % phys.remang >= 0):
 	         TopologyUtilities.remAng(phys.posvec, phys.velvec, phys.myTop)
       if (prop.isMDL(prop.myPropagator)):
            prop.runModifiers(prop.myPropagator.postrunmodifiers, phys, forces, prop, prop.myPropagator)
