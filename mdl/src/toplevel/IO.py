@@ -138,7 +138,26 @@ class IO:
          self.figures[i] = 0
       self.mplFigCount = 0
 
+   def nextLargest(self, step, freq):
+      rem = step % freq
+      return step+(freq-rem)
 
+   def computeNext(self, currentstep, remcom, remang):
+      # Find the next highest step whose value modulo an output frequency is zero
+      val = numpy.inf
+      if (remcom > 0):
+         val = numpy.minimum(val, self.nextLargest(currentstep, remcom))
+      if (remang > 0):
+         val = numpy.remang(val, self.nextLargest(currentstep, remang))
+      if (self.screen != -1):
+         val = numpy.minimum(val, self.nextLargest(currentstep, self.screen))
+      for plot in self.plots:
+         if (self.plots[plot] != -1):
+	    val = numpy.minimum(val, self.nextLargest(currentstep, self.plots[plot]))
+      for file in self.files:
+         if (self.files[file][1] != -1):
+	    val = numpy.minimum(val, self.nextLargest(currentstep, self.files[file][1]))
+      return val
 
    #####################################################################################
    # INSTANTANEOUS FILE I/O (NO FREQUENCY)
