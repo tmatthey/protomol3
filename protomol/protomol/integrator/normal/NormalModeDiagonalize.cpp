@@ -198,7 +198,7 @@ namespace ProtoMol
 
         newDiag = true;
 
-        report << debug( 1 ) << "[NormalModeDiagonalize::run] Finding diagonalized Hessian." << endr;
+        report << hint << "[NormalModeDiagonalize::run] Finding diagonalized Hessian." << endr;
 
         if(!(checkpointUpdate && firstDiag)) {
           //save positions where diagonalized for checkpoint save
@@ -325,7 +325,7 @@ namespace ProtoMol
             firstDiag = false;
           }
 
-          report << debug(2) << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
+          report << hint << "Coarse diagonalization complete. Maximum eigenvalue = " << max_eigenvalue << "." << endr;
         }
         
         //post diag minimize?

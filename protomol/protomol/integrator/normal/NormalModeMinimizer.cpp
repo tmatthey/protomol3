@@ -83,6 +83,10 @@ namespace ProtoMol {
     //(*myPositions).intoWeightedAdd(-randStp,gaussRandCoord1);
     //do minimization with local forces, max loop 100, set subSpace minimization true
     itrs = minimizer(minLim, 100, simpleMin, reDiag, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
+
+    //flag excessive minimizations
+    if(itrs > 10) report << hint << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
+
     numSteps++;
     avItrs += itrs;
     avMinForceCalc += forceCalc;
