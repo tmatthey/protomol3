@@ -562,7 +562,9 @@ class PropagatorFactory:
                              'eigenValueThresh', 5,
                              'blockVectorCols', 0,
                              'residuesPerBlock', 1,
-                             'blockCutoffDistance', 10))
+                             'blockCutoffDistance', 10,
+			     'autoParameters', True,
+			     'autoDT', False))
                             #('averageSteps', 1,
 			    # 'avStepSize', 1.0,
 			    # 'reDiagFrequency', 0,
