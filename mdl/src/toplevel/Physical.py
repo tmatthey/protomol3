@@ -266,7 +266,8 @@ class Physical:
       @rtype: float
       @return: System pressure
       """
-      return forces.energies.pressure(self.myTop.getVolume(self.posvec))
+      TopologyUtilities.addVelocityVirial(forces.energies, self.myTop, self.velvec)
+      return TopologyUtilities.velocityVirial(self.myTop, self.velvec).pressure(self.myTop.getVolume(self.posvec))
 
    # SYSTEM VOLUME (AA^3)
    def volume(self):
@@ -475,6 +476,8 @@ class Physical:
                        self.myPSF.getAttributeInt("acceptor", index-1, "atom1"),
                        self.myPSF.getAttributeInt("acceptor", index-1, "atom2"))
 
+
+
    # GET THE MASS (AMU) OF A SPECIFIC ATOM
    def mass(self, atom):
       """
@@ -598,7 +601,7 @@ class Physical:
             # NOTE TO SELF: THIS WAS COMMENTED OUT FOR PM 3
             # IT MAY EFFECT RANDOM NUMBER CONSISTENCY
             #aaa = MathUtilities.randomNumberFirst(self.seed, 1)
-            TopologyUtilities.randomVelocity(self.temperature, self.myTop, self.velvec, self.seed)
+	    TopologyUtilities.randomVelocity(self.temperature, self.myTop, self.velvec, self.seed)
 	 if (self.remcom >= 0):
 	   TopologyUtilities.removeLinearMomentum(self.velvec, self.myTop).disown()
          if (self.remang >= 0):
