@@ -28,8 +28,15 @@ import os
 
 # Check for Gnuplot and Matplotlib
 # Conditional import.
-if sys.modules.has_key('_Gnuplot'): from _Gnuplot import *
-if sys.modules.has_key('pylab'): from pylab import *
+try:
+   from _Gnuplot import *
+except:
+   pass
+try: 
+   from _pylab import *
+except:
+   pass
+  
 
 import numpy
 
@@ -207,7 +214,7 @@ class IO:
         phys.myPAR.readFlag = 1
         phys.build()
 
-   def readGromacs(self, phys, topname, parname):
+   def readGromacs(self, phys, topname, parname, gbname=""):
         """
 	Read Gromacs input files, and convert them
 
@@ -225,6 +232,8 @@ class IO:
 	groPar = GromacsParameterFileReader.GromacsParameters()
 	portGro = PortGromacsParameters.PortGromacsParameters()
 	portGro.Read_Basic_Gromacs_Parameters(phys.myPSF, phys.myPAR, groTop, groPar, self.checkPath(topname), self.checkPath(parname))
+	if (gbname != ""):
+	   portGro.Read_Gromacs_GB_Parameters(self.checkPath(gbname))
 	phys.myPAR.readFlag = 1
 	phys.build()
 
