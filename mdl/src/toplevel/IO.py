@@ -891,7 +891,7 @@ class IO:
             elif (output == 'xyztrajforce'):
                self.myOutputs.append(OutputXYZTrajectoryForce.OutputXYZTrajectoryForce(filename, freq))
             elif (output == 'xyztrajpos'):
-               self.myOutputs.append(OutputXYZTrajectoryPos.OutputXYZTrajectoryPos(filename, freq))
+               self.myOutputs.append(OutputXYZTrajectoryPos.OutputXYZTrajectoryPos(filename, freq, 1))
             elif (output == 'xyztrajvel'):
                self.myOutputs.append(OutputXYZTrajectoryVel.OutputXYZTrajectoryVel(filename, freq))
             elif (output == 'gui'):
