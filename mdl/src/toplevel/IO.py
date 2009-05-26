@@ -751,7 +751,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, forces.coulombEnergy(), 'coulombenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(0), 'coulombenergy')
 
    def plotLJEnergy(self, phys, forces, step):
       """
@@ -766,7 +766,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, forces.ljEnergy(), 'ljenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(1), 'ljenergy')
 
    def plotBondEnergy(self, phys, forces, step):
       """
@@ -781,7 +781,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, phys.app.energies.getTable(3), 'bondenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(2), 'bondenergy')
 
    def plotAngleEnergy(self, phys, forces, step):
       """
@@ -796,7 +796,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, forces.angleEnergy(), 'angleenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(3), 'angleenergy')
       
    def plotDihedralEnergy(self, phys, forces, step):
       """
@@ -811,7 +811,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, forces.dihedralEnergy(), 'dihedralenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(4), 'dihedralenergy')
 
    def plotImproperEnergy(self, phys, forces, step):
       """
@@ -826,7 +826,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, forces.improperEnergy(), 'improperenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(5), 'improperenergy')
 
    def plotShadowEnergy(self, phys, forces, step):
       """
