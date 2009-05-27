@@ -79,14 +79,13 @@ def pyWrap(env, pmhome):
     for i in range(0, len(modulelist)):
        module = modulelist[i]
        if (env['PLATFORM'] == 'win32'):  
-          env['SWIG'] = r'C:\Swig\swigwin-1.3.33\swig.exe'
+          env['SWIG'] = r'swig.exe'
           swigObject = env.SharedObject([os.getcwd()+'/interface/'+dir+'/'+module+'.i'])
           newlib = env.SharedLibrary(os.getcwd()+'/interface/'+dir+'/_'+module+'.dll', [os.getcwd()+'/interface/'+dir+'/'+module+'_wrap.cc', swigObject])
           copyToPYD = Copy(os.getcwd()+'/interface/'+dir+'/_'+module+'.pyd', os.getcwd()+'/interface/'+dir+'/_'+module+'.dll')
           env.AddPostAction(os.getcwd()+'/interface/'+dir+'/_'+module+'.dll', copyToPYD)
        else:
           env.SharedLibrary(target='interface/'+dir+'/_'+module+'.so', source=['interface/'+dir+'/'+module+'.i'], SHLIBPREFIX="", LIBS=['mdl']+env['LIBS'])
-
 
 
 
