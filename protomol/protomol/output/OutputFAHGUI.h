@@ -28,7 +28,7 @@ namespace ProtoMol {
   public:
     OutputFAHGUI();
     OutputFAHGUI(const std::string &name, int freq, int port, 
-                 int prange, const string &projn, Real timeout, bool pause);
+                 int prange, const std::string &projn, Real timeout, bool pause);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  From class Output
