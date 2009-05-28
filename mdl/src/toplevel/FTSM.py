@@ -351,9 +351,15 @@ def setConstraint(angle1, angle2, phi, psi, kappa, forcefield):
         if (forcefield.forcetypes[i] == 'h'):
             if (not flag):
 	       forcefield.forcearray[i].setPars(kappa, angle1-1, phi)
+	       forcefield.params['HarmonicDihedral']['kbias'][0] = kappa
+	       forcefield.params['HarmonicDihedral']['dihedralnum'][0] = angle1
+	       forcefield.params['HarmonicDihedral']['angle'][0] = phi
                flag = True
             else:
 	       forcefield.forcearray[i].setPars(kappa, angle2-1, psi)
+	       forcefield.params['HarmonicDihedral']['kbias'][1] = kappa
+	       forcefield.params['HarmonicDihedral']['dihedralnum'][1] = angle2
+	       forcefield.params['HarmonicDihedral']['angle'][1] = psi
 
 
 def switchPhiPsi(S):
