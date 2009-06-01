@@ -3,7 +3,7 @@
 \usepackage{graphicx}
 %\usepackage{longtable}
 %\usepackage{multirow}
-\usepackage{psfig}
+%\usepackage{psfig}
 \usepackage{amsmath}
 %\usepackage{amsthm}
 %\usepackage{amsfonts}
@@ -149,10 +149,19 @@ force calculators.  MDL currently possesses the following capabilities:
 of a physical system in MDL involves reading CHARMM \cite{Broo83} Protein
 Structure Files (PSFs) and Parameter (PAR) files.  Files from the 
 Protein Data Bank (PDB, \cite{BERN77}) can be used to populate atomic positions.
-Pairwise computations such as the Lennard-Jones potential \cite{} which
+Pairwise computations such as the Lennard-Jones potential which
 models both van der Waals and Pauli Exclusion force terms, and the
 electrostatic forces are customizable through evaluation algorithms, cutoffs
 and switching functions.
+\item {\bf Compatibility with GROMACS topology}.  As an alternative to
+the CHARMM PSF, a user may set up the system {\it topology} (i.e., bonds,
+angles, etc.) using a topology file from Gromacs \cite{BeSD95}.  This
+topology file can be particularly useful if the user desires the
+Generalized Born \cite{OnBC04} implicit solvent model for electrostatics, since
+parameters are provided.
+\item {\bf Compatibility with AMBER force fields}.  Gromacs topology
+information is often coupled to AMBER force fields.  MDL contains readers
+for these force fields, which can be used as an alternative to CHARMM.
 \item {\bf Construct a physical system}. MDL provides the ability
 for a user to control parameters such as simulation boundary conditions, 
 Kelvin temperature, etc. along with easy access to observables such
@@ -175,12 +184,19 @@ data charts.  Through Gnuplot-py \cite{GNUP05} or Matplotlib \cite{MATP05}, MDL 
 plot observables such as temperature, pressure, total energy or potential
 terms, etc. which makes verification of propagation schemes easier; for
 example by ensuring conserved quantity fluctuations remain bounded.
-Finally, MDL can interact with the Java GUI of ProtoMol (see \cite{Matt04}),
+Finally, MDL can interact with the Java Molecular Viewer (JMV) of ProtoMol (see \cite{Matt04}),
 which can interactively visualize a system while running MDL commands
 in the background.  MDL is actually part of a larger Problem Solving
 Environment (PSE, \cite{GaHR94, MHK+06}) ProtoMol which also contains a computational back
 end, for which MDL serves as a {\it scripting interface}.  This is convenient
 since expansions to the computational back end become available in MDL.
+\item {\bf Compatibility with OpenMM}.  OpenMM \cite{FEV+09} provides
+a set of force calculators which can run on Graphical Processor Units (GPUs).
+These types of processors are specifically designed for processing large
+amounts of data quickly, and thus can improve performance by orders of
+magnitude for large-scale systems over a long period of time.  
+Preliminary results indicate roughly a 500-fold speedup for these types
+of systems \cite{CCSI09}.
 \end{enumerate}
 
 
@@ -207,7 +223,14 @@ to install some external tools, which we outline below as prerequisites.
 Although there seems to be quite a few prerequisites, you may have some
 of them already and they are all relatively easy to install and do
 not themselves require other dependencies.  So you should be able
-to have everythin set up in a relatively short period of time.
+to have everything set up in a relatively short period of time.
+
+Alteratively if you are using Windows, you can run the self-installing
+executable on the MDLab home page.  This executable has all necessary
+features to run the software, plus the ProtoMol JVM.  
+For systems other than Windows, or if you want to run on GPUs, you must
+install the tools below and compile the software from scratch to ensure
+compatibility with your particular OS flavor.
 
 \section{Prerequisites}
 
@@ -218,7 +241,9 @@ sure that the version of each tool corresponds to the version
 specified below.  Please install these tools in the order they
 appear.
 
-\subsection{Python 2.5}
+\subsection{Required}
+
+\subsubsection{Python 2.5}
 
 The Python interpreter should come standard on most versions of *nix
 and some versions of Mac OS.  If Python has been installed, you can
@@ -236,7 +261,7 @@ under 'Download'.  The safest bet is to download Python 2.5 since
 this is the version used by developers; although future versions
 should be back-compatible.
 
-\subsection{SCons}
+\subsubsection{SCons}
 
 SCons (\texttt{http://www.scons.org}) is a software construction
 tool built entirely in Python which offers an alternative to Makefiles
@@ -246,7 +271,7 @@ You will use this to compile the ProtoMol back end into a shared
 object binary which will dynamically link to the shared libraries 
 imported by MDL.
 
-\subsection{SWIG}
+\subsubsection{SWIG}
 
 SWIG (Simplified Wrapper Interface Generator, \cite{Beaz96} is an
 open source tool which can generate wrapper code for C and C++
@@ -265,7 +290,7 @@ from \texttt{www.swig.org}.  Follow the instructions, and make
 sure you check C++ as your input language and Python as you target,
 and select your appropriate platform.
 
-\subsection{Numpy}
+\subsubsection{Numpy}
 
 Numerical Python (NumPy, \texttt{http://numpy.scipy.org/}) is
 available open source and provides a set of libraries implemented
@@ -276,7 +301,9 @@ basic installation; there is no need to include any prefixes as
 the built NumPy libraries will be deposited in your Python
 installation.
 
-\subsection{Gnuplot-py or Matplotlib}
+\subsection{Optional}
+
+\subsubsection{Gnuplot-py or Matplotlib}
 
 Gnuplot-py is a plotting library built in Python which
 interfaces to the Gnuplot utility and can plot data
@@ -297,28 +324,58 @@ Matplotlib you will need to indicate this in your simulation
 protocols.  Matplotlib is available open source at
 \texttt{http://matplotlib.sourceforge.net}.
 
+\subsubsection{Java Molecular Viewer}
+
+The ProtoMol JVM is available open source on Chris Sweet's
+website \texttt{http://www.nd.edu/\~{ }csweet1}.  Once you have
+installed and run this software, the default port will be 52753.
+MDL simulations submit data to this port automatically, so the
+molecule can be viewed interactively as a simulation runs.
+
+\subsubsection{OpenMM and CUDA}
+
+OpenMM provides a set of libraries for molecular modeling which
+can be invoked transparently.  Specifically, the MDL environment
+uses OpenMM for the expensive force calculation, which generally
+consumes the highest percentage of execution time for a MD
+simulation.  These libraries can be executed on graphical processing
+units (GPUs) which can yield extensive savings in execution time.
+These libraries are available at \texttt{https://simtk.org/home/openmm}.
+After downloading them, you can install MDL with the interface to
+OpenMM to achieve these improvements in speed.  You also must have
+an NVidia (\texttt{https://www.nvidia.com}) graphics card installed.
+
+CUDA (Compute Unified Device Architecture) provides a computing
+environment which processes all data on NVidia GPUs.  This engine
+is available at \texttt{http://www.nvidia.com/cuda}.  OpenMM
+submits computation to the CUDA engine, which in turn performs
+the computation on GPUs.  With both OpenMM and CUDA installed,
+you can achieve the improvements in speed provided by the processing
+power of GPUs.
+
 \section{Installation}
 
 Once you have these tools, you are ready to install and
-run MDL.  The first step will be to change to the ProtoMol
-root directory, and type:
+run MDL.  The first step will be to run (from the MDL root
+directory):
 
 \begin{verbatim}
-scons mdl=1 lapack=1 gui=1
+scons gui=1
 \end{verbatim}
 
-The three flags here indicate: (1) that you intend to compile
-ProtoMol as a shared object file to be dynamically loaded for 
-MDL and that you want appropriate ProtoMol classes and functions
-SWIG-wrapped for Python, (2) that you want to link in Lapack \cite{}
-functionality, and (3) that you would like to potentially
-use the Java GUI for interactive visualization of MDL simulations.
-The \texttt{lapack} flag only comes into play for normal
-mode propagators, so if you do not see yourself using those you
-can leave this flag out.  We recommend however including everything
-possible at the point of compilation, since if you later change
-your mind you will have to recreate the shared object file which
-can take some time.
+You do not have to include the \texttt{gui=1} flag if you
+know for sure you will not use the ProtoMol JMV.  However, it
+is beneficial to include this if you are not sure, since if you
+later change your mind you will have to recompile.  Alternatively, if 
+you have installed OpenMM and CUDA and would like to
+run on GPUs, type:
+
+\begin{verbatim}
+scons openmm=cuda
+\end{verbatim}
+
+This will interface to the OpenMM libraries for force computation,
+and you can subsequently run these calculations on your NVidia GPUs.
 
 Once the compilation is finished, you are ready to use MDL.
 The three basic types of Python scripts that MDL is built to handle
@@ -333,24 +390,11 @@ of the MDL framework.
 The basic facility for testing numerical methods will be an MDL
 {\it simulation protocol}, which involves setting up a biological
 system and propagating it with time.  Protocols can be run through
-a standard Python interpreter.  However, prior to execution it is 
-necessary for the interpreter to know the location of MDL modules
-for importing, contained within the environment variable 
-\texttt{PYTHONPATH}.  MDL provides two files for properly
-setting up your \texttt{PYTHONPATH}: \\
+a standard Python interpreter.  MDL contains several 
+example simulation protocols within the \texttt{simulations/} folder, 
+as Python scripts runnable through:
 
-1. MDLSetup.bash (for bash users) \\
-\indent 2. MDLSetup.tcsh (for csh or tcsh users) \\
-
-If you are unsure of your shell, type in a terminal:
-
-\texttt{printenv SHELL}\\
-
-MDL contains several example simulation protocols within
-the \texttt{simulations/} folder, as Python scripts runnable
-through:
-
-\texttt{python simulations/<file>.py}\\
+\texttt{./RunMDL simulations/<file>.py}\\
 
 You may also set up your own simulation protocol but the structure
 will be similar to the examples provided.  We will now run through
@@ -359,7 +403,7 @@ the 'typical' structure of an MDL simulation protocol.
 \section{Importing Core Modules}
 
 A Python module is implemented within its own Python script
-and contained classes and functions applicable to a specific
+and contains classes and functions applicable to a specific
 task.  MDL provides five 'core' Python modules which are each
 responsible for a separate portion of an MD simulation:
 
@@ -383,14 +427,11 @@ and electrostatic), or Python-prototyped force calculators.
 
 An MD simulation protocol will most likely need everything
 from these five modules, so the first step will typically be to
-import all of their functionality using the Python interpreter:
+import all of their functionality using the Python interpreter.
+This is done by importing the entire \texttt{MDL} module:
 
 \begin{verbatim}
-from Physical import *
-from Forces import *
-from ForceField import *
-from IO import *
-from Propagator import *
+from MDL import *
 \end{verbatim}
 
 \section{Physical System}
@@ -400,7 +441,7 @@ system, that is being propagated with time.  MDL provides several
 example systems in the \texttt{data/} directory.  These include: \\
 
 %\begin{enumerate}
-\noindent 1. Alanine dipeptide in vacuum (22 atoms).\\
+\noindent 1. Alanine dipeptide in vacuum (22 atoms, includes both CHARMM and AMBER/Gromacs).\\
 2. Solvated alanine (22 atom solute, 445 water molecules).\\
 3. Block alanine dipeptide in vacuum (22 atom block structure).\\
 4. Two argon systems (ideal gas, 280 and 400 molecules).\\
@@ -475,6 +516,19 @@ populated through files:
 io.readPSF(phys, "examples/bpti_water_1101/bpti.psf")
 io.readPAR(phys, "examples/bpti_water_1101/bpti.par")
 \end{verbatim}
+
+Alternatively, you can input a Gromacs topology file and 
+AMBER force field, using the \texttt{readGromacs()} method
+of \texttt{IO}.  This function accepts the \texttt{Physical}
+object, the name of the Gromacs topology file as a string,
+and the directory holding the AMBER force fields as a string.
+The example below uses AMBER96:
+
+\begin{verbatim}
+io.readGromacs(phys, "data/alanine_gromacs/alanine.top",
+                     "data/alanine_gromacs/ffamber96/")
+\end{verbatim}
+
 
 This is the minimum necessary to set up an MDL physical
 system, since default values are provided for other parameters.
@@ -622,7 +676,9 @@ equilibrium lengths.\\
 If a \texttt{Forces} object has been defined, a \texttt{ForceField}
 can be constructed by invoking its member function \texttt{makeForceField()},
 passing a \texttt{Physical} object and the Python string \texttt{charmm}
-to evaluate CHARMM forces.  To evaluate a subset (i.e. noble gas simulations
+to evaluate CHARMM forces.  You can do this even if you used AMBER
+force field parameters; everything is converted transparently.
+To evaluate a subset (i.e. noble gas simulations
 will not have bonded forces) or a different set of
 forces, simply ignore the second argument:
 
@@ -635,19 +691,19 @@ You can evaluate a subset of CHARMM forces by using \texttt{ForceField}
 member functions \texttt{bondedForces} and \texttt{nonbondedForces},
 passing Python strings with uniquely identifying characters.
 For bonded forces, ``b''=bond, ``a''=angle, ``d''=dihedral
-and ``i''=improper.  For nonbonded, ``l''=van der Waals
+and ``i''=improper.  For nonbonded, ``l''=Lennard Jones
 and ``c''= electrostatic:
 
 \begin{verbatim}
 forces = Forces()                           # Declare a Forces object
 ff = forces.makeForceField(phys)            # Return a ForceField
 ff.bondedForces("bd")                       # Bond and dihedral
-ff.nonbondedForces("l")                     # Van der Waals
+ff.nonbondedForces("l")                     # Lennard Jones
 \end{verbatim}
 
-By default, all specified pairwise forces are evaluated
+By default, all pairwise forces are evaluated
 using a quadratic {\it direct} algorithm, meaning all pairs are
-considered.  For CHARMM pairwise forces, MDL provides the opportunity to
+considered.  For pairwise forces, MDL provides the ability to
 change the {\it algorithm} for force evaluation, to \texttt{Cutoff}
 for example.  In the case of \texttt{Cutoff}, after a certain
 pairwise distance zero is assumed for the resulting potential, 
@@ -662,8 +718,8 @@ ff.params = {'LennardJones':{'algorithm':'Cutoff',
                              'cutoff':6.5}}
 \end{verbatim}
 
-If both CHARMM Lennard-Jones and Coulomb forces are being evaluated,
-and the same parameters are used for both, you can save performance
+If both Lennard-Jones and Coulomb forces are being evaluated and the 
+same parameters are used for both, you can save performance
 by setting both sets of parameters at the same time. In this case,
 atomic pairs will be evaluated once for both, resulting in considerable
 performance savings.  This is also the default:
@@ -678,7 +734,7 @@ An abrupt dropoff in the potential at the cutoff values can
 cause numerical instabilities.  This can be avoided by {\it smoothing}
 the force to zero at the cutoff value.  MDL thus provides
 {\it switching functions} which can be applied to the potential.
-The following switching functions are available for CHARMM
+The following switching functions are available for 
 pairwise forces: \\
 
 %\begin{enumerate}
@@ -758,7 +814,7 @@ include: \\
 \indent 4. {\bf xyztrajpos}: An XYZ trajectory file of atomic positions. \\
 \indent 5. {\bf xyztrajvel}: An XYZ trajectory file of atomic velocities. \\
 \indent 6. {\bf xyztrajforce}: An XYZ trajectory file of atomic forces. \\
-\indent 7. {\bf gui}: Set this frequency if using the ProtoMol Java GUI.  This
+\indent 7. {\bf gui}: Set this frequency if using the ProtoMol Java Molecular Viewer (JMV).  This
 provides the step frequency at which to send positional information to
 this GUI.  In this case the 'filename' is a name for the simulation which
 appears in the GUI.  The default port for submitting information is 52753,
@@ -919,14 +975,22 @@ propagation schemes, with corresponding parameters, data types
 and default values:
 
 \begin{enumerate}
+\item {\bf BBK}: The Brooks-Brunger-Karplus method \cite{BrBK82}. {\it Parameters: {\bf temp} (Kelvin temperature, floating point, 300), {\bf gamma} (damping coefficient, floating point, 91), {\bf seed} (random number seed, integer, 1234)}. 
 \item {\bf Leapfrog}: The Leapfrog (or Velocity Verlet) method \cite{HoEa81}.  {\it Parameters: NONE}
-\item {\bf PLeapfrog}: The Position Verlet method \cite{}.  {\it Parameters: NONE}
+\item {\bf PLeapfrog}: The Position Verlet method \cite{SABW82}.  {\it Parameters: NONE}
 \item {\bf LeapfrogTruncatedShadow}: The Leapfrog method, which uses the solution of a nearby {\it Shadow Hamiltonian} \cite{ENSD05}.  {\it Parameters: NONE}
 \item {\bf LangevinImpulse}: The Langevin Impulse method \cite{SkIz02}.  {\it Parameters: {\bf temp} (Kelvin temperature, floating point, 300), {\bf gamma} (damping coefficient, floating point, 91), {\bf seed} (random number seed, integer, 1234)}.
-\item {\bf DMDLeapfrog}: Extension of the Leapfrog method to Langevin dynamics \cite{}.  {\it Parameters: Same as LangevinImpuse, plus {\bf iter} (number of velocity updates before calculating the dissipative term, integer, 5)}.
+\item {\bf DMDLeapfrog}: Extension of the Leapfrog method to Langevin dynamics.  {\it Parameters: Same as LangevinImpuse, plus {\bf iter} (number of velocity updates before calculating the dissipative term, integer, 5)}.
 \item {\bf NoseNVTLeapfrog}: The Nose Hoover method \cite{Nose84, Hoov85}. {\it Parameters: {\bf temp} (Kelvin temperature, floating point, 300), {\bf inertia} (thermal inertia, floating point, 0.5), {\bf bathpos} (heat bath center of mass location, floating point, 1.0)}.  
-\item {\bf CGMinimizer}: Non-linear conjugate gradient minimizer \cite{}.{\it Parameters: {\bf alpha} (Point where decrease is significant, floating point, 0.001), {\bf beta} (Point where directional derivative decrease is significant, floating point, 0.05), {\bf restart} (restart interval, integer, 0)}.  
+\item {\bf CGMinimizer}: Non-linear conjugate gradient minimizer.{\it Parameters: {\bf alpha} (Point where decrease is significant, floating point, 0.001), {\bf beta} (Point where directional derivative decrease is significant, floating point, 0.05), {\bf restart} (restart interval, integer, 0)}.  
 \item {\bf NumericalDifferentiation}: Used to check force implementations by making a second approximation to forces by perturbing positions by some small value, recomputing potential energy and then using a Taylor series to estimate the force value.  Outputs the force error and Hessian.  {\it Parameters: {\bf epsilon} (Amount of perturbation, floating point, 1.0)}
+\item {\bf OpenMM}: Runs Langevin dynamics, computing forces using OpenMM.  {\it Parameters: Same as LangevinImpulse, plus {\bf HarmonicBondForce} (specifies whether or not to compute bond potential, boolean, True),
+                                                                                                                           {\bf HarmonicAngleForce} (specifies whether or not to compute angle potential, boolean, True),               
+                                                                                                                           {\bf RBDihedralForce} (specifies whether or not to compute dihedral potential, boolean, True),                                 
+                                                                                                                           {\bf PeriodicTorsion} (specifies whether or not to compute improper potential, boolean, True),
+                                                                                                                           {\bf NonbondedForce} (specifies whether or not to compute pairwise forces, boolean, True),
+                                                                                                                           {\bf GBSAEpsilon} (epsilon parameter for Generalized Born, floating point, 1.0),
+                                                                                                                           {\bf GBSASolvent} (solvent dielectric constant for Generalized Born, floating point, 78.3),                                                                                   {\bf commotion} (frequency to remove center of mass motion, integer, 0)}
 \end{enumerate}
 
 
@@ -939,7 +1003,7 @@ propagators, sequentially evaluating faster varying forces at
 larger frequencies and the fastest using an STS propagator, terminating
 the chain.
 
-\subsection{Normal Mode Analysis}
+\subsection{Normal Mode Langevin}
 
 MDL contains several built-in propagators to perform {\it normal
 mode analysis}.  The frequencies of the normal modes of a system
@@ -968,75 +1032,36 @@ prop.propagate(scheme=['NormalModeDiagonalize',
                cyclelength=[1,1],
                dt=4.0,
                forcefield=[ff, ff2, ff3],
-               params={'NormalModeDiagonalize':{'reDiagFrequency':100,
-                                                'minSteps':20,
-                                                'minLim':0.1,
-                                                'removeRand':1},
-                       'NormalModeLangevin':{'firstmode':1,
-                                             'numbermodes':22,
+               params={'NormalModeDiagonalize':{'reDiag':100},
+                       'NormalModeLangevin':{'numbermodes':22,
                                              'gamma':80,
                                              'seed':1234,
                                              'temperature':300},
-                       'NormalModeMinimizer':{'minimlim':0.5,
-                                              'simplemin':1}})
+                       'NormalModeMinimizer':{'minimlim':0.5}})
 \end{verbatim}
 
-Normal mode propagators accept a decent number of parameters, although
-in many cases the defaults will be acceptable.  The outermost \texttt{NormalModeDiagonalize}
+The outermost \texttt{NormalModeDiagonalize}
 accepts a frequency to rediagonalize the mass-reweighted Hessian, the number of
-minimization steps, a threshold at which to stop minimization, and a boolean value
-which specifies whether or not the last random perturbation should be removed from
-the system (this would come from the innermost propagator).  \texttt{NormalModeLangevin}
-accepts parameters similar to \texttt{LangevinImpulse} (the Kelvin temperature,
-damping coefficient and random seed), and in addition accepts a few more for the
-number of fast frequency modes starting from a particular first mode (which will usually
-be 1).  For the \texttt{NormalModeMinimizer}, once again a threshold is specified for
-the potential energy deviation and a boolean value designating whether a simple
-minimization is desired (1, default) or an exact minima projection.  Alternatively,
-a Mori-Zwanzig \cite{} formalism can be used to project dynamics, which also
-can output mode data into a directory:
-
-
-\begin{verbatim}
-prop.propagate(scheme=['NormalModeMori', 
-                       'NormalModeRelax', 
-                       'NormalModeBrownian'],
-               steps=20,
-               cyclelength=[1,1],
-               dt=4.0,
-               forcefield=[ff, ff2, ff3],
-               params={'NormalModeMori':{'firstmode':1,
-                                         'numbermodes':10,
-                                         'gamma':80,
-                                         'seed':1234,
-                                         'temperature':300,
-                                         'modeOutput':'modes'},
-                       'NormalModeRelax':{'minimlim':0.5,
-                                          'rediag':0,
-                                          'simplemin':1},
-                       'NormalModeBrownian':{'firstmode':11,
-                                             'numbermodes':56,
-                                             'gamma':420,
-                                             'seed':1234,
-                                             'temperature':300}})
-\end{verbatim}
+minimization steps.  \texttt{NormalModeLangevin}
+accepts parameters similar to \\ \texttt{LangevinImpulse} (the Kelvin temperature,
+damping coefficient and random seed), and in addition accepts a number of fast
+frequency modes (in this case, 22). For the \texttt{NormalModeMinimizer}, 
+a threshold is specified for the potential energy deviation.  Energy minimization
+will stop after this point, and the resulting conformation will be used 
+as the most probable for fast modes.  
 
 \newpage
 \section{Examples}
 
-Here we provide two examples of complete MDL simulation protocol scripts.  In addition, several more are available in the \texttt{simulations/} directory in the MDL framework.
+Here we provide two examples of complete MDL simulation protocol scripts.  I
+n addition, several more are available in the \texttt{simulations/} directory 
+in the MDL framework.
 
 \subsection{United Atom Butane in Vacuum for 1 ps, Leapfrog}
 
 \begin{verbatim}
 
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
+from MDL import *
 
 # PHYSICAL SYSTEM
 phys = Physical()
@@ -1070,15 +1095,7 @@ prop.propagate(scheme="Leapfrog", steps=200, dt=0.5, forcefield=ff)
 \subsection{Solvated Bovine Pancreatic Tripsin Inhibitor (BPTI) running Langevin Impulse using cutoffs}
 
 \begin{verbatim}
-# A DRAFT OF A SIMULATION OF 4-ATOM BUTANE
-# USING THE NEW STRUCTURE
-from Physical import *
-from Forces import *
-from Propagator import *
-from IO import *
-from ForceField import *
-
-
+from MDL import *
 
 # PHYSICAL
 phys = Physical()
@@ -1111,6 +1128,38 @@ gamma = prop.propagate(scheme="LangevinImpulse", steps=2000, dt=0.1,
                        forcefield=ff,
                        params={'LangevinImpulse':{'gamma':0.5}})
 
+
+
+\end{verbatim}
+
+\newpage
+
+\subsection{Alanine Dipeptide with OpenMM, Gromacs Topology and AMBER Force Fields}
+
+\begin{verbatim}
+from MDL import *
+
+# PHYSICAL
+phys = Physical()
+io = IO()
+io.readPDBPos(phys, "data/alanine_gromacs/alanine.pdb")
+io.readGromacs(phys, "data/alanine_gromacs/alanine.top", 
+                     "data/alanine_gromacs/ffamber96/")
+phys.bc = "Vacuum"
+phys.temperature = 10
+
+
+# FORCES
+forces = Forces()
+ff = forces.makeForceField(phys)
+ff.gbsa = True
+
+# OUTPUT
+io.screen = 2
+
+# EXECUTE
+prop = Propagator(phys, forces, io)
+gamma = prop.propagate("OpenMM", steps=2000, dt=0.5, forcefield=ff)
 
 
 \end{verbatim}
@@ -1150,8 +1199,8 @@ a new propagator in Python, you will want to include its module in either
 \texttt{classes} or \texttt{functions}, depending on which implementation
 method you choose.  There are several example Python-prototyped propagators
 in these directories.  In the \texttt{classes} folder, there are implementations
-of Leapfrog \cite{HoEa81}, Br{\"u}nger-Brooks-Karplus (BBK, \cite{BrBk82}), the Hybrid Monte Carlo (HMC, \cite{})
-sampling method, Nose-Poincar\'e \cite{}, and Recursive Multiple Thermostatting \cite{Swee04}, and
+of Leapfrog \cite{HoEa81}, Br{\"u}nger-Brooks-Karplus (BBK, \cite{BrBK82}), the Hybrid Monte Carlo (HMC, \cite{})
+sampling method, Nose-Poincar\'e \cite{BoLL99}, and Recursive Multiple Thermostatting \cite{Swee04}, and
 the MTS propagator Verlet-I/r-RESPA \cite{GRUB89A, GHWS91, TuBM92} (also known as {\it Impulse}).
 For \texttt{functions}, we have included BBK, Leapfrog, Impulse, a simplified
 version of Takahashi-Imada \cite{TaIm84}, and a velocity scaler which runs Velocity Verlet,
@@ -1254,7 +1303,7 @@ ensemble by doing {\it velocity scaling}, which multiplies the
 velocities by \begin{math}\sqrt{T_0/T}\end{math} where 
 \begin{math}T_0\end{math} is our target temperature, keeping
 the average kinetic energy 
-\begin{math} <KE> = \frac{3}{2}kT \end{math} constant.  We can define
+\begin{math} <KE> = \frac{3}{2}NkT \end{math} constant.  We can define
 a modifier for this:
 
 \begin{verbatim}
@@ -1516,7 +1565,15 @@ Laboratory for Computational Life Sciences\\
 Department of Computer Science and Engineering\\
 University of Notre Dame\\
 384 Fitzpatrick Hall of Engineering\\
-Notre Dame, Indiana 46556 USA
+Notre Dame, Indiana 46556 USA\\ \\
+
+\noindent Or lead developer Trevor Cickovski:\\ \\
+Trevor Cickovski\\
+Natural Sciences Collegium\\
+Eckerd College\\
+115 Sheen Science C\\
+St. Petersburg, Florida 33517 USA\\
+{\it cickovtm@eckerd.edu}
 
 
 \bibliographystyle{plain}
