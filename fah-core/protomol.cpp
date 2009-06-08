@@ -80,10 +80,14 @@ extern "C" int core_main(int argc, char *argv[]) {
       }
     }
       
+    oCheckpt->doIt(app.currentStep);
+    core.checkpoint();
     app.finalize();
 
     // Return results
     core.addResultFiles("*");
+    core.addResultFile(String::printf("../logfile_%s.txt",
+                                      core.suffix.c_str()));
 
     // Setup header
     core.unit->core_type = 180;
