@@ -51,18 +51,18 @@ bool DCDTrajectoryWriter::openWith(const char *filename, Real timestep,
   setTimestep(timestep);
   setFirststep(firststep);
   setLittleEndian(isLittleEndian);
-  return open(string(filename));
+  return open(filename);
 }
 
 bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
   if (!is_open())
-    File::open(filename.c_str(), ios::binary | ios::in | ios::out);
+    open(filename, ios::binary | ios::in | ios::out);
 
   // Try to read the number of frames
   file.clear();
   file.seekg(0, ios::end);
   ios::pos_type size = file.tellg();
-  if (file.fail()) {return false;}
+  if (file.fail()) return false;
 
   int32 nAtoms = static_cast<int32>(numAtoms);
   int32 numSets = 1;
@@ -94,9 +94,9 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
   }
 
   if (size > static_cast<ios::pos_type>(100)) {
-    close();
-    open(filename.c_str(), std::ios::binary | std::ios::in);
     // Ok, we have already written frames
+    close();
+    open(filename, ios::binary | ios::in);
     file.seekg(8, ios::beg);
     read((char *)&numSets, 4);
     close();
@@ -106,7 +106,7 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
 
     close();
-    open(filename.c_str(), std::ios::binary | std::ios::in | std::ios::out);
+    open(filename, ios::binary | ios::in | ios::out);
     file.seekp(8, ios::beg);
     //  8: Number of sets of coordinates, NAMD=0 ???
     file.write((char *)&numSets, 4);  
@@ -120,7 +120,7 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
   } else {
     // First time ...
     close();
-    open(filename.c_str(), ios::binary | ios::out | ios::trunc);
+    open(filename, ios::binary | ios::out | ios::trunc);
 
     // Write header
     file.write((char *)&n84, 4); //  0
@@ -170,13 +170,13 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     close();
   }
   close();
-  open(filename.c_str(),std::ios::binary|std::ios::out|std::ios::app);
+  open(filename, ios::binary | ios::out | ios::app);
   return !file.fail();
 }
 
 bool DCDTrajectoryWriter::write(const Vector3DBlock &coords) {
   const unsigned int count = coords.size();
-  if (!reopen(count)) {return false;}
+  if (!reopen(count)) return false;
 
   myX.resize(count);
   myY.resize(count);

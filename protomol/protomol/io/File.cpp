@@ -30,9 +30,8 @@ bool File::open() {
     file.open(filename.c_str(), mode);
 
     // Work around a boost::iostreams bug for F@H core
-    if ((mode & ios::app) || (mode & ios::ate))
-      file.seekg(0, ios::end);
-    else file.seekg(0);
+    if (!((mode & ios::app) || (mode & ios::ate)))
+      file.seekg(0);
 
   } catch (const ios::failure &e) {}
 
@@ -51,7 +50,10 @@ bool File::open(const string &filename, ios::openmode mode) {
 }
 
 void File::close() {
-  if (is_open()) file.close();
+  if (is_open()) {
+    file.flush(); // boost::iostreams work around
+    file.close();
+  }
 }
 
 bool File::is_open() {

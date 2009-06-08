@@ -6,7 +6,10 @@
 #include <protomol/type/XYZ.h>
 
 #ifdef BUILD_FOR_FAH
-    typedef FAH::Exception Exception;
+namespace FAH {
+  class Exception;
+};
+typedef FAH::Exception Exception;
 #endif
 
 namespace ProtoMol {
