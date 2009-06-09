@@ -397,7 +397,8 @@ namespace ProtoMol {
     //call LAPACK 
     //	
 #if defined( HAVE_LAPACK )
-    abstol = dlamch_( &cmach);	//find machine safe minimum  
+    //abstol = dlamch_( &cmach);	//find machine safe minimum  
+    abstol = 1e-15;	//use small value for tolerence  
     //
     dsyevr_( &jobz, &range, &uplo, &n, hsnhessM, &lda, &vl, &vu, &il, &iu, &abstol, &m, eigValO, eigVecO, &ldz, isuppz, 
                 wrkSp, &lwork, iwork, &liwork, &info);
