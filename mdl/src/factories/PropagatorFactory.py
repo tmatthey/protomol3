@@ -564,7 +564,9 @@ class PropagatorFactory:
                              'residuesPerBlock', 1,
                              'blockCutoffDistance', 10,
 			     'autoParameters', True,
-			     'autoDT', False))
+			     'autoDT', False,
+			     'pdm', False,
+			     'minimLim', 0.1))
                             #('averageSteps', 1,
 			    # 'avStepSize', 1.0,
 			    # 'reDiagFrequency', 0,
@@ -587,6 +589,7 @@ class PropagatorFactory:
 			     'temperature', 300.0,
 			     'minimlim', 0.1,
 			     'randforce', 1,
+			     'rediag', 0,
 			     'simplemin', 1))
       self.registerPMObject("NormalModeMori",
 			    ('firstmode', 1,
@@ -625,7 +628,7 @@ class PropagatorFactory:
       			'seed', 1234,
       			'HarmonicBondForce', True,
       			'HarmonicAngleForce', True,
-      			'RBDihedralForce', False,
+      			'RBDihedralForce', True,
       			'PeriodicTorsion', True,
       			'NonbondedForce', True,
       			'IntegratorType', 1,
