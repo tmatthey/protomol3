@@ -348,6 +348,8 @@ mdl/simulations/NoseHoover_Decalanine.py -text
 mdl/simulations/NosePoincGL_Butane.py -text
 mdl/simulations/OpenMM_Alanine_Gromacs.py -text
 mdl/simulations/OpenMM_Alanine_Gromacs_GBSA.py -text
+mdl/simulations/OpenMM_Calmodulin.py -text
+mdl/simulations/OpenMM_WW.py -text
 mdl/simulations/PIT_ALA.py -text
 mdl/simulations/PLeapfrog_Butane.py -text
 mdl/simulations/RMT_Butane.py -text
