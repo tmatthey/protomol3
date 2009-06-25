@@ -191,6 +191,7 @@ mdl/data/decalanine_66/alanine.testSet -text
 mdl/data/decalanine_66/alanine.water.pdb -text
 mdl/data/decalanine_66/alanine.water.psf -text
 mdl/data/decalanine_66/dihedralIndexSet -text
+mdl/data/params.agb -text
 mdl/data/water_216/water216.conf -text
 mdl/data/water_216/water216.coor.pdb -text
 mdl/data/water_216/water216.new.pos.pdb -text
