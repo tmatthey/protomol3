@@ -1,5 +1,8 @@
 #include <protomol/force/hessian/HessDihedral.h>
 #include <protomol/type/Vector3DBlock.h>
+#include <protomol/base/Report.h>
+
+using namespace ProtoMol::Report;
 
 using namespace ProtoMol;
 //constructors
@@ -117,21 +120,40 @@ bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2,
                               const Vector3D &a3, const Vector3D &a4,
                               Real &x21, Real &x43, Real &y43, Real &z21, Real &z43, Real &r23, 
                               double *aRot, Real &phi) {
+  //offset, in case singular matrix
+  double offSet = 0.0;
   //actual positions
   double a[9] = {
     a1[0], a2[0], a3[0], a1[1], a2[1], a3[1], a1[2], a2[2], a3[2]
   };
-  //determinant of position matrix
-  double dta = a[0] * (a[8] * a[4] - a[7] * a[5]) - a[3] *
-    (a[8] * a[1] - a[7] * a[2]) + a[6] * (a[5] * a[1] - a[4] * a[2]);
-  //matrix will be singular if forst 3 atoms already in a plane containing one
-  // of the axes probability is very small so ignore in this case.
-  if (dta == 0.0) {
-    for (int i = 0; i < 144; i++) hessD[i] = 0.0;
 
-    //clear Hessian
-    return false;
+  //determinant of position matrix
+  double dta = det(a);
+
+  //matrix will be singular if first 3 atoms has one non moving
+  //probability is very small but offset slightly if nessecary.
+  if (fabs(dta) < 1e-4) {   //ill conditioned below 1e-5
+
+    report << debug(1) << "HessDihedral::rotateAndCalcPhi position determinate = " << dta << ", offsetting by 0.1." << endr;
+
+    //try and fix singularity by shifting by 0.1\AA
+    offSet = 0.1;
+    for(int i=0;i<9;i++) a[i] += offSet;
+    dta = det(a);
+
+    //test
+    if (fabs(dta) < 1e-4) {   //STILL ill conditioned
+
+      report << debug(1) << "HessDihedral::rotateAndCalcPhi position determinate = " << dta << ", clearing Hessian." << endr;
+      //clear Hessian
+      for (int i = 0; i < 144; i++) hessD[i] = 0.0;
+
+      return false;
+
+    } //else carry on
+
   }
+
   //Vector3D rxy // Vector from atom a to atom b
   Vector3D r12(a2 - a1);
   Vector3D r23v(a3 - a2);
@@ -140,11 +162,14 @@ bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2,
   // vectors
   double cosPhi = -r12.dot(r23v) / (r12.norm() * r23v.norm());
   double sinPhi = (r12.cross(r23v)).norm() / (r12.norm() * r23v.norm());
-  //  sin(acos(cosPhi));
 
-  //double sinPhi= sin(acos(cosPhi));
-  double nsa1 = a1.normSquared(); double nsa2 = a2.normSquared();
-  double nsa3 = a3.normSquared();
+  //Find norms of first 3 body distances, including offset if added
+  Vector3D a1d(a[0], a[3], a[6]);
+  Vector3D a2d(a[1], a[4], a[7]);
+  Vector3D a3d(a[2], a[5], a[8]);
+  double nsa1 = a1d.normSquared(); double nsa2 = a2d.normSquared();
+  double nsa3 = a3d.normSquared();
+
   //
   double x, y, z;
   z = (nsa3 - nsa2 - r23v.norm() * r23v.norm()) / (-2.0 * r23v.norm());
@@ -192,7 +217,7 @@ bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2,
 
   //fourth body position
   double in4[3] = {
-    a4[0], a4[1], a4[2]
+    a4[0] + offSet, a4[1] + offSet, a4[2] + offSet
   };
   //rotate it
   double out4[3] = {
@@ -210,6 +235,16 @@ bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2,
   z21 = opC[7] - opC[6]; z43 = out4[2] - opC[8]; r23 = r23v.norm();
 
   return true;
+}
+
+//Calculates determinate of 3x3 matrix
+double HessDihedral::det(const double* a){
+  //determinant of  matrix
+  double dta = a[0] * (a[8] * a[4] - a[7] * a[5]) - a[3] *
+    (a[8] * a[1] - a[7] * a[2]) + a[6] * (a[5] * a[1] - a[4] * a[2]);
+
+  return dta;
+
 }
 
 //Calculates reduced Hessian and rotates back.

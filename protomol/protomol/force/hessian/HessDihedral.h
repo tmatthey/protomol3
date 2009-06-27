@@ -58,6 +58,9 @@ namespace ProtoMol {
     //Use aRot to rotate the vector back into real space
     double *rotateV3D(const double *aRot, double *mf);
 
+    //Calculates determinate of 3x3 matrix
+    double det(const double* a);
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Friends of class HessDihedral
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
