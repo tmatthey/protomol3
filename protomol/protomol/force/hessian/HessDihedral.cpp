@@ -134,7 +134,7 @@ bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2,
   //probability is very small but offset slightly if nessecary.
   if (fabs(dta) < 1e-4) {   //ill conditioned below 1e-5
 
-    report << debug(1) << "HessDihedral::rotateAndCalcPhi position determinate = " << dta << ", offsetting by 0.1." << endr;
+    report << debug(1) << "HessDihedral::rotateAndCalcPhi Positions determinant = " << dta << ", offsetting by 0.1." << endr;
 
     //try and fix singularity by shifting by 0.1\AA
     offSet = 0.1;
@@ -144,7 +144,7 @@ bool HessDihedral::rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2,
     //test
     if (fabs(dta) < 1e-4) {   //STILL ill conditioned
 
-      report << debug(1) << "HessDihedral::rotateAndCalcPhi position determinate = " << dta << ", clearing Hessian." << endr;
+      report << debug(1) << "HessDihedral::rotateAndCalcPhi Positions determinant = " << dta << ", clearing Hessian." << endr;
       //clear Hessian
       for (int i = 0; i < 144; i++) hessD[i] = 0.0;
 
