@@ -99,7 +99,6 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   //openMM
 
 #if defined (HAVE_OPENMM)
-
   //find system size
   unsigned int sz = app->positions.size();
 
@@ -330,7 +329,6 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
       //
       Real c6 = 4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6;
       Real c12 = 4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12;
-
 #ifdef DEBUG
       mFile << c6 << " " << c12 << " " << charge << " " << mass << std::endl;  
 #endif
@@ -381,10 +379,10 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
         }
 
         mForces.push_back( NBForce( atom1, atom2, chargeij, sigma2, epsilon2, c6, c12 ) );
-
-        //mFile << i << " " << atom1 << " " << atom2 << " " << chargeij << " " << 
-        //    sigma2 << " " << epsilon2 << " " << c6 << " " << c12 << std::endl;  
-
+#ifdef DEBUG
+        mFile << i << " " << atom1 << " " << atom2 << " " << chargeij << " " << 
+            sigma2 << " " << epsilon2 << " " << c6 << " " << c12 << std::endl;  
+#endif
         nonbonded->setNonbonded14Parameters(nonbonded14index++, atom1, atom2, chargeij, sigma2, epsilon2);
 
       }
@@ -408,7 +406,6 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   // Add GBSA if needed.
   
   if (app->topology->implicitSolvent  == GBSA) {
-
 #ifdef DEBUG
     mFile << "Generalised Borne " << sz << std::endl;
 #endif
@@ -494,6 +491,10 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
   //print platform
   report << plain << "OpenMM platform is: '" << context->getPlatform().getName() << "'." << endr;
+  const OpenMM::State state = context->getState(OpenMM::State::Positions | 
+                                                OpenMM::State::Velocities |
+                                                OpenMM::State::Forces |
+                                                OpenMM::State::Energy);
 
 #else
 
@@ -552,6 +553,11 @@ void OpenMMIntegrator::run(int numTimesteps) {
 
   postStepModify();
 
+}
+
+void OpenMMIntegrator::calcForces()
+{
+  const OpenMM::State state = context->getState(OpenMM::State::Forces);
 }
 
 void OpenMMIntegrator::getParameters(vector<Parameter> &parameters)

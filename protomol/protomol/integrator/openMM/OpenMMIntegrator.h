@@ -19,7 +19,7 @@
 #include "PeriodicTorsionForce.h"
 #include "GBSAOBCForce.h"
 #include "CMMotionRemover.h"
-
+#include "internal/OpenMMContextImpl.h"
 //integrators
 #include "Integrator.h"
 #include "LangevinIntegrator.h"
@@ -62,7 +62,7 @@ namespace ProtoMol {
   public:
     virtual void initialize(ProtoMolApp *app);
     virtual void run(int numTimesteps);
-
+    virtual void calcForces();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class StandardIntegrator
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
