@@ -557,7 +557,9 @@ void OpenMMIntegrator::run(int numTimesteps) {
 
 void OpenMMIntegrator::calcForces()
 {
+#if defined (HAVE_OPENMM)
   const OpenMM::State state = context->getState(OpenMM::State::Forces);
+#endif
 }
 
 void OpenMMIntegrator::getParameters(vector<Parameter> &parameters)
