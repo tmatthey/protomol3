@@ -28,9 +28,11 @@ namespace ProtoMol {
   }
 
   NormalModeMinimizer::NormalModeMinimizer(Real timestep, int firstmode, int nummode, Real gamma, int seed, Real temperature, 
-      Real minimlim, int rforce, bool red, bool simplemin, ForceGroup *overloadedForces) 
+      Real minimlim, int rforce, bool red, bool simplemin, int redmaxmin,
+      ForceGroup *overloadedForces) 
     : STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, gamma, seed, temperature),
-      numSteps(0), minLim(minimlim), randforce(rforce), reDiag(red), simpleMin(simplemin)
+      numSteps(0), minLim(minimlim), randforce(rforce), reDiag(red), 
+      simpleMin(simplemin), rediagOnMaxMinSteps(redmaxmin)
   {
   }
 
@@ -87,8 +89,16 @@ namespace ProtoMol {
     //flag excessive minimizations
     if(itrs > 10) report << hint << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
 
-    numSteps++;
     avItrs += itrs;
+
+    //rediagonalize if minimization steps exceeds 'rediagOnMaxMinSteps'
+    if(reDiag && rediagOnMaxMinSteps > 0 && itrs > rediagOnMaxMinSteps){
+      report << debug(1) << "[NormalModeMinimizer::run] Minimization steps (" 
+              << itrs << ") exceeded maximum (" << rediagOnMaxMinSteps << "), forcing re-diagonalize." << endr;
+      itrs = -1;  //force re-diag
+    }
+
+    numSteps++;
     avMinForceCalc += forceCalc;
     report <<debug(5)<<"[NormalModeMinimizer::run] iterations = "<<itrs<<" average = "<<
                 (float)avItrs/(float)numSteps<<" force calcs = "<<forceCalc<<" average = "<<(float)avMinForceCalc/(float)numSteps<<endl;
@@ -146,12 +156,13 @@ namespace ProtoMol {
     parameters.push_back(Parameter("randforce",Value(randforce,ConstraintValueType::NotNegative()),1,Text("Add random force/EM steps")));
     parameters.push_back(Parameter("rediag",Value(reDiag,ConstraintValueType::NoConstraints()),false,Text("Force re-digonalize")));
     parameters.push_back(Parameter("simplemin",Value(simpleMin,ConstraintValueType::NoConstraints()),true,Text("Simple minimizer or exact minima projection.")));
+    parameters.push_back(Parameter("rediagmaxminsteps",Value(rediagOnMaxMinSteps,ConstraintValueType::NotNegative()),0,Text("Rediagonalize if maximum minimizer steps exceeded.")));
 
   }
 
   STSIntegrator* NormalModeMinimizer::doMake(const vector<Value>& values,ForceGroup* fg)const{
     return new NormalModeMinimizer(values[0],values[1],values[2],values[3],values[4],values[5],
-                                   values[6],values[7],values[8],values[9],fg);
+                                   values[6],values[7],values[8],values[9],values[10],fg);
   }
 
   //void NormalModeMinimizer::addModifierAfterInitialize(){
