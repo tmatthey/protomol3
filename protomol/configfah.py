@@ -1,19 +1,26 @@
-# BOOST_HOME
+# libfah
+have_libfah=0
+if os.environ.has_key('LIBFAH_HOME'):
+    env.Append(CPPPATH = [os.environ['LIBFAH_HOME']])
+    env.Append(LIBPATH = [os.environ['LIBFAH_HOME']])
+
+if (conf.CheckLib('fah') and conf.CheckCXXHeader('fah/ID.h')):
+    env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
+    have_libfah=1
+
+
+
+# boost
 if os.environ.has_key('BOOST_HOME'):
     env.Append(CPPPATH = [os.environ['BOOST_HOME']])
 
 boost_configure(conf, ['version', 'iostreams/stream'],
                 ['iostreams', 'system', 'filesystem'])
 
-have_libfah=0
-if os.environ.has_key('LIBFAH_HOME'):
-    env.Append(CPPPATH = [os.environ['LIBFAH_HOME']])
-    env.Append(LIBPATH = [os.environ['LIBFAH_HOME']])
-
-if (conf.CheckLib('fah') and
-    conf.CheckCXXHeader('fah/core/chksum/ChecksumDevice.h')):
-    env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
-    have_libfah=1
+# boost::iostreams
+have_boost_iostreams=0
+if (conf.CheckCXXHeader('boost/iostreams/stream.hpp')):
+    have_boost_iostreams=1
 
 
 # libbip2
@@ -28,11 +35,6 @@ if not conf.CheckLib('bz2'):
 
 else: have_bzip2 = 1
 
-
-# boost::iostreams
-have_boost_iostreams=0
-if (conf.CheckCXXHeader('boost/iostreams/stream.hpp')):
-    have_boost_iostreams=1
 
 
 # pthreads
