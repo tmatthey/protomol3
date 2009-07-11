@@ -57,19 +57,6 @@ if (globals().has_key('use_simtk_lapack') and use_simtk_lapack and
 
 # LAPACK
 if not have_simtk_lapack:
-    if env['PLATFORM'] == 'posix':
-        # G2C
-        if os.environ.has_key('G2C_HOME'):
-            env.Append(LIBPATH = [os.environ['G2C_HOME']])
-
-        have_g2c = conf.CheckLib('g2c')
-
-        # BLAS
-        if os.environ.has_key('BLAS_HOME'):
-            env.Append(LIBPATH = [os.environ['BLAS_HOME']])
-
-        have_blas = conf.CheckLib('blas')
-
     if os.environ.has_key('LAPACK_HOME'):
         env.Append(CPPPATH = [os.environ['LAPACK_HOME']])
         env.Append(LIBPATH = [os.environ['LAPACK_HOME']])
@@ -84,3 +71,16 @@ if not have_simtk_lapack:
     if globals().has_key('use_lapack') and use_lapack and not have_lapack:
         print 'lapack library not found'
         Exit(1)
+
+    if env['PLATFORM'] == 'posix':
+        # BLAS
+        if os.environ.has_key('BLAS_HOME'):
+            env.Append(LIBPATH = [os.environ['BLAS_HOME']])
+
+        have_blas = conf.CheckLib('blas')
+
+        # G2C
+        if os.environ.has_key('G2C_HOME'):
+            env.Append(LIBPATH = [os.environ['G2C_HOME']])
+
+        have_g2c = conf.CheckLib('g2c')
