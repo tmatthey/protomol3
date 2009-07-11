@@ -35,8 +35,41 @@ if globals().has_key('use_openmm') and use_openmm:
                     env.Append(CPPDEFINES = ['HAVE_OPENMM'])
                     have_openmm = 1
 
+
+
+# SimTK LAPACK
+if os.environ.has_key('SIMTK_LAPACK_HOME'):
+    env.Append(CPPPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/include'])
+    env.Append(LIBPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/lib'])
+  
+have_simtk_lapack = 0
+if conf.CheckLib('SimTKlapack') and conf.CheckCXXHeader('SimTKlapack.h'):
+    env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
+    have_simtk_lapack = 1
+
+# Complain if reqquest was explicit
+if (globals().has_key('use_simtk_lapack') and use_simtk_lapack and
+    not have_simtk_lapack):
+    print 'SimTKlapack library not found'
+    Exit(1)
+
+
+
 # LAPACK
-if globals().has_key('use_lapack') and use_lapack:
+if not have_simtk_lapack:
+    if env['PLATFORM'] == 'posix':
+        # G2C
+        if os.environ.has_key('G2C_HOME'):
+            env.Append(LIBPATH = [os.environ['G2C_HOME']])
+
+        have_g2c = conf.CheckLib('g2c')
+
+        # BLAS
+        if os.environ.has_key('BLAS_HOME'):
+            env.Append(LIBPATH = [os.environ['BLAS_HOME']])
+
+        have_blas = conf.CheckLib('blas')
+
     if os.environ.has_key('LAPACK_HOME'):
         env.Append(CPPPATH = [os.environ['LAPACK_HOME']])
         env.Append(LIBPATH = [os.environ['LAPACK_HOME']])
@@ -47,32 +80,7 @@ if globals().has_key('use_lapack') and use_lapack:
         have_lapack = 1
 
 
-    if env['CC'] == 'gcc' and have_lapack:
-        # BLAS
-        if os.environ.has_key('BLAS_HOME'):
-            env.Append(LIBPATH = [os.environ['BLAS_HOME']])
-
-        have_blas = 0  
-        if conf.CheckLib('blas'):
-            have_blas = 1
-
-
-        # G2C
-        if os.environ.has_key('G2C_HOME'):
-            env.Append(LIBPATH = [os.environ['G2C_HOME']])
-
-        have_g2c = 0  
-        if conf.CheckLib('g2c'):
-            have_g2c = 1
-
-
-if globals().has_key('use_simtk_lapack') and use_simtk_lapack:
-    # SimTK LAPACK
-    if os.environ.has_key('SIMTK_LAPACK_HOME'):
-        env.Append(CPPPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/include'])
-        env.Append(LIBPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/lib'])
-  
-    have_simtk_lapack = 0
-    if conf.CheckLib('SimTKlapack') and conf.CheckCXXHeader('SimTKlapack.h'):
-        env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
-        have_simtk_lapack = 1
+    # Complain if reqquest was explicit
+    if globals().has_key('use_lapack') and use_lapack and not have_lapack:
+        print 'lapack library not found'
+        Exit(1)

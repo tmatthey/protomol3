@@ -13,7 +13,8 @@ opts.AddOptions(
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
     BoolOption('lapack', 'Use LAPACK', 1),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
-    EnumOption('openmm', 'Build with OpenMM', 'none', allowed_values=('none', 'reference', 'cuda'))
+    EnumOption('openmm', 'Build with OpenMM', 'none',
+               allowed_values = ('none', 'reference', 'cuda'))
 )
 
 compiler_add_opts()
@@ -34,8 +35,7 @@ subsrc = SConscript('protomol/SConscript')
 
 # DIAG Options
 qrdiag = int(env.get('qrdiag', 0))
-if qrdiag:
-    env.Append(CCFLAGS = '-DHAVE_QRDIAG')
+if qrdiag: env.Append(CCFLAGS = '-DHAVE_QRDIAG')
 
 # GUI Options
 gui = int(env.get('gui', 0))
