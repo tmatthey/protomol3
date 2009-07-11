@@ -1,6 +1,15 @@
 import os
 
-execfile('../protomol/boost.py')
+# ProtoMol
+if os.environ.has_key('PROTOMOL_HOME'):
+  PROTOMOL_HOME = os.environ['PROTOMOL_HOME']
+else: PROTOMOL_HOME = '../protomol'
+
+if not os.path.isdir(PROTOMOL_HOME):
+  print 'Cannot find protomol.  Please set PROTOMOL_HOME.'
+  Exit(1)
+
+execfile(PROTOMOL_HOME + '/boost.py')
 
 opts = Options('options.py')
 
@@ -21,11 +30,6 @@ if env['CC'] == 'gcc':
 
 if not env.GetOption('clean'):
   # ProtoMol
-  if not os.environ.has_key('PROTOMOL_HOME'):
-    print 'PROTOMOL_HOME not set'
-    Exit(1)
-
-  PROTOMOL_HOME = os.environ['PROTOMOL_HOME']
   env.Append(CPPPATH = [PROTOMOL_HOME])
   env.Append(LIBPATH = [PROTOMOL_HOME])
 
