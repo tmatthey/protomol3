@@ -49,3 +49,4 @@ if not env['PLATFORM'] == 'win32':
   env.Append(PROGSUFFIX = '.exe')
 
 env.Program('FahCore_b4', src)
+
