@@ -22,9 +22,9 @@ if (conf.CheckCXXHeader('boost/iostreams/stream.hpp')):
 
 # libbip2
 have_bzip2=0
-if os.environ.has_key('LIBBZ2_HOME'):
-    env.Append(LIBPATH = [os.environ['LIBBZ2_HOME']])
-    env.Append(CPPPATH = [os.environ['LIBBZ2_HOME'] + '/src'])
+if os.environ.has_key('LIBBZIP2_HOME'):
+    env.Append(LIBPATH = [os.environ['LIBBZIP2_HOME']])
+    env.Append(CPPPATH = [os.environ['LIBBZIP2_HOME'] + '/src'])
 
 if not conf.CheckLib('bz2'):
     print 'libbzip2 not found.  Please set LIBBZ2_HOME'
