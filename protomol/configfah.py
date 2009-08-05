@@ -27,7 +27,7 @@ if os.environ.has_key('LIBBZIP2_HOME'):
     env.Append(CPPPATH = [os.environ['LIBBZIP2_HOME'] + '/src'])
 
 if not conf.CheckLib('bz2'):
-    print 'libbzip2 not found.  Please set LIBBZ2_HOME'
+    print 'libbzip2 not found.  Please set LIBBIPZ2_HOME'
     Exit(1)
 
 else: have_bzip2 = 1
