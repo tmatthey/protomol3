@@ -8,13 +8,7 @@
 
 //#include "ModifierForceProjection.h"
 
-using namespace std;
-
 using namespace ProtoMol::Report;
-
-using std::string;
-using std::vector;
-
 
 namespace ProtoMol {
   //__________________________________________________ NormalModeOpenMM
@@ -41,27 +35,25 @@ namespace ProtoMol {
     OpenMMIntegrator::initialize(app);
     initializeForces();
     //NM initialization
+    
     NormalModeUtilities::initialize((int)app->positions.size(), app,
 				    myForces, NO_NM_FLAGS);
-    //
 
     //Set up minimum limit
     app->eigenInfo.myMinimumLimit = minLim;
-    //
-
   }
 
   void NormalModeOpenMM::run(int numTimesteps) {
-    if( numTimesteps < 1 )
+    if( numTimesteps < 1 ){
         return;
+    }
 
     //check valid eigenvectors
-    if(*Q == NULL)
+    if(*Q == NULL){
         report << error << "No Eigenvectors for NormalMode integrator."<<endr;
-    //
+    }
 
     OpenMMIntegrator::run(numTimesteps);
-
   }
 
   void NormalModeOpenMM::getParameters(vector<Parameter>& parameters) const {
@@ -72,29 +64,24 @@ namespace ProtoMol {
     parameters.push_back(Parameter("gamma",Value(NormalModeUtilities::myGamma*(1000 * Constant::INV_TIMEFACTOR),ConstraintValueType::NotNegative()),80.0,Text("Langevin Gamma")));
     parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),300.0,Text("Langevin temperature")));
     parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
-
   }
 
-  STSIntegrator* NormalModeOpenMM::doMake(const vector<Value>& values,ForceGroup* fg)const{
-
-    unsigned int numPar = OpenMMIntegrator::getParameterSize();
+  STSIntegrator* NormalModeOpenMM::doMake(const vector<Value>& values,ForceGroup* fg) const {
+    const unsigned int numPar = OpenMMIntegrator::getParameterSize();
 
     std::vector<Value> ommValues(values.begin() + 1, values.begin() + numPar);
 
-    NormalModeOpenMM* myIntegP = new NormalModeOpenMM(values[0],values[7],values[8],values[9],values[10],values[11],fg);
+    NormalModeOpenMM* myIntegP = new NormalModeOpenMM(
+        values[0], values[numPar+0], values[numPar+1], values[numPar+2], values[numPar+3], values[numPar+4], fg
+    );
 
     myIntegP->OpenMMIntegrator::setupValues(ommValues);
 
     return (STSIntegrator*)myIntegP;
-
   }
 
   unsigned int NormalModeOpenMM::getParameterSize(){
-
     return OpenMMIntegrator::getParameterSize() + 5;
-
   }
-
-
 }
 
