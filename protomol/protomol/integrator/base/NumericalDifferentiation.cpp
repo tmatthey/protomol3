@@ -19,8 +19,8 @@ NumericalDifferentiation::NumericalDifferentiation() :
   STSIntegrator() {}
 
 NumericalDifferentiation::NumericalDifferentiation(
-  Real timestep, Real epsil, ForceGroup *overloadedForces) :
-  STSIntegrator(timestep, overloadedForces), epsilon(epsil) {
+  Real timestep, Real epsil, bool calch, ForceGroup *overloadedForces) :
+  STSIntegrator(timestep, overloadedForces), epsilon(epsil), calcHessian(calch) {
   hsn.findForces(overloadedForces);     //find forces and parameters
 }
 
@@ -92,32 +92,34 @@ void NumericalDifferentiation::run(int numTimesteps) {
     }
 
     //Hessian
-    for (unsigned int i = 0; i < _3N; i++)
-      for (unsigned int j = 0; j < _3N; j++) {
-        app->positions[i / 3][i % 3] += epsilon;
-        app->positions[j / 3][j % 3] += epsilon;
-        calculateForces();
-        hessPE1 = app->energies.potentialEnergy();
-        app->positions[i / 3][i % 3] -= 2.0 * epsilon;
-        app->positions[j / 3][j % 3] -= 2.0 * epsilon;
-        calculateForces();
-        hessPE2 = app->energies.potentialEnergy();
-        numHess[i * _3N + j] =
-          ((hessPE1 + hessPE2) / (epsilon * epsilon) - 2.0 * oldPE /
-           (epsilon * epsilon) - num2ndDeriv[i / 3][i % 3] -
-           num2ndDeriv[j / 3][j % 3]) * 0.5;
-        report
-          << debug(3) << "[NumericalDifferentiation::run] Atom1 " 
-          << i / 3 << ":" << coor[i % 3] << ", Atom2 " << j / 3 << ":"
-          << coor[j % 3] << ", Hess.= " << hsn.hessM[i * _3N + j]
-          << ", num. Hess.= " << numHess[i * _3N + j] << ", epsilon= "
-          << epsilon << "." << endr;
-        //restore hessian positions
-        app->positions[i / 3][i % 3] += epsilon;
-        app->positions[j / 3][j % 3] += epsilon;
-        Real tempErr = fabs(numHess[i * _3N + j] - hsn.hessM[i * _3N + j]);
-        if (tempErr > maxForceError) maxHessError = tempErr;
-      }
+    if(calcHessian){
+      for (unsigned int i = 0; i < _3N; i++)
+        for (unsigned int j = 0; j < _3N; j++) {
+          app->positions[i / 3][i % 3] += epsilon;
+          app->positions[j / 3][j % 3] += epsilon;
+          calculateForces();
+          hessPE1 = app->energies.potentialEnergy();
+          app->positions[i / 3][i % 3] -= 2.0 * epsilon;
+          app->positions[j / 3][j % 3] -= 2.0 * epsilon;
+          calculateForces();
+          hessPE2 = app->energies.potentialEnergy();
+          numHess[i * _3N + j] =
+            ((hessPE1 + hessPE2) / (epsilon * epsilon) - 2.0 * oldPE /
+              (epsilon * epsilon) - num2ndDeriv[i / 3][i % 3] -
+          num2ndDeriv[j / 3][j % 3]) * 0.5;
+          report
+            << debug(3) << "[NumericalDifferentiation::run] Atom1 " 
+            << i / 3 << ":" << coor[i % 3] << ", Atom2 " << j / 3 << ":"
+            << coor[j % 3] << ", Hess.= " << hsn.hessM[i * _3N + j]
+            << ", num. Hess.= " << numHess[i * _3N + j] << ", epsilon= "
+            << epsilon << "." << endr;
+          //restore hessian positions
+          app->positions[i / 3][i % 3] += epsilon;
+          app->positions[j / 3][j % 3] += epsilon;
+          Real tempErr = fabs(numHess[i * _3N + j] - hsn.hessM[i * _3N + j]);
+          if (tempErr > maxForceError) maxHessError = tempErr;
+        }
+    }
 
     report << debug(1) << "[NumericalDifferentiation::run] force error = "
            << maxForceError << ", Hessian error = " << maxHessError
@@ -137,12 +139,16 @@ void NumericalDifferentiation::getParameters(vector<Parameter> &parameters)
 const {
   STSIntegrator::getParameters(parameters);
   parameters.push_back
-    (Parameter("epsilon", Value(epsilon, ConstraintValueType::Positive()), true,
+    (Parameter("epsilon", Value(epsilon, ConstraintValueType::Positive()), 1.0,
                Text("epsilon")));
+  parameters.push_back
+    (Parameter("calcHessian", Value(calcHessian, ConstraintValueType::NoConstraints()), true,
+             Text("Calculate Hessian?")));
+  
 }
 
 STSIntegrator *NumericalDifferentiation::doMake(const vector<Value> &values,
                                                 ForceGroup *fg) const {
-  return new NumericalDifferentiation(values[0], values[1], fg);
+  return new NumericalDifferentiation(values[0], values[1], values[2], fg);
 }
 

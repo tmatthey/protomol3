@@ -16,7 +16,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     NumericalDifferentiation();
-    NumericalDifferentiation(Real timestep, Real epsil,
+    NumericalDifferentiation(Real timestep, Real epsil, bool calch,
                              ForceGroup *overloadedForces);
     ~NumericalDifferentiation();
 
@@ -55,6 +55,8 @@ namespace ProtoMol {
     Real epsilon;
     unsigned int _N, _3N;
     Hessian hsn;
+    bool calcHessian;
+    
   };
 }
 
