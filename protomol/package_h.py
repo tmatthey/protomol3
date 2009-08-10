@@ -4,18 +4,19 @@ REPO="unknown"
 def c_str_escape(str):
    return str.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
 
-f = open('.svn/entries')
-try:
-    i = 0
-    for line in f:
-        l = c_str_escape(line.strip())
-        if l.startswith("http"):
-            REPO = line.strip()
-            break
-        else:
-            REV = line.strip()
-finally:
-    f.close()
+if os.path.exists( '.svn/entries' ):
+  f = open('.svn/entries')
+  try:
+      i = 0
+      for line in f:
+          l = c_str_escape(line.strip())
+          if l.startswith("http"):
+              REPO = line.strip()
+              break
+          else:
+              REV = line.strip()
+  finally:
+      f.close()
 
 execfile('tags.py')
 
