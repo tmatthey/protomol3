@@ -1,158 +1,102 @@
 import os, sys
 
 execfile('compiler.py')
+execfile('config.py')
+execfile('configfah.py')
 execfile('boost.py')
 
 # Command Line Options
 opts = Options('options.py')
 Export('opts')
 
-opts.AddOptions(
-    BoolOption('qrdiag', 'Set to 1 if QR diagonalization', 0),
-    BoolOption('gui', 'Set to 1 if using the GUI', 0),
-    BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
-    BoolOption('lapack', 'Use LAPACK', 1),
-    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
-    EnumOption('openmm', 'Build with OpenMM', 'none',
-               allowed_values = ('none', 'reference', 'cuda'))
-)
-
+#Add options
+add_fah_options()
+add_config_options()
 compiler_add_opts()
 
 # Create environment and import external PATH
 env = Environment(options = opts, ENV = os.environ)
-
 Export('env')
- 
-# Configure
-conf = Configure(env, custom_tests = {'BoostVersion' : boost_check_version})
-Export('conf')
-
-# Import subdir build files
-subsrc = SConscript('protomol/SConscript')
-
-# Get options
-
-# DIAG Options
-qrdiag = int(env.get('qrdiag', 0))
-if qrdiag: env.Append(CCFLAGS = '-DHAVE_QRDIAG')
-
-# GUI Options
-gui = int(env.get('gui', 0))
-if gui:
-    env.Append(CCFLAGS = '-DHAVE_GUI')
 
 # FAH Options
 fah = int(env.get('fah', 0))
 
-# LAPACK Options
-use_lapack = int(env.get('lapack', 0))
-use_simtk_lapack = int(env.get('simtk_lapack', 0))
-
-# OpenMM Options
-openmm_type = env.get('openmm')
-if( openmm_type == 'none' ):
-    use_openmm = 0
-else:
-    use_openmm = 1
-
-    if ( openmm_type == 'reference' ):
-        use_openmm_reference = 1
-        use_openmm_cuda = 0
-    elif ( openmm_type == 'cuda' ):
-        use_openmm_reference = 0
-        use_openmm_cuda = 1
-
-# Configure compiler
-compiler_configure()
-
-
 # Include protomol
 env.Append(CPPPATH = '#')
 
-
 # Generate Help
-Help(opts.GenerateHelpText(env))
+Help( opts.GenerateHelpText(env) )
 
+# Do configuration
+if not env.GetOption('clean'):
+    execfile('package_h.py')
 
-# libprotomol
+    # Configure
+    conf = Configure(env, custom_tests = {'BoostVersion' : boost_check_version})
+    Export('conf')
+
+    # Run Configurations
+    compiler_configure()
+    config_configure()
+
+    if fah:
+        fah_configure()
+
+    if env['PLATFORM'] == 'win32':
+        if debug:
+            variant = 'Debug'
+        else:
+            variant = 'Release'
+
+    env = conf.Finish()
+
+# ProtoMol Library
 libname = 'protomol'
 if fah: libname = libname + '-fah'
 libsrc = []
-libs = []
-libs.append(libname)
 
-
-if not env.GetOption('clean'):
-    execfile('package_h.py')
-    execfile('config.py')
-    
-    # Folding@Home library version
-    if fah:
-      execfile('configfah.py')
-
-      if (have_bzip2 and have_boost_iostreams and have_libfah):
-        env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
-        have_libfah=1
-
-      if not (have_libfah and have_bzip2 and have_boost_iostreams):
-        print 'Need libfah, boost iostreams and libbzip2 for Folding@Home build'
-        Exit(1)
-
-      env.Append(CPPDEFINES = ['BUILD_FOR_FAH'])
-
-    env = conf.Finish()
-    
-    if env['PLATFORM'] == 'win32':
-      if debug: variant = 'Debug'
-      else: variant = 'Release'
-
+# Import subdir build files
+for s in SConscript('protomol/SConscript'):
+    libsrc.append('#/protomol/' + s)
 
 if fah:
     libsrc.append('#/protomol/modules.cpp')
 
+# Build Library
+env.Library(libname, libsrc)
 
-# Get source
-for s in subsrc:
-    libsrc.append('#/protomol/' + s)
+# Setup Application Libraries
+env.Append(LIBPATH = ['.'])
+env.Prepend(LIBS = [libname])
 
+# ProtoMol Sources
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
-
-
-# Build Protomol
-env.Append(LIBPATH = ['.'])
-
-
-# Build libprotomol
-env.Prepend(LIBS = [libname])
-env.Library(libname, libsrc)
+# Build Application
 if (env['PLATFORM'] == 'darwin'): # MAC
-   protomol = env.Program('ProtoMol-app', src)
+    protomol = env.Program('ProtoMol-app', src)
 else:
-   protomol = env.Program('ProtoMol', src)
+    protomol = env.Program('ProtoMol', src)
+
 Default(protomol)
 
-
+# Build Visual Studio Project
 if env['PLATFORM'] == 'win32':
-  src = []
-  def add_hdrs(arg, dir, files):
-    global src
-    for file in files:
-      if file.endswith(arg):
-        src += [dir + os.sep + file]
+    src = []
 
-  os.path.walk('protomol', add_hdrs, '.h')
-  inc = src
-  src = []
-  os.path.walk('protomol', add_hdrs, '.cpp')
+    def add_hdrs(arg, dir, files):
+        global src
+        for file in files:
+            if file.endswith(arg):
+                src += [dir + os.sep + file]
 
-  env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
-                  srcs = src, incs = inc,
-                  auto_build_solution = 0,
-                  variant = ['Debug', 'Release'],
-                  buildtarget = ['debug=1', 'debug=0'])
+    os.path.walk('protomol', add_hdrs, '.h')
+    inc = src
+    src = []
+    os.path.walk('protomol', add_hdrs, '.cpp')
 
-
-# Tidy
-env.Command('tidy', '', 'rm -f config.log $$(find . -name \*~ -o -name \#*)')
+    env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
+                    srcs = src, incs = inc,
+                    auto_build_solution = 0,
+                    variant = ['Debug', 'Release'],
+                    buildtarget = ['debug=1', 'debug=0'])

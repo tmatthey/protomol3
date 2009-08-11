@@ -821,6 +821,7 @@ protomol/boost.py -text
 protomol/compiler.py -text
 protomol/config.py -text
 protomol/configfah.py -text
+protomol/configfuncs.py -text
 protomol/doc/Doxyfile -text
 protomol/doc/SCPISM.tex -text
 protomol/doc/SCPISM_Implementation-Rev-1.pdf -text
@@ -1324,7 +1325,6 @@ protomol/scripts/TemplateModule.cpp -text
 protomol/scripts/TemplateModule.h -text
 protomol/scripts/findModules -text
 protomol/scripts/makeModule -text
-protomol/tags.py -text
 scripts/build-protomol-core -text
 scripts/build-protomol-core.bat -text
 scripts/clean-protomol-core.bat -text

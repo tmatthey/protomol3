@@ -5,7 +5,7 @@ def compiler_add_opts():
         BoolOption('optimize', 'Set to 1 to force optimizations', 1),
         BoolOption('debug', 'Set to 1 to force debug options', 0),
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
-        BoolOption('threaded', 'Set to 1 to enable thread support', 1),
+        #BoolOption('threaded', 'Set to 1 to enable thread support', 1),
         BoolOption('profile', 'Set to 1 to enable profiler', 0),
         BoolOption('depends', 'Set to 1 to output dependency files', 0),
         BoolOption('distcc', 'Set to 1 to enable distributed builds', 0),
@@ -33,12 +33,12 @@ def compiler_configure(c99_mode = 1):
 
     if env.has_key('optimize'): optimize = int(env['optimize'])
     else: optimize = mode == 'release'
-    
+
     if env.has_key('debug'): debug = int(env['debug'])
     else: debug = mode == 'debug'
-    
+
     strict = int(env.get('strict', 1))
-    threaded = int(env.get('threaded', 1))
+    #threaded = int(env.get('threaded', 1))
     profile = int(env.get('profile', 0))
     depends = int(env.get('depends', 0))
     compiler = env.get('compiler', 0)
@@ -75,12 +75,12 @@ def compiler_configure(c99_mode = 1):
             Tool('link')(env)
             Tool('ar')(env)
             Tool('as')(env)
-            
+
         elif compiler in Split('hp sgi sun aix'):
             Tool(compiler + 'cc')(env)
             Tool(compiler + 'c++')(env)
             Tool(compiler + 'link')(env)
-            
+
             if compiler in Split('sgi sun'):
                 Tool(compiler + 'ar')(env)
 
@@ -152,20 +152,20 @@ def compiler_configure(c99_mode = 1):
 
 
     # Threads
-    if threaded:
-        if env['CC'] == 'gcc':
-            if not conf.CheckLib('pthread'):
-                print 'Need pthreads'
-                Exit(1)
+    #if threaded:
+        #if env['CC'] == 'gcc':
+            #if not conf.CheckLib('pthread'):
+                #print 'Need pthreads'
+                #Exit(1)
 
-            env.Append(LINKFLAGS = ['-pthread'])
-            env.Append(CPPDEFINES = ['_REENTRANT'])
+            #env.Append(LINKFLAGS = ['-pthread'])
+            #env.Append(CPPDEFINES = ['_REENTRANT'])
 
-        elif env['CC'] == 'cl':
-            if debug:
-                env.Append(CCFLAGS = ['/MTd'])
-            else:
-                env.Append(CCFLAGS = ['/MT'])
+        #elif env['CC'] == 'cl':
+            #if debug:
+                #env.Append(CCFLAGS = ['/MTd'])
+            #else:
+                #env.Append(CCFLAGS = ['/MT'])
 
 
     # static

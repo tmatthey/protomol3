@@ -1,86 +1,80 @@
-if env['PLATFORM'] == 'win32':
-    env.Append(LIBS = 'wsock32')
-else:
-    env.Append(LIBS = 'pthread')
+execfile('configfuncs.py')
 
-if env['CC'] == 'gcc':
-    if os.environ.has_key('ATLAS_HOME'):
-        env.Append(LIBPATH = [os.environ['ATLAS_HOME']])
-    else:
-        env.Append(LIBPATH = ['/usr/lib/atlas'])
+def add_config_options():
+    opts.AddOptions(
+        BoolOption('qrdiag', 'Set to 1 if QR diagonalization', 0),
+        BoolOption('gui', 'Set to 1 if using the GUI', 0),
+        BoolOption('lapack', 'Use LAPACK', 0),
+        BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
+        EnumOption('openmm', 'Build with OpenMM', 'none',
+                allowed_values = ('none', 'reference', 'cuda'))
+    )
 
-if globals().has_key('use_openmm') and use_openmm:
-    if os.environ.has_key('OPENMM_HOME') == False:
-        print 'OPENMM_HOME is not set'
-    else:
-        have_openmm = 0
+def config_configure():
+    # DIAG Options
+    use_qr = int( env.get( 'qrdiag', 0 ) )
+    if use_qr == 1:
+        env.Append(CCFLAGS = '-DHAVE_QRDIAG')
 
-        openmm_home = os.environ['OPENMM_HOME']
-        env.Append(CPPPATH = [openmm_home + os.sep +'include'])
-        env.Append(LIBPATH = [openmm_home + os.sep + 'lib'   ])
+    # GUI Options
+    use_gui = int( env.get( 'gui',0 ) )
+    if use_gui == 1:
+        env.Append(CCFLAGS = '-DHAVE_GUI')
 
-        if (globals().has_key('use_openmm_reference') and use_openmm_reference) or (globals().has_key('use_openmm_cuda') and use_openmm_cuda):
-            if conf.CheckLib('OpenMM_d'):
+        if env['PLATFORM'] == 'win32':
+            check_library( 'wsock32', True )
+        else:
+            check_library( 'pthread', True )
+
+    # SimTK LAPACK
+    use_simtk = int( env.get( 'simtk_lapack', 0) )
+    if use_simtk == 1:
+        simtk_home = check_envvar( 'SIMTK_LAPACK_HOME' )
+
+        env.Append(LIBPATH = [simtk_home + '/lib'])
+        env.Append(CPPPATH = [simtk_home + '/include'])
+
+        if check_library( 'SimTKlapack', True ) and check_header( 'SimTKlapack.h', True ):
+            env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
+
+    # LAPACK
+    use_lapack = int( env.get( 'lapack', 0 ) )
+    if use_lapack:
+        lapack_home = check_envvar( 'LAPACK_HOME' )
+
+        env.Append(CPPPATH = [lapack_home])
+        env.Append(LIBPATH = [lapack_home])
+
+        if check_library( 'lapack', True ):
+            env.Append(CPPDEFINES = ['HAVE_LAPACK'])
+
+        if env['PLATFORM'] == 'posix':
+            # BLAS
+            env.Append(LIBPATH = [check_envvar( 'BLAS_HOME' )])
+
+            check_library( 'blas' )
+
+            # G2C
+            env.Append(LIBPATH = [check_envvar( 'G2C_HOME' )])
+
+            check_library( 'g2c' )
+
+    # OpenMM Options
+    openmm_type = env.get('openmm')
+    if openmm_type != 'none':
+        openmm_home = check_envvar( 'OPENMM_HOME', True )
+
+        env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
+        env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
+
+        if openmm_type == 'reference':
+            if check_library( 'OpenMM_d', True ):
                 env.Append(CPPDEFINES = ['HAVE_OPENMM'])
-                have_openmm = 1
 
-        if globals().has_key('use_openmm_cuda') and use_openmm_cuda:
-            if os.environ.has_key('CUDA_HOME') == False:
-                print 'CUDA_HOME is not set'
-            else:
-                openmm_home = os.environ['CUDA_HOME']
-                env.Append(LIBPATH = [openmm_home + os.sep + 'lib'])
-            
-                if conf.CheckLib('cudart') and conf.CheckLib('OpenMMCuda_d'):
-                    env.Append(CPPDEFINES = ['HAVE_OPENMM'])
-                    have_openmm = 1
+        if openmm_type == 'cuda':
+            cuda_home = check_envvar( 'CUDA_HOME', True )
 
+            env.Append(LIBPATH = [cuda_home + os.sep + 'lib'])
 
-
-# SimTK LAPACK
-if os.environ.has_key('SIMTK_LAPACK_HOME'):
-    env.Append(CPPPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/include'])
-    env.Append(LIBPATH = [os.environ['SIMTK_LAPACK_HOME'] + '/lib'])
-  
-have_simtk_lapack = 0
-if conf.CheckLib('SimTKlapack') and conf.CheckCXXHeader('SimTKlapack.h'):
-    env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
-    have_simtk_lapack = 1
-
-# Complain if reqquest was explicit
-if (globals().has_key('use_simtk_lapack') and use_simtk_lapack and
-    not have_simtk_lapack):
-    print 'SimTKlapack library not found'
-    Exit(1)
-
-
-
-# LAPACK
-if not have_simtk_lapack:
-    if os.environ.has_key('LAPACK_HOME'):
-        env.Append(CPPPATH = [os.environ['LAPACK_HOME']])
-        env.Append(LIBPATH = [os.environ['LAPACK_HOME']])
-  
-    have_lapack = 0
-    if conf.CheckLib('lapack'):
-        env.Append(CPPDEFINES = ['HAVE_LAPACK'])
-        have_lapack = 1
-
-
-    # Complain if reqquest was explicit
-    if globals().has_key('use_lapack') and use_lapack and not have_lapack:
-        print 'lapack library not found'
-        Exit(1)
-
-    if env['PLATFORM'] == 'posix':
-        # BLAS
-        if os.environ.has_key('BLAS_HOME'):
-            env.Append(LIBPATH = [os.environ['BLAS_HOME']])
-
-        have_blas = conf.CheckLib('blas')
-
-        # G2C
-        if os.environ.has_key('G2C_HOME'):
-            env.Append(LIBPATH = [os.environ['G2C_HOME']])
-
-        have_g2c = conf.CheckLib('g2c')
+            if check_library( 'OpenMM_d', True ) and check_library( 'OpenMMCuda_d', True ) and check_library( 'cudart', True ):
+                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
