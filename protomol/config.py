@@ -51,13 +51,15 @@ def config_configure():
         if env['PLATFORM'] == 'posix':
             # BLAS
             env.Append(LIBPATH = [check_envvar( 'BLAS_HOME' )])
-
             check_library( 'blas' )
 
             # G2C
             env.Append(LIBPATH = [check_envvar( 'G2C_HOME' )])
-
             check_library( 'g2c' )
+
+            # GFortran
+            env.Append(LIBPATH = [check_envvar( 'GFORTRAN_HOME' )])
+            check_library( 'gfortran' )
 
     # OpenMM Options
     openmm_type = env.get('openmm')
