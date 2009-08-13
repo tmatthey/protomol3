@@ -10,6 +10,9 @@
 #include <protomol/parallel/Parallel.h>
 
 using namespace ProtoMol;
+
+using namespace ProtoMol::Report;
+
 //____ StandardIntegrator
 StandardIntegrator::StandardIntegrator() :
   Integrator(), myPreviousIntegrator(NULL) {}
@@ -46,6 +49,12 @@ void StandardIntegrator::calculateForces() {
         app->topology->atoms[i].mySCPISM_A->preForce();
   }
 
+  //GBSA pre-force initialize
+  if (app->topology->doGBSAOpenMM) {
+    for(unsigned int i=0;i<app->topology->atoms.size();i++)
+        app->topology->atoms[i].myGBSA_T->preForce();
+  }
+
   preForceModify();
 
   if (!anyMediForceModify())
@@ -54,6 +63,13 @@ void StandardIntegrator::calculateForces() {
   myForcesToEvaluate->evaluateSystemForces(app, myForces);
   mediForceModify();
   myForcesToEvaluate->evaluateExtendedForces(app, myForces);
+
+
+  //dump energy
+  //report << plain <<"Potential energy due to GBSA = "<<app->energies[ScalarStructure::COULOMB]<<endr;
+
+  //dump forces 
+  //for (unsigned int k=0;k<myForces->size();k++) report << plain <<"Atom "<<k<<", Forces "<<(*myForces)[k]<<endr;
 
   if (!anyMediForceModify()) Parallel::reduce(&app->energies, myForces);
 

@@ -169,6 +169,27 @@ void ProtoMolApp::build() {
 
   }
 
+  //using GBSA with openMM
+  if (config[InputDoGBSAObc::keyword]) {
+     topology->doGBSAOpenMM = 1;
+     topology->obcType = config[InputDoGBSAObc::keyword];
+
+     if (topology->obcType == 1) {
+       topology->alphaObc = 0.8;
+       topology->betaObc = 0;
+       topology->gammaObc = 2.91;
+
+     } else if (topology->obcType == 2) {
+       //obctype = 2
+       topology->alphaObc = 1.0;
+       topology->betaObc = 0.8;
+       topology->gammaObc = 4.85;
+     }
+     topology->dielecOffset = 0.09;
+
+  }
+
+
   //find force field type before building topology
   if (config.valid(InputGromacsTopo::keyword) && 
     config.valid(InputGromacsParamPath::keyword)) {

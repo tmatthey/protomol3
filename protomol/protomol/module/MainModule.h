@@ -21,6 +21,7 @@ namespace ProtoMol {
   declareInputValue(InputOutputfreq, INT, NOTNEGATIVE);
   declareInputValue(InputOutput, BOOL, NOCONSTRAINTS);
   declareInputValue(InputMinimalImage, BOOL, NOCONSTRAINTS);
+  declareInputValue(InputDoGBSAObc, BOOL, NOCONSTRAINTS);
 
   class MainModule : public Module {
   public:

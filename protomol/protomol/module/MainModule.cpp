@@ -22,6 +22,7 @@ defineInputValue(InputIntegrator, "integrator");
 defineInputValue(InputReducedImage, "reducedImage");
 defineInputValue(InputTemperature, "temperature");
 defineInputValue(InputDoSCPISM, "doscpism");
+defineInputValue(InputDoGBSAObc, "doGBSAObc");
 defineInputValueAndText(InputVirialCalc, "virialCalc",
                         "Required for constant pressure simulations.");
 defineInputValueAndText(InputMolVirialCalc, "molVirialCalc",
@@ -50,6 +51,7 @@ void MainModule::init(ProtoMolApp *app) {
   InputOutput::registerConfiguration(&app->config, true);
   InputOutputfreq::registerConfiguration(&app->config, 1);
   InputMinimalImage::registerConfiguration(&app->config, false);
+  InputDoGBSAObc::registerConfiguration(config, 0);
 }
 
 void MainModule::configure(ProtoMolApp *app) {
