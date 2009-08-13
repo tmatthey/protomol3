@@ -51,59 +51,31 @@ namespace ProtoMol {
       Real offsetRadius_i = topo->atomTypes[type1].vdwR - topo->atoms[atom1].myGBSA_T->offsetRadius;
       Real offsetRadius_j = topo->atomTypes[type2].vdwR - topo->atoms[atom2].myGBSA_T->offsetRadius;
 
-      report << debug(1) <<"Atom "<<atom1<<", burial term "<<topo->atoms[atom1].myGBSA_T->burialTerm<<endr;
-      report << debug(1) <<"Atom "<<atom2<<", burial term "<<topo->atoms[atom2].myGBSA_T->burialTerm<<endr;
-
       Real bornRad_i, bornRad_j;
       Real psi_i, psi_j;
       Real tanhparam_i, tanhparam_j;
 
-      //Psi values for atom1 and atom 2 (i and j)
-      if (!topo->atoms[atom1].myGBSA_T->doneCalculateBornRadius) {
-       
-      } // else no need to calculate born radius for atom1, it is already done.
-
-      if (!topo->atoms[atom2].myGBSA_T->doneCalculateBornRadius) {
-      } // else no need to calculate born radius for atom2
 
      psi_i = topo->atoms[atom1].myGBSA_T->PsiValue;
      tanhparam_i = topo->alphaObc*psi_i - topo->betaObc*psi_i*psi_i + topo->gammaObc*psi_i*psi_i*psi_i;
      psi_j = topo->atoms[atom2].myGBSA_T->PsiValue;
      tanhparam_j = topo->alphaObc*psi_j - topo->betaObc*psi_j*psi_j + topo->gammaObc*psi_j*psi_j*psi_j;
 
-#if 0
-      report << debug(1) <<"GBProtoMol : atom1 "<<atom1<<", Psi = "<<topo->atoms[atom1].myGBSA_T->PsiValue<<endr;
-      report << debug(1) <<"GBProtoMol : atom2 "<<atom2<<", Psi = "<<topo->atoms[atom2].myGBSA_T->PsiValue<<endr;
-#endif
-    
-
-      if ((atom1 == 0) && (atom2 == 1)) report << debug(1) <<"ProtoMol : alpha "<<topo->alphaObc<<", beta "<<topo->betaObc<<", gamma "<<topo->gammaObc<<endr;
-#if 0
-      //SC : debugging 
-      report << debug(1) <<"GBProtoMol Atom : "<<atom1<<", Born Radius = "<<BornRad_i<<", Atom : "<<atom2<<", BornRadius = "<<BornRad_j<<endr;
-#endif
 
       bornRad_i = topo->atoms[atom1].myGBSA_T->bornRad;
       bornRad_j = topo->atoms[atom2].myGBSA_T->bornRad;
 
-      energy = 0;
-
-      force = 0;
-
-      //report << debug(5) <<" Atom1 "<<atom1<<", seen BornRadius "<<bornRad_i<<", Atom2 "<<atom2<<", seen BornRadius "<<bornRad_j<<endr;
-      //report << plain <<" Atom1 "<<atom1<<", seen BornRadius "<<bornRad_i<<", Atom2 "<<atom2<<", seen BornRadius "<<bornRad_j<<endr;
-
+      //Equation (17)
       Real expterm = ((dist*dist)/(4*bornRad_i*bornRad_j));
       Real fGB_ij = sqrt(dist*dist + bornRad_i*bornRad_j*exp(-expterm));
 
       Real scaledCharge_i = topo->atoms[atom1].scaledCharge;
       Real scaledCharge_j = topo->atoms[atom2].scaledCharge;
 
-      //energy = -0.5*(scaledCharge_i*scaledCharge_j)*(1/fGB_ij)*((1/soluteDielec) - (1/solventDielec));
-      //energy = -(scaledCharge_i*scaledCharge_j)*(1/fGB_ij)*((1/soluteDielec) - (1/solventDielec));
+      //Equation (16)
       energy = -(scaledCharge_i*scaledCharge_j)*(1/fGB_ij)*((1/soluteDielec) - (1/solventDielec));
 
-      //self terms
+      //self terms (Equation (18))
       if (!topo->atoms[atom1].myGBSA_T->doSelfForceTerm) {
          energy -= (scaledCharge_i*scaledCharge_i)*(1/bornRad_i)*((1/soluteDielec) - (1/solventDielec));
          topo->atoms[atom1].myGBSA_T->doSelfForceTerm = true;
@@ -114,7 +86,6 @@ namespace ProtoMol {
          topo->atoms[atom2].myGBSA_T->doSelfForceTerm = true;
       }
 
-      //report << plain <<"Atom1 "<<atom1<<", Atom2 "<<atom2<<", energy "<<energy<<endr;
 
 
     //Scaling factors
@@ -130,10 +101,7 @@ namespace ProtoMol {
         Uij = 1;
      }else {
         Lij =(offsetRadius_i > fabs(dist - S_j*offsetRadius_j)) ? offsetRadius_i : fabs(dist - S_j*offsetRadius_j);
-
         Uij = dist + S_j*offsetRadius_j;
-
-
      }
 
      if (offsetRadius_i < offsetRadius_j*S_j - dist) {
@@ -146,7 +114,6 @@ namespace ProtoMol {
 
       //Derivatives for calculation of the derivative of the born radii
       Real dLijdrij, dUijdrij, dCijdrij;
-      //Real dCijdrij = 
       if (offsetRadius_i <= (dist - S_j*offsetRadius_j)) dLijdrij = 1;
       else dLijdrij = 0;
 
@@ -201,9 +168,8 @@ namespace ProtoMol {
      Real fGBij = sqrt(dist*dist + bornRad_i*bornRad_j*exp(-expterm_ij));
 
      //force due to pairwise i-j term
+     //Check Equation (19-20). Next line only finds the pairwise terms.
      force -= scaledCharge_i*scaledCharge_j*(1/(fGBij*fGBij))*0.5*(1/fGBij)*((2*dist - 0.5*exp(-expterm_ij)*dist) + exp(-expterm_ij)*dRidrij*(bornRad_j + (dist*dist)/(4*bornRad_i)) + exp(-expterm_ij)*dRjdrji*(bornRad_i + (dist*dist)/(4*bornRad_j)))*(1/dist);
-
-     //Real force_i_term = Force_i_term(topo, atom1, atom2);
 
      force -= Force_i_term(topo, atom1, atom2, dRidrij)*(1/dist);
 
@@ -213,8 +179,8 @@ namespace ProtoMol {
 
    }
 
-   //estimate the force term for the sum over k,l where k=i
-   //
+   //estimate the force term for the sum over k,l where k=i,j and l {\neq} j if 
+   //k=i and l {\neq}i if k=j
    Real Force_i_term(const GenericTopology *topo, int atom1, int atom2, Real dRidrij) const{
 
       Real scaledCharge_i, scaledCharge_l;
@@ -249,8 +215,10 @@ namespace ProtoMol {
         filGB = sqrt(ril*ril + bornRad_i*bornRad_l*exp(-expterm));
 
         if ( l != atom1) {
+          //Equation (24)
          force += scaledCharge_i*scaledCharge_l*(1/(filGB*filGB))*0.5*(1/filGB)*exp(-expterm)*dRidrij*(bornRad_l + (ril*ril)/(4.0*bornRad_i));
         }else {
+         //Equation (26)
          force += scaledCharge_i*scaledCharge_l*(1/(filGB*filGB))*dRidrij;
         }
 

@@ -90,6 +90,7 @@ namespace ProtoMol {
 
      Real Lij, Uij, Cij;
 
+     //Equations (6-8)
      if (offsetRadius_i >=  dist + S_j*offsetRadius_j) {
         Lij = one;
         Uij = one;
@@ -100,16 +101,16 @@ namespace ProtoMol {
         Uij = dist + S_j*offsetRadius_j;
         
      }
-
-     //store Lvalues Uvalues in an array so that we can use later
-     topo->atoms[atom1].myGBSA_T->Lvalues[atom2] = Lij;
-     topo->atoms[atom1].myGBSA_T->Uvalues[atom2] = Uij;
-
      if (offsetRadius_i < offsetRadius_j*S_j- dist) {
        Cij = two*(one/offsetRadius_i - one/Lij);
      }else {
        Cij = 0;
      }
+
+     //store Lvalues Uvalues in an array so that we can use later
+     topo->atoms[atom1].myGBSA_T->Lvalues[atom2] = Lij;
+     topo->atoms[atom1].myGBSA_T->Uvalues[atom2] = Uij;
+
 
      Real invLij = one/Lij;
      Real invUij = one/Uij;
@@ -125,6 +126,8 @@ namespace ProtoMol {
      topo->atoms[atom1].myGBSA_T->burialTerm += term_i;
 
 
+    // These are required for jith term. Note that Lij not necessary equal to Lji. Same is true for Uij and Cij.
+    // These quantities may not be symmetric. I need these for calculating R_j.
     Real Lji, Uji, Cji;
 
     if (offsetRadius_j >=  dist + S_i*offsetRadius_i) {
