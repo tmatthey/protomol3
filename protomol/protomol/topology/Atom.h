@@ -28,6 +28,79 @@ namespace ProtoMol {
     Real zeta, eta;
     bool energySum;
   };
+
+  //add variables to store GBSA paramaters for each atom
+  struct GBSAAtomParameters {
+
+    GBSAAtomParameters() {
+      bornRadiusDerivatives = NULL;
+      Lvalues = NULL;
+      Uvalues = NULL;
+      distij = NULL;
+    }
+
+    ~GBSAAtomParameters() {
+
+      if (bornRadiusDerivatives != NULL) delete [] bornRadiusDerivatives;
+
+    }
+
+    void SetSpaceForBornRadiusDerivatives(int sz) {
+      if (bornRadiusDerivatives == NULL) {
+         bornRadiusDerivatives = new Real[sz];
+      }
+    }
+
+    void SetSpaceLvalues(int sz) {
+       Lvalues = new Real[sz];
+    }
+    void SetSpaceUvalues(int sz) {
+       Uvalues = new Real[sz];
+    }
+
+    void SetSpaceDistij(int sz) {
+       distij = new Real[sz];
+    }
+
+    //Pre force initialization
+    void preForce() {
+      burialTerm = 0.0;
+      doneCalculateBornRadius = false;
+      doSelfForceTerm = false;
+      doneACEPotential = false;
+    }
+
+    Real bornRad, burialTerm;
+    Real scalingFactor;
+    Real offsetRadius;
+
+    //int doneBornRadii;
+
+    Real PsiValue;
+
+    //Need to define an array which will store the derivatives of born radius of atom
+    //i w.r.t. all j
+    Real *bornRadiusDerivatives;
+
+    Real *Lvalues;
+    Real *Uvalues;
+
+    Real *distij;
+
+    //Defining a flag which will be false if Born Radius value has not been calculated
+    //from the burialTerm/PsiValue. It will be set to true first time Born Radius is
+    //estimated for THIS atom. It has to be set to false in preForce() routine above.
+    bool doneCalculateBornRadius;
+
+    //flag to control calculation of i-i term
+    bool doSelfForceTerm;
+
+    //flag for setting ACE potential
+    bool doneACEPotential;
+
+
+  };
+
   /**
    * This class defines the information for one atom.  It contains the type
    * of the atom, its charge (scaled by a constant factor), and the next
@@ -41,7 +114,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Atom() : type(-1), scaledCharge(0.0), scaledMass(0.0), hvyAtom(-1),
       atomNum(-1), cellListNext(-1), molecule(-1), mybonds(std::vector<int>()),
-             mySCPISM_A(0) {}
+             mySCPISM_A(0), myGBSA_T(0) {}
 
     // A default constructor for the atom class
 
@@ -80,6 +153,8 @@ namespace ProtoMol {
     std::string residue_name;
     int residue_seq;
     SCPISMAtomParameters *mySCPISM_A;
+
+    GBSAAtomParameters *myGBSA_T;
   };
 }
 #endif /* ATOM_H */

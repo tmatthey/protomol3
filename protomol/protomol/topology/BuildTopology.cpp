@@ -819,6 +819,64 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
 
   // end of SCPISM
 
+  //GBSA parameters]
+  if (topo->doGBSAOpenMM) {
+  unsigned int atomsSize = topo->atoms.size();
+  //string hname("H"), cname("C"), 
+  for (unsigned int i=0;i < atomsSize; i++) {
+
+    Atom *tempatom = &(topo->atoms[i]);
+
+    tempatom->myGBSA_T = new GBSAAtomParameters();
+
+    int type = tempatom->type;
+
+    string name = topo->atomTypes[type].name;
+
+    tempatom->myGBSA_T->offsetRadius = 0.09;
+    //tempatom->myGBSA_T->scalingFactor 
+    if ( name[0] == 'H') {
+       tempatom->myGBSA_T->scalingFactor = 0.85;
+    }else if ( name[0] == 'C') {
+       tempatom->myGBSA_T->scalingFactor = 0.72;
+    }else if ( name[0] == 'N') {
+       tempatom->myGBSA_T->scalingFactor = 0.79;
+      
+    }else if ( name[0] == 'O') {
+       tempatom->myGBSA_T->scalingFactor = 0.85;
+    } else if ( name[0] == 'P') {
+       tempatom->myGBSA_T->scalingFactor = 0.86;
+    } else if (name[0] == 'S') {
+       tempatom->myGBSA_T->scalingFactor = 0.85;
+    } else {
+       tempatom->myGBSA_T->scalingFactor = 0.8;
+    }
+
+    //allocate the array to store derivatives of born radius w.r.t. r_{ij}'s
+    if (tempatom->myGBSA_T->bornRadiusDerivatives == NULL) {
+        tempatom->myGBSA_T->SetSpaceForBornRadiusDerivatives(atomsSize);
+    }
+
+    if (tempatom->myGBSA_T->Lvalues == NULL) {
+        tempatom->myGBSA_T->SetSpaceLvalues(atomsSize);
+    }
+    if (tempatom->myGBSA_T->Uvalues == NULL) {
+        tempatom->myGBSA_T->SetSpaceUvalues(atomsSize);
+    }
+
+    if (tempatom->myGBSA_T->distij == NULL) {
+       tempatom->myGBSA_T->SetSpaceDistij(atomsSize);
+    }
+
+  }
+
+  }
+  
+  
+      
+
+  
+
   // store the molecule information
   buildMoleculeTable(topo);
   buildExclusionTable(topo, topo->exclude);

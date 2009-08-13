@@ -200,6 +200,13 @@ namespace ProtoMol {
     /// if the distances on the same molecule are minimal regardless boundary 
     /// conditions
     bool minimalMolecularDistances;
+
+    //Parameters for GBSA with OpenMM
+    int doGBSAOpenMM;
+    int obcType;
+    Real dielecOffset;
+    Real alphaObc, betaObc, gammaObc;
+
   };
   //________________________________________ INLINES
 }
