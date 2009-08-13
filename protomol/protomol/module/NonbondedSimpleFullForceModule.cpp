@@ -25,6 +25,13 @@
 #include <protomol/topology/CellListEnumeratorPeriodicBoundaries.h>
 #include <protomol/topology/CellListEnumeratorStandard.h>
 
+//GB
+#include <protomol/force/GB/GBBornBurialTerm.h>
+#include <protomol/force/GB/GBBornRadii.h>
+#include <protomol/force/GB/GBForce.h>
+#include <protomol/force/GB/GBACEForce.h>
+
+
 using namespace std;
 using namespace ProtoMol;
 
@@ -181,6 +188,13 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, Cn, CoulombSCPISMForce> >());
     f.reg(new SimpleFullSystem<OneAtomPair<VBC, CmpCnCn,
           CoulombSCPISMForce> >());
+
+    // GB
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBBornBurialTerm> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBBornRadii> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBACEForce> >());
+
 
     // OneAtomPairTwo
     f.reg(new SimpleFullSystem<OneAtomPairTwo<VBC, C2, LennardJonesForce, C1,
