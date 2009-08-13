@@ -917,8 +917,14 @@ protomol/protomol/force/Force.cpp -text
 protomol/protomol/force/Force.h -text
 protomol/protomol/force/ForceGroup.cpp -text
 protomol/protomol/force/ForceGroup.h -text
+protomol/protomol/force/GB/GBACEForce.cpp -text
+protomol/protomol/force/GB/GBACEForce.h -text
 protomol/protomol/force/GB/GBBornBurialTerm.cpp -text
 protomol/protomol/force/GB/GBBornBurialTerm.h -text
+protomol/protomol/force/GB/GBBornRadii.cpp -text
+protomol/protomol/force/GB/GBBornRadii.h -text
+protomol/protomol/force/GB/GBForce.cpp -text
+protomol/protomol/force/GB/GBForce.h -text
 protomol/protomol/force/GB/SConscript -text
 protomol/protomol/force/LennardJonesForce.cpp -text
 protomol/protomol/force/LennardJonesForce.h -text
