@@ -917,6 +917,9 @@ protomol/protomol/force/Force.cpp -text
 protomol/protomol/force/Force.h -text
 protomol/protomol/force/ForceGroup.cpp -text
 protomol/protomol/force/ForceGroup.h -text
+protomol/protomol/force/GB/GBBornBurialTerm.cpp -text
+protomol/protomol/force/GB/GBBornBurialTerm.h -text
+protomol/protomol/force/GB/SConscript -text
 protomol/protomol/force/LennardJonesForce.cpp -text
 protomol/protomol/force/LennardJonesForce.h -text
 protomol/protomol/force/MetaForce.cpp -text
