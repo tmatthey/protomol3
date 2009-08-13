@@ -66,28 +66,34 @@ namespace ProtoMol {
       if (!topo->atoms[atom1].myGBSA_T->doneCalculateBornRadius)  {
         //calculate born radius
         //set flag to true
+
+        //Equation (3) and (5)
         topo->atoms[atom1].myGBSA_T->PsiValue = 0.5*topo->atoms[atom1].myGBSA_T->burialTerm*offsetRadius_i;
         psi_i = topo->atoms[atom1].myGBSA_T->PsiValue;
+
+        //part of Equation (1)
         tanhparam_i = topo->alphaObc*psi_i - topo->betaObc*psi_i*psi_i + topo->gammaObc*psi_i*psi_i*psi_i;
+        //Second part of Equation (1)
         Real invBornRad_i = (1/offsetRadius_i) - (1/topo->atomTypes[type1].vdwR)*tanh(tanhparam_i);
         topo->atoms[atom1].myGBSA_T->bornRad = 1/invBornRad_i;
         topo->atoms[atom1].myGBSA_T->doneCalculateBornRadius = true;
-
-        report << plain <<"Atom "<<atom1<<", calculated Born Radius "<<topo->atoms[atom1].myGBSA_T->bornRad<<endr;
 
       }
 
       if (!topo->atoms[atom2].myGBSA_T->doneCalculateBornRadius)  {
         //calculate born radius
         //set flag to true
+
+         //Equation (3) and (5)
          topo->atoms[atom2].myGBSA_T->PsiValue = 0.5*topo->atoms[atom2].myGBSA_T->burialTerm*offsetRadius_j;
         psi_j = topo->atoms[atom2].myGBSA_T->PsiValue;
+ 
+        //part of Equation (1)
         tanhparam_j = topo->alphaObc*psi_j - topo->betaObc*psi_j*psi_j + topo->gammaObc*psi_j*psi_j*psi_j;
+        //Second part of Equation (1)
          Real invBornRad_j = (1/offsetRadius_j) - (1/topo->atomTypes[type2].vdwR)*tanh(tanhparam_j);
          topo->atoms[atom2].myGBSA_T->bornRad = 1/invBornRad_j;
          topo->atoms[atom2].myGBSA_T->doneCalculateBornRadius = true;
-        report << plain <<"Atom "<<atom2<<", calculated Born Radius "<<topo->atoms[atom2].myGBSA_T->bornRad<<endr;
-
 
       }
 
