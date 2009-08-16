@@ -215,12 +215,30 @@ Similarly, the derivative of $f_{jl}^{GB}$  w.~r.~t.~ $r_{ij}$ is
 %\frac{\partial f_{ii}^{GB}}{\partial r_{ij}} = -q_{i}^{2}\frac{1}{R_{i}^{2}}\frac{\partial R_{i}}{\partial r_{ij}} 
 %\end{equation}
 
+\subsection{Force in $\mathbf{r}_i$}
+
+To obtain the force we need to find
+\begin{equation}
+\frac{\mathrm{d}r_{ij}}{\mathrm{d}\mathbf{r}_i} =
+\frac{\mathrm{d}||\mathbf{r}_j-\mathbf{r}_i||}{\mathrm{d}\mathbf{r}_i}~=~-\frac{||\mathbf{r}_j-\mathbf{r}_i||}{r_{ij}}~=~-\hat{\mathbf{r}}_{ij},
+\end{equation}
+and similarly for $\mathbf{r}_j$, then apply the chain rule to get
+\begin{equation}
+\label{nablaes}\nabla_{ij}E_{GB} ~=~ \frac{\partial E_{GB}}{\partial r_{ij}} ~[-\hat{\mathbf{r}}_{ij} ~~ \hat{\mathbf{r}}_{ij}~].
+\end{equation}
+
+For the force
+\begin{equation}
+\mathbf{F}_{ij} = -\nabla_{ij}E_{GB} ~=~ \frac{\partial E_{GB}}{\partial r_{ij}} ~[~\hat{\mathbf{r}}_{ij} ~ -\hat{\mathbf{r}}_{ij}~].
+\end{equation}
+
 \section{Hessian}
 Second derivative of $G_{np}$ is given by
 \begin{equation}
 \label{eq:GnpHess1}
-\frac{\partial^{2} G^{np}}{\partial r_{ij}^{2}} = 24{\pi}{\sigma}\left[ ({\rho}_{i} + {\rho}_{s})^{2}{\rho_{i}}^{6}
-\left(\frac{7}{R_{i}^{8}}\left(\frac{\partial R_{i}}{\partial r_{ij}}\right)^{2} - \frac{1}{R_{i}^{7}}\frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}}\right)+ ({\rho}_{j} + {\rho}_{s})^{2}{\rho_{j}}^{6} \left(\frac{7}{R_{j}^{8}}\left(\frac{\partial R_{j}}{\partial r_{ij}}\right)^{2} - \frac{1}{R_{j}^{7}} \frac{\partial^{2}R_{j}}{\partial r_{ij}^{2}}\right) \right]. 
+\frac{\partial^{2} G^{np}}{\partial r_{ij}^{2}} = 24{\pi}{\sigma}\left[ ({\rho}_{i} + {\rho}_{s})^{2}\frac{{\rho_{i}}^{6}}{R_{i}^{7}}
+\left(\frac{7}{R_{i}}\left(\frac{\partial R_{i}}{\partial r_{ij}}\right)^{2} - \frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}}\right)+ ({\rho}_{j} + {\rho}_{s})^{2}
+\frac{{\rho_{j}}^{6}}{R_{j}^{7}} \left(\frac{7}{R_{j}}\left(\frac{\partial R_{j}}{\partial r_{ij}}\right)^{2} -  \frac{\partial^{2}R_{j}}{\partial r_{ij}^{2}}\right) \right]. 
 \end{equation}
 Second derivative of $E_{GB}$ is given by
 \begin{equation}
@@ -281,4 +299,34 @@ where
 %(diff(Lij(rij), rij))^2/Lij(rij)^3-(1/2)*(diff(Lij(rij), rij, rij))/Lij(rij)^2
 %-(diff(Uij(rij), rij))^2/Uij(rij)^3+(1/2)*(diff(Uij(rij), rij, rij))/Uij(rij)^2
 \end{eqnarray}
+
+
+\subsection*{Hessian for $\mathbf{r}_i$.}
+
+We can now differentiate w.r.t. $\mathbf{r}_{ij}$ to get the Hessian for atoms $i$ and $j$.
+\begin{equation}
+\mathbf{H}_{ij}=
+\frac{\partial E_{GB}}{\partial r_{ij}}\frac{1}{r_{ij}}
+\left[
+\begin{array}{r r}
+\mathbf{I} & -\mathbf{I}\\
+\\
+-\mathbf{I} & \mathbf{I}
+\end{array}\right]
++
+\left(
+\frac{\partial^2 E_{GB}}{\partial r_{ij}^2}-\frac{\partial E_{GB}}{\partial r_{ij}}\frac{1}{r_{ij}}
+\right)
+\left[
+\begin{array}{r r}
+\hat{\mathbf{r}}_{ij}\hat{\mathbf{r}}_{ij}^{\mathrm{T}} & -\hat{\mathbf{r}}_{ij}\hat{\mathbf{r}}_{ij}^{\mathrm{T}}\\
+\\
+-\hat{\mathbf{r}}_{ij}\hat{\mathbf{r}}_{ij}^{\mathrm{T}} & \hat{\mathbf{r}}_{ij}\hat{\mathbf{r}}_{ij}^{\mathrm{T}}
+\end{array}\right].
+\end{equation}
+
+
+
+
+
 \end{document}
