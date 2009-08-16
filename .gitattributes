@@ -825,6 +825,7 @@ protomol/configfuncs.py -text
 protomol/doc/Doxyfile -text
 protomol/doc/GB_Born.pdf -text
 protomol/doc/GB_Born.tex -text
+protomol/doc/GB_Born_old.tex -text
 protomol/doc/SCPISM.tex -text
 protomol/doc/SCPISM_Implementation-Rev-1.pdf -text
 protomol/doc/footer.html -text
