@@ -123,7 +123,7 @@ Derivative of $C_{ij}$ (Equation (\ref{Cijeqn})) w.~r.~t.~ $r_{ij}$ is given by
   0 &\mbox{, otherwise}
   \end{array} \right..
 \end{equation}
-Question: Does $\partial C_{ij}/\partial r_{ij}=0$?
+We assume that $r_{ij} - S_{j}\tilde{\rho}_{j} {\geq} 0$ and so $\partial C_{ij}/\partial r_{ij}=0$ here.
 
 \paragraph{ACE Solvation term}
 The nonpolar ACE solvation energy is given by
@@ -240,10 +240,16 @@ Second derivative of $G_{np}$ is given by
 \left(\frac{7}{R_{i}}\left(\frac{\partial R_{i}}{\partial r_{ij}}\right)^{2} - \frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}}\right)+ ({\rho}_{j} + {\rho}_{s})^{2}
 \frac{{\rho_{j}}^{6}}{R_{j}^{7}} \left(\frac{7}{R_{j}}\left(\frac{\partial R_{j}}{\partial r_{ij}}\right)^{2} -  \frac{\partial^{2}R_{j}}{\partial r_{ij}^{2}}\right) \right]. 
 \end{equation}
+
 Second derivative of $E_{GB}$ is given by
-\begin{equation}
-\frac{\partial^{2} E_{GB}}{\partial r_{ij}^{2}} = \left[ q_{i}q_{j}\left(\frac{1}{{f_{ij}^{GB}}^{2}}\frac{\partial^{2}f_{ij}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{ij}^{GB}}^{3}}\left(\frac{\partial f_{ij}^{GB}}{\partial r_{ij}}\right)^{2} \right) + \displaystyle\sum_{k}\displaystyle\sum_{l}q_{k}q_{l} \left( \frac{1}{{f_{kl}^{GB}}^{2}}\frac{\partial^{2}f_{kl}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{kl}^{GB}}^{3}}\left(\frac{\partial f_{kl}^{GB}}{\partial r_{ij}}\right)^{2}\right) \right].
-\end{equation}
+\begin{eqnarray}
+\frac{\partial^{2} E_{GB}}{\partial r_{ij}^{2}} &=&  \left(\frac{1}{{\epsilon}_{S}} - \frac{1}{{\epsilon}_{w}}\right)
+\left[ 
+\displaystyle\sum_{k}\displaystyle\sum_{l}q_{k}q_{l} \left( \frac{1}{{f_{kl}^{GB}}^{2}}\frac{\partial^{2}f_{kl}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{kl}^{GB}}^{3}}\left(\frac{\partial f_{kl}^{GB}}{\partial r_{ij}}\right)^{2}\right)\right.\\
+&& \left. +q_{i}q_{j}\left(\frac{1}{{f_{ij}^{GB}}^{2}}\frac{\partial^{2}f_{ij}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{ij}^{GB}}^{3}}\left(\frac{\partial f_{ij}^{GB}}{\partial r_{ij}}\right)^{2} \right) 
+\right].
+\end{eqnarray}
+
 Second derivative of the Born Radius $R_{i}$ (see Equation (\ref{eq:GnpHess1})) is given by
 \begin{eqnarray}
 \frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}} & = & 2(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})^{2}(\frac{\partial {\Psi}}{\partial r_{ij}})^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}\frac{R_{i}^{3}}{\rho^{2}} \\ \nonumber
