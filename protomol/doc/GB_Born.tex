@@ -245,8 +245,9 @@ Second derivative of $E_{GB}$ is given by
 \begin{eqnarray}
 \frac{\partial^{2} E_{GB}}{\partial r_{ij}^{2}} &=&  \left(\frac{1}{{\epsilon}_{S}} - \frac{1}{{\epsilon}_{w}}\right)
 \left[ 
-\displaystyle\sum_{k}\displaystyle\sum_{l}q_{k}q_{l} \left( \frac{1}{{f_{kl}^{GB}}^{2}}\frac{\partial^{2}f_{kl}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{kl}^{GB}}^{3}}\left(\frac{\partial f_{kl}^{GB}}{\partial r_{ij}}\right)^{2}\right)\right.\\
-&& \left. +q_{i}q_{j}\left(\frac{1}{{f_{ij}^{GB}}^{2}}\frac{\partial^{2}f_{ij}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{ij}^{GB}}^{3}}\left(\frac{\partial f_{ij}^{GB}}{\partial r_{ij}}\right)^{2} \right) 
+\displaystyle\sum_{k\ne i,j} \left(\frac{q_{i}q_{k}}{{f_{ik}^{GB}}^{2}}\frac{\partial^{2}f_{ik}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{ik}^{GB}}^{3}}\left(\frac{\partial f_{ik}^{GB}}{\partial r_{ij}}\right)^{2}\right)\right. \nonumber \\
+&& \quad + \displaystyle\sum_{l\ne i,j} \left(\frac{q_{j}q_{l}}{{f_{jl}^{GB}}^{2}}\frac{\partial^{2}f_{jl}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{jl}^{GB}}^{3}}\left(\frac{\partial f_{jl}^{GB}}{\partial r_{ij}}\right)^{2}\right) \nonumber \\
+&& \qquad \left. +\left(\frac{q_{i}q_{j}}{{f_{ij}^{GB}}^{2}}\frac{\partial^{2}f_{ij}^{GB}}{\partial r_{ij}^{2}} - \frac{2}{{f_{ij}^{GB}}^{3}}\left(\frac{\partial f_{ij}^{GB}}{\partial r_{ij}}\right)^{2} \right) 
 \right].
 \end{eqnarray}
 
