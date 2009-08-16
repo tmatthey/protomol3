@@ -253,12 +253,13 @@ Second derivative of $E_{GB}$ is given by
 
 Second derivative of the Born Radius $R_{i}$ (see Equation (\ref{eq:GnpHess1})) is given by
 \begin{eqnarray}
-\frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}} & = & 2(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})^{2}(\frac{\partial {\Psi}}{\partial r_{ij}})^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}\frac{R_{i}^{3}}{\rho^{2}} \\ \nonumber
-& & - 2R_{i}^{2} \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})(1 -{\tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})}^{2})\\ \nonumber 
-& &\left(\frac{\partial {\Psi}_{i}}{\partial r_{ij}}\right)^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}\frac{1}{\rho} \\ \nonumber
-& & + R_{i}^{2}(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})({\alpha}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}} - 2{\beta}(\frac{\partial {\Psi}_{i}}{\partial r_{ij}})^{2} - 2{\beta}{\Psi}_{i}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}})\frac{1}{{\rho}_{i}} \\ \nonumber
-& & +R_{i}^{2}(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})( 6{\gamma}{\Psi}_{i}(\frac{\partial {\Psi}_{i}}{\partial r_{ij}})^{2} + 3{\gamma}{\Psi}_{i}^{2}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}})\frac{1}{{\rho}_{i}}.
+\frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}} & = & 2\frac{R_{i}^{3}}{\rho^{2}}\left(\frac{\partial {\Psi}}{\partial r_{ij}}\right)^{2}(1 - \tanh^{2}({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3}))^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}  \nonumber \\
+& & - 2\frac{R_{i}^{2}}{\rho}(1 -{\tanh^{2}({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})}) \left(\frac{\partial {\Psi}_{i}}{\partial r_{ij}}\right)^{2} \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})  \nonumber \\
+& &\qquad ({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}   \nonumber\\
+& & +\frac{R_{i}^{2}}{{\rho}_{i}}(1 - \tanh^{2}({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3}))\left({\alpha}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}} - 2{\beta}\left(\frac{\partial {\Psi}_{i}}{\partial r_{ij}}\right)^{2} - 2{\beta}{\Psi}_{i}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}}\right)  \nonumber \\
+& & +\frac{R_{i}^{2}}{{\rho}_{i}}(1 - \tanh^{2}({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3}))\left( 6{\gamma}{\Psi}_{i}\left(\frac{\partial {\Psi}_{i}}{\partial r_{ij}}\right)^{2} + 3{\gamma}{\Psi}_{i}^{2}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}}\right).
 \end{eqnarray}
+
 Second derivative of $f_{ij}^{GB}$ is given by
 \begin{eqnarray}
 \label{eq:fGB2ndDerv1}
