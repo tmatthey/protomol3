@@ -246,10 +246,10 @@ Second derivative of $E_{GB}$ is given by
 \end{equation}
 Second derivative of the Born Radius $R_{i}$ (see Equation (\ref{eq:GnpHess1})) is given by
 \begin{eqnarray}
-\frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}} & = & 2(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3}))^{2}(\frac{\partial {\Psi}}{\partial r_{ij}})^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}\frac{R_{i}^{3}}{\rho^{2}} \\ \nonumber
+\frac{\partial^{2}R_{i}}{\partial r_{ij}^{2}} & = & 2(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})^{2}(\frac{\partial {\Psi}}{\partial r_{ij}})^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}\frac{R_{i}^{3}}{\rho^{2}} \\ \nonumber
 & & - 2R_{i}^{2} \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})(1 -{\tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})}^{2})\\ \nonumber 
 & &\left(\frac{\partial {\Psi}_{i}}{\partial r_{ij}}\right)^{2}({\alpha} - 2{\beta}{\Psi} + 3{\gamma}{\Psi}^{2})^{2}\frac{1}{\rho} \\ \nonumber
-& & R_{i}^{2}(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})({\alpha}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}} - 2{\beta}(\frac{\partial {\Psi}_{i}}{\partial r_{ij}})^{2} - 2{\beta}{\Psi}_{i}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}})\frac{1}{{\rho}_{i}} \\ \nonumber
+& & + R_{i}^{2}(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})({\alpha}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}} - 2{\beta}(\frac{\partial {\Psi}_{i}}{\partial r_{ij}})^{2} - 2{\beta}{\Psi}_{i}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}})\frac{1}{{\rho}_{i}} \\ \nonumber
 & & +R_{i}^{2}(1 - \tanh({\alpha}{\Psi} - {\beta}{\Psi}^{2} + {\gamma}{\Psi}^{3})^{2})( 6{\gamma}{\Psi}_{i}(\frac{\partial {\Psi}_{i}}{\partial r_{ij}})^{2} + 3{\gamma}{\Psi}_{i}^{2}\frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}})\frac{1}{{\rho}_{i}}.
 \end{eqnarray}
 Second derivative of $f_{ij}^{GB}$ is given by
@@ -289,15 +289,13 @@ where
 \label{eq:BurialTerm2ndDerv}
 \frac{\partial^{2}I_{i}}{\partial r_{ij}^{2}} & = & \left[ \frac{1}{L_{ij}^{3}}\left(\frac{\partial L_{ij}}{\partial r_{ij}}\right)^{2}
 - \frac{1}{U_{ij}^{3}}\left(\frac{\partial U_{ij}}{\partial r_{ij}}\right)^{2} + \left(\frac{1}{4L_{ij}^{3}}\frac{\partial L_{ij}}{\partial r_{ij}} - \frac{1}{4U_{ij}^{3}}\frac{\partial U_{ij}}{\partial r_{ij}} \right)\right] \\ \nonumber
-& & +  \left[ \frac{1}{8}\left(\frac{2}{L_{ij}^{3}} \frac{\partial L_{ij}}{\partial r_{ij}} - \frac{2}{U_{ij}^{3}} \frac{\partial U_{ij}}{\partial r_{ij}} \right) - \frac{r_{ij}}{4}\left(\frac{3}{U_{ij}^{4}}\left(\frac{\partial U_{ij}}{\partial r_{ij}} \right)^{2}    - \frac{3}{L_{ij}^{4}}\left(\frac{\partial L_{ij}}{\partial r_{ij}} \right)^{2} \right)\right] \\ \nonumber
+& & +  \left[ \frac{1}{8}\left(\frac{2}{L_{ij}^{3}} \frac{\partial L_{ij}}{\partial r_{ij}} - \frac{2}{U_{ij}^{3}} \frac{\partial U_{ij}}{\partial r_{ij}} \right) + \frac{r_{ij}}{4}\left(\frac{3}{U_{ij}^{4}}\left(\frac{\partial U_{ij}}{\partial r_{ij}} \right)^{2}    - \frac{3}{L_{ij}^{4}}\left(\frac{\partial L_{ij}}{\partial r_{ij}} \right)^{2} \right)\right] \\ \nonumber
 & & + \left[ \frac{1}{2r_{ij}^{3}}\log(\frac{L_{ij}}{U_{ij}}) - \frac{1}{2} \frac{U_{ij}}{r_{ij}^{2}L_{ij}} \left( \frac{1}{U_{ij}}\frac{\partial L_{ij}}{\partial r_{ij}} - \frac{L_{ij}}{U_{ij}^{2}}\frac{\partial U_{ij}}{\partial r_{ij}} \right)
 +\frac{1}{4}\frac{U_{ij}}{r_{ij}L_{ij}}\left(\frac{2L_{ij}}{U_{ij}^{3}}\left(\frac{\partial U_{ij}}{\partial r_{ij}}\right)^{2} - 2\frac{\frac{\partial L_{ij}}{\partial r_{ij}}\frac{\partial U_{ij}}{\partial r_{ij}}}{U_{ij}^{2}} \right) \right] \\ \nonumber
 & & - \left[ \frac{1}{4}\frac{U_{ij}}{r_{ij}L_{ij}^2}\frac{\partial L_{ij}}{\partial r_{ij}}\left( \frac{1}{U_{ij}}\frac{\partial L_{ij}}{\partial r_{ij}} - \frac{L_{ij}}{U_{ij}^{2}}\frac{\partial U_{ij}}{\partial r_{ij}} \right) +  \frac{1}{4}\frac{1}{r_{ij}L_{ij}}\frac{\partial U_{ij}}{\partial r_{ij}}\left(\frac{1}{U_{ij}}\frac{\partial L_{ij}}{\partial r_{ij}} - \frac{L_{ij}}{U_{ij}^{2}}\frac{\partial U_{ij}}{\partial r_{ij}} \right) \right] \\ \nonumber
-& & + \frac{S_{j}^{2}{{\tilde{\rho}_{i}}}^{2}}{4r_{ij}}\left[\frac{1}{r_{ij}^2}\left(\frac{1}{L_{ij}^2} - \frac{1}{U_{ij}^2} \right) - \frac{2}{r_{ij}^{2}U_{ij}^{3}}\frac{\partial U_{ij}}{\partial r_{ij}} - \frac{3}{U_{ij}^{4}}\left( \frac{\partial U_{ij}}{\partial r_{ij}}\right)^{2} \right] \\ \nonumber
-%+1/4 (((((&DifferentialD;)^2)/(&DifferentialD;rij^2) Lij(rij))/(Uij(rij))-(2 ((&DifferentialD;)/(&DifferentialD;rij) Lij(rij)) ((&DifferentialD;)/(&DifferentialD;rij) Uij(rij)))/((Uij(rij))^2)+(2 Lij(rij) ((&DifferentialD;)/(&DifferentialD;rij) Uij(rij))^2)/((Uij(rij))^3)-(Lij(rij) (((&DifferentialD;)^2)/(&DifferentialD;rij^2) Uij(rij)))/((Uij(rij))^2)) Uij(rij))/(rij Lij(rij))
-%(1/2)*((diff(Lij(rij), rij))/Uij(rij)-Lij(rij)*(diff(Uij(rij), rij))/Uij(rij)^2)*Uij(rij)/(rij^2*Lij(rij)) \\ \nonumber
-%(diff(Lij(rij), rij))^2/Lij(rij)^3-(1/2)*(diff(Lij(rij), rij, rij))/Lij(rij)^2
-%-(diff(Uij(rij), rij))^2/Uij(rij)^3+(1/2)*(diff(Uij(rij), rij, rij))/Uij(rij)^2
+& & + \frac{S_{j}^{2}{{\tilde{\rho}_{i}}}^{2}}{4r_{ij}^{3}}\left[\left(\frac{1}{L_{ij}^2} - \frac{1}{U_{ij}^2} \right) \right]
+-\frac{S_{j}^{2}{{\tilde{\rho}_{i}}}^{2}}{4r_{ij}^{2}}\left( \frac{2}{U_{ij}^{3}}\frac{\partial U_{ij}}{\partial r_{ij}}
+- \frac{2}{L_{ij}^{3}}\frac{\partial L_{ij}}{\partial r_{ij}}\right) + \frac{S_{j}^{2}{{\tilde{\rho}_{i}}}^{2}}{8r_{ij}}\left(\frac{6}{L_{ij}^{4}} \left(\frac{\partial L_{ij}}{\partial r_{ij}} \right)^{2} - \frac{6}{U_{ij}^{4}} \left(\frac{\partial U_{ij}}{\partial r_{ij}} \right)^{2} \right)
 \end{eqnarray}
 
 
