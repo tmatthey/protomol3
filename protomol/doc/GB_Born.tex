@@ -289,6 +289,18 @@ and
 & & + \frac{1}{f_{jl}^{GB}}\exp(-\frac{r_{jl}^2}{4R_{j}R_{j}})\left(\frac{\partial R_{j}}{\partial r_{ij}}\right)^{2}
 \left[(R_{l} + \left(-\frac{r_{jl}^{2}}{4R_{j}}\right))\frac{-r_{jl}^{2}}{4R_{j}^{2}R_{l}} - \frac{r_{jl}^{2}}{4R_{j}} \right]
 \end{eqnarray}
+
+Chris's derivation
+\begin{eqnarray}
+\label{eq:fGBil2ndderv2}
+\frac{\partial^{2} f_{ik}^{GB}}{\partial r_{ij}^{2}} & = & 
+-\frac{1}{ f_{ik}^{GB}}\left(\frac{\partial f_{ik}^{GB}}{\partial r_{ij}}\right)^{2}  \nonumber \\
+&& + \frac{1}{ 2f_{ik}^{GB}}  \exp\left(-\frac{r_{ik}^2}{4R_{i}R_{k}}\right) \left[
+\frac{\partial^{2} R_{i}}{\partial r_{ij}^2}\left(R_k +\frac{r_{ik}^2}{4R_i}  \right) \right. \nonumber \\
+&& \qquad \left. + \frac{r_{ik}^4}{16R_i^3R_j}\left(\frac{\partial f_{ik}^{GB}}{\partial r_{ij}}\right)^{2}\right].
+\end{eqnarray}
+The $\partial^{2} f_{jk}^{GB}/\partial r_{ij}^{2}$ term can be written similarly.
+
 Note that
 \begin{equation}
 \frac{\partial^{2}{\Psi}_{i}}{\partial r_{ij}^{2}} = \frac{\partial^{2}I_{i}}{\partial r_{ij}^{2}}{\tilde{\rho}_{i}}.
