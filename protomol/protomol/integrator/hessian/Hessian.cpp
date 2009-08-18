@@ -25,6 +25,22 @@
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
 #include <protomol/force/born/BornRadii.h>
 
+#include <protomol/force/GB/GBBornBurialTerm.h>
+#include <protomol/force/GB/GBBornRadii.h>
+#include <protomol/force/GB/GBACEForce.h>
+#include <protomol/force/hessian/ReducedHessGBACE.h>
+//#include <protomol/force/hessian/GB/ReducedHessGBForce.h>
+
+//GB testing
+#include <protomol/force/GB/GBACERForce.h>
+#include <protomol/force/hessian/ReducedHessGBACER.h>
+
+#include <protomol/force/GB/GBFGBForce.h>
+#include <protomol/force/hessian/ReducedHessGBFGB.h>
+
+#include <protomol/force/GB/GBForce.h>
+#include <protomol/force/hessian/ReducedHessGB.h>
+
 using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;
@@ -68,6 +84,14 @@ Hessian::Hessian(const Hessian &hess) {
   myCoulombSCPISM = hess.myCoulombSCPISM;
   myBornRadii = hess.myBornRadii;
   myBornSelf = hess.myBornSelf;
+  //GB
+  myGBBornBurialTerm = hess.myGBBornBurialTerm;
+  myGBBornRadii = hess.myGBBornRadii;
+  myGBACEForce = hess.myGBACEForce;
+  myGBForce = hess.myGBForce;
+
+  //testing only
+
   myLennardJones = hess.myLennardJones;
   myDihedral = hess.myDihedral;
   myRBDihedral = hess.myRBDihedral;
@@ -104,13 +128,23 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
   Real mCutoff = 0.0;
   D = 78.0; S = 0.3; epsi = 1.0;
   myBornSwitch = 3; myDielecConst = 80.0;
-  myBond = myAngle = myCoulomb = myCoulombDielec = myCoulombSCPISM =
-                                                     myLennardJones =
-                                                       myDihedral =
-                                                         myImproper = 
-                                                           myBornRadii =
-                                                             myBornSelf = 
-                                                               myRBDihedral = false;
+  myBond = 
+      myAngle = 
+          myCoulomb = 
+              myCoulombDielec = 
+                   myCoulombSCPISM =
+                       myLennardJones =
+                           myDihedral =
+                              myImproper = 
+                                  myBornRadii =
+                                       myBornSelf = 
+                                           myRBDihedral = 
+                                               myGBBornBurialTerm = 
+                                                   myGBBornRadii = 
+                                                       myGBACEForce = 
+                                                                myGBForce = false;
+
+   solvationparam = 3.0 ; watersphereradius = 1.4;
 
   for (unsigned int i = 0; i < ListForces.size(); i++) {
 
@@ -284,6 +318,33 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
           myDielecConst = Fparam[j].value;
         } 
       }
+    } else if (equalStartNocase("GBBornBurialTerm", ListForces[i]->getId())) {
+        myGBBornBurialTerm = true;
+    } else if (equalStartNocase("GBBornRadii", ListForces[i]->getId())) {
+        myGBBornRadii = true;
+    } else if (equalStartNocase("GBACEForce", ListForces[i]->getId())) {
+        myGBACEForce = true;
+        vector<Parameter> Fparam;
+        ListForces[i]->getParameters(Fparam);
+        for (unsigned int j = 0; j < Fparam.size(); j++) {
+           if (equalNocase(Fparam[j].keyword, "-solvationparam")) {
+              solvationparam = Fparam[j].value;
+           }else if (equalNocase(Fparam[j].keyword,"-watersphereradius")) {
+              watersphereradius = Fparam[j].value;
+           }
+        }
+    } else if (equalStartNocase("GBForce", ListForces[i]->getId())) {
+
+      myGBForce = true;
+      vector<Parameter> Fparam;
+      ListForces[i]->getParameters(Fparam);
+      for (unsigned int j = 0; j < Fparam.size(); j++) {
+         if (equalNocase(Fparam[j].keyword, "-soluteDielec")) {
+            soluteDielec = Fparam[j].value;
+         }else if (equalNocase(Fparam[j].keyword,"-solventDielec")) {
+            solventDielec = Fparam[j].value;
+         }
+      }
     }
 
   }      
@@ -455,6 +516,26 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
     evaluateBornRadii(myPositions, myTopo);
   }
 
+  if (myGBBornBurialTerm && myTopo->doGBSAOpenMM) {
+     //report << plain <<"Hessian : Calculate forces GBBornBurialTerm"<<endr;
+     evaluateGBBornBurialTerm(myPositions, myTopo);
+
+/*
+     for(int i=0; i<myTopo->atoms.size();i++)
+        for (int j = i+1 ; j<myTopo->atoms.size() ; j++) 
+            report << plain <<"From force : Atom1 "<<i<<", Atom2 "<<j<<" dist "<<myTopo->atoms[i].myGBSA_T->distij[j]<<" Lij "<<myTopo->atoms[i].myGBSA_T->Lvalues[j]<<endr;
+*/
+  }
+
+  if (myGBBornRadii && myTopo->doGBSAOpenMM) {
+     //report << plain <<"Hessian : Calculate forces GBBornRadii"<<endr;
+     evaluateGBBornRadii(myPositions, myTopo);
+  }
+
+  if (myGBBornBurialTerm && myGBBornRadii && myGBForce && myTopo->doGBSAOpenMM) {
+    //report << plain <<"Hessian : Appropriate flags set for calculation of GB hessian"<<endr;
+  }
+
   unsigned int atoms_size = myTopo->atoms.size();
   for (unsigned int i = 0; i < atoms_size; i++){
     for (unsigned int j = i + 1; j < atoms_size; j++){ 
@@ -474,6 +555,15 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
       //Bourn radii
       if (myBornRadii && myBornSelf && myTopo->doSCPISM)          
         rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
+
+
+      if (myGBBornBurialTerm && myGBBornRadii && myGBACEForce && myTopo->doGBSAOpenMM) {
+        rhp += evaluateGBACEPair(i, j, myPositions, myTopo);
+      }
+
+      if (myGBBornBurialTerm && myGBBornRadii && myGBForce && myTopo->doGBSAOpenMM) {
+         rhp += evaluateGBPair(i, j, myPositions, myTopo);
+      }
       //output sum to matrix
       outputSparsePairMatrix(i, j, myTopo->atoms[i].scaledMass, myTopo->atoms[j].scaledMass,
                               rhp, mrw, sz, hessM);
@@ -481,6 +571,7 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
     }
   }
   //
+
 }
 
 void Hessian::evaluatePairs(int i, int j, int pairType, const Vector3DBlock *myPositions,
@@ -678,6 +769,51 @@ void Hessian::evaluateBornRadii(const Vector3DBlock *myPositions,
   }
 }
 
+void Hessian::evaluateGBBornBurialTerm(const Vector3DBlock *myPositions,
+                                         GenericTopology *myTopo) {
+
+   unsigned int atom_size = myTopo->atoms.size();
+   GBBornBurialTerm gbBornBurialTerm;
+   
+   //substitute code for preForce() 
+   for (unsigned int i = 0 ; i <atom_size ; i++) {
+      myTopo->atoms[i].myGBSA_T->preForce();
+   }
+   for (unsigned int i=0; i < atom_size ; i++) {
+      for (unsigned int j = i + 1; j < atom_size; j++){
+         ExclusionClass ec = myTopo->exclusions.check(i, j);
+         if (ec != EXCLUSION_FULL) {
+           Vector3D rij =
+              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+           Real a = rij.normSquared();
+           Real rawE, rawF;
+           gbBornBurialTerm(rawE, rawF, a, 1.0/a, rij, myTopo, i, j, ec);
+         }
+      }
+   }
+}
+
+void Hessian::evaluateGBBornRadii(const Vector3DBlock *myPositions,
+                                         GenericTopology *myTopo) {
+
+   unsigned int atom_size = myTopo->atoms.size();
+   GBBornRadii gbBornRadii;
+
+   for (unsigned int i=0; i < atom_size ; i++) {
+      for (unsigned int j = i + 1; j < atom_size; j++){
+         ExclusionClass ec = myTopo->exclusions.check(i, j);
+         if (ec != EXCLUSION_FULL) {
+           Vector3D rij =
+              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+           Real a = rij.normSquared();
+           Real rawE, rawF;
+           gbBornRadii(rawE, rawF, a, 1.0/a, rij, myTopo, i, j, ec);
+         }
+      }
+   }
+}
+
+
 //Pairwise Born Self energy Hessian
 Matrix3By3 Hessian::evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPositions,
                                        const GenericTopology *myTopo) {
@@ -696,6 +832,41 @@ Matrix3By3 Hessian::evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPo
     }
   }
   return rha;
+}
+
+
+Matrix3By3 Hessian::evaluateGBACEPair(int i, int j, const Vector3DBlock *myPositions,
+                                        const GenericTopology *myTopo) {
+
+   ReducedHessGBACE rHessGBACE;
+   Matrix3By3 rha(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+   ExclusionClass ec = myTopo->exclusions.check(i, j);
+   if (ec != EXCLUSION_FULL) {
+      Vector3D rij = myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+      Real a = rij.normSquared();
+      rha = rHessGBACE(a, rij, myTopo, i, j, solvationparam, watersphereradius, ec);
+   }
+
+   return rha;
+}
+
+Matrix3By3 Hessian::evaluateGBPair(int i, int j, const Vector3DBlock *myPositions, 
+                                  const GenericTopology *myTopo) {
+
+   ReducedHessGB rHessGB;
+   Matrix3By3 rha(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+   int sz = (int)myTopo->atoms.size();
+   ExclusionClass ec = myTopo->exclusions.check(i, j);
+   if (ec != EXCLUSION_FULL) {
+      Vector3D rij = myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+      Real a = rij.normSquared();
+      rha = rHessGB(a, rij, myTopo, i, j, sz, soluteDielec, solventDielec, ec);
+   }
+
+   return rha;
+
 }
 
 void Hessian::clear() {

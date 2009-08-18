@@ -55,8 +55,18 @@ namespace ProtoMol {
 
     void evaluateBornRadii(const Vector3DBlock *myPositions, GenericTopology *myTopo);
 
+    //GB specific code
+    void evaluateGBBornBurialTerm(const Vector3DBlock *myPositions, GenericTopology *myTopo);
+    void evaluateGBBornRadii(const Vector3DBlock *myPositions, GenericTopology *myTopo);
+
     Matrix3By3 evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPositions,
                                        const GenericTopology *myTopo);
+
+    Matrix3By3 evaluateGBACEPair(int i, int j, const Vector3DBlock *myPositions,
+                                        const GenericTopology *myTopo);
+
+    Matrix3By3 evaluateGBPair(int i, int j, const Vector3DBlock *myPositions,
+                                  const GenericTopology *myTopo);
 
   public:
     void clear(); // clear the hessian matrix
@@ -82,6 +92,15 @@ namespace ProtoMol {
     bool myDihedral;
     bool myImproper;
     bool myRBDihedral;
+
+    //GB stuff
+    bool myGBBornBurialTerm, myGBBornRadii;
+    bool myGBACEForce;
+    Real solvationparam, watersphereradius;
+
+    bool myGBForce;
+    Real soluteDielec, solventDielec;
+
     Real cCutoff, cSwitchon, cSwitch, cOrder, cSwitchoff;   //switch data
     Real lCutoff, lSwitchon, lSwitch, lOrder, lSwitchoff;
     Real D, S, epsi;
