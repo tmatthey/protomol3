@@ -149,10 +149,16 @@ namespace ProtoMol {
      //Check Equation (9)
      Real dRidrij = power(bornRad_i,2)*offsetRadius_i*(1-tanh_i*tanh_i)*tanhparam_derv_i*(1/radius_i)*dBTidrij;
 
+     topo->atoms[atom1].myGBSA_T->btDerv1[atom2] = dBTidrij;
+     topo->atoms[atom1].myGBSA_T->bornRadiusDerivatives[atom2] = dRidrij;
+
+
      Real dBTjdrji = -0.5*dLjidrij*(1/(Lji*Lji)) + 0.5*dUjidrij*(1/(Uji*Uji)) + 0.125*((1/(Uji*Uji)) - (1/(Lji*Lji))) + 0.125*dist*((2/(Lji*Lji*Lji))*dLjidrij - (2/(Uji*Uji*Uji))*dUjidrij) - 0.25*(1/(dist*dist))*log(Lji/Uji) + (Uji/(4*dist*Lji))*((1/Uji)*dLjidrij - (Lji/(Uji*Uji))*dUjidrij) - 0.125*power(S_i_term,2)*((1/(Lji*Lji)) - (1/(Uji*Uji))) + 0.25*((S_i*S_i*offsetRadius_i*offsetRadius_i)/(dist*Uji*Uji*Uji))*dUjidrij - 0.25*((S_i*S_i*offsetRadius_i*offsetRadius_i)/(dist*Lji*Lji*Lji))*dLjidrij + dCjidrij;
 
      Real dRjdrji = power(bornRad_j,2)*offsetRadius_j*(1-tanh_j*tanh_j)*tanhparam_derv_j*(1/radius_j)*dBTjdrji;
 
+     topo->atoms[atom2].myGBSA_T->btDerv1[atom1] = dBTjdrji;
+     topo->atoms[atom2].myGBSA_T->bornRadiusDerivatives[atom1] = dRjdrji;
      //Check Equation (15)
      force += c1*(c_i*(1/power(bornRad_i,7.0))*dRidrij*(1/dist) + c_j*(1/power(bornRad_j,7.0))*dRjdrji*(1/dist));
 

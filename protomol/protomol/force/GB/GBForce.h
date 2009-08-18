@@ -75,6 +75,7 @@ namespace ProtoMol {
       //Equation (16)
       energy = -(scaledCharge_i*scaledCharge_j)*(1/fGB_ij)*((1/soluteDielec) - (1/solventDielec));
 
+/*
       //self terms (Equation (18))
       if (!topo->atoms[atom1].myGBSA_T->doSelfForceTerm) {
          energy -= (scaledCharge_i*scaledCharge_i)*(1/bornRad_i)*((1/soluteDielec) - (1/solventDielec));
@@ -85,6 +86,7 @@ namespace ProtoMol {
          energy -= (scaledCharge_j*scaledCharge_j)*(1/bornRad_j)*((1/soluteDielec) - (1/solventDielec));
          topo->atoms[atom2].myGBSA_T->doSelfForceTerm = true;
       }
+*/
 
 
 
@@ -219,7 +221,7 @@ namespace ProtoMol {
          force += scaledCharge_i*scaledCharge_l*(1/(filGB*filGB))*0.5*(1/filGB)*exp(-expterm)*dRidrij*(bornRad_l + (ril*ril)/(4.0*bornRad_i));
         }else {
          //Equation (26)
-         force += scaledCharge_i*scaledCharge_l*(1/(filGB*filGB))*dRidrij;
+         //force += scaledCharge_i*scaledCharge_l*(1/(filGB*filGB))*dRidrij;
         }
 
       }
