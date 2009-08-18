@@ -37,11 +37,23 @@ namespace ProtoMol {
       Lvalues = NULL;
       Uvalues = NULL;
       distij = NULL;
+      btDerv1 = NULL;
+      psiDerv1 = NULL;
+
+      fij = NULL;
     }
 
     ~GBSAAtomParameters() {
 
       if (bornRadiusDerivatives != NULL) delete [] bornRadiusDerivatives;
+
+      if (Lvalues != NULL) delete [] Lvalues;
+      if (Uvalues != NULL) delete [] Uvalues;
+      if (distij != NULL) delete [] distij;
+      if (btDerv1 != NULL) delete [] btDerv1;
+      if (psiDerv1 != NULL) delete [] psiDerv1;
+
+      if (fij != NULL) delete [] fij;
 
     }
 
@@ -49,6 +61,11 @@ namespace ProtoMol {
       if (bornRadiusDerivatives == NULL) {
          bornRadiusDerivatives = new Real[sz];
       }
+
+      btDerv1 = new Real[sz];
+      psiDerv1 = new Real[sz];
+
+      fij = new Real[sz];
     }
 
     void SetSpaceLvalues(int sz) {
@@ -87,6 +104,12 @@ namespace ProtoMol {
 
     Real *distij;
 
+    Real *btDerv1;
+
+    Real *psiDerv1;
+
+    Real *fij;
+
     //Defining a flag which will be false if Born Radius value has not been calculated
     //from the burialTerm/PsiValue. It will be set to true first time Born Radius is
     //estimated for THIS atom. It has to be set to false in preForce() routine above.
@@ -97,6 +120,9 @@ namespace ProtoMol {
 
     //flag for setting ACE potential
     bool doneACEPotential;
+
+    //flag for calculation of born radius first derivatives
+   
 
 
   };
