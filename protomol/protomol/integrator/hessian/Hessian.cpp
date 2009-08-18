@@ -31,13 +31,6 @@
 #include <protomol/force/hessian/ReducedHessGBACE.h>
 //#include <protomol/force/hessian/GB/ReducedHessGBForce.h>
 
-//GB testing
-#include <protomol/force/GB/GBACERForce.h>
-#include <protomol/force/hessian/ReducedHessGBACER.h>
-
-#include <protomol/force/GB/GBFGBForce.h>
-#include <protomol/force/hessian/ReducedHessGBFGB.h>
-
 #include <protomol/force/GB/GBForce.h>
 #include <protomol/force/hessian/ReducedHessGB.h>
 
