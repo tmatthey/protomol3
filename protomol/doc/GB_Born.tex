@@ -269,10 +269,10 @@ Second derivative of $f_{ij}^{GB}$ is given by
 & & + \frac{1}{2f_{ij}^{GB}}\exp\left(-\frac{r_{ij}^2}{4R_{i}R_{j}}\right)\left[\quad \frac{\partial^{2} R_{i}}{\partial r_{ij}^2}R_{j} + 2\frac{\partial R_{i}}{\partial r_{ij}}\frac{\partial R_{j}}{\partial r_{ij}} \right. \nonumber \\
 & & \qquad\qquad + 2 \frac{\partial R_{i}}{\partial r_{ij}}R_{j}\left(- \frac{r_{ij}}{2R_{i}R_{j}} + \frac{r_{ij}^{2}}{4R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}^{2}}{4R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}} \right) \nonumber \\
 & &  \qquad\qquad + R_{i}\frac{\partial^{2} R_{j}}{\partial r_{ij}^2} \nonumber \\
-& &  \qquad\qquad + 2R_{j}\frac{\partial R_{i}}{\partial r_{ij}}\left(-\frac{r_{ij}}{2R_{i}R_{j}} + \frac{r_{ij}^2}{4R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}^2}{4R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}}  \right) \nonumber \\
-& &  \qquad\qquad + R_{i}R_{j}\left(-\frac{1}{2R_{i}R_{j}} + \frac{r_{ij}}{4R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}}{4R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}}-\frac{r_{ij}^{2}}{2R_{i}^{2}R_{j}^{2}}\frac{\partial R_{i}}{\partial r_{ij}}\frac{\partial R_{j}}{\partial r_{ij}} \right)  \nonumber \\
+& &  \qquad\qquad + 2R_{i}\frac{\partial R_{j}}{\partial r_{ij}}\left(-\frac{r_{ij}}{2R_{i}R_{j}} + \frac{r_{ij}^2}{4R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}^2}{4R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}}  \right) \nonumber \\
+& &  \qquad\qquad + R_{i}R_{j}\left(-\frac{1}{2R_{i}R_{j}} + \frac{r_{ij}}{R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}}{R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}}-\frac{r_{ij}^{2}}{2R_{i}^{2}R_{j}^{2}}\frac{\partial R_{i}}{\partial r_{ij}}\frac{\partial R_{j}}{\partial r_{ij}} \right)  \nonumber \\
 & &  \qquad\qquad + R_{i}R_{j}\left(\frac{r_{ij}^{2}}{4R_{i}^{2}R_{j}}\frac{\partial^{2}R_{i}}{\partial r_{ij}^2} + \frac{r_{ij}^{2}}{4R_{i}R_{j}^{2}}\frac{\partial^{2}R_{j}}{\partial r_{ij}^2} - \frac{r_{ij}^{2}}{2R_{i}R_{j}^{3}}\left(\frac{\partial R_{j}}{\partial r_{ij}}\right)^{2}  - \frac{r_{ij}^{2}}{2R_{i}^{3}R_{j}}\left(\frac{\partial R_{i}}{\partial r_{ij}}\right)^{2}    \right) \nonumber \\
-& &  \qquad\qquad + \left. R_{i}R_{j}\left.-\frac{r_{ij}}{2R_{i}R_{j}} + \frac{r_{ij}^{2}}{4R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}^{2}}{4R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}} \right) \quad \right].
+& &  \qquad\qquad + \left. R_{i}R_{j}\left(-\frac{r_{ij}}{2R_{i}R_{j}} + \frac{r_{ij}^{2}}{4R_{i}^{2}R_{j}}\frac{\partial R_{i}}{\partial r_{ij}} + \frac{r_{ij}^{2}}{4R_{i}R_{j}^{2}}\frac{\partial R_{j}}{\partial r_{ij}} \right)^{2} \quad \right].
 \end{eqnarray}
 
 Similarly, we can find, 
@@ -299,7 +299,7 @@ Similarly, we can find,
 -\frac{1}{ f_{ik}^{GB}}\left(\frac{\partial f_{ik}^{GB}}{\partial r_{ij}}\right)^{2}  \nonumber \\
 && + \frac{1}{ 2f_{ik}^{GB}}  \exp\left(-\frac{r_{ik}^2}{4R_{i}R_{k}}\right) \left[
 \frac{\partial^{2} R_{i}}{\partial r_{ij}^2}\left(R_k +\frac{r_{ik}^2}{4R_i}  \right) \right. \nonumber \\
-&& \qquad \left. + \frac{r_{ik}^4}{16R_i^3R_j}\left(\frac{\partial f_{ik}^{GB}}{\partial r_{ij}}\right)^{2}\right].
+&& \qquad \left. + \frac{r_{ik}^4}{16R_i^3R_j}\left(\frac{\partial R_{i}}{\partial r_{ij}}\right)^{2}\right].
 \end{eqnarray}
 The $\partial^{2} f_{jk}^{GB}/\partial r_{ij}^{2}$ term can be written similarly.
 
