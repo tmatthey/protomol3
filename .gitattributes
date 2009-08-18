@@ -983,6 +983,10 @@ protomol/protomol/force/hessian/ReducedHessCoulombDiElec.cpp -text
 protomol/protomol/force/hessian/ReducedHessCoulombDiElec.h -text
 protomol/protomol/force/hessian/ReducedHessCoulombSCPISM.cpp -text
 protomol/protomol/force/hessian/ReducedHessCoulombSCPISM.h -text
+protomol/protomol/force/hessian/ReducedHessGB.cpp -text
+protomol/protomol/force/hessian/ReducedHessGB.h -text
+protomol/protomol/force/hessian/ReducedHessGBACE.cpp -text
+protomol/protomol/force/hessian/ReducedHessGBACE.h -text
 protomol/protomol/force/hessian/ReducedHessLennardJones.cpp -text
 protomol/protomol/force/hessian/ReducedHessLennardJones.h -text
 protomol/protomol/force/hessian/SConscript -text
