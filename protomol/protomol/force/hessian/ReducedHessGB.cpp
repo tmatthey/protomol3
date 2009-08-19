@@ -182,7 +182,7 @@ Matrix3By3 ReducedHessGB::operator()( Real a,
    Real dGjkterm = 0;
    //Real dfGBik, d2fGBik, dfGBjk, d2fGBjk;
 
-   for(unsigned int k = 0; k<numatoms; k++) {
+   for(int k = 0; k<numatoms; k++) {
 
      if ((k == atom1) || (k == atom2)) continue;
 

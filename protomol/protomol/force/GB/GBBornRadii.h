@@ -40,15 +40,15 @@ namespace ProtoMol {
                     int atom1, int atom2, ExclusionClass excl) const {
 
       //r_{ij}
-      Real dist = sqrt(distSquared);
+      //Real dist = sqrt(distSquared);
 
 
       int type1 = topo->atoms[atom1].type;
       int type2 = topo->atoms[atom2].type;
 
 
-      Real radius_i = topo->atomTypes[type1].vdwR;
-      Real radius_j = topo->atomTypes[type2].vdwR;
+      //Real radius_i = topo->atomTypes[type1].vdwR;
+      //Real radius_j = topo->atomTypes[type2].vdwR;
 
      //offset radii ({\tilde{\rho}_{j}})
      Real offsetRadius_i = topo->atomTypes[type1].vdwR - topo->atoms[atom1].myGBSA_T->offsetRadius;
@@ -56,8 +56,8 @@ namespace ProtoMol {
 
 
      //Scaling factors
-     Real S_i = topo->atoms[atom1].myGBSA_T->scalingFactor;
-     Real S_j = topo->atoms[atom2].myGBSA_T->scalingFactor;
+     //Real S_i = topo->atoms[atom1].myGBSA_T->scalingFactor;
+     //Real S_j = topo->atoms[atom2].myGBSA_T->scalingFactor;
 
      Real psi_i, psi_j;
 

@@ -112,7 +112,7 @@ namespace ProtoMol {
      }
 
      Real invLij = 1/Lij;
-     Real invUij = 1/Uij;
+     //Real invUij = 1/Uij;
 
       //Derivatives for calculation of the derivative of the born radii
       Real dLijdrij, dUijdrij, dCijdrij;
@@ -205,9 +205,9 @@ namespace ProtoMol {
 
         // if l == j do not do it
         //if ((l == atom2) || (l == atom1))  continue;
-        if (l == atom2) continue;
+        if (l == (unsigned)atom2) continue;
 
-        if (l == atom1) ril = 0;
+        if (l == (unsigned)atom1) ril = 0;
         else ril = topo->atoms[atom1].myGBSA_T->distij[l];
 
         bornRad_l = topo->atoms[l].myGBSA_T->bornRad;
@@ -216,7 +216,7 @@ namespace ProtoMol {
         expterm = (ril*ril)/(4.0*bornRad_i*bornRad_l);
         filGB = sqrt(ril*ril + bornRad_i*bornRad_l*exp(-expterm));
 
-        if ( l != atom1) {
+        if (l != (unsigned)atom1) {
           //Equation (24)
          force += scaledCharge_i*scaledCharge_l*(1/(filGB*filGB))*0.5*(1/filGB)*exp(-expterm)*dRidrij*(bornRad_l + (ril*ril)/(4.0*bornRad_i));
         }else {
