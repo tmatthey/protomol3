@@ -66,12 +66,14 @@ def config_configure():
 
     # OpenMM Options
     openmm_type = env.get('openmm')
-    if openmm_type != 'none':
-        openmm_home = check_envvar( 'OPENMM_HOME' )
+    if openmm_type != 'none':       
+        # The following must bail if it is not found as openmm is not installed to a place
+        # that the compiler will locate by default. The same is also true for CUDA.
 
-        if openmm_home is not None:
-            env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
-            env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
+        openmm_home = check_envvar( 'OPENMM_HOME', True )
+
+        env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
+        env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
 
         if openmm_type == 'reference':
             if check_library( 'OpenMM_d', True ):

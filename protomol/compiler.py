@@ -7,6 +7,7 @@ def compiler_add_opts():
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
         #BoolOption('threaded', 'Set to 1 to enable thread support', 1),
         BoolOption('profile', 'Set to 1 to enable profiler', 0),
+        BoolOption('pic', 'Set to 1 to enable position independant code', 0),
         BoolOption('depends', 'Set to 1 to output dependency files', 0),
         BoolOption('distcc', 'Set to 1 to enable distributed builds', 0),
         BoolOption('ccache', 'Set to 1 to enable cached builds', 0),
@@ -40,6 +41,7 @@ def compiler_configure(c99_mode = 1):
     strict = int(env.get('strict', 1))
     #threaded = int(env.get('threaded', 1))
     profile = int(env.get('profile', 0))
+    pic = int( env.get( 'pic', 0 ) )
     depends = int(env.get('depends', 0))
     compiler = env.get('compiler', 0)
     distcc = env.get('distcc', 0)
@@ -96,6 +98,10 @@ def compiler_configure(c99_mode = 1):
     if env['CC'] == 'cl':
         env.Append(CCFLAGS = ['/EHsc', '/Zp'])
 
+    # PIC flags
+    if pic:
+      if env['CC'] == 'gcc':
+        env.Append( CCFLAGS = '-fPIC' )
 
     # Profiler flags
     if profile:
