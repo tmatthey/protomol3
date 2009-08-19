@@ -40,8 +40,10 @@ if not env.GetOption('clean'):
   use_lapack = int(env.get('lapack', 0))
   use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
-  execfile(PROTOMOL_HOME + os.sep + 'config.py')
-  execfile(PROTOMOL_HOME + os.sep + 'configfah.py')
+  execfile(PROTOMOL_HOME + '/config.py')
+  execfile(PROTOMOL_HOME + '/configfah.py')
+  config_configure()
+  fah_configure()
 
 src = ['protomol.cpp']
 

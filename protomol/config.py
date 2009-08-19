@@ -1,4 +1,7 @@
-execfile('configfuncs.py')
+if not 'PROTOMOL_HOME' in locals():
+    PROTOMOL_HOME = '.'
+
+execfile(PROTOMOL_HOME + '/configfuncs.py')
 
 def add_config_options():
     opts.AddOptions(
@@ -64,10 +67,11 @@ def config_configure():
     # OpenMM Options
     openmm_type = env.get('openmm')
     if openmm_type != 'none':
-        openmm_home = check_envvar( 'OPENMM_HOME', True )
+        openmm_home = check_envvar( 'OPENMM_HOME' )
 
-        env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
-        env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
+        if openmm_home is not None:
+            env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
+            env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
 
         if openmm_type == 'reference':
             if check_library( 'OpenMM_d', True ):
@@ -78,5 +82,6 @@ def config_configure():
 
             env.Append(LIBPATH = [cuda_home + os.sep + 'lib'])
 
-            if check_library( 'OpenMM_d', True ) and check_library( 'OpenMMCuda_d', True ) and check_library( 'cudart', True ):
+            if check_library( 'OpenMM_d', True ) and check_library( 'OpenMMCuda_d', True ) and \
+              check_library( 'cudart', True ):
                 env.Append(CPPDEFINES = ['HAVE_OPENMM'])

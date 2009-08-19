@@ -1,4 +1,7 @@
-execfile('configfuncs.py')
+if not 'PROTOMOL_HOME' in locals():
+    PROTOMOL_HOME = '.'
+
+execfile(PROTOMOL_HOME + '/configfuncs.py')
 
 def add_fah_options():
     opts.AddOptions(
@@ -7,7 +10,7 @@ def add_fah_options():
 
 def fah_configure():
     # libfah
-    libfah_home = check_envvar( 'LIBFAH_HOME', True )
+    libfah_home = check_envvar('LIBFAH_HOME', True)
 
     env.Append(CPPPATH = [libfah_home])
     env.Append(LIBPATH = [libfah_home])
@@ -21,15 +24,15 @@ def fah_configure():
     )
 
     # boost::iostreams
-    check_header( 'boost/iostreams/stream.hpp', True )
+    check_header('boost/iostreams/stream.hpp', True)
 
     # libbip2
-    libbzip2_home = check_envvar( 'LIBBZIP2_HOME', True )
+    libbzip2_home = check_envvar('LIBBZIP2_HOME', True)
 
     env.Append(LIBPATH = [libbzip2_home])
     env.Append(CPPPATH = [libbzip2_home])
 
-    check_library( 'bz2', True )
+    check_library('bz2', True)
 
     # pthreads
     if env['PLATFORM'] != 'win32':

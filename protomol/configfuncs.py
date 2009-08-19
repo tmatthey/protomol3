@@ -1,3 +1,5 @@
+import sys
+
 def check_envvar( name, die = False ):
     if os.environ.has_key(name):
         return os.environ[name]
@@ -6,7 +8,7 @@ def check_envvar( name, die = False ):
             print "Environment Variable Missing: " + name
             sys.exit(1)
         else:
-            return ""
+            return None
 
 def check_header( name, die = False ):
 	if not conf.CheckCXXHeader( name ):
