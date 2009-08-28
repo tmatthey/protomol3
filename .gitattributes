@@ -938,6 +938,7 @@ protomol/protomol/force/MollyForce.h -text
 protomol/protomol/force/OneAtomContraints.h -text
 protomol/protomol/force/OneAtomPair.h -text
 protomol/protomol/force/OneAtomPairFull.h -text
+protomol/protomol/force/OneAtomPairNoExclusion.h -text
 protomol/protomol/force/OneAtomPairThree.h -text
 protomol/protomol/force/OneAtomPairTwo.h -text
 protomol/protomol/force/SConscript -text

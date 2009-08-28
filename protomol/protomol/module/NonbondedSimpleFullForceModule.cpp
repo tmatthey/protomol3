@@ -7,6 +7,7 @@
 #include <protomol/topology/VacuumBoundaryConditions.h>
 
 #include <protomol/force/OneAtomPair.h>
+#include <protomol/force/OneAtomPairNoExclusion.h>
 #include <protomol/force/OneAtomPairTwo.h>
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/LennardJonesForce.h>
@@ -190,10 +191,10 @@ void NonbondedSimpleFullForceModule::registerForces(ProtoMolApp *app) {
           CoulombSCPISMForce> >());
 
     // GB
-    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBBornBurialTerm> >());
-    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBBornRadii> >());
-    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBForce> >());
-    f.reg(new SimpleFullSystem<OneAtomPair<VBC, Universal, GBACEForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairNoExclusion<VBC, Universal, GBBornBurialTerm> >());
+    f.reg(new SimpleFullSystem<OneAtomPairNoExclusion<VBC, Universal, GBBornRadii> >());
+    f.reg(new SimpleFullSystem<OneAtomPairNoExclusion<VBC, Universal, GBForce> >());
+    f.reg(new SimpleFullSystem<OneAtomPairNoExclusion<VBC, Universal, GBACEForce> >());
 
 
     // OneAtomPairTwo
