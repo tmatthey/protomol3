@@ -639,7 +639,7 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
       switch(topo->forceFieldFlag) {
 
         case GROMACS :  
-                  r_ij = 0.5 * sigma_i + sigma_j;
+                  r_ij = 0.5 * (sigma_i + sigma_j);
                   e_ij = sqrt(epsilon_i * epsilon_j);
                   r14_ij = 0.5 * sigma14_i + sigma14_j;
                   e14_ij = sqrt(epsilon14_i * epsilon14_j);
