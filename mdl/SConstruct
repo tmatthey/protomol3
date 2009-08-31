@@ -232,7 +232,7 @@ for s in subsrc:
      # will never be true for MDL.
      #if (s != 'parallel/FFTComplex.cpp'):
      libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
-#env.Prepend(LIBS = [''])
+env.Prepend(LIBS = [''])
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
    sl = env.SharedLibrary(libname2, libsrc2, env['LIBS'])
