@@ -38,7 +38,7 @@ def pyWrap(env, pmhome):
      numpypath = sys.exec_prefix+"/Lib/site-packages/numpy/core/include/numpy/"
   else:
      numpypath = sys.exec_prefix+"/lib/"+pyvers+"/site-packages/numpy/core/include/numpy/"
-     numpypath = sys.exec_prefix+"/lib/"+pyvers+"/dist-packages/numpy/core/include/numpy/"
+     numpypath2 = sys.exec_prefix+"/lib/"+pyvers+"/dist-packages/numpy/core/include/numpy/"
 
   #env['ARFLAGS'] = "rcS"
   env.Append(CPPPATH = '#')
@@ -58,6 +58,7 @@ def pyWrap(env, pmhome):
      env['LIBS'] = ''
      env.Append(CXXFLAGS='-I'+pmhome)
      env.Append(SHCXXFLAGS=' -I'+numpypath)
+     env.Append(SHCXXFLAGS=' -I'+numpypath2)
      env.Append(SHCXXFLAGS='-I'+pmhome)
      env.Append(LIBPATH=sys.exec_prefix+'/lib/python'+sys.version[0:3]+'/config/')
      env.Append(CPPPATH=sys.exec_prefix+'/include')
@@ -66,6 +67,7 @@ def pyWrap(env, pmhome):
      env.Append(CXXFLAGS=' -fPIC')
      env.Append(CXXFLAGS='-I'+pmhome)
      env.Append(SHCXXFLAGS=' -I'+numpypath)
+     env.Append(SHCXXFLAGS=' -I'+numpypath2)
      env.Append(SHCXXFLAGS='-I'+pmhome)
   if (env['PLATFORM'] != 'darwin'):
      env.Append(SHLINKFLAGS=' -Wl,-E')
@@ -230,7 +232,7 @@ for s in subsrc:
      # will never be true for MDL.
      #if (s != 'parallel/FFTComplex.cpp'):
      libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
-env.Prepend(LIBS = [''])
+#env.Prepend(LIBS = [''])
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
    sl = env.SharedLibrary(libname2, libsrc2, env['LIBS'])
