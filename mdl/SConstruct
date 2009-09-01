@@ -34,11 +34,17 @@ def pyWrap(env, pmhome):
                      )
 
   pyvers = "python%d.%d" % sys.version_info[:2]
-  if (env['PLATFORM'] == 'win32'):
-     numpypath = sys.exec_prefix+"/Lib/site-packages/numpy/core/include/numpy/"
+  numpypath = env.get('numpy', '')
+  if (numpypath == ''):
+     numpypath = sys.exec_prefix
+     if (env['PLATFORM'] == 'win32'):
+        numpypath += "/Lib/site-packages/numpy/core/include/numpy/"
+     else:
+        numpypath2 = numpypath+"/lib/"+pyvers+"/dist-packages/numpy/core/include/numpy/"
+        numpypath += "/lib/"+pyvers+"/site-packages/numpy/core/include/numpy/"
   else:
-     numpypath = sys.exec_prefix+"/lib/"+pyvers+"/site-packages/numpy/core/include/numpy/"
-     numpypath2 = sys.exec_prefix+"/lib/"+pyvers+"/dist-packages/numpy/core/include/numpy/"
+     numpypath += '/core/include/numpy/'
+     numpypath2 = numpypath
 
   #env['ARFLAGS'] = "rcS"
   env.Append(CPPPATH = '#')
@@ -104,11 +110,15 @@ execfile(pmhome+os.sep+'compiler.py')
 opts = Options(pmhome+os.sep+'options.py')
 Export('opts')
 
+def novalidate(a, b, c):
+   return
+
 opts.AddOptions(
     BoolOption('gui', 'Set to 1 if using the GUI', 0),
     BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
     BoolOption('lapack', 'Use LAPACK', 1),
     BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
+    PathOption('numpy', 'Numpy Root Directory', '', novalidate),
     EnumOption('openmm', 'Build with OpenMM', 'none', allowed_values=('none', 'reference', 'cuda'))
     )
 
