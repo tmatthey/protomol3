@@ -43,18 +43,21 @@ def config_configure():
             env.Append(CPPDEFINES = ['HAVE_LAPACK'])
             have_lapack = True
 
-        if env['PLATFORM'] == 'posix':
-            # BLAS
-            env.Append(LIBPATH = [check_envvar( 'BLAS_HOME' )])
-            check_library( 'blas' )
+            if env['PLATFORM'] == 'posix':
+                # BLAS
+                home = check_envvar( 'BLAS_HOME' )
+                if home != None: env.Append(LIBPATH = [home])
+                check_library( 'blas' )
 
-            # G2C
-            env.Append(LIBPATH = [check_envvar( 'G2C_HOME' )])
-            check_library( 'g2c' )
+                # G2C
+                home = check_envvar( 'G2C_HOME' )
+                if home != None: env.Append(LIBPATH = [home])
+                check_library( 'g2c' )
 
-            # GFortran
-            env.Append(LIBPATH = [check_envvar( 'GFORTRAN_HOME' )])
-            check_library( 'gfortran' )
+                # GFortran
+                home = check_envvar( 'GFORTRAN_HOME' )
+                env.Append(LIBPATH = [check_envvar( 'GFORTRAN_HOME' )])
+                check_library( 'gfortran' )
 
     # SimTK LAPACK
     use_simtk = int( env.get( 'simtk_lapack', 0) )
