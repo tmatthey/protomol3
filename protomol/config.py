@@ -39,7 +39,7 @@ def config_configure():
             env.Append(CPPPATH = [lapack_home])
             env.Append(LIBPATH = [lapack_home])
 
-        if check_library( 'lapack', True ):
+        if check_library( 'lapack' ):
             env.Append(CPPDEFINES = ['HAVE_LAPACK'])
             have_lapack = True
 
@@ -65,9 +65,14 @@ def config_configure():
             env.Append(LIBPATH = [simtk_home + '/lib'])
             env.Append(CPPPATH = [simtk_home + '/include'])
 
-        if check_library( 'SimTKlapack', True ) and \
+        if check_library( 'SimTKlapack' ) and \
                 check_header( 'SimTKlapack.h', True ):
             env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
+            have_lapack = True
+
+    if not have_lapack and (use_simtk or use_lapack):
+        print "Missing lapack"
+        sys.exit(1)
 
     # OpenMM Options
     openmm_type = env.get( 'openmm', 'none' )
