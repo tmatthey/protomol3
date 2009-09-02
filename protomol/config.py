@@ -66,7 +66,7 @@ def config_configure():
             check_library( 'gfortran' )
 
     # OpenMM Options
-    openmm_type = env.get('openmm', 'none')
+    openmm_type = env.get( 'openmm', 'none' )
     if openmm_type != 'none':       
         # The following must bail if it is not found as openmm is not
         # installed to a place that the compiler will locate by default. The
