@@ -19,9 +19,8 @@ def fah_configure():
         env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
 
     # boost
-    boost_configure(
-        conf, ['version', 'iostreams/stream'], ['iostreams', 'system', 'filesystem']
-    )
+    boost_configure(conf, ['version', 'iostreams/stream'],
+                    ['iostreams', 'system', 'filesystem'])
 
     # boost::iostreams
     check_header('boost/iostreams/stream.hpp', True)
@@ -35,7 +34,7 @@ def fah_configure():
     check_library('bz2', True)
 
     # pthreads
-    if env['PLATFORM'] != 'win32':
-        check_library('pthread')
+    if env['PLATFORM'] == 'win32': check_library('Ws2_32')
+    else: check_library('pthread')
 
     env.Append(CPPDEFINES = ['BUILD_FOR_FAH', 'HAVE_LIBFAH'])
