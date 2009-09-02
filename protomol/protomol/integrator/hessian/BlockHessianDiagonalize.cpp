@@ -371,7 +371,7 @@ namespace ProtoMol {
   // Diagonalize Hessian
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   int BlockHessianDiagonalize::diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim, int &numFound){
-   double *wrkSp;
+   double *wrkSp = 0;
    int *isuppz, *iwork;
 
 

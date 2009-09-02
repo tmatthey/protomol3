@@ -29,28 +29,19 @@ def config_configure():
         else:
             check_library( 'pthread', True )
 
-    # SimTK LAPACK
-    use_simtk = int( env.get( 'simtk_lapack', 0) )
-    if use_simtk == 1:
-        simtk_home = check_envvar( 'SIMTK_LAPACK_HOME' )
-
-        env.Append(LIBPATH = [simtk_home + '/lib'])
-        env.Append(CPPPATH = [simtk_home + '/include'])
-
-        if check_library( 'SimTKlapack', True ) and \
-                check_header( 'SimTKlapack.h', True ):
-            env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
-
     # LAPACK
+    have_lapack = False
     use_lapack = int( env.get( 'lapack', 0 ) )
     if use_lapack:
         lapack_home = check_envvar( 'LAPACK_HOME' )
 
-        env.Append(CPPPATH = [lapack_home])
-        env.Append(LIBPATH = [lapack_home])
+        if lapack_home != None:
+            env.Append(CPPPATH = [lapack_home])
+            env.Append(LIBPATH = [lapack_home])
 
         if check_library( 'lapack', True ):
             env.Append(CPPDEFINES = ['HAVE_LAPACK'])
+            have_lapack = True
 
         if env['PLATFORM'] == 'posix':
             # BLAS
@@ -64,6 +55,19 @@ def config_configure():
             # GFortran
             env.Append(LIBPATH = [check_envvar( 'GFORTRAN_HOME' )])
             check_library( 'gfortran' )
+
+    # SimTK LAPACK
+    use_simtk = int( env.get( 'simtk_lapack', 0) )
+    if use_simtk == 1 or (use_lapack and not have_lapack):
+        simtk_home = check_envvar( 'SIMTK_LAPACK_HOME' )
+
+        if simtk_home != None:
+            env.Append(LIBPATH = [simtk_home + '/lib'])
+            env.Append(CPPPATH = [simtk_home + '/include'])
+
+        if check_library( 'SimTKlapack', True ) and \
+                check_header( 'SimTKlapack.h', True ):
+            env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
 
     # OpenMM Options
     openmm_type = env.get( 'openmm', 'none' )
