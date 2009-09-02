@@ -10,7 +10,7 @@ def add_config_options():
         BoolOption('lapack', 'Use LAPACK', 0),
         BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
         EnumOption('openmm', 'Build with OpenMM', 'none',
-                allowed_values = ('none', 'reference', 'cuda'))
+                   allowed_values = ('none', 'reference', 'cuda'))
     )
 
 def config_configure():
@@ -37,7 +37,8 @@ def config_configure():
         env.Append(LIBPATH = [simtk_home + '/lib'])
         env.Append(CPPPATH = [simtk_home + '/include'])
 
-        if check_library( 'SimTKlapack', True ) and check_header( 'SimTKlapack.h', True ):
+        if check_library( 'SimTKlapack', True ) and \
+                check_header( 'SimTKlapack.h', True ):
             env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
 
     # LAPACK
@@ -65,11 +66,11 @@ def config_configure():
             check_library( 'gfortran' )
 
     # OpenMM Options
-    openmm_type = env.get('openmm')
+    openmm_type = env.get('openmm', 'none')
     if openmm_type != 'none':       
-        # The following must bail if it is not found as openmm is not installed to a place
-        # that the compiler will locate by default. The same is also true for CUDA.
-
+        # The following must bail if it is not found as openmm is not
+        # installed to a place that the compiler will locate by default. The
+        # same is also true for CUDA.
         openmm_home = check_envvar( 'OPENMM_HOME', True )
 
         env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
@@ -84,6 +85,7 @@ def config_configure():
 
             env.Append(LIBPATH = [cuda_home + os.sep + 'lib'])
 
-            if check_library( 'OpenMM_d', True ) and check_library( 'OpenMMCuda_d', True ) and \
-              check_library( 'cudart', True ):
+            if check_library( 'OpenMM_d', True ) and \
+                    check_library( 'OpenMMCuda_d', True ) and \
+                    check_library( 'cudart', True ):
                 env.Append(CPPDEFINES = ['HAVE_OPENMM'])
