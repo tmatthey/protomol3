@@ -56,7 +56,7 @@ def config_configure():
 
                 # GFortran
                 home = check_envvar( 'GFORTRAN_HOME' )
-                env.Append(LIBPATH = [check_envvar( 'GFORTRAN_HOME' )])
+                if home != None: env.Append(LIBPATH = [home])
                 check_library( 'gfortran' )
 
     # SimTK LAPACK
