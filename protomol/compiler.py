@@ -1,8 +1,6 @@
 def compiler_add_opts():
     opts.AddOptions(
-        EnumOption('mode', 'Set build mode', 'release',
-                   allowed_values = ('debug', 'release')),
-        BoolOption('optimize', 'Set to 1 to force optimizations', 1),
+        ('optimize', 'Set to 1 to force optimizations', -1),
         BoolOption('debug', 'Set to 1 to force debug options', 0),
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
         #BoolOption('threaded', 'Set to 1 to enable thread support', 1),
@@ -24,19 +22,12 @@ def compiler_add_opts():
 
 
 def compiler_configure(c99_mode = 1):
-    global depends, compiler, strict, optimize, debug, mode
-
-    if env.GetOption('clean'):
-        return
+    if env.GetOption('clean'): return
 
     # Get options
-    mode = env.get('mode', 'release')
-
-    if env.has_key('optimize'): optimize = int(env['optimize'])
-    else: optimize = mode == 'release'
-
-    if env.has_key('debug'): debug = int(env['debug'])
-    else: debug = mode == 'debug'
+    debug = env.get('debug')
+    optimize = env.get('optimize')
+    if optimize == -1: optimize = not debug
 
     strict = int(env.get('strict', 1))
     #threaded = int(env.get('threaded', 1))
