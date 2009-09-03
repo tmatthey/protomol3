@@ -1,4 +1,18 @@
+# Configure system boilerplate
 import os
+import imp
+
+if os.environ.has_key('CONFIG_SCRIPTS_HOME'):
+  config_home = os.environ['CONFIG_SCRIPTS_HOME']
+else: config_home = '../config' # assumed relative path
+
+if not os.path.isdir(config_home):
+  print 'Cannot find config scripts.  Please set CONFIG_SCRIPTS_HOME'
+  Exit(1)
+
+mod = imp.load_module('config', None, config_home, ('', '', 5))
+from config import *
+
 
 # ProtoMol
 if os.environ.has_key('PROTOMOL_HOME'):
@@ -9,46 +23,54 @@ if not os.path.isdir(PROTOMOL_HOME):
   print 'Cannot find protomol.  Please set PROTOMOL_HOME.'
   Exit(1)
 
-execfile(PROTOMOL_HOME + '/boost.py')
+# Setup
+deps = ['compiler', 'libfah', 'dist']
 
-opts = Options('options.py')
+vars = Variables('options.py')
 
-opts.AddOptions(
-    BoolOption('lapack', 'Use LAPACK', 0),
-    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0)
+vars.AddVariables(
+  BoolVariable('lapack', 'Use LAPACK', 0),
+  BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0)
 )
 
-env = Environment(options = opts, ENV = os.environ)
-conf = Configure(env, custom_tests = {'BoostVersion' : boost_check_version})
+config.add_vars(deps, vars)
+env = Environment(variables = vars, ENV = os.environ)
+Help(vars.GenerateHelpText(env))
+conf = Configure(env)
 
-if env['CC'] == 'cl':
-  env.Append(CCFLAGS = '/TP /EHsc /Zp') # C++ mode
+# Configure
+if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
+  # Configure compiler
+  config.configure('compiler', conf)
 
-if env['CC'] == 'gcc':
-  env.Append(CCFLAGS = '-Wall -Werror -g')
-  env.Append(CPPDEFINES = ['DEBUG'])
-
-if not env.GetOption('clean'):
   # ProtoMol
   env.Append(CPPPATH = [PROTOMOL_HOME])
   env.Append(LIBPATH = [PROTOMOL_HOME])
 
+  execfile(PROTOMOL_HOME + '/config.py')
+  config_configure()
+  
+  # libprotomol-fah
   if not conf.CheckLib('protomol-fah'):
     print 'Need protomol >= 3.0 please set PROTOMOL_HOME';
     Exit(1)
-  
-  use_lapack = int(env.get('lapack', 0))
-  use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
-  execfile(PROTOMOL_HOME + '/config.py')
-  execfile(PROTOMOL_HOME + '/configfah.py')
-  config_configure()
-  fah_configure()
+  # libfah
+  config.configure('libfah', conf)
 
+
+# Main
 src = ['protomol.cpp']
 
 if not env['PLATFORM'] == 'win32':
   env.Append(PROGSUFFIX = '.exe')
 
-env.Program('FahCore_b4', src)
+name = 'FahCore_b4'
+Default(env.Program(name, src))
 
+# Dist
+config.configure('dist', conf, default_distver = '0.0.2')
+distfiles = [name + '.exe']
+tar = env.TarBZ2Dist('Protomol-FAHCore', distfiles)
+Alias('dist', tar)
+AlwaysBuild(tar)
