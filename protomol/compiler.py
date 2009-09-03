@@ -30,7 +30,7 @@ def compiler_configure(c99_mode = 1):
         return
 
     # Get options
-    mode = env.get('mode', 'debug')
+    mode = env.get('mode', 'release')
 
     if env.has_key('optimize'): optimize = int(env['optimize'])
     else: optimize = mode == 'release'
