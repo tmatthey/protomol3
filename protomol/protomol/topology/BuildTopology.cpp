@@ -569,6 +569,14 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   // LennardJonesParameters
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  //
+  //Add factors for modifying 1-4 interaction
+  //
+  if (topo->forceFieldFlag == GROMACS) {
+    topo->coulombScalingFactor = par.fudgeQQ;
+    topo->LJScalingFactor = par.fudgeLJ;
+  }
+        
   // get some array sizes
   unsigned int sizeAtomTypes = topo->atomTypes.size();
   unsigned int sizeNonbondeds = par.nonbondeds.size();
@@ -667,14 +675,6 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
 
       topo->lennardJonesParameters.set(i, j, paramsij);
     }
-  }
-
-  //
-  //Add factors for modifying 1-4 interaction
-  //
-  if (topo->forceFieldFlag == GROMACS) {
-     topo->coulombScalingFactor = par.fudgeQQ;
-     topo->LJScalingFactor = par.fudgeLJ;
   }
 
 
