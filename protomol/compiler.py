@@ -117,7 +117,7 @@ def compiler_configure(c99_mode = 1):
 
     else:
         if env['CC'] == 'gcc':
-            env.Append(LINKFLAGS = ['--strip-all'])
+            env.Append(LINKFLAGS = ['-Wl,--strip-all'])
 
 
     # Optimizations
