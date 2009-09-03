@@ -39,14 +39,7 @@ if not env.GetOption('clean'):
     compiler_configure()
     config_configure()
 
-    if fah:
-        fah_configure()
-
-    if env['PLATFORM'] == 'win32':
-        if debug:
-            variant = 'Debug'
-        else:
-            variant = 'Release'
+    if fah: fah_configure()
 
     env = conf.Finish()
 
@@ -94,6 +87,9 @@ if env['PLATFORM'] == 'win32':
     inc = src
     src = []
     os.path.walk('protomol', add_hdrs, '.cpp')
+
+    if env.get('debug'): variant = 'Debug'
+    else: variant = 'Release'
 
     env.MSVSProject(target = 'ProtoMol' + env['MSVSPROJECTSUFFIX'],
                     srcs = src, incs = inc,
