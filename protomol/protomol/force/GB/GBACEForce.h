@@ -160,7 +160,7 @@ namespace ProtoMol {
      topo->atoms[atom2].myGBSA_T->btDerv1[atom1] = dBTjdrji;
      topo->atoms[atom2].myGBSA_T->bornRadiusDerivatives[atom1] = dRjdrji;
      //Check Equation (15)
-     force += c1*(c_i*(1/power(bornRad_i,7.0))*dRidrij*(1/dist) + c_j*(1/power(bornRad_j,7.0))*dRjdrji*(1/dist));
+     force += c1*(c_i*(1/power(bornRad_i,7))*dRidrij*(1/dist) + c_j*(1/power(bornRad_j,7))*dRjdrji*(1/dist));
 
   }
 
