@@ -38,22 +38,25 @@ env = Environment(variables = vars, ENV = os.environ)
 Help(vars.GenerateHelpText(env))
 conf = Configure(env)
 
+env.__setitem__('static', 1) # force static build
+
 # Configure
 if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
   # Configure compiler
   config.configure('compiler', conf)
 
-  # ProtoMol
+  # libprotomol-fah
   env.Append(CPPPATH = [PROTOMOL_HOME])
   env.Append(LIBPATH = [PROTOMOL_HOME])
 
-  execfile(PROTOMOL_HOME + '/config.py')
-  config_configure()
-  
-  # libprotomol-fah
   if not conf.CheckLib('protomol-fah'):
     print 'Need protomol >= 3.0 please set PROTOMOL_HOME';
     Exit(1)
+
+  # ProtoMol dependencies
+  env.Append(LIBPATH = ['/usr/lib/atlas']) # get atlas version of libblas
+  execfile(PROTOMOL_HOME + '/config.py')
+  config_configure()
 
   # libfah
   config.configure('libfah', conf)
