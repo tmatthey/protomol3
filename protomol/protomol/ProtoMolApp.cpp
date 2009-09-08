@@ -41,6 +41,9 @@ using namespace ProtoMol::Constant;
 ProtoMolApp::ProtoMolApp(ModuleManager *modManager) :
   modManager(modManager), SCPISMParameters(0), cmdLine(&config), outputs(0),
   integrator(0), topology(0) {
+
+  TimerStatistic::timer[TimerStatistic::WALL].start();
+
   modManager->init(this);
 
   topologyFactory.registerAllExemplarsConfiguration(&config);
@@ -209,7 +212,7 @@ void ProtoMolApp::build() {
   integrator =
     integratorFactory.make(config[InputIntegrator::keyword], &forceFactory);
 
-  // Setup run paramiters (used for GUI so required here)
+  // Setup run parameters (used for GUI so required here)
   currentStep = config[InputFirststep::keyword];
   lastStep = currentStep + (int)config[InputNumsteps::keyword];
 
@@ -281,6 +284,8 @@ void ProtoMolApp::build() {
 bool ProtoMolApp::step() {
   if (currentStep >= lastStep) return false;
 
+  TimerStatistic::timer[TimerStatistic::RUN].start();
+
   outputs->run(currentStep);
 
   int inc = outputs->getNext() - currentStep;
@@ -292,8 +297,10 @@ bool ProtoMolApp::step() {
 
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].stop();
 
-  //moved so that current step valid in integrator
+  // moved here so that current step is valid in integrator
   currentStep += inc;
+
+  TimerStatistic::timer[TimerStatistic::RUN].stop();
 
   return true;
 }
@@ -306,6 +313,8 @@ void ProtoMolApp::finalize() {
   zap(integrator);
   zap(outputs);
   zap(SCPISMParameters);
+
+  TimerStatistic::timer[TimerStatistic::WALL].stop();
 
   report
     << allnodesserial << plain << "Timing: " << TimerStatistic() << "." << endr;
