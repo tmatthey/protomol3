@@ -9,6 +9,7 @@
 #include <fah/core/chksum/ChecksumManager.h>
 #include <fah/Exception.h>
 #include <fah/String.h>
+#include <fah/util/Logger.h>
 
 #include <iostream>
 
@@ -34,7 +35,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     ProtoMolApp app(&modManager);
 
-    app.splash(cout);
+    app.splash(*LOG_MESSAGE_STREAM());
 
     // Add outputs FAHFile and FAHGUI
     string name = "ProtoMol Project";
@@ -59,7 +60,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
-    app.print(cout);
+    app.print(*LOG_MESSAGE_STREAM());
 
 
     // FAH Core setup
@@ -69,7 +70,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     int outputFreq = toInt(app.config["outputfreq"]);
     while (app.step()) {
       if (app.currentStep % outputFreq == 0)
-        cout << "Step: " << app.currentStep << endl;
+        LOG_INFO(1, "Step: " << app.currentStep);
 
       // Update shared info file.
       core.updateSharedInfo(app.currentStep);
@@ -96,10 +97,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     return 0;
 
   } catch (const ProtoMol::Exception &e) {
-    cerr << "ProtoMol ERROR: " << e.getMessage() << endl;
-#ifdef DEBUG
-    cerr << e << endl;
-#endif
+    LOG_ERROR("ProtoMol ERROR: " << e);
   }
 
   return 1;
@@ -109,7 +107,7 @@ int main(int argc, char *argv[]) {
   int ret;
 
   try {
-    Core core;
+    Core &core = *FAH::Core::getInstance();
 
     ret = core.init(argc, argv);
     if (ret) return ret;
@@ -118,7 +116,7 @@ int main(int argc, char *argv[]) {
     struct stat buf;
     if (!stat("checkpt", &buf) && !ChecksumManager::instance().has("checkpt")) {
       // Checksum not valid
-      cerr << "Guru Meditation: checkpt sum" << endl;
+      LOG_ERROR("Guru Meditation: checkpt sum");
       return BAD_FRAME_CHECKSUM;
     }
 
@@ -131,15 +129,20 @@ int main(int argc, char *argv[]) {
     ret = core.finalize();
 
   } catch (const FAH::Exception &e) {
-    cerr << "Core ERROR: " << e << endl;
+    if (e.getCode() == BAD_ARGUMENTS)
+      Core::getInstance()->usage(cerr, argv[0]);
 
-    if (e.getCode() == BAD_ARGUMENTS) Core::usage(argv[0]);
+    LOG_ERROR("Core: " << e);
 
     if (e.getCode()) return e.getCode();
     else return UNKNOWN_ERROR;
 
   } catch (const ProtoMol::Exception &e) {
-    cerr << "Core ERROR: " << e << endl;
+    LOG_ERROR("std::exception: " << e);
+
+#ifdef DEBUG
+    throw e; // Rethrow to get core dump
+#endif
 
     return UNKNOWN_ERROR;
   }
