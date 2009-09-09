@@ -25,7 +25,7 @@ def fah_configure():
     # boost::iostreams
     check_header('boost/iostreams/stream.hpp', True)
 
-    # libbip2
+    # libzip2
     libbzip2_home = check_envvar('LIBBZIP2_HOME', True)
 
     env.Append(LIBPATH = [libbzip2_home])
@@ -33,8 +33,17 @@ def fah_configure():
 
     check_library('bz2', True)
 
-    # pthreads
-    if env['PLATFORM'] == 'win32': check_library('Ws2_32')
-    else: check_library('pthread')
+    # threads
+    if env['PLATFORM'] == 'win32':
+        check_library('Ws2_32')
+
+    if os.environ.has_key('PTHREADS_HOME'):
+        home = os.environ['PTHREADS_HOME']
+        env.Append(CPPPATH = [home])
+        env.Append(LIBPATH = [home])
+
+    if conf.CheckCHeader('pthread.h') and conf.CheckLib('pthread'):
+        env.Append(CPPDEFINES = ['HAVE_PTHREADS'])
+    else: raise Exception, 'Need pthreads'
 
     env.Append(CPPDEFINES = ['BUILD_FOR_FAH', 'HAVE_LIBFAH'])
