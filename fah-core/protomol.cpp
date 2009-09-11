@@ -35,7 +35,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     ProtoMolApp app(&modManager);
 
-    app.splash(*LOG_MESSAGE_STREAM());
+    app.splash(*LOG_RAW_STREAM());
 
     // Add outputs FAHFile and FAHGUI
     string name = "ProtoMol Project";
