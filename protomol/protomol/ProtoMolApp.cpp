@@ -86,30 +86,50 @@ void ProtoMolApp::splash(ostream &stream) {
     << PROTOMOL_HR << endl;
 }
 
-void ProtoMolApp::configure(const string &configfile) {
+void ProtoMolApp::load(const string &configfile) {
   vector<string> args;
 
   args.push_back("ProtoMol");
   args.push_back(configfile);
-  configure(args);
+  load(args);
 }
 
-
-bool ProtoMolApp::configure(int argc, char *argv[]) {
-  return configure(vector<string>(argv, argv + argc));
+bool ProtoMolApp::load(int argc, char *argv[]) {
+  return load(vector<string>(argv, argv + argc));
 }
 
-bool ProtoMolApp::configure(const vector<string> &args) {
+bool ProtoMolApp::load(const vector<string> &args) {
   // Parse command line
   if (cmdLine.parse(args)) return false;
 
+  return true;
+}
+
+void ProtoMolApp::configure() {
   // Read Config file
   if (config.valid(InputConfig::keyword))
     changeDirectory(config[InputConfig::keyword]);
   else THROW("Configuration file not set.");
 
   modManager->configure(this);
+}
 
+void ProtoMolApp::configure(const string &configfile) {
+  load(configfile);
+  configure();
+}
+
+bool ProtoMolApp::configure(int argc, char *argv[]) {
+  if (!load(argc, argv)) return false;
+  configure();
+  return true;
+}
+
+bool ProtoMolApp::configure(const vector<string> &args) {
+  if (!load(args)) return false;
+
+  configure();
+  
   return true;
 }
 

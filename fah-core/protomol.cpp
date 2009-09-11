@@ -37,6 +37,10 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     app.splash(*LOG_RAW_STREAM());
 
+    // Load configuration options
+    if (!app.load(argc, argv)) return 1;
+
+    // Modify configuration
     // Add outputs FAHFile and FAHGUI
     string name = "ProtoMol Project";
     name += core.unit->project_id;
@@ -47,8 +51,8 @@ extern "C" int core_main(int argc, char *argv[]) {
     app.config["Checkpoint"] = "checkpt";
     app.config["CheckpointFreq"] = -1; // Disable
 
-
-    if (!app.configure(argc, argv)) return 1;
+    // Configure and build
+    app.configure();
     app.build();
 
     // Find CheckpointOutput
@@ -60,7 +64,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
-    app.print(*LOG_MESSAGE_STREAM());
+    app.print(*LOG_RAW_STREAM());
 
 
     // FAH Core setup
@@ -68,7 +72,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     core.initSharedInfo(name, app.lastStep, 1);
 
     int outputFreq = toInt(app.config["outputfreq"]);
-    while (app.step()) {
+    while (app.step() && !core.shouldQuit()) {
       if (app.currentStep % outputFreq == 0)
         LOG_INFO(1, "Step: " << app.currentStep);
 
@@ -123,7 +127,9 @@ int main(int argc, char *argv[]) {
     // Add config file
     core.args.push_back((char *)"protomol.conf");
 
-    if (core_main(core.args.size(), &core.args[0]))
+    core.args.push_back(0); // Sentinel
+
+    if (core_main(core.args.size() - 1, &core.args[0]))
       return UNKNOWN_ERROR;
 
     ret = core.finalize();

@@ -60,8 +60,12 @@ namespace ProtoMol {
     ~ProtoMolApp();
 
     static void splash(std::ostream &stream);
+    void load(const std::string &configfile);
+    bool load(int argc = 0, char *argv[] = 0);
+    bool load(const std::vector<std::string> &args);
+    void configure();
     void configure(const std::string &configfile);
-    bool configure(int argc = 0, char *argv[] = 0);
+    bool configure(int argc, char *argv[]);
     bool configure(const std::vector<std::string> &args);
     void build();
     void print(std::ostream &stream);

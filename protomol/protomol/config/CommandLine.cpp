@@ -78,6 +78,7 @@ int CommandLine::parse(const vector<string> &args) {
         int ret = (*option->action)(cmdArgs);
         if (ret == -1) return -1;
       }
+
     } else if (args[i][0] == '-' && args[i][1] == '-') {
       string key = &args[i++][2];
 
@@ -97,6 +98,7 @@ int CommandLine::parse(const vector<string> &args) {
 
       if (!config->set(key, val))
         THROW(string("Invalid value '") + val + "' for keyword '" + key + "'.");
+
     } else if (!configSet) {
       vector<string> cmdArgs;
 
