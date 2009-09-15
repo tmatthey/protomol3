@@ -20,11 +20,22 @@
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
 
+//GB
+#include <protomol/force/GB/GBBornBurialTerm.h>
+#include <protomol/force/GB/GBBornRadii.h>
+#include <protomol/force/GB/GBACEForce.h>
+#include <protomol/force/hessian/ReducedHessGBACE.h>
+#include <protomol/force/GB/GBForce.h>
+#include <protomol/force/hessian/ReducedHessGB.h>
+
 #include <protomol/type/BlockMatrix.h>
 
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
+
+#define ADDSCPISM
+#define ADDGB
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -622,9 +633,30 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
   
   unsigned int _N = myTopo->atoms.size();
   //Pairwise intra block or adjacent
+  
+  //SCPISM
   //Pre-calculate Born radii if Self energy Hessian required
   if(myBornRadii && myBornSelf && myTopo->doSCPISM)
     evaluateBornRadii(myPositions, myTopo);
+  
+#ifdef ADDGB
+  //Pre calculate Born radii for GB if required
+  if (myGBBornBurialTerm && myTopo->doGBSAOpenMM) {
+    //report << plain <<"Hessian : Calculate forces GBBornBurialTerm"<<endr;
+    evaluateGBBornBurialTerm(myPositions, myTopo);
+    
+  }
+  
+  if (myGBBornRadii && myTopo->doGBSAOpenMM) {
+    //report << plain <<"Hessian : Calculate forces GBBornRadii"<<endr;
+    evaluateGBBornRadii(myPositions, myTopo);
+  }
+  
+  //if (myGBBornBurialTerm && myGBBornRadii && myGBForce && myTopo->doGBSAOpenMM) {
+    //report << plain <<"Hessian : Appropriate flags set for calculation of GB hessian"<<endr;
+  //}
+  
+#endif
 
   for (unsigned int i = 0; i < _N; i++){
     for (unsigned int j = i + 1; j < _N; j++){             
@@ -639,10 +671,24 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
           rhp += evaluatePairsMatrix(i, j, COULOMBDIELEC, myPositions, myTopo, true);
         if (myCoulombSCPISM)  //SCP
           rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, true);
-#if 1
+#ifdef ADDSCPISM
+
         if (myBornRadii && myBornSelf && myTopo->doSCPISM)  //Bourn radii         
           rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
 #endif
+        
+#ifdef ADDGB
+        //GB energies
+        if (myGBBornBurialTerm && myGBBornRadii && myGBACEForce && myTopo->doGBSAOpenMM) {
+          rhp += evaluateGBACEPair(i, j, myPositions, myTopo);
+        }
+        
+        if (myGBBornBurialTerm && myGBBornRadii && myGBForce && myTopo->doGBSAOpenMM) {
+          rhp += evaluateGBPair(i, j, myPositions, myTopo);
+        }
+        
+#endif
+
         //Output matrix
         int aout[2]={i,j};
         for (int ii = 0; ii < 2; ii++){
@@ -698,10 +744,23 @@ void BlockHessian::evaluateBlocks(const Real cutoffDistance, const Vector3DBlock
                 rhp += evaluatePairsMatrix(i, j, COULOMBDIELEC, myPositions, myTopo, true);
               if (myCoulombSCPISM)  //SCP
                 rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, true);
-  #if 1
+#ifdef ADDSCPISM
               if (myBornRadii && myBornSelf && myTopo->doSCPISM)  //Bourn radii         
                 rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
-  #endif
+#endif
+              
+#ifdef ADDGB
+              //add GB forces
+              if (myGBBornBurialTerm && myGBBornRadii && myGBACEForce && myTopo->doGBSAOpenMM) {
+                rhp += evaluateGBACEPair(i, j, myPositions, myTopo);
+              }
+              
+              if (myGBBornBurialTerm && myGBBornRadii && myGBForce && myTopo->doGBSAOpenMM) {
+                rhp += evaluateGBPair(i, j, myPositions, myTopo);
+              }
+              
+#endif
+
               //Output matrix
               int aout[2]={i,j};
               for (int ii = 0; ii < 2; ii++){
@@ -789,10 +848,27 @@ void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
   //electroStatics.clear();
   //
   //Pairwise  
+  
+  //SCPISM
   //Pre-calculate Born radii if Self energy Hessian required
   if(myBornRadii && myBornSelf && myTopo->doSCPISM)
     evaluateBornRadii(myPositions, myTopo);
-
+  
+#ifdef ADDGB
+  //Pre calculate Born radii for GB if required
+  if (myGBBornBurialTerm && myTopo->doGBSAOpenMM) {
+    //report << plain <<"Hessian : Calculate forces GBBornBurialTerm"<<endr;
+    evaluateGBBornBurialTerm(myPositions, myTopo);
+    
+  }
+  
+  if (myGBBornRadii && myTopo->doGBSAOpenMM) {
+    //report << plain <<"Hessian : Calculate forces GBBornRadii"<<endr;
+    evaluateGBBornRadii(myPositions, myTopo);
+  }
+  
+#endif
+  
   for (unsigned int i = 0; i < _N; i++){
     for (unsigned int j = i + 1; j < _N; j++){             
       if(abs(atom_block[i] - atom_block[j]) >= 2){  //NOT within block or adjacent
@@ -806,10 +882,23 @@ void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
           rhp += evaluatePairsMatrix(i, j, COULOMBDIELEC, myPositions, myTopo, true);
         if (myCoulombSCPISM)  //SCP
           rhp += evaluatePairsMatrix(i, j, COULOMBSCPISM, myPositions, myTopo, true);
-#if 1
+#ifdef ADDSCPISM
         if (myBornRadii && myBornSelf && myTopo->doSCPISM)  //Bourn radii         
           rhp += evaluateBornSelfPair(i, j, myPositions, myTopo);
 #endif
+        
+#ifdef ADDGB
+        // add GB forces
+        if (myGBBornBurialTerm && myGBBornRadii && myGBACEForce && myTopo->doGBSAOpenMM) {
+          rhp += evaluateGBACEPair(i, j, myPositions, myTopo);
+        }
+        
+        if (myGBBornBurialTerm && myGBBornRadii && myGBForce && myTopo->doGBSAOpenMM) {
+          rhp += evaluateGBPair(i, j, myPositions, myTopo);
+        }
+        
+#endif
+
         //Output matrix
         int aout[2]={i,j};
         for (int ii = 0; ii < 2; ii++){

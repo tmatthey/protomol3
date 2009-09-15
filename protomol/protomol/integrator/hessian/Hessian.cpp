@@ -761,53 +761,8 @@ void Hessian::evaluateBornRadii(const Vector3DBlock *myPositions,
     }
   }
 }
-
-void Hessian::evaluateGBBornBurialTerm(const Vector3DBlock *myPositions,
-                                         GenericTopology *myTopo) {
-
-   unsigned int atom_size = myTopo->atoms.size();
-   GBBornBurialTerm gbBornBurialTerm;
-   
-   //substitute code for preForce() 
-   for (unsigned int i = 0 ; i <atom_size ; i++) {
-      myTopo->atoms[i].myGBSA_T->preForce();
-   }
-   for (unsigned int i=0; i < atom_size ; i++) {
-      for (unsigned int j = i + 1; j < atom_size; j++){
-         ExclusionClass ec = myTopo->exclusions.check(i, j);
-         if (ec != EXCLUSION_FULL) {
-           Vector3D rij =
-              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
-           Real a = rij.normSquared();
-           Real rawE, rawF;
-           gbBornBurialTerm(rawE, rawF, a, 1.0/a, rij, myTopo, i, j, ec);
-         }
-      }
-   }
-}
-
-void Hessian::evaluateGBBornRadii(const Vector3DBlock *myPositions,
-                                         GenericTopology *myTopo) {
-
-   unsigned int atom_size = myTopo->atoms.size();
-   GBBornRadii gbBornRadii;
-
-   for (unsigned int i=0; i < atom_size ; i++) {
-      for (unsigned int j = i + 1; j < atom_size; j++){
-         ExclusionClass ec = myTopo->exclusions.check(i, j);
-         if (ec != EXCLUSION_FULL) {
-           Vector3D rij =
-              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
-           Real a = rij.normSquared();
-           Real rawE, rawF;
-           gbBornRadii(rawE, rawF, a, 1.0/a, rij, myTopo, i, j, ec);
-         }
-      }
-   }
-}
-
-
-//Pairwise Born Self energy Hessian
+  
+//SCPISM Pairwise Born Self energy Hessian
 Matrix3By3 Hessian::evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPositions,
                                        const GenericTopology *myTopo) {
 
@@ -827,7 +782,55 @@ Matrix3By3 Hessian::evaluateBornSelfPair(int i, int j, const Vector3DBlock *myPo
   return rha;
 }
 
+//GB Burial term
+void Hessian::evaluateGBBornBurialTerm(const Vector3DBlock *myPositions,
+                                         GenericTopology *myTopo) {
 
+   unsigned int atom_size = myTopo->atoms.size();
+   GBBornBurialTerm gbBornBurialTerm;
+   
+   //substitute code for preForce() 
+   for (unsigned int i = 0 ; i <atom_size ; i++) {
+      myTopo->atoms[i].myGBSA_T->preForce();
+   }
+   for (unsigned int i=0; i < atom_size ; i++) {
+      for (unsigned int j = i + 1; j < atom_size; j++){
+         ExclusionClass ec = myTopo->exclusions.check(i, j);
+         //Now include ALL atoms, no exclusions
+         if (1) { //ec != EXCLUSION_FULL) {
+           Vector3D rij =
+              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+           Real a = rij.normSquared();
+           Real rawE, rawF;
+           gbBornBurialTerm(rawE, rawF, a, 1.0/a, rij, myTopo, i, j, ec);
+         }
+      }
+   }
+}
+
+//GB born radii
+void Hessian::evaluateGBBornRadii(const Vector3DBlock *myPositions,
+                                         GenericTopology *myTopo) {
+
+   unsigned int atom_size = myTopo->atoms.size();
+   GBBornRadii gbBornRadii;
+
+   for (unsigned int i=0; i < atom_size ; i++) {
+      for (unsigned int j = i + 1; j < atom_size; j++){
+         ExclusionClass ec = myTopo->exclusions.check(i, j);
+         //Now include ALL atoms, no exclusions
+         if (1) { //ec != EXCLUSION_FULL) {
+           Vector3D rij =
+              myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
+           Real a = rij.normSquared();
+           Real rawE, rawF;
+           gbBornRadii(rawE, rawF, a, 1.0/a, rij, myTopo, i, j, ec);
+         }
+      }
+   }
+}
+
+//GB ACE force
 Matrix3By3 Hessian::evaluateGBACEPair(int i, int j, const Vector3DBlock *myPositions,
                                         const GenericTopology *myTopo) {
 
@@ -835,7 +838,8 @@ Matrix3By3 Hessian::evaluateGBACEPair(int i, int j, const Vector3DBlock *myPosit
    Matrix3By3 rha(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
    ExclusionClass ec = myTopo->exclusions.check(i, j);
-   if (ec != EXCLUSION_FULL) {
+   //Now include ALL atoms, no exclusions
+   if (1) { //ec != EXCLUSION_FULL) {
       Vector3D rij = myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
       Real a = rij.normSquared();
       rha = rHessGBACE(a, rij, myTopo, i, j, solvationparam, watersphereradius, ec);
@@ -844,6 +848,7 @@ Matrix3By3 Hessian::evaluateGBACEPair(int i, int j, const Vector3DBlock *myPosit
    return rha;
 }
 
+//GB force
 Matrix3By3 Hessian::evaluateGBPair(int i, int j, const Vector3DBlock *myPositions, 
                                   const GenericTopology *myTopo) {
 
@@ -852,7 +857,8 @@ Matrix3By3 Hessian::evaluateGBPair(int i, int j, const Vector3DBlock *myPosition
 
    int sz = (int)myTopo->atoms.size();
    ExclusionClass ec = myTopo->exclusions.check(i, j);
-   if (ec != EXCLUSION_FULL) {
+   //Now include ALL atoms, no exclusions
+   if (1) { //ec != EXCLUSION_FULL) {
       Vector3D rij = myTopo->minimalDifference((*myPositions)[i], (*myPositions)[j]);
       Real a = rij.normSquared();
       rha = rHessGB(a, rij, myTopo, i, j, sz, soluteDielec, solventDielec, ec);
@@ -862,6 +868,7 @@ Matrix3By3 Hessian::evaluateGBPair(int i, int j, const Vector3DBlock *myPosition
 
 }
 
+//Clear Hessian
 void Hessian::clear() {
   if (hessM != 0)
     for (unsigned int i = 0; i < sz * sz; i++) hessM[i] = 0.0;
