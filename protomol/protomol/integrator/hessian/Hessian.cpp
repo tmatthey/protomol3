@@ -137,7 +137,7 @@ void Hessian::findForces(ForceGroup *overloadedForces) {
                                                        myGBACEForce = 
                                                                 myGBForce = false;
 
-   solvationparam = 3.0 ; watersphereradius = 1.4;
+   solvationparam = 2.26 / 418.4 ; watersphereradius = 1.4;
 
   for (unsigned int i = 0; i < ListForces.size(); i++) {
 
