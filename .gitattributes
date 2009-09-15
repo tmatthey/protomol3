@@ -997,6 +997,7 @@ protomol/protomol/force/nonbonded/NonbondedFullEwaldSystemForce.h -text
 protomol/protomol/force/nonbonded/NonbondedFullEwaldSystemForceBase.cpp -text
 protomol/protomol/force/nonbonded/NonbondedFullEwaldSystemForceBase.h -text
 protomol/protomol/force/nonbonded/NonbondedFullSystemForce.h -text
+protomol/protomol/force/nonbonded/NonbondedIntermittentFullSystemForce.h -text
 protomol/protomol/force/nonbonded/NonbondedSimpleFullSystemForce.h -text
 protomol/protomol/force/nonbonded/SConscript -text
 protomol/protomol/force/system/SConscript -text
@@ -1192,6 +1193,8 @@ protomol/protomol/module/NonbondedFullElectrostaticForceModule.cpp -text
 protomol/protomol/module/NonbondedFullElectrostaticForceModule.h -text
 protomol/protomol/module/NonbondedFullForceModule.cpp -text
 protomol/protomol/module/NonbondedFullForceModule.h -text
+protomol/protomol/module/NonbondedIntermittentFullForceModule.cpp -text
+protomol/protomol/module/NonbondedIntermittentFullForceModule.h -text
 protomol/protomol/module/NonbondedSimpleFullForceModule.cpp -text
 protomol/protomol/module/NonbondedSimpleFullForceModule.h -text
 protomol/protomol/module/NormalModeModule.cpp -text

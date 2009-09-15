@@ -20,6 +20,7 @@
 #include <protomol/module/NonbondedFullElectrostaticForceModule.h>
 #include <protomol/module/NonbondedFullForceModule.h>
 #include <protomol/module/NonbondedSimpleFullForceModule.h>
+#include <protomol/module/NonbondedIntermittentFullForceModule.h>
 
 using namespace ProtoMol;
 
@@ -46,5 +47,6 @@ void moduleInitFunction(ModuleManager *manager) {
   manager->add(new NonbondedFullForceModule());
   manager->add(new NonbondedSimpleFullForceModule());
   manager->add(new NonbondedFullElectrostaticForceModule());
+  manager->add(new NonbondedIntermittentFullForceModule());
 }
 

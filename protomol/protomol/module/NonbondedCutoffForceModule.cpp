@@ -9,6 +9,7 @@
 #include <protomol/force/OneAtomPair.h>
 #include <protomol/force/OneAtomPairTwo.h>
 #include <protomol/force/OneAtomPairThree.h>
+#include <protomol/force/OneAtomPairNoExclusion.h>
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
@@ -26,6 +27,10 @@
 
 #include <protomol/topology/CellListEnumeratorPeriodicBoundaries.h>
 #include <protomol/topology/CellListEnumeratorStandard.h>
+
+//GB
+#include <protomol/force/GB/GBForce.h>
+#include <protomol/force/GB/GBACEForce.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -146,7 +151,15 @@ void NonbondedCutoffForceModule::registerForces(ProtoMolApp *app) {
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, Cn, CoulombSCPISMForce> >());
     f.reg(new CutoffSystem<CCM, OneAtomPair<VBC, CmpCnCn,
           CoulombSCPISMForce> >());
-
+    
+    // GB
+    f.reg(new CutoffSystem<CCM, OneAtomPairNoExclusion<VBC, Universal, GBForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairNoExclusion<VBC, Universal, GBACEForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairNoExclusion<VBC, C2, GBForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairNoExclusion<VBC, C2, GBACEForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairNoExclusion<VBC, Cn, GBForce> >());
+    f.reg(new CutoffSystem<CCM, OneAtomPairNoExclusion<VBC, Cn, GBACEForce> >());
+    
     // OneAtomPairThree (forces): LennardJonesForce CoulombSCPISMForce BornRadii
 
     f.reg(new CutoffSystem<CCM, OneAtomPairThree<VBC, C2, LennardJonesForce, C1,
