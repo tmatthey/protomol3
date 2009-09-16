@@ -24,7 +24,7 @@ extern void moduleInitFunction(ModuleManager *);
 
 extern "C" int core_main(int argc, char *argv[]) {
   try {
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(_WIN32)
     ProtoMol::Debugger::initStackTrace(argv[0]);
 #endif
 
