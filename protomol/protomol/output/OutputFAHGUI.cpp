@@ -119,8 +119,13 @@ void OutputFAHGUI::doRun(int step) {
 
 void OutputFAHGUI::doFinalize(int step) {
   doRun(step);
-  if (server) delete server;
-  server = 0;
+  if (server) {
+#ifdef HAVE_LIBFAH
+    server->join();
+#endif
+    delete server;
+    server = 0;
+  }
 }
 
 Output *OutputFAHGUI::doMake(const vector<Value> &values) const {

@@ -3,7 +3,7 @@ def compiler_add_opts():
         ('optimize', 'Set to 1 to force optimizations', -1),
         BoolOption('debug', 'Set to 1 to force debug options', 0),
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
-        #BoolOption('threaded', 'Set to 1 to enable thread support', 1),
+        BoolOption('threaded', 'Set to 1 to enable thread support', 1),
         BoolOption('profile', 'Set to 1 to enable profiler', 0),
         BoolOption('pic', 'Set to 1 to enable position independant code', 0),
         BoolOption('depends', 'Set to 1 to output dependency files', 0),
@@ -30,7 +30,7 @@ def compiler_configure(c99_mode = 1):
     if optimize == -1: optimize = not debug
 
     strict = int(env.get('strict', 1))
-    #threaded = int(env.get('threaded', 1))
+    threaded = int(env.get('threaded', 1))
     profile = int(env.get('profile', 0))
     pic = int( env.get( 'pic', 0 ) )
     depends = int(env.get('depends', 0))
@@ -149,20 +149,22 @@ def compiler_configure(c99_mode = 1):
 
 
     # Threads
-    #if threaded:
-        #if env['CC'] == 'gcc':
-            #if not conf.CheckLib('pthread'):
-                #print 'Need pthreads'
-                #Exit(1)
+    # If you don't like this code put threaded=0 in your options.py file.
+    # but don't comment this out.
+    if threaded:
+        if env['CC'] == 'gcc':
+            if not conf.CheckLib('pthread'):
+                print 'Need pthreads'
+                Exit(1)
 
-            #env.Append(LINKFLAGS = ['-pthread'])
-            #env.Append(CPPDEFINES = ['_REENTRANT'])
+            env.Append(LINKFLAGS = ['-pthread'])
+            env.Append(CPPDEFINES = ['_REENTRANT'])
 
-        #elif env['CC'] == 'cl':
-            #if debug:
-                #env.Append(CCFLAGS = ['/MTd'])
-            #else:
-                #env.Append(CCFLAGS = ['/MT'])
+        elif env['CC'] == 'cl':
+            if debug:
+                env.Append(CCFLAGS = ['/MTd'])
+            else:
+                env.Append(CCFLAGS = ['/MT'])
 
 
     # static
