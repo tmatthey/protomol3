@@ -91,8 +91,6 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     // Return results
     core.addResultFiles("*");
-    core.addResultFile(String::printf("../logfile_%s.txt",
-                                      core.suffix.c_str()));
 
     // Setup header
     core.unit->core_type = 180;
