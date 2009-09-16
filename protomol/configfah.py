@@ -37,13 +37,14 @@ def fah_configure():
     if env['PLATFORM'] == 'win32':
         check_library('Ws2_32')
 
-    if os.environ.has_key('PTHREADS_HOME'):
-        home = os.environ['PTHREADS_HOME']
-        env.Append(CPPPATH = [home])
-        env.Append(LIBPATH = [home])
+    else:
+        if os.environ.has_key('PTHREADS_HOME'):
+            home = os.environ['PTHREADS_HOME']
+            env.Append(CPPPATH = [home])
+            env.Append(LIBPATH = [home])
 
-    if conf.CheckCHeader('pthread.h') and conf.CheckLib('pthread'):
-        env.Append(CPPDEFINES = ['HAVE_PTHREADS'])
-    else: raise Exception, 'Need pthreads'
+        if conf.CheckCHeader('pthread.h') and conf.CheckLib('pthread'):
+            env.Append(CPPDEFINES = ['HAVE_PTHREADS'])
+        else: raise Exception, 'Need pthreads'
 
     env.Append(CPPDEFINES = ['BUILD_FOR_FAH', 'HAVE_LIBFAH'])
