@@ -1,4 +1,4 @@
-//Updated for standalone GUI
+// Updated for standalone GUI
 #if defined (HAVE_GUI) || defined (HAVE_LIBFAH)
 
 #include <protomol/output/OutputFAHGUI.h>
@@ -34,18 +34,17 @@ OutputFAHGUI::OutputFAHGUI(const string &name, int freq, int port, int prange,
   Output(freq), name(name), myPort(port), myPortRange(prange),
   myProjName(projn), myTimeout(timeout), myPause(pause), server(0) {
 
-    //default pause timeout to 10 seconds
-    if(myPause && !myTimeout) myTimeout = 10;
-  
-  }
+  //default pause timeout to 10 seconds
+  if(myPause && !myTimeout) myTimeout = 10; 
+}
 
 void OutputFAHGUI::doInitialize() {
 #ifdef HAVE_LIBFAH
   server = new GUIServer(myProjName.c_str(), app->topology->atoms.size(),
-                          app->topology->bonds.size());
+                         app->topology->bonds.size());
 #else
   server = new GUIServer(myProjName.c_str(), app->topology->atoms.size(),
-                          app->topology->bonds.size(),myPort,myPortRange);
+                         app->topology->bonds.size(), myPort, myPortRange);
   server->info.iterations = app->lastStep / 1000;
   server->info.frames = app->lastStep;
   server->current.frames_done = 0;
@@ -99,11 +98,9 @@ void OutputFAHGUI::doRun(int step) {
         server->current.energy = kineticEnergy(app->topology, &app->velocities);
         server->current.temperature =
           temperature(app->topology, &app->velocities);
-        //Mode number valid?
-        if(app->eigenInfo.currentMode != -1){
+        // Mode number valid?
+        if (app->eigenInfo.currentMode != -1)
           server->current.iterations_done = app->eigenInfo.currentMode;
-        }
-        //
         setCoords();
       }
 
@@ -112,17 +109,14 @@ void OutputFAHGUI::doRun(int step) {
             
     default: break;
   }
-  if(myTimeout && (guiTimer.getTime()).getRealTime() > myTimeout)
-    THROW("GUI communication timeout.");
 
+  if (myTimeout && (guiTimer.getTime()).getRealTime() > myTimeout)
+    THROW("GUI communication timeout.");
 }
 
 void OutputFAHGUI::doFinalize(int step) {
   doRun(step);
   if (server) {
-#ifdef HAVE_LIBFAH
-    server->join();
-#endif
     delete server;
     server = 0;
   }
@@ -183,7 +177,7 @@ void OutputFAHGUI::setCoords() {
   Vector3DBlock posMi;
 
   posMi.resize(app->positions.size());
-  //
+
   x = y = z = 0.0;
   for (unsigned int i = 0; i < app->positions.size(); i++) {
 	posMi[i] = app->topology->minimalPosition(app->positions[i]);
@@ -191,6 +185,7 @@ void OutputFAHGUI::setCoords() {
     y += posMi[i].c[1];
     z += posMi[i].c[2];
   }
+
   sz = app->positions.size();
   x /= sz; y /= sz; z /= sz;
   for (unsigned int i = 0; i < app->positions.size(); i++) {
@@ -218,12 +213,14 @@ void OutputFAHGUI::setAtoms() {
   float radius = 0;
 
   for (unsigned int i = 0; i < (app->topology->atoms).size(); i++) {
-    // Determine diamiter/ set name
+    // Determine diamiter / set name
     int atomNameLen = app->topology->atoms[i].name.length();
     for(int j=0;j<min(atomNameLen,4);j++)
       server->atoms[i].type[j] = (app->topology->atoms[i].name.c_str())[j];
+
     if(atomNameLen < 4)
         for(int j=atomNameLen;j<4;j++) server->atoms[i].type[j] = 0;
+
     switch(server->atoms[i].type[0]){
         case 'H':	radius = 1.2;
                     break;
@@ -240,7 +237,8 @@ void OutputFAHGUI::setAtoms() {
         default:	radius = 1.9;
                     break;
     }
-    //add charge
+
+    // add charge
     server->atoms[i].charge = app->topology->atoms[i].scaledCharge;
     server->atoms[i].radius = radius / 2.0;
   }

@@ -28,7 +28,8 @@ namespace ProtoMol {
   public:
     OutputFAHGUI();
     OutputFAHGUI(const std::string &name, int freq, int port, 
-                 int prange, const std::string &projn, Real timeout, bool pause);
+                 int prange, const std::string &projn, Real timeout,
+                 bool pause);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  From class Output
@@ -60,6 +61,7 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     static const std::string keyword;
+
   private:
     std::string name;
     int myPort, myPortRange;
@@ -73,7 +75,6 @@ namespace ProtoMol {
 #else
     GUIServer *server;
 #endif
-
   };
 }
 

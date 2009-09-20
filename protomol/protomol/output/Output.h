@@ -99,7 +99,6 @@ namespace ProtoMol {
 
   protected:
     int myOutputFreq;       ///< Output freqeuncy
-
   };
 }
 #endif
