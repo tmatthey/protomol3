@@ -38,7 +38,7 @@ env = Environment(variables = vars, ENV = os.environ)
 Help(vars.GenerateHelpText(env))
 conf = Configure(env)
 
-env.__setitem__('static', 1) # force static build
+env.__setitem__('static', os.getenv('STATIC_BUILD', 1)) # static build
 
 # Configure
 if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:

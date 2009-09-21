@@ -10,11 +10,9 @@
 #include <fah/Exception.h>
 #include <fah/String.h>
 #include <fah/util/Logger.h>
+#include <fah/os/SystemUtilities.h>
 
 #include <iostream>
-
-#include <sys/types.h>
-#include <sys/stat.h>
 
 using namespace std;
 using namespace ProtoMol;
@@ -64,8 +62,8 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
+    // Print configuration
     app.print(*LOG_RAW_STREAM());
-
 
     // FAH Core setup
     // Initialize shared file
@@ -115,8 +113,8 @@ int main(int argc, char *argv[]) {
     if (ret) return ret;
 
     // Validate checkpoint file
-    struct stat buf;
-    if (!stat("checkpt", &buf) && !ChecksumManager::instance().has("checkpt")) {
+    if (SystemUtilities::exists("checkpt") &&
+        !ChecksumManager::instance().has("checkpt")) {
       // Checksum not valid
       LOG_ERROR("Guru Meditation: checkpt sum");
       return BAD_FRAME_CHECKSUM;

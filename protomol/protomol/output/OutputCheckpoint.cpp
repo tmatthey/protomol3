@@ -171,6 +171,8 @@ void OutputCheckpoint::WriteConfig(int step) {
     
     if (!confWriter.write(mCurrent, step, Random::Instance(), app->integrator))
       THROWS("Could not write " << getId() << " '" << confFile << "'.");
+
+    confWriter.close();
   }
 
   SystemUtilities::rename(confFile, mName);
