@@ -25,7 +25,7 @@ fah = int(env.get('fah', 0))
 env.Append(CPPPATH = '#')
 
 # Generate Help
-Help( opts.GenerateHelpText(env) )
+Help(opts.GenerateHelpText(env))
 
 # Do configuration
 if not env.GetOption('clean'):
@@ -56,22 +56,18 @@ if fah:
     libsrc.append('#/protomol/modules.cpp')
 
 # Build Library
-env.Library(libname, libsrc)
-
-# Setup Application Libraries
-env.Append(LIBPATH = ['.'])
-env.Prepend(LIBS = [libname])
+lib = env.Library(libname, libsrc)
 
 # ProtoMol Sources
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
 # Build Application
-if (env['PLATFORM'] == 'darwin'): # MAC
-    protomol = env.Program('ProtoMol-app', src)
-else:
-    protomol = env.Program('ProtoMol', src)
+name = 'ProtoMol'
+if (env['PLATFORM'] == 'darwin'): name += '-app' # Why?
+protomol = env.Program(name, src + [lib])
 
-Default(protomol)
+if fah: Default(lib)
+else: Default(protomol)
 
 # Build Visual Studio Project
 if env['PLATFORM'] == 'win32':

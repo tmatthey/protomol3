@@ -1,7 +1,10 @@
+import os
+
 def compiler_add_opts():
     opts.AddOptions(
         ('optimize', 'Set to 1 to force optimizations', -1),
-        BoolOption('debug', 'Set to 1 to force debug options', 0),
+        BoolOption('debug', 'Set to 1 to force debug options',
+                   os.getenv('DEBUG_MODE', 0)),
         BoolOption('strict', 'Set to 0 to disable strict options', 1),
         BoolOption('threaded', 'Set to 1 to enable thread support', 1),
         BoolOption('profile', 'Set to 1 to enable profiler', 0),
