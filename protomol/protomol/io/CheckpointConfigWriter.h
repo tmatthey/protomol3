@@ -21,7 +21,8 @@ namespace ProtoMol {
     // New methods of class CheckpointConfig
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    bool write(const int& id, const int& steps, const Random& rand, const Integrator* integ);
+    bool write(const int& id, const int& steps, const Random& rand,
+               const Integrator* integ);
   };
 }
 
