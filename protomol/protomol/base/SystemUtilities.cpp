@@ -31,6 +31,8 @@
 
 #include <fstream>
 #include <sys/stat.h>
+#include <string.h>
+#include <errno.h>
 
 #ifdef BUILD_FOR_FAH
 #include <fah/core/chksum/overrides.h>
@@ -206,9 +208,13 @@ namespace ProtoMol {
   void SystemUtilities::rename(const string &src, const string &dst) {
     unlink(dst);
 #ifdef BUILD_FOR_FAH
-    fah_rename(src.c_str(), dst.c_str());
+    int error = fah_rename(src.c_str(), dst.c_str());
 #else
-    ::rename(src.c_str(), dst.c_str());
+    int error = ::rename(src.c_str(), dst.c_str());
 #endif
+
+    if (error)
+      THROWS("Failed to rename '" << src << "' to '" << dst << "': "
+             << strerror(errno));
   }
 }

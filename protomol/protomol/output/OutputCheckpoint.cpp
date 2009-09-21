@@ -164,14 +164,14 @@ void OutputCheckpoint::WriteVelocities(int step) {
 void OutputCheckpoint::WriteConfig(int step) {
   string confFile = mName + ".tmp";
 
-  CheckpointConfigWriter confWriter;
-  if (!confWriter.open(mName + ".tmp"))
-    THROWS("Can't open " << getId() << " '" << confFile << "'.");
-  
-  if (!confWriter.write(mCurrent, step, Random::Instance(), app->integrator))
-    THROWS("Could not write " << getId() << " '" << confFile << "'.");
-
-  confWriter.close();
+  {
+    CheckpointConfigWriter confWriter;
+    if (!confWriter.open(confFile))
+      THROWS("Can't open " << getId() << " '" << confFile << "'.");
+    
+    if (!confWriter.write(mCurrent, step, Random::Instance(), app->integrator))
+      THROWS("Could not write " << getId() << " '" << confFile << "'.");
+  }
 
   SystemUtilities::rename(confFile, mName);
 }
