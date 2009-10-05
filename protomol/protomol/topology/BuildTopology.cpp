@@ -3,6 +3,7 @@
 #include <protomol/base/Exception.h>
 #include <protomol/type/PAR.h>
 #include <protomol/type/PSF.h>
+#include <protomol/type/String.h>
 #include <protomol/topology/TopologyUtilities.h>
 #include <protomol/topology/GenericTopology.h>
 #include <protomol/topology/CoulombSCPISMParameterTable.h>
@@ -128,7 +129,7 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   for (vector<PAR::Bond>::const_iterator bond = par.bonds.begin();
        bond != par.bonds.end();
        ++bond)
-    bondLookUpTable[bond->atom1 + "," + bond->atom2] = bond;
+    bondLookUpTable[String::toUpper(bond->atom1) + "," + String::toUpper(bond->atom2)] = bond;
 
   // Find the parameters from PAR
   int ignoredBonds = 0;
@@ -144,10 +145,10 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
 
     map<string,
         vector<PAR::Bond>::const_iterator>::const_iterator currentbond =
-      bondLookUpTable.find(bond1 + "," + bond2);
+      bondLookUpTable.find(String::toUpper(bond1) + "," + String::toUpper(bond2));
 
     if (currentbond == bondLookUpTable.end())
-      currentbond = bondLookUpTable.find(bond2 + "," + bond1);
+      currentbond = bondLookUpTable.find(String::toUpper(bond2) + "," + String::toUpper(bond1));
 
     // if we still have not found this bond type in the PAR object, report an
     // error
@@ -192,8 +193,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   map<string, vector<PAR::Angle>::const_iterator> angleLookUpTable;
   for (vector<PAR::Angle>::const_iterator angle = par.angles.begin();
        angle != par.angles.end(); ++angle)
-    angleLookUpTable[angle->atom1 + "," + angle->atom2 + "," +
-                     angle->atom3] = angle;
+    angleLookUpTable[String::toUpper(angle->atom1) + "," + String::toUpper(angle->atom2) + "," +
+                     String::toUpper(angle->atom3)] = angle;
 
   // Find the parameters from PAR
   int ignoredAngles = 0;
@@ -262,8 +263,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   map<string, vector<PAR::Dihedral>::const_iterator> dihedralLookUpTable;
   for (vector<PAR::Dihedral>::const_iterator dihedral = par.dihedrals.begin();
        dihedral != par.dihedrals.end(); ++dihedral)
-    dihedralLookUpTable[dihedral->atom1 + "," + dihedral->atom2 + "," +
-                        dihedral->atom3 + "," + dihedral->atom4] = dihedral;
+    dihedralLookUpTable[String::toUpper(dihedral->atom1) + "," + String::toUpper(dihedral->atom2) + "," +
+                        String::toUpper(dihedral->atom3) + "," + String::toUpper(dihedral->atom4)] = dihedral;
 
   // Find the parameters from PAR
   // loop over the dihedral list in the PSF object
@@ -403,8 +404,8 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
   map<string, vector<PAR::Improper>::const_iterator> improperLookUpTable;
   for (vector<PAR::Improper>::const_iterator improper = par.impropers.begin();
        improper != par.impropers.end(); improper++)
-    improperLookUpTable[improper->atom1 + "," + improper->atom2 + "," +
-                        improper->atom3 + "," + improper->atom4] = improper;
+    improperLookUpTable[String::toUpper(improper->atom1) + "," + String::toUpper(improper->atom2) + "," +
+                        String::toUpper(improper->atom3) + "," + String::toUpper(improper->atom4)] = improper;
 
   // Find the parameters from PAR
   // loop over the improper list in the PSF object
@@ -781,7 +782,7 @@ void ProtoMol::buildTopology(GenericTopology *topo, const PSF &psf,
         tempatomtype->mySCPISM_T->C_i = mySCPISMTable->myData[name].C_i;
 
       } else {
-        THROW("No SCPISM data for atom type.");
+        THROWS("No SCPISM data for atom type: " << name);
 
       }
 

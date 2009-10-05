@@ -83,16 +83,17 @@ namespace ProtoMol {
     //remove last random pertubation
     if(randforce) app->positions.intoSubtract(gaussRandCoord1);
     //(*myPositions).intoWeightedAdd(-randStp,gaussRandCoord1);
-    //do minimization with local forces, max loop 100, set subSpace minimization true
-    itrs = minimizer(minLim, 100, simpleMin, reDiag, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
+    //do minimization with local forces, max loop rediagOnMaxMinSteps, set subSpace minimization true
+    itrs = minimizer(minLim, rediagOnMaxMinSteps>0 ? rediagOnMaxMinSteps : 100 , simpleMin, reDiag, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
 
     //flag excessive minimizations
     if(itrs > 10) report << hint << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
+    else report << debug(3) << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
 
     avItrs += itrs;
 
     //rediagonalize if minimization steps exceeds 'rediagOnMaxMinSteps'
-    if(reDiag && rediagOnMaxMinSteps > 0 && itrs > rediagOnMaxMinSteps){
+    if(reDiag && rediagOnMaxMinSteps > 0 && itrs >= rediagOnMaxMinSteps){
       report << debug(1) << "[NormalModeMinimizer::run] Minimization steps (" 
               << itrs << ") exceeded maximum (" << rediagOnMaxMinSteps << "), forcing re-diagonalize." << endr;
       itrs = -1;  //force re-diag

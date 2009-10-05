@@ -38,7 +38,7 @@ namespace ProtoMol
       NormalModeDiagonalize( int cycles, int redi, bool fDiag,
                              bool rRand,
                              Real redhy, Real eTh, int bvc, int rpb, Real dTh, 
-                             bool apar, bool adts, bool pdm, Real ml,
+                             bool apar, bool adts, bool pdm, Real ml, int maxit,
                              ForceGroup *overloadedForces,
                              StandardIntegrator *nextIntegrator );
       ~NormalModeDiagonalize();
@@ -125,6 +125,8 @@ namespace ProtoMol
       //post diagonalize minimize
       bool postDiagonalizeMinimize;
       Real minLim;
+      int maxMinSteps;
+
 
   };
 }

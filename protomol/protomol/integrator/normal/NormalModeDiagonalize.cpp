@@ -41,7 +41,7 @@ namespace ProtoMol
   NormalModeDiagonalize::
   NormalModeDiagonalize(int cycles, int redi, bool fDiag, bool rRand,
                         Real redhy, Real eTh, int bvc, int rpb, Real dTh, 
-                        bool apar, bool adts, bool pdm, Real ml,
+                        bool apar, bool adts, bool pdm, Real ml, int maxit,
                         ForceGroup *overloadedForces,
                         StandardIntegrator *nextIntegrator ) :
     MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
@@ -52,8 +52,8 @@ namespace ProtoMol
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
     residuesPerBlock( rpb ), checkpointUpdate( false ),  
     autoParmeters(apar), adaptiveTimestep( adts ), 
-    postDiagonalizeMinimize(pdm), minLim(ml)
- {
+    postDiagonalizeMinimize(pdm), minLim(ml), maxMinSteps(maxit)
+{
 
 
     //find forces and parameters
@@ -333,8 +333,8 @@ namespace ProtoMol
           
           Real lastLambda; int forceCalc = 0; //diagnostic/effective gamma
 
-          //do minimization with local forces, max loop 100, set subSpace minimization true
-          int itrs = minimizer(minLim, 100, true, false, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
+          //do minimization with local forces, max loop maxMinSteps, set subSpace minimization true
+          int itrs = minimizer(minLim, maxMinSteps, true, false, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
           report << debug(2) << "[NormalModeDiagonalize::run] iterations = "<< itrs << " force calcs = " << forceCalc << endr;
 
         }
@@ -445,12 +445,21 @@ namespace ProtoMol
                                     false, 
                                     Text("Minimize after diagonalization.") ) );
 
+
     parameters.push_back( Parameter( "minimlim",
                                     Value(minLim,ConstraintValueType::NotNegative() ),
                                     0.1,
                                     Text("Minimizer target PE difference kcal mole^{-1}") ) );
+
+    parameters.push_back(Parameter("maxminsteps",
+				   Value(maxMinSteps,ConstraintValueType::Positive()),
+				   100,
+				   Text("maximum number of minimizer steps.")));
+
+
     
-  }
+      }
+
 
   MTSIntegrator* NormalModeDiagonalize::doMake( const vector<Value>& values, ForceGroup* fg, StandardIntegrator *nextIntegrator ) const
   {
@@ -458,7 +467,7 @@ namespace ProtoMol
                                       values[3], values[4], values[5],
                                       values[6], values[7], values[8], 
                                       values[9], values[10], values[11],
-                                      values[12],
+                                      values[12], values[13], 
                                       fg, nextIntegrator               );
   }
 

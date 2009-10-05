@@ -40,6 +40,8 @@ namespace ProtoMol {
                   break;
         case 'N': A_i = 60.0; B_i = 9.66; C_i = 0.22;
                   break;
+      case 'P': A_i = 60.0; B_i = 9.66; C_i = 0.22; // JAIP 9/29/09
+	          break;
         case 'S': A_i = 60.0; B_i = 9.10; C_i = 0.22;
                   break;
         case 'H': if(isHbonded == PH){
