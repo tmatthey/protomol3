@@ -84,8 +84,8 @@ extern "C" int core_main(int argc, char *argv[]) {
     }
       
     oCheckpt->doIt(app.currentStep);
-    core.checkpoint();
     app.finalize();
+    core.checkpoint();
 
     // Return results
     core.addResultFiles("*");
@@ -121,12 +121,14 @@ int main(int argc, char *argv[]) {
     }
 
     // Add config file
-    core.args.push_back((char *)"protomol.conf");
+    vector<char *> args;
+    vector<char *>::iterator it = core.args.begin();
+    args.push_back(*it++); // Executable name
+    args.push_back((char *)"protomol.conf");
+    args.insert(args.end(), it, core.args.end());
+    args.push_back(0); // Sentinel
 
-    core.args.push_back(0); // Sentinel
-
-    if (core_main(core.args.size() - 1, &core.args[0]))
-      return UNKNOWN_ERROR;
+    if (core_main(args.size() - 1, &args[0])) return UNKNOWN_ERROR;
 
     ret = core.finalize();
 

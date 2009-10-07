@@ -2,6 +2,7 @@
 
 #include <protomol/base/Report.h>
 #include <protomol/base/StringUtilities.h>
+#include <protomol/base/Exception.h>
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -55,8 +56,8 @@ bool DCDTrajectoryWriter::openWith(const char *filename, Real timestep,
 }
 
 bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
-  if (!is_open())
-    open(filename, ios::binary | ios::in | ios::out);
+  if (!is_open()) open(filename, ios::binary | ios::in | ios::out);
+  if (!is_open()) THROWS("Failed to open '" << filename << "'");
 
   // Try to read the number of frames
   file.clear();
@@ -95,18 +96,18 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
 
   if (size > static_cast<ios::pos_type>(100)) {
     // Ok, we have already written frames
-    close();
-    open(filename, ios::binary | ios::in);
+    //close();
+    //open(filename, ios::binary | ios::in);
     file.seekg(8, ios::beg);
     read((char *)&numSets, 4);
-    close();
+    //close();
     
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
     ++numSets;
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
 
-    close();
-    open(filename, ios::binary | ios::in | ios::out);
+    //close();
+    //open(filename, ios::binary | ios::in | ios::out);
     file.seekp(8, ios::beg);
     //  8: Number of sets of coordinates, NAMD=0 ???
     file.write((char *)&numSets, 4);  
@@ -114,13 +115,14 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     // 20: Number of sets of coordinates, NAMD=0 ???
     file.write((char *)&numSets, 4);   
 
-    file.seekg(0, ios::end);
-    close();
+    //file.seekg(0, ios::end);
+    //close();
     
   } else {
     // First time ...
-    close();
-    open(filename, ios::binary | ios::out | ios::trunc);
+    //close();
+    //open(filename, ios::binary | ios::out | ios::trunc);
+    file.seekg(0, ios::beg);
 
     // Write header
     file.write((char *)&n84, 4); //  0
@@ -167,10 +169,12 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.write((char *)&n4, 4);
     file.write((char *)&nAtoms, 4);
     file.write((char *)&n4, 4);
-    close();
+    //close();
   }
-  close();
-  open(filename, ios::binary | ios::out | ios::app);
+
+  //close();
+  //open(filename, ios::binary | ios::out | ios::app);
+
   return !file.fail();
 }
 
