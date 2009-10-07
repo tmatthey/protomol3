@@ -56,73 +56,71 @@ bool DCDTrajectoryWriter::openWith(const char *filename, Real timestep,
 }
 
 bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
-  if (!is_open()) open(filename, ios::binary | ios::in | ios::out);
-  if (!is_open()) THROWS("Failed to open '" << filename << "'");
+  if (!is_open()) {
+    open(filename, ios::binary | ios::in | ios::out);
+    if (!is_open()) THROWS("Failed to open '" << filename << "'");
+  }
 
-  // Try to read the number of frames
+  // Try to read the file size
   file.clear();
   file.seekg(0, ios::end);
   ios::pos_type size = file.tellg();
   if (file.fail()) return false;
 
-  int32 nAtoms = static_cast<int32>(numAtoms);
-  int32 numSets = 1;
-  int32 numSteps = 1;
-  int32 firstStep = static_cast<int32>(myFirstStep);
-  float4 timeStep = static_cast<float4>(myTimeStep) *
-                    Constant::INV_TIMEFACTOR;
-
-  int32 n0 = 0;
-  int32 n2 = 2;
-  int32 n4 = 4;
-  int32 n24 = 24;
-  int32 n84 = 84;
-  int32 n164 = 164;
-
-  if (myIsLittleEndian != ISLITTLEENDIAN) {
-    swapBytes(nAtoms);
-    swapBytes(numSets);
-    swapBytes(numSteps);
-    swapBytes(firstStep);
-    swapBytes(timeStep);
-
-    swapBytes(n0);
-    swapBytes(n2);
-    swapBytes(n4);
-    swapBytes(n24);
-    swapBytes(n84);
-    swapBytes(n164);
-  }
-
   if (size > static_cast<ios::pos_type>(100)) {
-    // Ok, we have already written frames
-    //close();
-    //open(filename, ios::binary | ios::in);
+    // This is not the first write.  Just update header.
+
+    // 8: Read numSets
     file.seekg(8, ios::beg);
+    int32 numSets;
     read((char *)&numSets, 4);
-    //close();
     
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
     ++numSets;
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
 
-    //close();
-    //open(filename, ios::binary | ios::in | ios::out);
-    file.seekp(8, ios::beg);
     //  8: Number of sets of coordinates, NAMD=0 ???
+    file.seekp(8, ios::beg);
     file.write((char *)&numSets, 4);  
-    file.seekp(20, ios::beg);
+
     // 20: Number of sets of coordinates, NAMD=0 ???
+    file.seekp(20, ios::beg);
     file.write((char *)&numSets, 4);   
 
-    //file.seekg(0, ios::end);
-    //close();
+    file.seekg(0, ios::end);
     
   } else {
     // First time ...
-    //close();
-    //open(filename, ios::binary | ios::out | ios::trunc);
     file.seekg(0, ios::beg);
+
+    int32 nAtoms = static_cast<int32>(numAtoms);
+    int32 numSets = 1;
+    int32 numSteps = 1;
+    int32 firstStep = static_cast<int32>(myFirstStep);
+    float4 timeStep =
+      static_cast<float4>(myTimeStep) * Constant::INV_TIMEFACTOR;
+
+    int32 n0 = 0;
+    int32 n2 = 2;
+    int32 n4 = 4;
+    int32 n24 = 24;
+    int32 n84 = 84;
+    int32 n164 = 164;
+
+    if (myIsLittleEndian != ISLITTLEENDIAN) {
+      swapBytes(nAtoms);
+      swapBytes(numSets);
+      swapBytes(numSteps);
+      swapBytes(firstStep);
+      swapBytes(timeStep);
+
+      swapBytes(n0);
+      swapBytes(n2);
+      swapBytes(n4);
+      swapBytes(n24);
+      swapBytes(n84);
+      swapBytes(n164);
+    }
 
     // Write header
     file.write((char *)&n84, 4); //  0
@@ -135,28 +133,19 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.write((char *)&numSteps, 4);
     // 20: NAMD writes += numSteps 
     file.write((char *)&numSets, 4);
-    file.write((char *)&n0, 4);   // 24
-    file.write((char *)&n0, 4);   // 28
-    file.write((char *)&n0, 4);   // 32
-    file.write((char *)&n0, 4);   // 36
-    file.write((char *)&n0, 4);   // 40
+    // 24
+    for (unsigned i = 0; i < 5; i++)
+      file.write((char *)&n0, 4);
     // 44 : length of a timestep
     file.write((char *)&timeStep, 4);
     // 48 : unit cell, none=0, used=1
-    file.write((char *)&n0, 4);   
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    file.write((char *)&n0, 4);
-    // Pretend to be Charmm 24
+    for (unsigned i = 0; i < 9; i++)
+      file.write((char *)&n0, 4);
+    // 84: Pretend to be Charmm 24
     file.write((char *)&n24, 4);   
     file.write((char *)&n84, 4);
 
-    // Write DCD title record
+    // 92: Write DCD title record
     file.write((char *)&n164, 4);
     file.write((char *)&n2, 4);
     string remarks = string("Remarks: File '") + filename + "'. ProtoMol (" +
@@ -165,15 +154,11 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.write(getRightFill(string("Remarks: " + comment), 80).c_str(), 80);
     file.write((char *)&n164, 4);
 
-    // Write DCD num-atoms record
+    // 264: Write DCD num-atoms record
     file.write((char *)&n4, 4);
     file.write((char *)&nAtoms, 4);
     file.write((char *)&n4, 4);
-    //close();
   }
-
-  //close();
-  //open(filename, ios::binary | ios::out | ios::app);
 
   return !file.fail();
 }
