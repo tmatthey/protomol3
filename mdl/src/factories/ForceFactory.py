@@ -83,7 +83,13 @@ class ForceFactory:
                                               'Cn':CutoffForce.NCSF_CCM_OAPVBC_CNSF_CSCPF,
                                               'CmpCnCn':CutoffForce.NCSF_CCM_OAPVBC_CCNSF_CSCPF,
                                               'Cutoff':CutoffForce.NCSF_CCM_OAPVBC_CSF_CSCPF},
-                                    'Ewald':{'Cutoff':EwaldForce.EWALD_V_TTT_CUTOFF,
+                                    'GB':{'Universal':CutoffForce.NCSF_CCM_OAPVBC_U_GB,
+				          'C2':CutoffForce.NCSF_CCM_OAPVBC_C2_GB,
+					  'Cn':CutoffForce.NCSF_CCM_OAPVBC_CN_GB},
+			            'GBACE':{'Universal':CutoffForce.NCSF_CCM_OAPVBC_U_GBACE,
+				             'C2':CutoffForce.NCSF_CCM_OAPVBC_C2_GBACE,
+					     'Cn':CutoffForce.NCSF_CCM_OAPVBC_CN_GBACE},
+				    'Ewald':{'Cutoff':EwaldForce.EWALD_V_TTT_CUTOFF,
                                              'C1':EwaldForce.EWALD_V_TTT_C1},
                                     'PME':{'Cutoff':PMEForce.PME_V_TTT_B,
                                            'C1':PMEForce.PME_V_TTT_B_C1},
@@ -216,6 +222,7 @@ class ForceFactory:
       alg = self.getParameter(params, 'algorithm', "SimpleFull")
       switch = self.getParameter(params, 'switching', "Universal")
       newforce = self.lookup(self.ljForces, 'LennardJones', bc, alg, switch)
+      print newforce
       return self.applyParameters(newforce, bc, alg, switch, params)
 
   def createCoulombDiElecForce(self, bc, params):
@@ -253,7 +260,15 @@ class ForceFactory:
       switch = self.getParameter(params, 'switching', "Universal")
       newforce = self.lookup(self.coulombForces, 'Coulomb', bc, alg, switch)
       return self.applyParameters(newforce, bc, alg, switch, params)
+      
+  def createBornBurial(self):
+      #return SimpleFullForce.NSFSF_V_U_GB_GBORNBUR()
+      return SimpleFullForce.NSFSF_V_U_GB_GBORNBUR().makeNew()
 
+  def createBornRadii(self):
+      #return SimpleFullForce.NSFSF_V_U_GB_GBORN()
+      return SimpleFullForce.NSFSF_V_U_GB_GBORN().makeNew()
+      
   def createBornForce(self, bc, params):
       """
       Return an electrostatic force object.
@@ -499,5 +514,41 @@ class ForceFactory:
               newforce = newforce.makeNew(self.getParameter(params, 'cutoff'),
                                           self.getParameter(params, 'switchon'),
                                           self.getParameter(params, 'switchoff'),
-                                          self.getParameter(params, 'order', 2))            
+                                          self.getParameter(params, 'order', 2))
+        elif (alg == "GB"):
+	   if (switch == "Universal"):
+	      newforce = newforce.makeNewGB(self.getParameter(params, 'solute', 1.0),
+	                                    self.getParameter(params, 'solvent', 80.0))
+	   elif (switch == "C2"):
+	      newforce = newforce.makeNewGB(self.getParameter(params, 'solute', 1.0),
+	                                    self.getParameter(params, 'solvent', 80.0),
+					    self.getParameter(params, 'cutoff'),
+					    self.getParameter(params, 'switchon'))
+           else:
+              newforce = newforce.makeNewGB(self.getParameter(params, 'solute', 1.0),
+	                                    self.getParameter(params, 'solvent', 80.0),
+					    self.getParameter(params, 'cutoff'),
+					    self.getParameter(params, 'switchon'),
+					    self.getParameter(params, 'switchoff'),
+					    self.getParameter(params, 'order', 2))
+        elif (alg == "GBACE"):
+	   newforce = SimpleFullForce.NSFSF_V_U_GB_GB().makeNew()
+	   #if (switch == "Universal"):
+	   #   newforce = newforce.makeNewGB(self.getParameter(params, 'solvation', 2.26/418.4),
+	   #                                 self.getParameter(params, 'sphere', 1.4))
+	   #elif (switch == "C2"):
+	   #   newforce = newforce.makeNewGB(self.getParameter(params, 'solvation', 2.26/418.4),
+	   #                                 self.getParameter(params, 'sphere', 1.4),
+	   #				    self.getParameter(params, 'cutoff'),
+	   #				    self.getParameter(params, 'switchon'))
+           #else:
+           #   newforce = newforce.makeNewGB(self.getParameter(params, 'solvation', 2.26/418.4),
+	   #                                 self.getParameter(params, 'sphere', 1.4),
+	   #				    self.getParameter(params, 'cutoff'),
+	   #				    self.getParameter(params, 'switchon'),
+	   #				    self.getParameter(params, 'switchoff'),
+	   #				    self.getParameter(params, 'order', 2))
+ 
+    return newforce
+ 
     return newforce

@@ -255,6 +255,12 @@ class ForceField(ForceGroup):
                  #   bornflag = len(self.forcearray)-1
                  #else:
                  #    print "NOT CREATING BORN FORCE"
+              if (self.params['Coulomb']['algorithm'] == 'GB' or
+	          self.params['Coulomb']['algorithm'] == 'GBACE'):
+		  self.forcearray.append(self.forceFactory.createBornBurial())
+                  self.addForce(self.forcearray[len(self.forcearray)-1])
+	          self.forcearray.append(self.forceFactory.createBornRadii())
+                  self.addForce(self.forcearray[len(self.forcearray)-1])
               if (not self.params['Coulomb'].has_key('OnlyBorn')):      
                  self.forcearray.append(self.forceFactory.createCoulombForce(self.bc, self.params['Coulomb']))
           elif (forcetype == 'e'):

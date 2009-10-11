@@ -98,7 +98,9 @@ def executePropagator(prop, phys, forces, io, numsteps):
               else:
                  prop.myPropagator.run(nextstop-ii)
                  ii = nextstop
-              if (prop.myLevel == 0):
+              
+	      
+	      if (prop.myLevel == 0):
                  prop.myStep = nextstop
 		 phys.myTop.time = prop.myStep*prop.myPropagator.getTimestep()
 		 io.run(phys, forces, prop.myStep, prop.myTimestep, prop.myPropagator)
@@ -590,7 +592,8 @@ class PropagatorFactory:
 			     'minimlim', 0.1,
 			     'randforce', 1,
 			     'rediag', 0,
-			     'simplemin', 1))
+			     'simplemin', 1,
+			     'redmaxmin', 0))
       self.registerPMObject("NormalModeMori",
 			    ('firstmode', 1,
 			     'numbermodes', 1,

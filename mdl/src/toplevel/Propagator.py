@@ -338,15 +338,22 @@ class Propagator:
        if ((str(type(forcefield)))[7:len(str(type(forcefield)))-2] == 'list'):
           for ff in forcefield:
              if (ff.dirty): ff.build()
-	     if (ff.gbsa): self.phys.myTop.implicitSolvent = 2
+	     if (ff.gbsa): 
+	        self.phys.myTop.implicitSolvent = 2
+		self.phys.myTop.doGBSAOpenMM = 1
+		self.phys.build()
        else:
           if (forcefield.dirty): 
               forcefield.build()
 	  if (forcefield.gbsa):
 	      self.phys.myTop.implicitSolvent = 2
+              self.phys.myTop.doGBSAOpenMM = 1
+	      self.phys.build()
        if (self.io.dirty):
           self.io.build()
         
+
+       print forcefield.forcearray
        if (propFactory.getType(outerscheme) == "method"):
           # Calculate the forces, store them in force.
           if (not hasattr(self.phys, 'app')):
@@ -374,7 +381,7 @@ class Propagator:
               rattle = True
               rattleMod = self.myPropagator.createRattleModifier(0.02, 30)
               self.myPropagator.adoptPostDriftOrNextModifier(rattleMod)
-          executePropagator(self, self.phys, self.forces, self.io, steps)
+          executePropagator(self, self.phys, self.forces, self.io, steps)  # Runs the propagator for a number of steps
           if (shake):
              self.myPropagator.removeModifier(shakeMod)
           if (rattle):
