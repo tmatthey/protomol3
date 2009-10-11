@@ -3,6 +3,7 @@
 #include <protomol/base/Report.h>
 #include <protomol/force/OneAtomPair.h>
 #include <protomol/force/OneAtomPairTwo.h>
+#include <protomol/force/OneAtomPairNoExclusion.h>
 #include <protomol/topology/PeriodicBoundaryConditions.h>
 #include <protomol/topology/VacuumBoundaryConditions.h>
 #include <protomol/switch/UniversalSwitchingFunction.h>
@@ -14,6 +15,10 @@
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/LennardJonesForce.h>
+#include <protomol/force/GB/GBForce.h>
+#include <protomol/force/GB/GBACEForce.h>
+#include <protomol/force/GB/GBBornBurialTerm.h>
+#include <protomol/force/GB/GBBornRadii.h>
 #include <protomol/force/nonbonded/NonbondedSimpleFullSystemForce.h>
 using namespace ProtoMol;
 %}
@@ -164,5 +169,15 @@ using namespace ProtoMol;
 %template(NSFSF_V_CC2_L_CC1_CDE) ProtoMol::NonbondedSimpleFullSystemForce<
 				   ProtoMol::OneAtomPairTwo<ProtoMol::VacuumBoundaryConditions,ProtoMol::ComplementSwitchingFunction<ProtoMol::C2SwitchingFunction>,ProtoMol::LennardJonesForce,ProtoMol::ComplementSwitchingFunction<ProtoMol::C1SwitchingFunction>,ProtoMol::CoulombForceDiElec> >;
 
+
 %template(NSFSF_V_CCN_L_CC1_CDE) ProtoMol::NonbondedSimpleFullSystemForce<
 				   ProtoMol::OneAtomPairTwo<ProtoMol::VacuumBoundaryConditions,ProtoMol::ComplementSwitchingFunction<ProtoMol::CnSwitchingFunction>,ProtoMol::LennardJonesForce,ProtoMol::ComplementSwitchingFunction<ProtoMol::C1SwitchingFunction>,ProtoMol::CoulombForceDiElec> >;
+
+
+%template(NSFSF_V_U_GB_GBORNBUR) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBBornBurialTerm> >;
+
+%template(NSFSF_V_U_GB_GBORN) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBBornRadii> >;
+
+%template(NSFSF_V_U_GB_GB) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBForce> >;
+
+%template(NSFSF_V_U_GB_GBACE) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBACEForce> >;

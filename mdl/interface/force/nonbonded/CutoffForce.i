@@ -4,6 +4,7 @@
 #include <protomol/config/Value.h>
 #include <protomol/force/OneAtomPair.h>
 #include <protomol/force/OneAtomPairTwo.h>
+#include <protomol/force/OneAtomPairNoExclusion.h>
 #include <protomol/topology/PeriodicBoundaryConditions.h>
 #include <protomol/topology/VacuumBoundaryConditions.h>
 #include <protomol/switch/UniversalSwitchingFunction.h>
@@ -16,6 +17,8 @@
 #include <protomol/force/CoulombForce.h>
 #include <protomol/force/coulomb/CoulombForceDiElec.h>
 #include <protomol/force/coulomb/CoulombSCPISMForce.h>
+#include <protomol/force/GB/GBForce.h>
+#include <protomol/force/GB/GBACEForce.h>
 //#include <protomol/force/coulomb/CoulombBornRadiiForce.h>
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/table/LennardJonesTableForce.h>
@@ -82,6 +85,38 @@ using namespace ProtoMol;
       }
       return self->make(v);
    }
+
+
+   Force* makeNewGB(Real d, Real s,
+		    Real cutoff=-1,
+                    Real switchon=-1,
+                    Real switchoff=-1,
+                    Real order=-1) {
+      std::vector<Value> v;
+      if (switchon == -1) { // Universal
+	 v.push_back(Value(d));
+	 v.push_back(Value(s));
+	 v.push_back(Value(cutoff));
+      }
+      else if (order == -1) { // C2
+	 v.push_back(Value(d));
+	 v.push_back(Value(s));
+         v.push_back(Value(switchon));
+         v.push_back(Value(cutoff));
+         v.push_back(Value(cutoff));
+      }
+      else { // Cn
+	 v.push_back(Value(d));
+	 v.push_back(Value(s));
+	 v.push_back(Value(switchon));
+         v.push_back(Value(switchoff));
+         v.push_back(Value(cutoff));
+         v.push_back(Value(order));
+         v.push_back(Value(cutoff));
+      }
+      return self->make(v);
+   }
+
 
    Force* makeNew(Real cutoff,
                   Real switchon=-1,
@@ -208,6 +243,21 @@ using namespace ProtoMol;
 %template(NCF_CCM_OAPVBC_CNSF_CSCPF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombSCPISMForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombSCPISMForce> > >;
 %template(NCF_CCM_OAPVBC_CCNSF_CSCPF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombSCPISMForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombSCPISMForce> > >;
 %template(NCF_CCM_OAPVBC_CSF_CSCPF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombSCPISMForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombSCPISMForce> > >;
+
+
+
+%template(NCF_CCM_OAPVBC_U_GB) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBForce> > >;
+%template(NCF_CCM_OAPVBC_U_GBACE) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBACEForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBACEForce> > >;
+%template(NCF_CCM_OAPVBC_C2_GB) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::C2SwitchingFunction, ProtoMol::GBForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::C2SwitchingFunction, ProtoMol::GBForce> > >;
+%template(NCF_CCM_OAPVBC_C2_GBACE) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::C2SwitchingFunction, ProtoMol::GBACEForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::C2SwitchingFunction, ProtoMol::GBACEForce> > >;
+%template(NCF_CCM_OAPVBC_CN_GB) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::CnSwitchingFunction, ProtoMol::GBForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::CnSwitchingFunction, ProtoMol::GBForce> > >;
+%template(NCF_CCM_OAPVBC_CN_GBACE) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::CnSwitchingFunction, ProtoMol::GBACEForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::CnSwitchingFunction, ProtoMol::GBACEForce> > >;
+
+
+
+
+
+
 
 //%template(NCF_CCM_OAPVBC_C1SF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C1SwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
 //%template(NCF_CCM_OAPVBC_C2SF_CBF) ProtoMol::NonbondedCutoffForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce>, ProtoMol::SystemForce, ProtoMol::NonbondedCutoffBornForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::C2SwitchingFunction,ProtoMol::CoulombBornRadiiForce> > >;
@@ -383,3 +433,14 @@ void setSwitchonCLVPC2Cutoff(ProtoMol::NonbondedCutoffSystemForce<ProtoMol::Cubi
 %template(NCSF_CCM_OAPVBC_CNSF_CFDE) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CnSwitchingFunction,ProtoMol::CoulombForceDiElec> >;
 %template(NCSF_CCM_OAPVBC_CMPCNNSF_CFDE) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CmpCnCnSwitchingFunction,ProtoMol::CoulombForceDiElec> >;
 %template(NCSF_CCM_OAPVBC_CSF_CFDE) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager,ProtoMol::OneAtomPair<ProtoMol::VacuumBoundaryConditions,ProtoMol::CutoffSwitchingFunction,ProtoMol::CoulombForceDiElec> >;
+
+
+# GBSA
+%template(NCSF_CCM_OAPVBC_U_GB) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBForce> >;
+%template(NCSF_CCM_OAPVBC_U_GBACE) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBACEForce> >;
+%template(NCSF_CCM_OAPVBC_C2_GB) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::C2SwitchingFunction, ProtoMol::GBForce> >;
+%template(NCSF_CCM_OAPVBC_C2_GBACE) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::C2SwitchingFunction, ProtoMol::GBACEForce> >;
+%template(NCSF_CCM_OAPVBC_CN_GB) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::CnSwitchingFunction, ProtoMol::GBForce> >;
+%template(NCSF_CCM_OAPVBC_CN_GBACE) ProtoMol::NonbondedCutoffSystemForce<ProtoMol::CubicCellManager, ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::CnSwitchingFunction, ProtoMol::GBACEForce> >;
+
+

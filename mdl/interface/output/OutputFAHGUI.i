@@ -7,12 +7,14 @@
 #include <protomol/output/OutputFile.h>
 #include <protomol/output/OutputCache.h>
 using namespace ProtoMol;
+using namespace std;
+using std::string;
 %}
 
 
 %include <protomol/type/Real.h>
-
 %include "std_string.i"
+
 %include <protomol/output/Output.h>
 %include <protomol/output/OutputFile.h>
 %include <protomol/output/OutputCache.h>
