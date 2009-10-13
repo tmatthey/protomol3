@@ -13,6 +13,7 @@
 #include <fah/os/SystemUtilities.h>
 
 #include <iostream>
+#include <climits>
 
 using namespace std;
 using namespace ProtoMol;
@@ -47,7 +48,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     // Setup checkpointing
     app.config["Checkpoint"] = "checkpt";
-    app.config["CheckpointFreq"] = -1; // Disable
+    app.config["CheckpointFreq"] = INT_MAX; // Disable
 
     // Configure and build
     app.configure();
@@ -70,7 +71,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     core.initSharedInfo(name, app.lastStep, 1);
 
     int outputFreq = toInt(app.config["outputfreq"]);
-    while (app.step() && !core.shouldQuit()) {
+    while (!core.shouldQuit() && app.step(100)) {
       if (app.currentStep % outputFreq == 0)
         LOG_INFO(1, "Step: " << app.currentStep);
 

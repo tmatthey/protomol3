@@ -301,7 +301,7 @@ void ProtoMolApp::build() {
   TimerStatistic::timer[TimerStatistic::IDLE].reset();
 }
 
-bool ProtoMolApp::step() {
+bool ProtoMolApp::step(int max) {
   if (currentStep >= lastStep) return false;
 
   TimerStatistic::timer[TimerStatistic::RUN].start();
@@ -310,6 +310,8 @@ bool ProtoMolApp::step() {
 
   int inc = outputs->getNext() - currentStep;
   inc = std::min(lastStep, currentStep + inc) - currentStep;
+
+  if (0 < max) inc = std::min(max, inc);
 
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].start();
 
