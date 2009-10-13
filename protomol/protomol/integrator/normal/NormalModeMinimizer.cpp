@@ -87,7 +87,7 @@ namespace ProtoMol {
     itrs = minimizer(minLim, rediagOnMaxMinSteps>0 ? rediagOnMaxMinSteps : 100 , simpleMin, reDiag, true, &forceCalc, &lastLambda, &app->energies, &app->positions, app->topology);
 
     //flag excessive minimizations
-    if(itrs > 10) report << hint << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
+    if(itrs > 10) report << debug(1) << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
     else report << debug(3) << "[NormalModeMinimizer::run] iterations = " << itrs << "." << endr;
 
     avItrs += itrs;
