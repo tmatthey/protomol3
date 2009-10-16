@@ -290,10 +290,6 @@ void ProtoMolApp::build() {
   forceFactory.unregisterAllExemplars();
   outputFactory.unregisterAllExemplars();
 
-  // Setup run paramiters
-  //currentStep = config[InputFirststep::keyword];
-  //lastStep = currentStep + (int)config[InputNumsteps::keyword];
-
   TimerStatistic::timer[TimerStatistic::RUN].reset();
   TimerStatistic::timer[TimerStatistic::INTEGRATOR].reset();
   TimerStatistic::timer[TimerStatistic::FORCES].reset();

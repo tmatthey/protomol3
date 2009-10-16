@@ -1,21 +1,25 @@
-import os, sys
+import os
+import sys
+import imp
 
-execfile('compiler.py')
+# This allows the use of the F@H compiler configuration script as it is.
+compiler = imp.new_module('compiler')
+execfile('compiler.py', compiler.__dict__)
+
 execfile('config.py')
 execfile('configfah.py')
 execfile('boost.py')
 
 # Command Line Options
-opts = Options('options.py')
-Export('opts')
+vars = Variables('options.py')
 
-#Add options
-add_fah_options()
-add_config_options()
-compiler_add_opts()
+# Add options
+add_fah_vars(vars)
+add_config_vars(vars)
+compiler.add_vars(vars)
 
 # Create environment and import external PATH
-env = Environment(options = opts, ENV = os.environ)
+env = Environment(variables = vars, ENV = os.environ)
 Export('env')
 
 # FAH Options
@@ -25,7 +29,7 @@ fah = int(env.get('fah', 0))
 env.Append(CPPPATH = '#')
 
 # Generate Help
-Help(opts.GenerateHelpText(env))
+Help(vars.GenerateHelpText(env))
 
 # Do configuration
 if not env.GetOption('clean'):
@@ -36,7 +40,7 @@ if not env.GetOption('clean'):
     Export('conf')
 
     # Run Configurations
-    compiler_configure()
+    compiler.configure(conf)
     config_configure()
 
     if fah: fah_configure()

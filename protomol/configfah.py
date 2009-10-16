@@ -3,9 +3,9 @@ if not 'PROTOMOL_HOME' in locals():
 
 execfile(PROTOMOL_HOME + '/configfuncs.py')
 
-def add_fah_options():
-    opts.AddOptions(
-        BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0)
+def add_fah_vars(vars):
+    vars.AddVariables(
+        BoolVariable('fah', 'Set to 1 to build library for Folding@Home', 0)
     )
 
 def fah_configure():

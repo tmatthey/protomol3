@@ -1,41 +1,76 @@
+import copy
+import re
 import os
+from SCons.Script import *
+from subprocess import *
+from SCons.Util import MD5signature
 
-def compiler_add_opts():
-    opts.AddOptions(
-        ('optimize', 'Set to 1 to force optimizations', -1),
-        BoolOption('debug', 'Set to 1 to force debug options',
-                   os.getenv('DEBUG_MODE', 0)),
-        BoolOption('strict', 'Set to 0 to disable strict options', 1),
-        BoolOption('threaded', 'Set to 1 to enable thread support', 1),
-        BoolOption('profile', 'Set to 1 to enable profiler', 0),
-        BoolOption('pic', 'Set to 1 to enable position independant code', 0),
-        BoolOption('depends', 'Set to 1 to output dependency files', 0),
-        BoolOption('distcc', 'Set to 1 to enable distributed builds', 0),
-        BoolOption('ccache', 'Set to 1 to enable cached builds', 0),
-        EnumOption('platform', 'Override default platform', '',
+class static_lib_decider_hack:
+    def __init__(self, env):
+        self.env = env
+        self.decider = env.decide_source
+
+    def __call__(self, dep, target, prev_ni):
+        if str(dep).endswith(self.env['LIBSUFFIX']):
+            try:
+                csig = dep.csig
+            except AttributeError:
+                csig = MD5signature(dep.get_contents())
+                dep.csig = csig
+                dep.get_ninfo().csig = csig
+
+            #print dependency, csig, "?=", prev_ni.csig
+            if prev_ni is None: return True
+            return csig != prev_ni.csig
+
+        return self.decider(dep, target, prev_ni)
+
+
+def add_vars(vars):
+    vars.AddVariables(
+        ('optimize', 'Enable or disable optimizations', -1),
+        ('sse2', 'Enable SSE2 instructions', -1),
+        ('sse3', 'Enable SSE3 instructions', 0),
+        BoolVariable('debug', 'Enable or disable debug options',
+                     os.getenv('DEBUG_MODE', 0)),
+        BoolVariable('strict', 'Enable or disable strict options', 1),
+        BoolVariable('threaded', 'Enable or disable thread support', 1),
+        BoolVariable('profile', 'Enable or disable profiler', 0),
+        BoolVariable('depends', 'Enable or disable dependency files', 0),
+        BoolVariable('distcc', 'Enable or disable distributed builds', 0),
+        BoolVariable('ccache', 'Enable or disable cached builds', 0),
+        EnumVariable('platform', 'Override default platform', '',
                    allowed_values = ('', 'win32', 'posix')),
-        EnumOption('cxxstd', 'Set C++ language standard', 'c++98',
-                   allowed_values = ('c++98', 'c++0x')),
-        EnumOption('compiler', 'Select compiler', 'default',
+        EnumVariable('cxxstd', 'Set C++ language standard', 'gnu++98',
+                   allowed_values = ('gnu++98', 'c++98', 'c++0x')),
+        EnumVariable('compiler', 'Select compiler', 'default',
                    allowed_values = ('default', 'gnu', 'intel', 'mingw', 'msvc',
                                      'linux-mingw', 'aix', 'posix', 'hp', 'sgi',
-                                     'sun')))
+                                     'sun')),
+        BoolVariable('static', 'Link to static libraries', 0),
+        BoolVariable('mostly_static', 'Link most libraries statically', 0),
+        ('num_jobs', 'Set the concurrency level.', -1),
+        )
 
-    opts.Add('static', 'Link to static libraries', 0)
 
+def configure(conf, c99_mode = 1):
+    env = conf.env
 
-def compiler_configure(c99_mode = 1):
     if env.GetOption('clean'): return
+
+    # Static lib decider hack
+    env.Decider(static_lib_decider_hack(env))
 
     # Get options
     debug = env.get('debug')
     optimize = env.get('optimize')
     if optimize == -1: optimize = not debug
-
+    sse2 = int(env.get('sse2'))
+    if sse2 == -1: sse2 = optimize
+    sse3 = int(env.get('sse3', 0))
     strict = int(env.get('strict', 1))
     threaded = int(env.get('threaded', 1))
     profile = int(env.get('profile', 0))
-    pic = int( env.get( 'pic', 0 ) )
     depends = int(env.get('depends', 0))
     compiler = env.get('compiler', 0)
     distcc = env.get('distcc', 0)
@@ -43,27 +78,42 @@ def compiler_configure(c99_mode = 1):
     cxxstd = env.get('cxxstd', 'c++0x')
     platform = env.get('platform', '')
     static = int(env.get('static', 0))
+    mostly_static = int(env.get('mostly_static', 0))
     num_jobs = env.get('num_jobs', -1)
 
-    if platform != '':
-        env.Replace(PLATFORM = platform)
+    if platform != '': env.Replace(PLATFORM = platform)
 
     # Select compiler
+    compiler_mode = None
+    
+    # Prefer Intel compiler
+    if os.environ.get('INTEL_LICENSE_FILE', False):
+        compiler = 'intel'
+
     if compiler:
         if compiler == 'gnu':
             Tool('gcc')(env)
             Tool('g++')(env)
+            compiler_mode = "gnu"
 
         elif compiler == 'intel':
             Tool('intelc')(env)
             env['ENV']['INTEL_LICENSE_FILE'] = (
                 os.environ.get("INTEL_LICENSE_FILE", ''))
 
+            if env['PLATFORM'] == 'win32': compiler_mode = 'msvc'
+            else: compiler_mode = 'gnu'
+            env.Replace(AR = 'xilib')
+
+            # Work around double CCFLAGS bug
+            env.Replace(CXXFLAGS = ['/TP'])
+
         elif compiler == 'linux-mingw':
             env.Replace(CC = 'i586-mingw32msvc-gcc')
             env.Replace(CXX = 'i586-mingw32msvc-g++')
             env.Replace(RANLIB = 'i586-mingw32msvc-ranlib')
             env.Replace(PROGSUFFIX = '.exe')
+            compiler_mode = "gnu"
 
         elif compiler == 'posix':
             Tool('cc')(env)
@@ -71,47 +121,63 @@ def compiler_configure(c99_mode = 1):
             Tool('link')(env)
             Tool('ar')(env)
             Tool('as')(env)
+            compiler_mode = "unknown"
 
-        elif compiler in Split('hp sgi sun aix'):
+        elif compiler in ['hp', 'sgi', 'sun', 'aix']:
             Tool(compiler + 'cc')(env)
             Tool(compiler + 'c++')(env)
             Tool(compiler + 'link')(env)
-
-            if compiler in Split('sgi sun'):
+            
+            if compiler in ['sgi', 'sun']:
                 Tool(compiler + 'ar')(env)
+
+            compiler_mode = "unknown"
 
         elif compiler != 'default':
             Tool(compiler)(env)
 
 
+    if compiler_mode is None:
+        if env['CC'] == 'cl' or env['CC'] == 'icl': compiler_mode = 'msvc'
+        elif env['CC'] == 'gcc' or env['CC'] == 'icc': compiler_mode = 'gnu'
+        else: compiler_mode = 'unknown'
+
+    if not compiler:
+        if env['CC'] == 'cl': compiler = 'msvc'
+        elif env['CC'] == 'gcc': compiler == 'gnu'
+        elif env['CC'] == 'icl' or env['CC'] == 'icc': compiler = 'intel'
+
+
     print "Compiler: " + env['CC']
     print "Platform: " + env['PLATFORM']
+    print "Mode: " + compiler_mode
 
 
     # Options
-    if env['CC'] == 'cl':
+    if compiler_mode == 'msvc':
         env.Append(CCFLAGS = ['/EHsc', '/Zp'])
+        env.Append(CCFLAGS = ['/wd4297', '/wd4103'])
+        env.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS'])
 
-    # PIC flags
-    if pic:
-      if env['CC'] == 'gcc':
-        env.Append( CCFLAGS = '-fPIC' )
+        if compiler == 'intel':
+            env.Append(CCFLAGS = ['/wd1786'])
+        
 
     # Profiler flags
     if profile:
-        if env['CC'] == 'gcc':
+        if compiler_mode == 'gnu':
             env.Append(CCFLAGS = ['-pg'])
             env.Append(LINKFLAGS = ['-pg'])
 
 
     # Debug flags
     if debug:
-        if env['CC'] == 'cl':
+        if compiler_mode == 'msvc':
             env.Append(CCFLAGS = ['/W1'])
             env.Append(LINKFLAGS = ['/DEBUG', '/MAP:${TARGET}.map'])
             env['PDB'] = '${TARGET}.pdb'
 
-        elif env['CC'] == 'gcc':
+        elif compiler_mode == 'gnu':
             env.Append(CCFLAGS = ['-ggdb', '-Wall'])
             if strict: env.Append(CCFLAGS = ['-Werror'])
             env.Append(LINKFLAGS = ['-rdynamic']) # for backtrace
@@ -119,43 +185,59 @@ def compiler_configure(c99_mode = 1):
         env.Append(CPPDEFINES = ['DEBUG'])
 
     else:
-        if env['CC'] == 'gcc':
+        if compiler_mode == 'gnu':
             env.Append(LINKFLAGS = ['-Wl,--strip-all'])
+
+        env.Append(CPPDEFINES = ['NDEBUG'])
 
 
     # Optimizations
     if optimize:
-        if env['CC'] in ['icc', 'icpc']:
-            env.Append(CCFLAGS = ['-O', '-finline-functions', '-funroll-loops'])
-        elif env['CC'] == 'gcc':
-            env.Append(CCFLAGS =
-                       ['-O9', '-ffast-math', '-funroll-loops'])
-            #env.Append(CCFLAGS = ['-msse2 -mfpmath=sse']);
-        elif env['CC'] == 'cl':
+        if compiler == 'intel':
+            if compiler_mode == 'gnu':
+                env.Append(CCFLAGS = ['-restrict', #'-ip', '-ipo-separate',
+                                      '-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
+            elif compiler_mode == 'msvc':
+                env.Append(CCFLAGS = ['/Qrestrict', #'/Qip', '/Qipo-separate',
+                                      '/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
+
+        if compiler_mode == 'gnu':
+            env.Append(CCFLAGS = ['-O9', '-ffast-math', '-funroll-loops',
+                                  '-fno-unsafe-math-optimizations'])
+        elif compiler_mode == 'msvc':
             env.Append(CCFLAGS = ['/Ox', '/GL'])
             env.Append(LINKFLAGS = ['/LTCG'])
             env.Append(ARFLAGS = ['/LTCG'])
 
+    if sse2:
+        if compiler_mode == 'gnu':
+            env.Append(CCFLAGS = ['-msse2', '-mfpmath=sse']);
+        elif compiler_mode == 'msvc':
+            env.Append(CCFLAGS = ['/arch:SSE2']);
+    elif sse3:
+        if compiler_mode == 'gnu':
+            env.Append(CCFLAGS = ['-msse3', '-mfpmath=sse']);
+        elif compiler_mode == 'msvc':
+            env.Append(CCFLAGS = ['/arch:SSE3']);
+
 
     # Dependency files
-    if depends and env['CC'] == 'gcc':
+    if depends and compiler_mode == 'gnu':
         env.Append(CCFLAGS = ['-MMD -MF ${TARGET}.d'])
 
 
     # C mode
     if c99_mode:
-        if env['CC'] == 'gcc':
+        if compiler_mode == 'gnu':
             env.Append(CFLAGS = ['-std=c99'])
             env.Append(CXXFLAGS = ['-std=' + cxxstd])
-        elif env['CC'] == 'cl':
+        elif compiler_mode == 'msvc':
             env.Append(CFLAGS = ['/TP']) # C++ mode
 
 
     # Threads
-    # If you don't like this code put threaded=0 in your options.py file.
-    # but don't comment this out.
     if threaded:
-        if env['CC'] == 'gcc':
+        if compiler_mode == 'gnu':
             if not conf.CheckLib('pthread'):
                 print 'Need pthreads'
                 Exit(1)
@@ -163,16 +245,18 @@ def compiler_configure(c99_mode = 1):
             env.Append(LINKFLAGS = ['-pthread'])
             env.Append(CPPDEFINES = ['_REENTRANT'])
 
-        elif env['CC'] == 'cl':
-            if debug:
-                env.Append(CCFLAGS = ['/MTd'])
-            else:
-                env.Append(CCFLAGS = ['/MT'])
+        elif compiler_mode == 'msvc':
+            if debug: env.Append(CCFLAGS = ['/MTd'])
+            else: env.Append(CCFLAGS = ['/MT'])
 
+
+    # Link flags
+    if compiler_mode == 'msvc' and not optimize:
+        env.Append(LINKFLAGS = ['/INCREMENTAL'])
 
     # static
     if static:
-        if env['CC'] == 'gcc':
+        if compiler_mode == 'gnu':
             env.Append(LINKFLAGS = ['-static'])
 
 
@@ -189,3 +273,58 @@ def compiler_configure(c99_mode = 1):
     if ccache:
         env.Replace(CC = 'ccache ' + env['CC'])
         env.Replace(CXX = 'ccache ' + env['CXX'])
+
+    # Num jobs
+    if num_jobs == -1:
+        if os.environ.has_key('SCONS_JOBS'):
+            num_jobs = int(os.environ.get('SCONS_JOBS', num_jobs))
+        else: num_jobs = default_num_jobs
+
+    SetOption('num_jobs', num_jobs)
+    print "running with -j", GetOption('num_jobs')
+
+
+    # For darwin
+    if env['PLATFORM'] == 'darwin':
+        env.Append(CPPDEFINES = ['__APPLE__'])
+        env['PLATFORM'] = 'posix'
+
+
+def findLibPath(env, lib):
+    eenv = copy.copy(os.environ)
+    eenv['LIBRARY_PATH'] = ':'.join(env['LIBPATH'])
+    cmd = env['CXX'].split()
+    libpat = env['LIBPREFIX'] + '%s' + env['LIBSUFFIX']
+
+    path = Popen(cmd + ['-print-file-name=' + libpat % lib],
+                 stdout = PIPE, env = eenv).communicate()[0].strip()
+
+    if path == libpat % lib: return None
+    return path
+
+
+def mostly_static_libs(env, ignore = ['pthread', 'dl']):
+    eenv = copy.copy(os.environ)
+    eenv['LIBRARY_PATH'] = ':'.join(env['LIBPATH'])
+    cmd = env['CXX'].split()
+    libpat = env['LIBPREFIX'] + '%s' + env['LIBSUFFIX']
+
+    libs = []
+
+    for lib in env['LIBS']:
+        skip = False
+        for i in ignore:
+            if re.match(i, lib):
+                skip = True
+                break
+
+        if not (skip or lib.startswith(os.sep) or
+                lib.endswith(env['LIBSUFFIX'])):
+            path = Popen(cmd + ['-print-file-name=' + libpat % lib],
+                         stdout = PIPE, env = eenv).communicate()[0].strip()
+            if path == libpat % lib: libs.append(lib)
+            else: libs.append(File(path))
+
+        else: libs.append(lib)
+
+    env.Replace(LIBS = libs)

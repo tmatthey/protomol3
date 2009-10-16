@@ -3,13 +3,13 @@ if not 'PROTOMOL_HOME' in locals():
 
 execfile(PROTOMOL_HOME + '/configfuncs.py')
 
-def add_config_options():
-    opts.AddOptions(
-        BoolOption('qrdiag', 'Set to 1 if QR diagonalization', 0),
-        BoolOption('gui', 'Set to 1 if using the GUI', 0),
-        BoolOption('lapack', 'Use LAPACK', 0),
-        BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
-        EnumOption('openmm', 'Build with OpenMM', 'none',
+def add_config_vars(vars):
+    vars.AddVariables(
+        BoolVariable('qrdiag', 'Set to 1 if QR diagonalization', 0),
+        BoolVariable('gui', 'Set to 1 if using the GUI', 0),
+        BoolVariable('lapack', 'Use LAPACK', 0),
+        BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0),
+        EnumVariable('openmm', 'Build with OpenMM', 'none',
                    allowed_values = ('none', 'reference', 'cuda'))
     )
 
