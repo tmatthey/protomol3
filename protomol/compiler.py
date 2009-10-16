@@ -155,7 +155,7 @@ def configure(conf, c99_mode = 1):
 
     # Options
     if compiler_mode == 'msvc':
-        env.Append(CCFLAGS = ['/EHsc', '/Zp'])
+        env.Append(CCFLAGS = ['/EHsc'])
         env.Append(CCFLAGS = ['/wd4297', '/wd4103'])
         env.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS'])
 
@@ -173,7 +173,7 @@ def configure(conf, c99_mode = 1):
     # Debug flags
     if debug:
         if compiler_mode == 'msvc':
-            env.Append(CCFLAGS = ['/W1'])
+            env.Append(CCFLAGS = ['/W1', '/Zi'])
             env.Append(LINKFLAGS = ['/DEBUG', '/MAP:${TARGET}.map'])
             env['PDB'] = '${TARGET}.pdb'
 
@@ -195,19 +195,22 @@ def configure(conf, c99_mode = 1):
     if optimize:
         if compiler == 'intel':
             if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-restrict', #'-ip', '-ipo-separate',
+                env.Append(CCFLAGS = ['-restrict', '-ipo-separate', # '-ip',
                                       '-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
             elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/Qrestrict', #'/Qip', '/Qipo-separate',
+                env.Append(CCFLAGS = ['/Qrestrict', '/Qipo-separate', # '/Qip',
                                       '/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
 
         if compiler_mode == 'gnu':
             env.Append(CCFLAGS = ['-O9', '-ffast-math', '-funroll-loops',
                                   '-fno-unsafe-math-optimizations'])
         elif compiler_mode == 'msvc':
-            env.Append(CCFLAGS = ['/Ox', '/GL'])
-            env.Append(LINKFLAGS = ['/LTCG'])
-            env.Append(ARFLAGS = ['/LTCG'])
+            env.Append(CCFLAGS = ['/Ox'])
+            if compiler != 'intel':
+                # Whole program optimizations
+                env.Append(CCFLAGS = ['/GL'])
+                env.Append(LINKFLAGS = ['/LTCG'])
+                env.Append(ARFLAGS = ['/LTCG'])
 
     if sse2:
         if compiler_mode == 'gnu':
