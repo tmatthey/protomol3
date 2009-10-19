@@ -1,7 +1,7 @@
 import copy
 import re
 import os
-import platform
+from platform import machine
 from SCons.Script import *
 from subprocess import *
 from SCons.Util import MD5signature
@@ -197,7 +197,7 @@ def configure(conf, c99_mode = 1):
     # Optimizations
     if optimize:
         # Machine
-        if platform.machine() != 'x86_64':
+        if machine() != 'x86_64':
             if compiler == 'intel':
                 if compiler_mode == 'gnu':
                     env.Append(CCFLAGS = ['-mia32'])
