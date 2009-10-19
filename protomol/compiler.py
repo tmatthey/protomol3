@@ -87,7 +87,7 @@ def configure(conf, c99_mode = 1):
 
     # Select compiler
     compiler_mode = None
-    
+
     # Prefer Intel compiler
     if os.environ.get('INTEL_LICENSE_FILE', False):
         compiler = 'intel'
@@ -129,7 +129,7 @@ def configure(conf, c99_mode = 1):
             Tool(compiler + 'cc')(env)
             Tool(compiler + 'c++')(env)
             Tool(compiler + 'link')(env)
-            
+
             if compiler in ['sgi', 'sun']:
                 Tool(compiler + 'ar')(env)
 
@@ -164,7 +164,7 @@ def configure(conf, c99_mode = 1):
 
         if compiler == 'intel':
             env.Append(CCFLAGS = ['/wd1786'])
-        
+
 
     # Profiler flags
     if profile:
@@ -201,20 +201,20 @@ def configure(conf, c99_mode = 1):
             if compiler == 'intel':
                 if compiler_mode == 'gnu':
                     env.Append(CCFLAGS = ['-mia32'])
-                elif compiler_mode == 'msvc': 
+                elif compiler_mode == 'msvc':
                     env.Append(CCFLAGS = ['/arch:IA32'])
             elif compiler == 'gnu':
                 env.Append(CCFLAGS = ['-march=pentium3'])
             elif compiler == 'msvc':
                 env.Append(CCFLAGS = ['/arch:SSE'])
-        
+
         # Instruction paths
         if compiler == 'intel':
             if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-restrict', '-ip',
+                env.Append(CCFLAGS = ['-restrict', # '-ip',
                                       '-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
             elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/Qrestrict', '/Qip',
+                env.Append(CCFLAGS = ['/Qrestrict', # '/Qip',
                                       '/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
 
         if compiler_mode == 'gnu':
@@ -226,14 +226,16 @@ def configure(conf, c99_mode = 1):
             env.Append(CCFLAGS = ['/Ox'])
             if compiler == 'intel' and not globalopt:
                 env.Append(LINKFLAGS = ['-qnoipo'])
-                
+
     # Whole program optimizations
     if globalopt:
         if compiler == 'intel':
             if compiler_mode == 'gnu':
                 env.Append(LINKFLAGS = ['-ipo'])
+                env.Append(CCFLAGS = ['-ipo'])
             elif compiler_mode == 'msvc':
                 env.Append(LINKFLAGS = ['/Qipo'])
+                env.Append(CCFLAGS = ['/Qipo'])
 
         elif compiler == 'msvc':
             env.Append(CCFLAGS = ['/GL'])
