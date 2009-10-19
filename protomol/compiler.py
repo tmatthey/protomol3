@@ -29,6 +29,7 @@ class static_lib_decider_hack:
 def add_vars(vars):
     vars.AddVariables(
         ('optimize', 'Enable or disable optimizations', -1),
+        ('globalopt', 'Enable or disable global optimizations', 0),
         ('sse2', 'Enable SSE2 instructions', 0),
         ('sse3', 'Enable SSE3 instructions', 0),
         BoolVariable('debug', 'Enable or disable debug options',
@@ -65,6 +66,7 @@ def configure(conf, c99_mode = 1):
     debug = env.get('debug')
     optimize = env.get('optimize')
     if optimize == -1: optimize = not debug
+    globalopt = env.get('globalopt')
     sse2 = int(env.get('sse2', 0))
     sse3 = int(env.get('sse3', 0))
     strict = int(env.get('strict', 1))
@@ -141,10 +143,11 @@ def configure(conf, c99_mode = 1):
         elif env['CC'] == 'gcc' or env['CC'] == 'icc': compiler_mode = 'gnu'
         else: compiler_mode = 'unknown'
 
-    if not compiler:
-        if env['CC'] == 'cl': compiler = 'msvc'
-        elif env['CC'] == 'gcc': compiler == 'gnu'
-        elif env['CC'] == 'icl' or env['CC'] == 'icc': compiler = 'intel'
+    if compiler == 'default':
+        cc = env['CC']
+        if cc == 'cl': compiler = 'msvc'
+        elif cc == 'gcc': compiler = 'gnu'
+        elif cc == 'icl' or cc == 'icc': compiler = 'intel'
 
 
     print "Compiler: " + env['CC']
@@ -192,6 +195,18 @@ def configure(conf, c99_mode = 1):
 
     # Optimizations
     if optimize:
+        # Machine
+        if compiler == 'intel':
+            if compiler_mode == 'gnu':
+                env.Append(CCFLAGS = ['-mia32'])
+            elif compiler_mode == 'msvc': 
+                env.Append(CCFLAGS = ['/arch:IA32'])
+        elif compiler == 'gnu':
+            env.Append(CCFLAGS = ['-march=i686'])
+        elif compiler == 'msvc':
+            env.Append(CCFLAGS = ['/arch:SSE'])
+        
+        # Instruction paths
         if compiler == 'intel':
             if compiler_mode == 'gnu':
                 env.Append(CCFLAGS = ['-restrict', #'-ipo-separate', # '-ip',
@@ -205,14 +220,25 @@ def configure(conf, c99_mode = 1):
                                   '-fno-unsafe-math-optimizations'])
         elif compiler_mode == 'msvc':
             env.Append(CCFLAGS = ['/Ox'])
-            if compiler == 'intel':
+            if compiler == 'intel' and not globalopt:
                 env.Append(LINKFLAGS = ['-qnoipo'])                
-            else:
-                # Whole program optimizations
-                env.Append(CCFLAGS = ['/GL'])
-                env.Append(LINKFLAGS = ['/LTCG'])
-                env.Append(ARFLAGS = ['/LTCG'])
+                
+    # Whole program optimizations
+    if globalopt:
+        if compiler == 'intel':
+            if compiler_mode == 'gnu':
+                env.Append(LINKFLAGS = ['-ipo'])
+            elif compiler_mode == 'msvc':
+                env.Append(LINKFLAGS = ['/Qipo'])
 
+        elif compiler == 'msvc':
+            env.Append(CCFLAGS = ['/GL'])
+            env.Append(LINKFLAGS = ['/LTCG'])
+            env.Append(ARFLAGS = ['/LTCG'])
+
+
+
+    # SSE optimizations
     if sse2:
         if compiler_mode == 'gnu':
             env.Append(CCFLAGS = ['-msse2', '-mfpmath=sse']);
