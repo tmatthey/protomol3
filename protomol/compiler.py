@@ -204,26 +204,28 @@ def configure(conf, c99_mode = 1):
                 elif compiler_mode == 'msvc': 
                     env.Append(CCFLAGS = ['/arch:IA32'])
             elif compiler == 'gnu':
-                env.Append(CCFLAGS = ['-march=i686'])
+                env.Append(CCFLAGS = ['-march=pentium3'])
             elif compiler == 'msvc':
                 env.Append(CCFLAGS = ['/arch:SSE'])
         
         # Instruction paths
         if compiler == 'intel':
             if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-restrict', #'-ipo-separate', # '-ip',
+                env.Append(CCFLAGS = ['-restrict', '-ip',
                                       '-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
             elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/Qrestrict', #'/Qipo-separate', # '/Qip',
+                env.Append(CCFLAGS = ['/Qrestrict', '/Qip',
                                       '/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
 
         if compiler_mode == 'gnu':
-            env.Append(CCFLAGS = ['-O9', '-ffast-math', '-funroll-loops',
-                                  '-fno-unsafe-math-optimizations'])
+            env.Append(CCFLAGS = ['-O3', '-funroll-loops'])
+            if compiler != 'intel':
+                env.Append(CCFLAGS = ['-mfpmath=sse', '-ffast-math',
+                                      '-fno-unsafe-math-optimizations'])
         elif compiler_mode == 'msvc':
             env.Append(CCFLAGS = ['/Ox'])
             if compiler == 'intel' and not globalopt:
-                env.Append(LINKFLAGS = ['-qnoipo'])                
+                env.Append(LINKFLAGS = ['-qnoipo'])
                 
     # Whole program optimizations
     if globalopt:
