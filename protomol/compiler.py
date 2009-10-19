@@ -1,6 +1,7 @@
 import copy
 import re
 import os
+import platform
 from SCons.Script import *
 from subprocess import *
 from SCons.Util import MD5signature
@@ -196,15 +197,16 @@ def configure(conf, c99_mode = 1):
     # Optimizations
     if optimize:
         # Machine
-        if compiler == 'intel':
-            if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-mia32'])
-            elif compiler_mode == 'msvc': 
-                env.Append(CCFLAGS = ['/arch:IA32'])
-        elif compiler == 'gnu':
-            env.Append(CCFLAGS = ['-march=i686'])
-        elif compiler == 'msvc':
-            env.Append(CCFLAGS = ['/arch:SSE'])
+        if platform.machine() != 'x86_64':
+            if compiler == 'intel':
+                if compiler_mode == 'gnu':
+                    env.Append(CCFLAGS = ['-mia32'])
+                elif compiler_mode == 'msvc': 
+                    env.Append(CCFLAGS = ['/arch:IA32'])
+            elif compiler == 'gnu':
+                env.Append(CCFLAGS = ['-march=i686'])
+            elif compiler == 'msvc':
+                env.Append(CCFLAGS = ['/arch:SSE'])
         
         # Instruction paths
         if compiler == 'intel':
