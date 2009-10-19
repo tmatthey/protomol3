@@ -553,7 +553,7 @@ namespace ProtoMol {
     unsigned int len = title.length() + 2;
     if (len >= maxColumn - 1) return title;
 
-    string result(maxColumn + 1, ' ');
+    string result(maxColumn, ' ');
     unsigned int i = 0;
 
     for (; i < (maxColumn - len) / 2; i++)
@@ -568,8 +568,6 @@ namespace ProtoMol {
 
     for (; i < maxColumn; i++)
       result[i] = i % 2 ? '+' : '=';
-
-    result[i] = 0;
 
     return result;
   }

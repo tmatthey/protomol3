@@ -305,6 +305,7 @@ bool ProtoMolApp::step(int max) {
   outputs->run(currentStep);
 
   int inc = outputs->getNext() - currentStep;
+  if (inc < 0) inc = 1;
   inc = std::min(lastStep, currentStep + inc) - currentStep;
 
   if (0 < max) inc = std::min(max, inc);
@@ -324,7 +325,7 @@ bool ProtoMolApp::step(int max) {
 }
 
 void ProtoMolApp::finalize() {
-  outputs->finalize(lastStep);
+  outputs->finalize(currentStep);
 
   // Clean up
   zap(topology);

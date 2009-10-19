@@ -8,7 +8,6 @@
 #include <fah/core/Core.h>
 #include <fah/core/chksum/ChecksumManager.h>
 #include <fah/Exception.h>
-#include <fah/String.h>
 #include <fah/util/Logger.h>
 #include <fah/os/SystemUtilities.h>
 
@@ -36,15 +35,16 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     app.splash(*LOG_RAW_STREAM());
 
+    // FAH Core setup
+    core.initUnit("ProtoMol", 180, app.lastStep, 1);
+
     // Load configuration options
     if (!app.load(argc, argv)) return 1;
 
     // Modify configuration
     // Add outputs FAHFile and FAHGUI
-    string name = "ProtoMol Project";
-    name += core.unit->project_id;
     app.config["FAHFile"] = "../current.xyz";
-    app.config["FAHGUI"] = name;
+    app.config["FAHGUI"] = core.projectName;
 
     // Setup checkpointing
     app.config["Checkpoint"] = "checkpt";
@@ -66,17 +66,13 @@ extern "C" int core_main(int argc, char *argv[]) {
     // Print configuration
     app.print(*LOG_RAW_STREAM());
 
-    // FAH Core setup
-    // Initialize shared file
-    core.initSharedInfo(name, app.lastStep, 1);
-
     int outputFreq = toInt(app.config["outputfreq"]);
     while (!core.shouldQuit() && app.step(100)) {
       if (app.currentStep % outputFreq == 0)
         LOG_INFO(1, "Step: " << app.currentStep);
 
-      // Update shared info file.
-      core.updateSharedInfo(app.currentStep);
+      // Update shared info file etc.
+      core.step(app.currentStep);
 
       if (core.doCheckpoint()) {
         oCheckpt->doIt(app.currentStep);
@@ -90,10 +86,6 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     // Return results
     core.addResultFiles("*");
-
-    // Setup header
-    core.unit->core_type = 180;
-    core.unit->compression_type = 1;
 
     return 0;
 

@@ -29,7 +29,7 @@ class static_lib_decider_hack:
 def add_vars(vars):
     vars.AddVariables(
         ('optimize', 'Enable or disable optimizations', -1),
-        ('sse2', 'Enable SSE2 instructions', -1),
+        ('sse2', 'Enable SSE2 instructions', 0),
         ('sse3', 'Enable SSE3 instructions', 0),
         BoolVariable('debug', 'Enable or disable debug options',
                      os.getenv('DEBUG_MODE', 0)),
@@ -65,8 +65,7 @@ def configure(conf, c99_mode = 1):
     debug = env.get('debug')
     optimize = env.get('optimize')
     if optimize == -1: optimize = not debug
-    sse2 = int(env.get('sse2'))
-    if sse2 == -1: sse2 = optimize
+    sse2 = int(env.get('sse2', 0))
     sse3 = int(env.get('sse3', 0))
     strict = int(env.get('strict', 1))
     threaded = int(env.get('threaded', 1))
@@ -195,10 +194,10 @@ def configure(conf, c99_mode = 1):
     if optimize:
         if compiler == 'intel':
             if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-restrict', '-ipo-separate', # '-ip',
+                env.Append(CCFLAGS = ['-restrict', #'-ipo-separate', # '-ip',
                                       '-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
             elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/Qrestrict', '/Qipo-separate', # '/Qip',
+                env.Append(CCFLAGS = ['/Qrestrict', #'/Qipo-separate', # '/Qip',
                                       '/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
 
         if compiler_mode == 'gnu':
@@ -206,7 +205,9 @@ def configure(conf, c99_mode = 1):
                                   '-fno-unsafe-math-optimizations'])
         elif compiler_mode == 'msvc':
             env.Append(CCFLAGS = ['/Ox'])
-            if compiler != 'intel':
+            if compiler == 'intel':
+                env.Append(LINKFLAGS = ['-qnoipo'])                
+            else:
                 # Whole program optimizations
                 env.Append(CCFLAGS = ['/GL'])
                 env.Append(LINKFLAGS = ['/LTCG'])
