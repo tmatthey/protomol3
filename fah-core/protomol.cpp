@@ -26,7 +26,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     ProtoMol::Debugger::initStackTrace(argv[0]);
 #endif
 
-    FAH::Core &core = *FAH::Core::getInstance();
+    Core &core = Core::getInstance();
 
     ModuleManager modManager;
     moduleInitFunction(&modManager);
@@ -64,7 +64,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     int outputFreq = toInt(app.config["outputfreq"]);
     int firstStep = toInt(app.config["realfirststep"]);
     int numSteps = app.lastStep - firstStep;
-    core.setInfo("ProtoMol", 180, numSteps, outputFreq);
+    core.setInfo(numSteps, outputFreq);
 
     // Print configuration
     app.print(*LOG_INFO_STREAM(2));
@@ -99,12 +99,13 @@ int main(int argc, char *argv[]) {
   int ret;
 
   try {
-    Core &core = *FAH::Core::getInstance();
+    Core core("ProtoMol", 180);
 
     ret = core.init(argc, argv);
     if (ret) return ret;
 
     // Validate checkpoint file
+    // TODO move this to core.validateCheckpointFile("checkpt");
     if (SystemUtilities::exists("checkpt") &&
         !ChecksumManager::instance().has("checkpt")) {
       // Checksum not valid
@@ -112,12 +113,12 @@ int main(int argc, char *argv[]) {
       return BAD_FRAME_CHECKSUM;
     }
 
-    // Add config file
+    // Add config file to args
     vector<char *> args;
-    vector<char *>::iterator it = core.args.begin();
+    vector<char *>::const_iterator it = core.getArgs().begin();
     args.push_back(*it++); // Executable name
     args.push_back((char *)"protomol.conf");
-    args.insert(args.end(), it, core.args.end());
+    args.insert(args.end(), it, core.getArgs().end());
     args.push_back(0); // Sentinel
 
     if (core_main(args.size() - 1, &args[0])) return UNKNOWN_ERROR;
@@ -125,9 +126,6 @@ int main(int argc, char *argv[]) {
     ret = core.finalize();
 
   } catch (const FAH::Exception &e) {
-    if (e.getCode() == BAD_ARGUMENTS)
-      Core::getInstance()->usage(cerr, argv[0]);
-
     LOG_ERROR("Core: " << e);
 
     if (e.getCode()) return e.getCode();
