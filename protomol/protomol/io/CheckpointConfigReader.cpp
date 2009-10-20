@@ -71,6 +71,7 @@ bool CheckpointConfigReader::readBase( Configuration& conf, Random &rand ) {
   }
 
   /* Update firststep */
+  conf["realfirststep"] = conf["firststep"];
   conf["firststep"] = toString (toInt( conf["firststep"] ) + step);
 
   /* Update total steps */

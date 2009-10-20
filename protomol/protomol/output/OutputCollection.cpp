@@ -33,12 +33,6 @@ void OutputCollection::run(int step) {
     (*i)->run(step);
 }
 
-void OutputCollection::updateNextStep(int step) {
-  app->outputCache.uncache();
-  for (iterator i = begin(); i != end(); ++i)
-    (*i)->updateNextStep(step);
-}
-
 void OutputCollection::finalize(int step) {
   app->outputCache.uncache();
   for (iterator i = begin(); i != end(); ++i)

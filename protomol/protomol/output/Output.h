@@ -26,12 +26,8 @@ namespace ProtoMol {
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    Output();
-    Output(int freq);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // New methods of class Output
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  public:
+    Output(int freq = 0);
+
     void initialize(const ProtoMolApp *app);
 
     ///< To initialize the object, before the simulation starts.
@@ -62,12 +58,10 @@ namespace ProtoMol {
     ///< Defines if the output object supports do<getId()> to enable or disable
     ///< the output.
 
-    int getFirstStep() const {return myFirstStep;}
-    int getLastStep() const {return myLastStep;}
-    int getOutputFreq() const {return myOutputFreq;}
-    int getNext() const {return myNextStep;}
-    bool first() const {return myFirst;}
-    void updateNextStep(int step);
+    int getFirstStep() const {return firstStep;}
+    int getLastStep() const {return lastStep;}
+    int getOutputFreq() const {return outputFreq;}
+    int getNext() const {return nextStep;}
 
   private:
     virtual void doInitialize() = 0;
@@ -85,20 +79,17 @@ namespace ProtoMol {
     virtual std::string getScope() const {return scope;}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // My data members
+    // Data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     static const std::string scope;
     const ProtoMolApp *app;
 
   private:
-    int myFirstStep;
-    int myNextStep;
-    int myLastStep;
-    bool myFirst;
-
-  protected:
-    int myOutputFreq;       ///< Output freqeuncy
+    int firstStep;
+    int nextStep;
+    int lastStep;
+    int outputFreq;       ///< Output freqeuncy
   };
 }
 #endif

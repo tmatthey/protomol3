@@ -56,7 +56,7 @@ void OutputDCDTrajectory::getParameters(vector<Parameter> &parameter) const {
                               ConstraintValueType::NotEmpty())));
   parameter.push_back
     (Parameter(keyword + "OutputFreq",
-               Value(myOutputFreq, ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive())));
   parameter.push_back
     (Parameter(keyword + "MinimalImage", Value(myMinimalImage),
                Text("whether the coordinates should be transformed to minimal "

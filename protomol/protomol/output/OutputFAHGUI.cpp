@@ -136,7 +136,7 @@ void OutputFAHGUI::getParameters(vector<Parameter> &parameter) const {
     (Parameter(getId(), Value(name, ConstraintValueType::NotEmpty())));
   parameter.push_back
     (Parameter(keyword + "OutputFreq",
-               Value(myOutputFreq, ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive())));
   parameter.push_back  
     (Parameter(keyword + "Port",
                Value(myPort, ConstraintValueType::Positive())));

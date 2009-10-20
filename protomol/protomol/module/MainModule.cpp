@@ -15,6 +15,7 @@ using namespace ProtoMol::Report;
 defineInputValue(InputSeed, "seed");
 defineInputValue(InputRandomType, "randomtype");
 defineInputValue(InputFirststep, "firststep");
+defineInputValue(InputRealfirststep, "realfirststep");
 defineInputValue(InputNumsteps, "numsteps");
 defineInputValueAndText(InputDebug, "debug", "report level, suppresses all "
                         "output with higher output level");
@@ -40,6 +41,7 @@ void MainModule::init(ProtoMolApp *app) {
   InputSeed::registerConfiguration(config, getTimerSeed());
   InputRandomType::registerConfiguration(config, 0);
   InputFirststep::registerConfiguration(config, 0);
+  InputRealfirststep::registerConfiguration(config, 0);
   InputNumsteps::registerConfiguration(config);
   InputDebug::registerConfiguration(config, 1);
   InputIntegrator::registerConfiguration(config);

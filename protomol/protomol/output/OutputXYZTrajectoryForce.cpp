@@ -54,7 +54,7 @@ const {
                               ConstraintValueType::NotEmpty())));
   parameter.push_back
     (Parameter(keyword + "OutputFreq",
-               Value(myOutputFreq, ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive())));
 }
 
 bool OutputXYZTrajectoryForce::adjustWithDefaultParameters(

@@ -11,53 +11,37 @@ using namespace ProtoMol;
 //____ Output
 const string Output::scope("Output");
 
-Output::Output() :
-  app(0), myFirstStep(0), myNextStep(0), myLastStep(0), myFirst(true),
-  myOutputFreq(0)
-{}
-
 Output::Output(int freq) :
-  app(0), myFirstStep(0), myNextStep(0), myLastStep(0), myFirst(true),
-  myOutputFreq(freq)
-{}
+  app(0), firstStep(0), nextStep(0), lastStep(0), outputFreq(freq) {}
 
 void Output::initialize(const ProtoMolApp *app) {
-  myFirst = true;
   this->app = app;
 
-  if(myOutputFreq <= 0) {  //used for finalize only outputs
-    if( app->config.valid( InputOutputfreq::keyword ) ) 
-      myOutputFreq = app->config[InputOutputfreq::keyword];
-    else 
-      myOutputFreq = 1;
+  if (outputFreq <= 0) { // used for finalize only outputs
+    if (app->config.valid(InputOutputfreq::keyword)) 
+      outputFreq = app->config[InputOutputfreq::keyword];
+    else outputFreq = 1;
   }
 
   if (app->config.valid(InputFirststep::keyword)) {
-    myNextStep = app->config[InputFirststep::keyword];
-    myFirstStep = app->config[InputFirststep::keyword];
-    myLastStep = myFirstStep;
+    nextStep = app->config[InputFirststep::keyword];
+    firstStep = app->config[InputFirststep::keyword];
+    lastStep = firstStep;
   }
 
   if (app->config.valid(InputNumsteps::keyword))
-    myLastStep =
-      myLastStep + app->config[InputNumsteps::keyword].operator int();
+    lastStep = lastStep + app->config[InputNumsteps::keyword].operator int();
 
   doInitialize();
 }
 
-void Output::updateNextStep(int step) {
-  int n = (step - myNextStep) / myOutputFreq;
-  myNextStep += max(n, 1) * myOutputFreq;
-}
-
 void Output::run(int step) {
-  if (step >= myNextStep) {
-    int n = (step - myNextStep) / myOutputFreq;
-    myNextStep += max(n, 1) * myOutputFreq;
-    if (app->energies.output())
-      doRun(step);
+  if (step >= nextStep) {
+    int n = (step - nextStep) / outputFreq;
+    nextStep += max(n, 1) * outputFreq;
+
+    if (app->energies.output()) doRun(step);
   }
-  myFirst = false;
 }
 
 void Output::finalize(int step) {

@@ -76,7 +76,7 @@ void OutputCheckpoint::doRun(int step) {
   const int finalStep = firstStep + toInt(app->config["numsteps"]);
   
   if (step != firstStep && step != finalStep) {
-    if (myOutputFreq > 0 && (step % myOutputFreq) == 0)
+    if (getOutputFreq() > 0 && (step % getOutputFreq()) == 0)
       doIt(step);
   }
 }
@@ -98,7 +98,7 @@ void OutputCheckpoint::getParameters(vector<Parameter> &parameter) const {
 
   parameter.push_back
     (Parameter(keyword + "Freq",
-               Value(myOutputFreq, ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive())));
 
   parameter.push_back
     (Parameter(keyword + "Start",

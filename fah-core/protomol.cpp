@@ -35,16 +35,13 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     app.splash(*LOG_RAW_STREAM());
 
-    // FAH Core setup
-    core.initUnit("ProtoMol", 180, app.lastStep, 1);
-
     // Load configuration options
     if (!app.load(argc, argv)) return 1;
 
     // Modify configuration
     // Add outputs FAHFile and FAHGUI
     app.config["FAHFile"] = "../current.xyz";
-    app.config["FAHGUI"] = core.projectName;
+    app.config["FAHGUI"] = "ProtoMol";
 
     // Setup checkpointing
     app.config["Checkpoint"] = "checkpt";
@@ -63,16 +60,18 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
-    // Print configuration
-    app.print(*LOG_RAW_STREAM());
-
+    // Set F@H info
     int outputFreq = toInt(app.config["outputfreq"]);
-    while (!core.shouldQuit() && app.step(100)) {
-      if (app.currentStep % outputFreq == 0)
-        LOG_INFO(1, "Step: " << app.currentStep);
+    int firstStep = toInt(app.config["realfirststep"]);
+    int numSteps = app.lastStep - firstStep;
+    core.setInfo("ProtoMol", 180, numSteps, outputFreq);
 
+    // Print configuration
+    app.print(*LOG_INFO_STREAM(2));
+
+    while (!core.shouldQuit() && app.step(100)) {
       // Update shared info file etc.
-      core.step(app.currentStep);
+      core.step(app.currentStep - firstStep);
 
       if (core.doCheckpoint()) {
         oCheckpt->doIt(app.currentStep);

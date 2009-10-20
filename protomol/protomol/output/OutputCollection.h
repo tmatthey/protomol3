@@ -31,19 +31,18 @@ namespace ProtoMol {
     // New methods of class OutputCollection
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
+    /// Initialize all Output objects
     void initialize(const ProtoMolApp *app);
 
-    ///< Initialize all Output objects
+    /// Invoke all Output objects with run()
     void run(int step);
 
-    ///< Invoke all Output objects with run()
-    void updateNextStep(int step);
+    /// Finalize all Outout objects
     void finalize(int step);
 
-    ///< Finalize all Outout objects
+    /// Add new Output object to the collection
     int getNext() const;
 
-    ///< Add new Output object to the collection
     void adoptOutput(Output *output);
 
     /// Iterators, const

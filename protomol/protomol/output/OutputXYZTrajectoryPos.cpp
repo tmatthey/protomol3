@@ -58,7 +58,7 @@ const {
 
   parameter.push_back
     (Parameter(keyword + "OutputFreq",
-               Value(myOutputFreq, ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive())));
 
   parameter.push_back
     (Parameter(keyword + "MinimalImage", Value(myMinimalImage),

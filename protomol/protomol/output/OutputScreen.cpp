@@ -24,7 +24,7 @@ OutputScreen::OutputScreen(int freq) :
 
 void OutputScreen::doInitialize() {
   Real step = app->integrator->getTimestep() *
-    max(1, myOutputFreq);
+    max(1, getOutputFreq());
 
   if (step >= 1e13) {
     myUnit = "s";
@@ -84,7 +84,7 @@ void OutputScreen::getParameters(vector<Parameter> &parameter) const {
   parameter.push_back(Parameter(getId(), Value(true), true));
   parameter.push_back
     (Parameter(keyword + "OutputFreq",
-               Value(myOutputFreq, ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive())));
 }
 
 bool OutputScreen::adjustWithDefaultParameters(vector<Value> &values,

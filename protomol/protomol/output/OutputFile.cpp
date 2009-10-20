@@ -93,7 +93,7 @@ void OutputFile::getParameters(vector<Parameter> &parameter) const {
     (Parameter(getId(), Value(myFilename, ConstraintValueType::NotEmpty())));
   parameter.push_back
     (Parameter(getId() + string("OutputFreq"),
-               Value(myOutputFreq, ConstraintValueType::Positive()),
+               Value(getOutputFreq(), ConstraintValueType::Positive()),
                Text("output frequency")));
   parameter.push_back
     (Parameter(getId() + string("CacheFreq"),

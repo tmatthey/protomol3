@@ -9,6 +9,7 @@ namespace ProtoMol {
   
   declareInputValue(InputNumsteps, INT, NOTNEGATIVE);
   declareInputValue(InputFirststep, INT, NOCONSTRAINTS);
+  declareInputValue(InputRealfirststep, INT, NOCONSTRAINTS);
   declareInputValue(InputSeed, INT, NOTNEGATIVE);
   declareInputValue(InputRandomType, INT, NOTNEGATIVE);
   declareInputValue(InputDebug, INT, NOCONSTRAINTS);
