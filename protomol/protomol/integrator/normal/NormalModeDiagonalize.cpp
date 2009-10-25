@@ -34,8 +34,15 @@ namespace ProtoMol
   const string NormalModeDiagonalize::keyword( "NormalModeDiagonalize" );
 
   NormalModeDiagonalize::NormalModeDiagonalize() :
-   MTSIntegrator(), NormalModeUtilities(), 
-   hessianCounter( 0 ), rediagCounter( 0 ), checkpointUpdate( false ) {
+    MTSIntegrator(), NormalModeUtilities(), firstDiag(true),
+    fullDiag(0), removeRand(0), rediagCount(0), nextRediag(0),
+    validMaxEigv(0), myNextNormalMode(0), myLastNormalMode(0),
+    rediagHysteresis(0), hessianCounter(0), rediagCounter(0),
+    rediagUpdateCounter(0), eigenValueThresh(0), blockCutoffDistance(0),
+    blockVectorCols(0), residuesPerBlock(0), memory_Hessian(0),
+    memory_eigenvector(0), checkpointUpdate(false), origCEigVal(0),
+    origTimestep(0), autoParmeters(false), adaptiveTimestep(0),
+    postDiagonalizeMinimize(0), minLim(0), maxMinSteps(0) {
   }
 
   NormalModeDiagonalize::
@@ -45,16 +52,16 @@ namespace ProtoMol
                         ForceGroup *overloadedForces,
                         StandardIntegrator *nextIntegrator ) :
     MTSIntegrator( cycles, overloadedForces, nextIntegrator ),
-    NormalModeUtilities( 1, 1, 91.0, 1234, 300.0 ),
-    fullDiag( fDiag ), removeRand( rRand ),
-    rediagCount( redi ), rediagHysteresis( redhy ),
-    hessianCounter( 0 ), rediagCounter( 0 ), eigenValueThresh( eTh ),
+    NormalModeUtilities( 1, 1, 91.0, 1234, 300.0 ), firstDiag(true),
+    fullDiag( fDiag ), removeRand( rRand ), rediagCount( redi ), nextRediag(0),
+    validMaxEigv(0), myNextNormalMode(0), myLastNormalMode(0),
+    rediagHysteresis( redhy ), hessianCounter( 0 ), rediagCounter( 0 ),
+    rediagUpdateCounter(0), eigenValueThresh( eTh ),
     blockCutoffDistance( dTh ), blockVectorCols( bvc ),
-    residuesPerBlock( rpb ), checkpointUpdate( false ),  
-    autoParmeters(apar), adaptiveTimestep( adts ), 
-    postDiagonalizeMinimize(pdm), minLim(ml), maxMinSteps(maxit)
-{
-
+    residuesPerBlock( rpb ),  memory_Hessian(0), memory_eigenvector(0),
+    checkpointUpdate( false ), origCEigVal(0), origTimestep(0),
+    autoParmeters(apar), adaptiveTimestep( adts ), postDiagonalizeMinimize(pdm),
+    minLim(ml), maxMinSteps(maxit) {
 
     //find forces and parameters
     rHsn.findForces( overloadedForces );

@@ -23,18 +23,23 @@ namespace ProtoMol {
 
   const string NormalModeMinimizer::keyword( "NormalModeMinimizer" );
 
-  NormalModeMinimizer::NormalModeMinimizer() : STSIntegrator(), NormalModeUtilities(), numSteps(0)
-  {
-  }
+  NormalModeMinimizer::NormalModeMinimizer() :
+    avItrs(0), itrs(0), avMinForceCalc(0), numSteps(0), minCount(0),
+    forceCalc(0), minLim(0), randforce(0), myPreviousNormalMode(0),
+    lastLambda(0), reDiag(0), simpleMin(0), eUFactor(0), randStp(0),
+    rediagOnMaxMinSteps(0) {}
 
-  NormalModeMinimizer::NormalModeMinimizer(Real timestep, int firstmode, int nummode, Real gamma, int seed, Real temperature, 
-      Real minimlim, int rforce, bool red, bool simplemin, int redmaxmin,
-      ForceGroup *overloadedForces) 
-    : STSIntegrator(timestep,overloadedForces), NormalModeUtilities( firstmode, nummode, gamma, seed, temperature),
-      numSteps(0), minLim(minimlim), randforce(rforce), reDiag(red), 
-      simpleMin(simplemin), rediagOnMaxMinSteps(redmaxmin)
-  {
-  }
+  NormalModeMinimizer::NormalModeMinimizer
+  (Real timestep, int firstmode, int nummode, Real gamma, int seed,
+   Real temperature,  Real minimlim, int rforce, bool red, bool simplemin,
+   int redmaxmin, ForceGroup *overloadedForces) 
+    : STSIntegrator(timestep, overloadedForces),
+      NormalModeUtilities(firstmode, nummode, gamma, seed, temperature),
+      avItrs(0), itrs(0), avMinForceCalc(0), numSteps(0), minCount(0),
+      forceCalc(0), minLim(minimlim), randforce(rforce),
+      myPreviousNormalMode(0), lastLambda(0), reDiag(red), 
+      simpleMin(simplemin), eUFactor(0), randStp(0),
+      rediagOnMaxMinSteps(redmaxmin) {}
 
   NormalModeMinimizer::~NormalModeMinimizer() 
   {  
