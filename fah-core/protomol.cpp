@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
     LOG_ERROR("Core: " << e);
 
     if (e.getCode()) return e.getCode();
-    else return UNKNOWN_ERROR;
+    return UNKNOWN_ERROR;
 
   } catch (const ProtoMol::Exception &e) {
     LOG_ERROR("std::exception: " << e);
