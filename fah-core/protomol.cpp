@@ -61,10 +61,9 @@ extern "C" int core_main(int argc, char *argv[]) {
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
     // Set F@H info
-    int outputFreq = toInt(app.config["outputfreq"]);
     int firstStep = toInt(app.config["realfirststep"]);
     int numSteps = app.lastStep - firstStep;
-    core.setInfo(numSteps, outputFreq);
+    core.setInfo(numSteps, numSteps < 100 ? 1 : numSteps / 100);
 
     // Print configuration
     app.print(*LOG_INFO_STREAM(2));
