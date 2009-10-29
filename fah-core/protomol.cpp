@@ -33,7 +33,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
     ProtoMolApp app(&modManager);
 
-    app.splash(*LOG_RAW_STREAM());
+    app.splash(cout);
 
     // Load configuration options
     if (!app.load(argc, argv)) return 1;
@@ -66,7 +66,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     core.setInfo(numSteps, numSteps < 100 ? 1 : numSteps / 100);
 
     // Print configuration
-    app.print(*LOG_INFO_STREAM(2));
+    app.print(cout);
 
     while (!core.shouldQuit() && app.step(100)) {
       // Update shared info file etc.
@@ -88,7 +88,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     return 0;
 
   } catch (const ProtoMol::Exception &e) {
-    LOG_ERROR("ProtoMol ERROR: " << e);
+    cerr << "ProtoMol ERROR: " << e << endl;
   }
 
   return 1;
@@ -130,8 +130,8 @@ int main(int argc, char *argv[]) {
     if (e.getCode()) return e.getCode();
     return UNKNOWN_ERROR;
 
-  } catch (const ProtoMol::Exception &e) {
-    LOG_ERROR("std::exception: " << e);
+  } catch (const std::exception &e) {
+    LOG_ERROR("std::exception: " << e.what());
 
 #ifdef DEBUG
     throw e; // Rethrow to get core dump
