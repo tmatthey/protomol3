@@ -78,12 +78,12 @@ namespace ProtoMol {
     /** 
      * @return -1 if no line was set the line number otherwise.
      */  
-    const long getLine() const {return line;}
+    long getLine() const {return line;}
 
     /** 
      * @return -1 of no column was set the column number otherwise.
      */
-    const long getCol() const {return col;}
+    long getCol() const {return col;}
 
     /** 
      * @return True of no filename, line, or column have been set.

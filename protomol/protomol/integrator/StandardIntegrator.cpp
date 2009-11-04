@@ -9,6 +9,10 @@
 #include <protomol/ProtoMolApp.h>
 #include <protomol/parallel/Parallel.h>
 
+#ifdef BUILD_FOR_FAH
+#include <fah/core/Core.h>
+#endif
+
 using namespace ProtoMol;
 
 using namespace ProtoMol::Report;
@@ -78,6 +82,10 @@ void StandardIntegrator::calculateForces() {
   //  Compute my potentialEnergy as the difference before/after the call to
   //  calculateForces().
   myPotEnergy = app->energies.potentialEnergy() - myPotEnergy;
+
+#ifdef BUILD_FOR_FAH
+  FAH::Core::getInstance().checkIn();
+#endif
 }
 
 void StandardIntegrator::doHalfKick() {

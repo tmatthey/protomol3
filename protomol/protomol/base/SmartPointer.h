@@ -148,7 +148,7 @@ namespace ProtoMol {
      * 
      * @return True if the smart pointers are equal. False otherwise.
      */
-    const bool operator==(const SmartPointer_T &smartPtr) const {
+    bool operator==(const SmartPointer_T &smartPtr) const {
       return ptr == smartPtr.ptr;
     }
 
@@ -161,7 +161,7 @@ namespace ProtoMol {
      * 
      * @return True if the smart pointers are not equal. False otherwise.
      */
-    const bool operator!=(const SmartPointer_T &smartPtr) const {
+    bool operator!=(const SmartPointer_T &smartPtr) const {
       return ptr != smartPtr.ptr;
     }
 
@@ -173,7 +173,7 @@ namespace ProtoMol {
      * @return True if this smart pointers internal pointer equals ptr.
      *         False otherwise.
      */
-    const bool operator==(const T *ptr) {
+    bool operator==(const T *ptr) {
       return this->ptr == ptr;
     }
 

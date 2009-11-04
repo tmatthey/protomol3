@@ -95,7 +95,7 @@ void LeapfrogIntegrator::run(int numTimesteps) {
   for (int i = 1; i < numTimesteps; i++) {
     doKickdoDrift();
     calculateForces();
-    }
+  }
 
   doHalfKick();
   postStepModify();

@@ -89,7 +89,7 @@ def configure(conf, c99_mode = 1):
     compiler_mode = None
 
     # Prefer Intel compiler
-    if os.environ.get('INTEL_LICENSE_FILE', False):
+    if compiler == 'default' and os.environ.get('INTEL_LICENSE_FILE', False):
         compiler = 'intel'
 
     if compiler:
@@ -105,10 +105,12 @@ def configure(conf, c99_mode = 1):
 
             if env['PLATFORM'] == 'win32': compiler_mode = 'msvc'
             else: compiler_mode = 'gnu'
-            env.Replace(AR = 'xilib')
 
-            # Work around double CCFLAGS bug
-            env.Replace(CXXFLAGS = ['/TP'])
+            if compiler_mode == 'msvc':
+                env.Replace(AR = 'xilib')
+
+                # Work around double CCFLAGS bug
+                env.Replace(CXXFLAGS = ['/TP'])
 
         elif compiler == 'linux-mingw':
             env.Replace(CC = 'i586-mingw32msvc-gcc')
@@ -181,9 +183,13 @@ def configure(conf, c99_mode = 1):
             env['PDB'] = '${TARGET}.pdb'
 
         elif compiler_mode == 'gnu':
-            env.Append(CCFLAGS = ['-ggdb', '-Wall'])
-            if strict: env.Append(CCFLAGS = ['-Werror'])
-            env.Append(LINKFLAGS = ['-rdynamic']) # for backtrace
+            if compiler == 'gnu':
+                env.Append(CCFLAGS = ['-ggdb', '-Wall'])
+                if strict: env.Append(CCFLAGS = ['-Werror'])
+                env.Append(LINKFLAGS = ['-rdynamic']) # for backtrace
+            elif compiler == 'intel':
+                if not optimize:
+                    env.Append(CCFLAGS = ['-O0'])
 
         env.Append(CPPDEFINES = ['DEBUG'])
 
@@ -300,13 +306,13 @@ def configure(conf, c99_mode = 1):
     default_num_jobs = 1
 
     # distcc
-    if distcc:
+    if distcc and compiler == 'gnu':
         default_num_jobs = 2
         env.Replace(CC = 'distcc ' + env['CC'])
         env.Replace(CXX = 'distcc ' + env['CXX'])
 
     # cccache
-    if ccache:
+    if ccache and compiler == 'gnu':
         env.Replace(CC = 'ccache ' + env['CC'])
         env.Replace(CXX = 'ccache ' + env['CXX'])
 
