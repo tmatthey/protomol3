@@ -11,7 +11,12 @@ execfile('configfah.py')
 execfile('boost.py')
 
 # Command Line Options
-vars = Variables('options.py')
+configs = []
+if os.environ.has_key('SCONS_OPTIONS'):
+    configs.append(os.environ['SCONS_OPTIONS'])
+configs.append('options.py')
+
+vars = Variables(configs)
 
 # Add options
 add_fah_vars(vars)

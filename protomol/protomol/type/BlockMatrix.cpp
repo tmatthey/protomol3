@@ -464,7 +464,7 @@ namespace ProtoMol
   // Index access
   double & BlockMatrix::operator[](unsigned int index )
   {
-    if ( index < 0 || index > arraySize ) {
+    if ( index > arraySize ) {
       Report::report << Report::error << "[BlockMatrix::operator[]] Index out of range." << Report::endr;
     }
 

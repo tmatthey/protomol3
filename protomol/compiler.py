@@ -153,7 +153,7 @@ def configure(conf, c99_mode = 1):
         elif cc == 'icl' or cc == 'icc': compiler = 'intel'
 
 
-    print "Compiler: " + env['CC']
+    print "Compiler: " + env['CC'] + ' (%s)' % compiler
     print "Platform: " + env['PLATFORM']
     print "Mode: " + compiler_mode
 
@@ -185,11 +185,11 @@ def configure(conf, c99_mode = 1):
         elif compiler_mode == 'gnu':
             if compiler == 'gnu':
                 env.Append(CCFLAGS = ['-ggdb', '-Wall'])
-                if strict: env.Append(CCFLAGS = ['-Werror'])
                 env.Append(LINKFLAGS = ['-rdynamic']) # for backtrace
             elif compiler == 'intel':
-                if not optimize:
-                    env.Append(CCFLAGS = ['-O0'])
+                env.Append(CCFLAGS = ['-g', '-diag-enable', 'warn'])
+
+            if strict: env.Append(CCFLAGS = ['-Werror'])
 
         env.Append(CPPDEFINES = ['DEBUG'])
 
@@ -214,15 +214,6 @@ def configure(conf, c99_mode = 1):
             elif compiler == 'msvc':
                 env.Append(CCFLAGS = ['/arch:SSE'])
 
-        # Instruction paths
-        if compiler == 'intel':
-            if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-restrict', # '-ip',
-                                      '-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
-            elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/Qrestrict', # '/Qip',
-                                      '/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
-
         if compiler_mode == 'gnu':
             env.Append(CCFLAGS = ['-O3', '-funroll-loops'])
             if compiler != 'intel':
@@ -233,34 +224,47 @@ def configure(conf, c99_mode = 1):
             if compiler == 'intel' and not globalopt:
                 env.Append(LINKFLAGS = ['-qnoipo'])
 
-    # Whole program optimizations
-    if globalopt:
-        if compiler == 'intel':
+        # Whole program optimizations
+        if globalopt:
+            if compiler == 'intel':
+                if compiler_mode == 'gnu':
+                    env.Append(LINKFLAGS = ['-ipo'])
+                    env.Append(CCFLAGS = ['-ipo'])
+                elif compiler_mode == 'msvc':
+                    env.Append(LINKFLAGS = ['/Qipo'])
+                    env.Append(CCFLAGS = ['/Qipo'])
+
+            elif compiler == 'msvc':
+                env.Append(CCFLAGS = ['/GL'])
+                env.Append(LINKFLAGS = ['/LTCG'])
+                env.Append(ARFLAGS = ['/LTCG'])
+
+        # SSE optimizations
+        if sse2:
             if compiler_mode == 'gnu':
-                env.Append(LINKFLAGS = ['-ipo'])
-                env.Append(CCFLAGS = ['-ipo'])
+                env.Append(CCFLAGS = ['-msse2', '-mfpmath=sse']);
             elif compiler_mode == 'msvc':
-                env.Append(LINKFLAGS = ['/Qipo'])
-                env.Append(CCFLAGS = ['/Qipo'])
+                env.Append(CCFLAGS = ['/arch:SSE2']);
 
-        elif compiler == 'msvc':
-            env.Append(CCFLAGS = ['/GL'])
-            env.Append(LINKFLAGS = ['/LTCG'])
-            env.Append(ARFLAGS = ['/LTCG'])
+        elif sse3:
+            if compiler_mode == 'gnu':
+                env.Append(CCFLAGS = ['-msse3', '-mfpmath=sse']);
+            elif compiler_mode == 'msvc':
+                env.Append(CCFLAGS = ['/arch:SSE3']);
+
+        elif compiler == 'intel':
+            if compiler_mode == 'gnu':
+                env.Append(CCFLAGS = ['-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
+            elif compiler_mode == 'msvc':
+                env.Append(CCFLAGS = ['/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
 
 
-
-    # SSE optimizations
-    if sse2:
+    # Pointer disambiguation
+    if compiler == 'intel':
         if compiler_mode == 'gnu':
-            env.Append(CCFLAGS = ['-msse2', '-mfpmath=sse']);
+            env.Append(CCFLAGS = ['-restrict'])
         elif compiler_mode == 'msvc':
-            env.Append(CCFLAGS = ['/arch:SSE2']);
-    elif sse3:
-        if compiler_mode == 'gnu':
-            env.Append(CCFLAGS = ['-msse3', '-mfpmath=sse']);
-        elif compiler_mode == 'msvc':
-            env.Append(CCFLAGS = ['/arch:SSE3']);
+            env.Append(CCFLAGS = ['/Qrestrict'])
 
 
     # Dependency files

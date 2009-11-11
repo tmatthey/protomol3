@@ -6,12 +6,14 @@
 using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;
-//____CheckpointConfigReader
+
 
 CheckpointConfigReader::CheckpointConfigReader() : Reader() {}
 
+
 CheckpointConfigReader::CheckpointConfigReader(const string &filename) :
   Reader(filename) {}
+
 
 bool CheckpointConfigReader::tryFormat() {
   if (!open()) return false;
@@ -23,7 +25,8 @@ bool CheckpointConfigReader::tryFormat() {
   return header == "!Checkpoint File!";
 }
 
-bool CheckpointConfigReader::readBase( Configuration& conf, Random &rand ) {
+
+bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
   if (!tryFormat()) {
     cout << "Invalid checkpoint" << endl;
     return false;
@@ -34,62 +37,43 @@ bool CheckpointConfigReader::readBase( Configuration& conf, Random &rand ) {
   int id = 0, step = 0;
     
   string line;
-  while( std::getline( file, line ) ) {
-    if ( line.find("#ID") != string::npos ) {
-      file >> id;
-    }
-    if ( line.find("#Step") != string::npos ) {
-      file >> step;
-    }
-    if ( line.find("#Random") != string::npos ) {
-      file >> rand;
-    }
+  while (std::getline(file, line)) {
+    if (line.find("#ID") != string::npos) file >> id;
+    if (line.find("#Step") != string::npos) file >> step;
+    if (line.find("#Random") != string::npos) file >> rand;
   }
 
-  /* Update initial checkpoint perameters */
+  // Update initial checkpoint perameters
   conf["CheckpointStart"] = id + 1;
 
-  /* Update position file */
-  conf["posfile"] = Append( conf["CheckpointPosBase"], id ) + ".pos";
+  // Update position file
+  conf["posfile"] = Append(conf["CheckpointPosBase"], id) + ".pos";
 
-  /* Update velocities file */
-  conf["velfile"] = Append( conf["CheckpointVelBase"], id ) + ".vel";
+  // Update velocities file
+  conf["velfile"] = Append(conf["CheckpointVelBase"], id) + ".vel";
 
-  /* Update dcd file */
-  if ( conf.valid( "DCDfile" ) ){
-    string dcd = conf["DCDfile"];
-    string dcdFile = dcd.substr( 0, dcd.rfind("dcd") + 1 );
+  // Update energy file
+  if (conf.valid("allEnergiesFile"))
+    conf["allEnergiesFile"] = Append(conf["allEnergiesFile"], id);
 
-    conf["DCDfile"] = Append( dcdFile, id ) + ".dcd";
-  }
+  // Update firststep
+  unsigned firststep = toInt(conf["firststep"]);
+  conf["firststep"] = firststep + step;
 
-  /* Update energy file */
-  if ( conf.valid( "allEnergiesFile" ) ){
-    string energies = conf["allEnergiesFile"];
-
-    conf["allEnergiesFile"] = Append( energies, id );
-  }
-
-  /* Update firststep */
-  conf["realfirststep"] = conf["firststep"];
-  conf["firststep"] = toString (toInt( conf["firststep"] ) + step);
-
-  /* Update total steps */
-  conf["numsteps"] = 
-    toString (toInt( conf["numsteps"] ) - toInt( conf["firststep"] ) );
+  // Update total steps
+  conf["numsteps"] = toInt(conf["numsteps"]) - firststep;
 
   return !file.fail();
 }
 
-bool CheckpointConfigReader::readIntegrator( Integrator* integ ) {
+
+bool CheckpointConfigReader::readIntegrator(Integrator *integ) {
   if (!tryFormat()) return false;
     
   string line;
-  while( std::getline( file, line ) ) {
-    if ( line.find("#Integrator") != string::npos ) {
-      file >> (*integ);
-    }
-  }
+  while (std::getline(file, line))
+    if (line.find("#Integrator") != string::npos)
+      file >> *integ;
 
   return !file.fail();
 }

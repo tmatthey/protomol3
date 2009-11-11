@@ -95,7 +95,7 @@ unsigned int String::parseUInteger(const string s) {
   errno = 0;
   unsigned long v = strtol(s.c_str(), 0, 10);
   ASSERT_OR_THROW(string("parseUInteger() Invalid unsigned integer '") + s +
-    "'!", errno == 0 && v >= 0);
+    "'!", errno == 0);
 
   return (unsigned int)v;
 }

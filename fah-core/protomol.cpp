@@ -21,12 +21,12 @@ using namespace FAH;
 extern void moduleInitFunction(ModuleManager *);
 
 extern "C" int core_main(int argc, char *argv[]) {
+  Core &core = Core::getInstance();
+
   try {
 #if defined(DEBUG) && !defined(_WIN32)
     ProtoMol::Debugger::initStackTrace(argv[0]);
 #endif
-
-    Core &core = Core::getInstance();
 
     ModuleManager modManager;
     moduleInitFunction(&modManager);
@@ -61,46 +61,47 @@ extern "C" int core_main(int argc, char *argv[]) {
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
     // Set F@H info
-    int firstStep = toInt(app.config["realfirststep"]);
-    int numSteps = app.lastStep - firstStep;
-    core.setInfo(numSteps, numSteps < 100 ? 1 : numSteps / 100);
+    unsigned gen = core.getUnit().base()->gen;
+    int stepsPerGen = core.getOptions()["steps-per-gen"].toInteger();
+    int firstStep = gen * stepsPerGen;
+    int frameSize = stepsPerGen < 100 ? 1 : stepsPerGen / 100;
+    core.setInfo(stepsPerGen, frameSize);
 
     // Print configuration
     app.print(cout);
 
-    while (!core.shouldQuit() && app.step(100)) {
+    do {
       // Update shared info file etc.
       core.step(app.currentStep - firstStep);
 
       if (core.doCheckpoint()) {
-        oCheckpt->doIt(app.currentStep);
+        oCheckpt->doIt(app.currentStep - firstStep);
         core.checkpoint();
       }
-    }
+    } while (!core.shouldQuit() && app.step(min(frameSize, 100)));
       
     oCheckpt->doIt(app.currentStep);
     app.finalize();
     core.checkpoint();
 
-    // Return results
-    core.addResultFiles("*");
-
     return 0;
 
   } catch (const ProtoMol::Exception &e) {
     cerr << "ProtoMol ERROR: " << e << endl;
+    core.markFaulty();
   }
 
   return 1;
 }
 
-int main(int argc, char *argv[]) {
-  int ret;
 
+int main(int argc, char *argv[]) {
   try {
     Core core("ProtoMol", 180);
 
-    ret = core.init(argc, argv);
+    core.getOptions().add("steps-per-gen")->setType(Option::INTEGER_TYPE);
+
+    int ret = core.init(argc, argv);
     if (ret) return ret;
 
     // Validate checkpoint file
@@ -115,14 +116,14 @@ int main(int argc, char *argv[]) {
     // Add config file to args
     vector<char *> args;
     vector<char *>::const_iterator it = core.getArgs().begin();
-    args.push_back(*it++); // Executable name
+    args.push_back(*it++); // Executables name
     args.push_back((char *)"protomol.conf");
     args.insert(args.end(), it, core.getArgs().end());
     args.push_back(0); // Sentinel
 
-    if (core_main(args.size() - 1, &args[0])) return UNKNOWN_ERROR;
+    core_main(args.size() - 1, &args[0]);
 
-    ret = core.finalize();
+    return core.finalize();
 
   } catch (const FAH::Exception &e) {
     LOG_ERROR("Core: " << e);
@@ -139,6 +140,4 @@ int main(int argc, char *argv[]) {
 
     return UNKNOWN_ERROR;
   }
-
-  return ret;
 }

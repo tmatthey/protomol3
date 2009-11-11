@@ -1,47 +1,25 @@
 # Configure system boilerplate
-import os
-import imp
-
-if os.environ.has_key('CONFIG_SCRIPTS_HOME'):
-  config_home = os.environ['CONFIG_SCRIPTS_HOME']
-else: config_home = '../config' # assumed relative path
-
-if not os.path.isdir(config_home):
-  print 'Cannot find config scripts.  Please set CONFIG_SCRIPTS_HOME'
-  Exit(1)
-
-mod = imp.load_module('config', None, config_home, ('', '', 5))
-from config import *
-
+import os, sys
+sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '../config'))
+import config
 
 # ProtoMol
-if os.environ.has_key('PROTOMOL_HOME'):
-  PROTOMOL_HOME = os.environ['PROTOMOL_HOME']
-else: PROTOMOL_HOME = '../protomol'
-
+PROTOMOL_HOME = os.environ.get('PROTOMOL_HOME', '../protomol')
 if not os.path.isdir(PROTOMOL_HOME):
   print 'Cannot find protomol.  Please set PROTOMOL_HOME.'
   Exit(1)
 
 # Setup
-deps = ['compiler', 'libfah', 'dist']
-
-vars = Variables('options.py')
-
-vars.AddVariables(
-  BoolVariable('lapack', 'Use LAPACK', 0),
-  BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0)
-)
-
-config.add_vars(deps, vars)
-env = Environment(variables = vars, ENV = os.environ)
-Help(vars.GenerateHelpText(env))
-conf = Configure(env)
+env = config.make_env(['compiler', 'libfah', 'dist'],
+                      [BoolVariable('lapack', 'Use LAPACK', 0),
+                       BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0)])
 
 env.__setitem__('static', os.getenv('STATIC_BUILD', 1)) # static build
 
 # Configure
 if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
+  conf = Configure(env)
+
   # Configure compiler
   config.configure('compiler', conf)
 
@@ -61,6 +39,7 @@ if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
   # libfah
   config.configure('libfah', conf)
 
+  config.configure('dist', conf, default_distver = '0.0.2')
 
 # Main
 src = ['protomol.cpp']
@@ -72,8 +51,6 @@ name = 'FahCore_b4'
 Default(env.Program(name, src))
 
 # Dist
-config.configure('dist', conf, default_distver = '0.0.2')
-distfiles = [name + '.exe']
-tar = env.TarBZ2Dist('Protomol-FAHCore', distfiles)
+tar = env.TarBZ2Dist('Protomol-FAHCore', [name + '.exe'])
 Alias('dist', tar)
 AlwaysBuild(tar)
