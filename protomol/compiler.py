@@ -33,6 +33,7 @@ def add_vars(vars):
         ('globalopt', 'Enable or disable global optimizations', 0),
         ('sse2', 'Enable SSE2 instructions', 0),
         ('sse3', 'Enable SSE3 instructions', 0),
+        ('auto_dispatch', 'Enable auto-dispatch of optimized code paths', 1),
         BoolVariable('debug', 'Enable or disable debug options',
                      os.getenv('DEBUG_MODE', 0)),
         BoolVariable('strict', 'Enable or disable strict options', 1),
@@ -70,6 +71,7 @@ def configure(conf, c99_mode = 1):
     globalopt = env.get('globalopt')
     sse2 = int(env.get('sse2', 0))
     sse3 = int(env.get('sse3', 0))
+    auto_dispatch = int(env.get('auto_dispatch', 1))
     strict = int(env.get('strict', 1))
     threaded = int(env.get('threaded', 1))
     profile = int(env.get('profile', 0))
@@ -203,7 +205,7 @@ def configure(conf, c99_mode = 1):
     # Optimizations
     if optimize:
         # Machine
-        if machine() != 'x86_64':
+        if machine() != 'x86_64' and not (sse2 or sse3):
             if compiler == 'intel':
                 if compiler_mode == 'gnu':
                     env.Append(CCFLAGS = ['-mia32'])
@@ -242,17 +244,37 @@ def configure(conf, c99_mode = 1):
         # SSE optimizations
         if sse2:
             if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-msse2', '-mfpmath=sse']);
+                if compiler == 'intel':
+                    env.Append(CCFLAGS = ['-xsse2']);
+                    if auto_dispatch:
+                        env.Append(CCFLAGS = ['-axSSE3,SSSE3,SSE4.1,SSE4.2'])
+                else:
+                    env.Append(CCFLAGS = ['-msse2']);
             elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/arch:SSE2']);
+                if compiler == 'intel':
+                    env.Append(CCFLAGS = ['/QxSSE2']);
+                    if auto_dispatch:
+                        env.Append(CCFLAGS = ['/QaxSSE3,SSSE3,SSE4.1,SSE4.2'])
+                else:
+                    env.Append(CCFLAGS = ['/arch:SSE2']);
 
         elif sse3:
             if compiler_mode == 'gnu':
-                env.Append(CCFLAGS = ['-msse3', '-mfpmath=sse']);
+                if compiler == 'intel':
+                    env.Append(CCFLAGS = ['-xsse3']);
+                    if auto_dispatch:
+                        env.Append(CCFLAGS = ['-axSSSE3,SSE4.1,SSE4.2'])
+                else:
+                    env.Append(CCFLAGS = ['-msse3']);
             elif compiler_mode == 'msvc':
-                env.Append(CCFLAGS = ['/arch:SSE3']);
+                if compiler == 'intel':
+                    env.Append(CCFLAGS = ['/QxSSE3']);
+                    if auto_dispatch:
+                        env.Append(CCFLAGS = ['/QaxSSSE3,SSE4.1,SSE4.2'])
+                else:
+                    env.Append(CCFLAGS = ['/arch:SSE3']);
 
-        elif compiler == 'intel':
+        elif compiler == 'intel' and auto_dispatch:
             if compiler_mode == 'gnu':
                 env.Append(CCFLAGS = ['-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
             elif compiler_mode == 'msvc':

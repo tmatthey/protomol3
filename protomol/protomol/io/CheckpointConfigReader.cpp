@@ -57,11 +57,13 @@ bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
     conf["allEnergiesFile"] = Append(conf["allEnergiesFile"], id);
 
   // Update firststep
-  unsigned firststep = toInt(conf["firststep"]);
-  conf["firststep"] = firststep + step;
+  int firststep = toInt(conf["firststep"]);
+  conf["firststep"] = step;
 
   // Update total steps
-  conf["numsteps"] = toInt(conf["numsteps"]) - firststep;
+  int numsteps = toInt(conf["numsteps"]) - (step - firststep);
+  if (numsteps < 0) numsteps = 0;
+  conf["numsteps"] = numsteps;
 
   return !file.fail();
 }
