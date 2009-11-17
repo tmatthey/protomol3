@@ -19,11 +19,8 @@ def fah_configure():
         env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
 
     # boost
-    boost_configure(conf, ['version', 'iostreams/stream'],
+    boost.configure(conf, ['version', 'iostreams/stream'],
                     ['iostreams', 'system', 'filesystem'])
-
-    # boost::iostreams
-    check_header('boost/iostreams/stream.hpp', True)
 
     # libzip2
     libbzip2_home = check_envvar('LIBBZIP2_HOME', True)

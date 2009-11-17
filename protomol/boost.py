@@ -1,3 +1,6 @@
+import os
+from SCons.Script import *
+
 def try_dirs(paths):
     for parts in paths:
         path = ''
@@ -7,13 +10,15 @@ def try_dirs(paths):
 
     return None
 
+
 def printenv(key):
-    str = key + '='
-    if os.environ.has_key(key): str += "'" + os.environ[key] + "'"
-    print str
+    if os.environ.has_key(key):
+        print key + '="' + os.environ[key] + '"'
+
 
 def boost_error(msg):
     print msg
+    printenv('BOOST_SOURCE')
     printenv('BOOST_HOME')
     printenv('BOOST_INCLUDE_PATH')
     printenv('BOOST_LIB_PATH')
@@ -21,7 +26,8 @@ def boost_error(msg):
     printenv('BOOST_VERSION')
     Exit(1)
 
-def boost_check_version(context, version):
+
+def check_version(context, version):
     context.Message("Checking for boost version %s..." % version)
 
     # Boost versions are in format major.minor.subminor
@@ -39,21 +45,18 @@ def boost_check_version(context, version):
     return ret
 
 
-def boost_configure(conf, hdrs = [], libs = [], version = '1.35',
-                    lib_suffix = ''):
+def configure(conf, hdrs = [], libs = [], version = '1.35', lib_suffix = ''):
     env = conf.env
 
     boost_inc = None
     boost_lib = None
-    boost_ver = version
     boost_lib_suffix = lib_suffix
 
-    if os.environ.has_key('BOOST_VERSION'):
-        boost_ver = os.environ['BOOST_VERSION']
+    boost_inc = os.environ.get('BOOST_SOURCE', boost_inc)
+    boost_ver = os.environ.get('BOOST_VERSION', version)
 
-    if os.environ.has_key('BOOST_HOME'):
-        boost_home = os.environ['BOOST_HOME']
-
+    boost_home = os.environ.get('BOOST_HOME', '')
+    if boost_home != '':
         path = try_dirs([[boost_home, 'include', 'boost'],
                          [boost_home, 'include',
                           'boost-' + boost_ver.replace('.', '_'), 'boost'],
@@ -70,12 +73,8 @@ def boost_configure(conf, hdrs = [], libs = [], version = '1.35',
             print "WARNING: No boost lib path found in BOOST_HOME"
 
 
-    if os.environ.has_key('BOOST_INCLUDE_PATH'):
-        boost_inc = os.environ['BOOST_INCLUDE_PATH']
-
-    if os.environ.has_key('BOOST_LIB_PATH'):
-        boost_lib = os.environ['BOOST_LIB_PATH']
-
+    boost_inc = os.environ.get('BOOST_INCLUDE_PATH', boost_inc)
+    boost_lib = os.environ.get('BOOST_LIB_PATH', boost_lib)
     if os.environ.has_key('BOOST_LIB_SUFFIX'):
         boost_lib_suffix = os.environ['BOOST_LIB_SUFFIX'].replace('.', '_')
 
@@ -89,6 +88,7 @@ def boost_configure(conf, hdrs = [], libs = [], version = '1.35',
 
 
     # Check version
+    conf.AddTest('BoostVersion', check_version)
     if not conf.BoostVersion(boost_ver):
         boost_error("Wrong version")
 
@@ -103,3 +103,8 @@ def boost_configure(conf, hdrs = [], libs = [], version = '1.35',
 
         if not conf.CheckLib(libname):
             boost_error(libname + ' library not found.')
+
+
+    if env['PLATFORM'] == 'win32':
+        env.Append(CPPDEFINES = ['BOOST_ALL_NO_LIB'])
+        env.Append(LIBS = ['wsock32'])
