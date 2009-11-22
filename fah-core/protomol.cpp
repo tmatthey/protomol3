@@ -61,7 +61,7 @@ extern "C" int core_main(int argc, char *argv[]) {
     if (!oCheckpt) THROW("Could not find OutputCheckpoint");
 
     // Set F@H info
-    unsigned gen = core.getUnit().base()->gen;
+    unsigned gen = core.getUnit().gen();
     int stepsPerGen = core.getOptions()["steps-per-gen"].toInteger();
     int firstStep = gen * stepsPerGen;
     int frameSize = stepsPerGen < 100 ? 1 : stepsPerGen / 100;
