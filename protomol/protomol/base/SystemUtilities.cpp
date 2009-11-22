@@ -35,7 +35,7 @@
 #include <errno.h>
 
 #ifdef BUILD_FOR_FAH
-#include <fah/core/chksum/overrides.h>
+#include <fah/checksum/overrides.h>
 #endif
 
 using namespace std;

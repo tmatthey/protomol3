@@ -13,7 +13,7 @@
 #include <stdio.h>
 
 #ifdef BUILD_FOR_FAH
-    #include <fah/core/chksum/ChecksumDevice.h>
+    #include <fah/checksum/ChecksumDevice.h>
 #else
     #include <fstream>
 #endif

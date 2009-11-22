@@ -6,7 +6,7 @@
 #include <protomol/config.h>
 
 #include <fah/core/Core.h>
-#include <fah/core/chksum/ChecksumManager.h>
+#include <fah/checksum/ChecksumManager.h>
 #include <fah/Exception.h>
 #include <fah/util/Logger.h>
 #include <fah/os/SystemUtilities.h>

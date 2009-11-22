@@ -15,7 +15,7 @@ def fah_configure():
     env.Append(CPPPATH = [libfah_home])
     env.Append(LIBPATH = [libfah_home])
 
-    if check_library('fah', True) and check_header('fah/ID.h', True):
+    if check_library('fah', True) and check_header('fah/Exception.h', True):
         env.Append(CPPDEFINES = ['HAVE_LIBFAH'])
 
     # boost
