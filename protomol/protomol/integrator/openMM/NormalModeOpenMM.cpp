@@ -32,8 +32,6 @@ namespace ProtoMol {
   }
 
   void NormalModeOpenMM::initialize(ProtoMolApp* app){
-    OpenMMIntegrator::initialize(app);
-    initializeForces();
     //NM initialization
     
     NormalModeUtilities::initialize((int)app->positions.size(), app,
@@ -41,6 +39,14 @@ namespace ProtoMol {
 
     //Set up minimum limit
     app->eigenInfo.myMinimumLimit = minLim;
+
+    //Set number of eigenvectors in use
+    app->eigenInfo.myNumUsedEigenvectors = _rfM;
+
+    //initialize base class
+    OpenMMIntegrator::initialize(app);
+
+    initializeForces();
   }
 
   void NormalModeOpenMM::run(int numTimesteps) {
