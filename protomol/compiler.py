@@ -197,7 +197,8 @@ def configure(conf, c99_mode = 1):
 
     else:
         if compiler_mode == 'gnu':
-            env.Append(LINKFLAGS = ['-Wl,--strip-all'])
+            # Strip symbols
+            env.Append(LINKFLAGS = ['-Wl,-s'])
 
         env.Append(CPPDEFINES = ['NDEBUG'])
 
