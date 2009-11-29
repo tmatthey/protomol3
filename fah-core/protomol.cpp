@@ -96,16 +96,21 @@ public:
       // Print configuration
       app.print(cout);
 
-      do {
-        // Update shared info file etc.
-        step(app.currentStep - firstStep);
+      try {
+        do {
+          // Update shared info file etc.
+          step(app.currentStep - firstStep);
+          
+          if (shouldCheckpoint()) {
+            oCheckpt->doIt(app.currentStep);
+            checkpoint();
+          }
+        } while (!shouldQuit() && app.step(min(frameSize, 100)));
 
-        if (doCheckpoint()) {
-          oCheckpt->doIt(app.currentStep - firstStep);
-          checkpoint();
-        }
-      } while (!shouldQuit() && app.step(min(frameSize, 100)));
-      
+      } catch (const ProtoMol::Exception &e) {
+        getUnit().type() = CORE_WORK_FAULTY;
+      }
+
       oCheckpt->doIt(app.currentStep);
       app.finalize();
       checkpoint();
