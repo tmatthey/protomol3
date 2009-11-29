@@ -10,7 +10,7 @@ if not os.path.isdir(PROTOMOL_HOME):
   Exit(1)
 
 # Setup
-env = config.make_env(['compiler', 'libfah', 'dist'],
+env = config.make_env(['compiler', 'libfah', 'dist', 'build_info'],
                       [BoolVariable('lapack', 'Use LAPACK', 0),
                        BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0)])
 
@@ -22,6 +22,8 @@ if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
 
   # Configure compiler
   config.configure('compiler', conf)
+
+  config.configure('build_info', conf, namespace = 'FAH::CoreInfo')
 
   # libprotomol-fah
   env.Append(CPPPATH = [PROTOMOL_HOME])
@@ -41,8 +43,11 @@ if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
 
   config.configure('dist', conf, default_distver = '0.0.2')
 
+info = env.BuildInfo('build_info.cpp', [])
+AlwaysBuild(info)
+
 # Main
-src = ['protomol.cpp']
+src = ['protomol.cpp', info]
 
 if not env['PLATFORM'] == 'win32':
   env.Append(PROGSUFFIX = '.exe')

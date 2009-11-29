@@ -97,7 +97,7 @@ extern "C" int core_main(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
   try {
-    Core core("ProtoMol", 180, 13);
+    Core core("ProtoMol", 180, 14);
 
     core.getOptions().add("steps-per-gen")->setType(Option::INTEGER_TYPE);
 
