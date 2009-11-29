@@ -84,7 +84,7 @@ void StandardIntegrator::calculateForces() {
   myPotEnergy = app->energies.potentialEnergy() - myPotEnergy;
 
 #ifdef BUILD_FOR_FAH
-  FAH::Core::getInstance().checkIn();
+  FAH::Core::instance().checkIn();
 #endif
 }
 

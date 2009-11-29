@@ -20,88 +20,14 @@ using namespace FAH;
 
 extern void moduleInitFunction(ModuleManager *);
 
-extern "C" int core_main(int argc, char *argv[]) {
-  Core &core = Core::getInstance();
+class ProtoMolCore : public Core {
+public:
+  ProtoMolCore() : Core("ProtoMol", 180, 14) {}
 
-  try {
-#if defined(DEBUG) && !defined(_WIN32)
-    ProtoMol::Debugger::initStackTrace(argv[0]);
-#endif
+  int init(int argc, char *argv[]) {
+    getOptions().add("steps-per-gen")->setType(Option::INTEGER_TYPE);
 
-    ModuleManager modManager;
-    moduleInitFunction(&modManager);
-
-    ProtoMolApp app(&modManager);
-
-    app.splash(cout);
-
-    // Load configuration options
-    if (!app.load(argc, argv)) return 1;
-
-    // Modify configuration
-    // Add outputs FAHFile and FAHGUI
-    app.config["FAHFile"] = "../current.xyz";
-    app.config["FAHGUI"] = "ProtoMol";
-
-    // Setup checkpointing
-    app.config["Checkpoint"] = "checkpt";
-    app.config["CheckpointFreq"] = INT_MAX; // Disable
-
-    // Configure and build
-    app.configure();
-    app.build();
-
-    // Find CheckpointOutput
-    OutputCheckpoint *oCheckpt = 0;
-    OutputCollection::const_iterator it;
-    const OutputCollection *outputs = app.outputs;
-    for (it = outputs->begin(); it != outputs->end(); it++)
-      if ((oCheckpt = dynamic_cast<OutputCheckpoint *>(*it))) break;
-
-    if (!oCheckpt) THROW("Could not find OutputCheckpoint");
-
-    // Set F@H info
-    unsigned gen = core.getUnit().gen();
-    int stepsPerGen = core.getOptions()["steps-per-gen"].toInteger();
-    int firstStep = gen * stepsPerGen;
-    int frameSize = stepsPerGen < 100 ? 1 : stepsPerGen / 100;
-    core.setInfo(stepsPerGen, frameSize);
-
-    // Print configuration
-    app.print(cout);
-
-    do {
-      // Update shared info file etc.
-      core.step(app.currentStep - firstStep);
-
-      if (core.doCheckpoint()) {
-        oCheckpt->doIt(app.currentStep - firstStep);
-        core.checkpoint();
-      }
-    } while (!core.shouldQuit() && app.step(min(frameSize, 100)));
-      
-    oCheckpt->doIt(app.currentStep);
-    app.finalize();
-    core.checkpoint();
-
-    return 0;
-
-  } catch (const ProtoMol::Exception &e) {
-    cerr << "ProtoMol ERROR: " << e << endl;
-    core.markFaulty();
-  }
-
-  return 1;
-}
-
-
-int main(int argc, char *argv[]) {
-  try {
-    Core core("ProtoMol", 180, 14);
-
-    core.getOptions().add("steps-per-gen")->setType(Option::INTEGER_TYPE);
-
-    int ret = core.init(argc, argv);
+    int ret = Core::init(argc, argv);
     if (ret) return ret;
 
     // Validate checkpoint file
@@ -114,30 +40,86 @@ int main(int argc, char *argv[]) {
     }
 
     // Add config file to args
-    vector<char *> args;
-    vector<char *>::const_iterator it = core.getArgs().begin();
-    args.push_back(*it++); // Executables name
-    args.push_back((char *)"protomol.conf");
-    args.insert(args.end(), it, core.getArgs().end());
-    args.push_back(0); // Sentinel
+    getArgs().push_front((char *)"protomol.conf");
 
-    core_main(args.size() - 1, &args[0]);
+    return 0;
+  }
 
-    return core.finalize();
 
-  } catch (const FAH::Exception &e) {
-    LOG_ERROR("Core: " << e);
-
-    if (e.getCode()) return e.getCode();
-    return UNKNOWN_ERROR;
-
-  } catch (const std::exception &e) {
-    LOG_ERROR("std::exception: " << e.what());
-
-#ifdef DEBUG
-    throw e; // Rethrow to get core dump
+  int main(int argc, char *argv[]) {
+    try {
+#if defined(DEBUG) && !defined(_WIN32)
+      ProtoMol::Debugger::initStackTrace(argv[0]);
 #endif
 
-    return UNKNOWN_ERROR;
+      ModuleManager modManager;
+      moduleInitFunction(&modManager);
+
+      ProtoMolApp app(&modManager);
+
+      app.splash(cout);
+
+      // Load configuration options
+      if (!app.load(argc, argv)) return 1;
+
+      // Modify configuration
+      // Add outputs FAHFile and FAHGUI
+      app.config["FAHFile"] = "../current.xyz";
+      app.config["FAHGUI"] = "ProtoMol";
+
+      // Setup checkpointing
+      app.config["Checkpoint"] = "checkpt";
+      app.config["CheckpointFreq"] = INT_MAX; // Disable
+
+      // Configure and build
+      app.configure();
+      app.build();
+
+      // Find CheckpointOutput
+      OutputCheckpoint *oCheckpt = 0;
+      OutputCollection::const_iterator it;
+      const OutputCollection *outputs = app.outputs;
+      for (it = outputs->begin(); it != outputs->end(); it++)
+        if ((oCheckpt = dynamic_cast<OutputCheckpoint *>(*it))) break;
+
+      if (!oCheckpt) THROW("Could not find OutputCheckpoint");
+
+      // Set F@H info
+      unsigned gen = getUnit().gen();
+      int stepsPerGen = getOptions()["steps-per-gen"].toInteger();
+      int firstStep = gen * stepsPerGen;
+      int frameSize = stepsPerGen < 100 ? 1 : stepsPerGen / 100;
+      setInfo(stepsPerGen, frameSize);
+
+      if (firstStep != app.currentStep) return BAD_WORK_UNIT;
+
+      // Print configuration
+      app.print(cout);
+
+      do {
+        // Update shared info file etc.
+        step(app.currentStep - firstStep);
+
+        if (doCheckpoint()) {
+          oCheckpt->doIt(app.currentStep - firstStep);
+          checkpoint();
+        }
+      } while (!shouldQuit() && app.step(min(frameSize, 100)));
+      
+      oCheckpt->doIt(app.currentStep);
+      app.finalize();
+      checkpoint();
+
+    } catch (const ProtoMol::Exception &e) {
+      cerr << "ProtoMol ERROR: " << e << endl;
+      throw e;
+    }
+
+    return 0;
   }
+};
+
+
+int main(int argc, char *argv[]) {
+  return ProtoMolCore().run(argc, argv);
 }
