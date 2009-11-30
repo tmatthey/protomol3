@@ -93,8 +93,17 @@ public:
       setInfo(stepsPerGen, frameSize);
 
       // Check that the unit is still on track
-      if (firstStep != app.currentStep || lastStep != app.lastStep)
+      if (app.currentStep < firstStep || lastStep < app.currentStep) {
+        LOG_ERROR("Invalid step " << app.currentStep << " not in ["
+                  << firstStep << ", " << lastStep << "]");
+
         return BAD_WORK_UNIT;
+      }
+
+      if (lastStep != app.lastStep) {
+        LOG_ERROR("Last step " << app.lastStep << " expected " << lastStep);
+        return BAD_WORK_UNIT;
+      }
 
       // Print configuration
       app.print(cout);
