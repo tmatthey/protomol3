@@ -88,10 +88,13 @@ public:
       unsigned gen = getUnit().gen();
       int stepsPerGen = getOptions()["steps-per-gen"].toInteger();
       int firstStep = gen * stepsPerGen;
+      int lastStep = firstStep + stepsPerGen;
       int frameSize = stepsPerGen < 100 ? 1 : stepsPerGen / 100;
       setInfo(stepsPerGen, frameSize);
 
-      if (firstStep != app.currentStep) return BAD_WORK_UNIT;
+      // Check that the unit is still on track
+      if (firstStep != app.currentStep || lastStep != app.lastStep)
+        return BAD_WORK_UNIT;
 
       // Print configuration
       app.print(cout);
