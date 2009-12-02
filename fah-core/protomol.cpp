@@ -54,6 +54,7 @@ public:
 
       ModuleManager modManager;
       moduleInitFunction(&modManager);
+
       ProtoMolApp app(&modManager);
 
       app.splash(cout);
