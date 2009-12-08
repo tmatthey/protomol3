@@ -17,11 +17,22 @@ import GenericTopology
 import _GenericTopology
 import numpy
 import sys
-
+import ProtoMolApp
 def deepcopy(a, b):
+   if (len(b) != len(a)):
+      b.resize(len(a))
    for i in range (0, len(a)):
       b[i] = a[i]
 
+
+class MDVec(numpy.ndarray):
+   def __eq__(self, b):
+    print "CALLED EQ"
+    if (len(self) != len(b)):
+      self.resize(len(b))
+    for i in range (0, len(b)):
+      self[i] = b[i]
+      
 
 class Atom:
    """
@@ -153,7 +164,7 @@ class Physical:
       self.dirty = 1   #: Dirty bit
    
    # Copy which avoids object assignment
-   def copy(self):
+   def copy(self, forces="", dt=-1):
       """
       Perform a deep copy, avoid reference assignment
       """
@@ -177,6 +188,7 @@ class Physical:
       retval.masses = self.masses.copy()
       retval.invmasses = self.invmasses.copy()
       retval.masssum = self.masssum
+      print self.posvec.size()
       retval.posvec.resize(self.posvec.size())
       for i in range(len(self.positions)):
          retval.positions[i] = self.positions[i]
@@ -187,16 +199,27 @@ class Physical:
       retval.myPSF = self.myPSF
       retval.myPDB = self.myPDB
       retval.myEig = self.myEig
+
+      if (dt != -1):
+         retval.app = ProtoMolApp.ProtoMolApp()
+	 retval.app.makeApp(retval.myTop, retval.posvec, retval.velvec, forces.energies, dt)
       retval.build()
       return retval
+      
+
+   def deepcopy(self, forces, dt):
+         retval = self.copy()
+         retval.app = ProtoMolApp.ProtoMolApp()
+         retval.app.makeApp(retval.myTop, retval.posvec, retval.velvec, forces.energies, dt)
+
       
    # SPECIAL ACCESSOR FOR self.positions or self.velocities
    # TO GET DATA FROM WRAPPERS
    def __getattr__(self, name):
       if (name == 'positions'):
-	 return self.__dict__['posvec'].getC()
+	 return (self.__dict__['posvec'].getC()).view(MDVec)
       elif (name == 'velocities'):
-         return self.__dict__['velvec'].getC()
+         return (self.__dict__['velvec'].getC()).view(MDVec)
       elif (name == 'time'):
          return self.myTop.time
       else:
@@ -209,9 +232,13 @@ class Physical:
       if (not self.__dict__.has_key(name)):
          firsttime = True
       if (name == 'positions'):
-         self.__dict__['posvec'].setC(val)
+	 for i in range (0, len(self.positions)):
+	    self.positions[i] = val[i]
+	 #self.__dict__['posvec'].setC(val)
       elif (name == 'velocities'):
-         self.__dict__['velvec'].setC(val)
+	 for i in range (0, len(self.velocities)):
+	    self.velocities[i] = val[i]
+	 #self.__dict__['velvec'].setC(val)
       elif (name == 'bc'):
          self.__dict__['bc'] = val         
          if (val == "Vacuum"):
