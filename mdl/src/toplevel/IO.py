@@ -285,6 +285,7 @@ class IO:
         @param xyzname: XYZ file name.
         """
         XYZReader.XYZReader(self.checkPath(xyzname)).read(phys.myXYZ)
+	phys.posvec.resize(phys.myXYZ.coords.size())
         for ii in range(0, phys.myXYZ.coords.size()*3, 3):
            phys.positions[ii] = phys.myXYZ.coords[ii]
            phys.positions[ii+1] = phys.myXYZ.coords[ii+1]
