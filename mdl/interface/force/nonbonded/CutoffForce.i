@@ -133,10 +133,10 @@ using namespace ProtoMol;
          v.push_back(Value(cutoff));
       }
       else { // Cn
+         v.push_back(Value(order));
 	 v.push_back(Value(switchon));
          v.push_back(Value(switchoff));
          v.push_back(Value(cutoff));
-         v.push_back(Value(order));
          v.push_back(Value(cutoff));
       }
       return self->make(v);
