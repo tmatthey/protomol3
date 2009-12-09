@@ -30,15 +30,6 @@ public:
     int ret = Core::init(argc, argv);
     if (ret) return ret;
 
-    // Validate checkpoint file
-    // TODO move this to core.validateCheckpointFile("checkpt");
-    if (SystemUtilities::exists("checkpt") &&
-        !ChecksumManager::instance().has("checkpt")) {
-      // Checksum not valid
-      LOG_ERROR("Guru Meditation: checkpt sum");
-      return BAD_FRAME_CHECKSUM;
-    }
-
     // Add config file to args
     getArgs().push_front((char *)"protomol.conf");
 
@@ -68,7 +59,7 @@ public:
       app.config["FAHGUI"] = "ProtoMol";
 
       // Setup checkpointing
-      app.config["Checkpoint"] = "checkpt";
+      app.config["Checkpoint"] = getCheckpointFile();
       app.config["CheckpointFreq"] = INT_MAX; // Disable
 
       // Configure and build
