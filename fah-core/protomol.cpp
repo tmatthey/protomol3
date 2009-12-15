@@ -25,7 +25,7 @@ public:
   ProtoMolCore() : Core("ProtoMol", 180, 18) {}
 
   int init(int argc, char *argv[]) {
-    getOptions().add("steps-per-gen")->setType(Option::INTEGER_TYPE);
+    options.add("steps-per-gen")->setType(Option::INTEGER_TYPE);
 
     int ret = Core::init(argc, argv);
     if (ret) return ret;
@@ -106,17 +106,16 @@ public:
           }
         } while (!shouldQuit() && app.step(min(frameSize, 100)));
 
+        oCheckpt->doIt(app.currentStep);
+        app.finalize();
+        checkpoint();
+
       } catch (const ProtoMol::Exception &e) {
         getUnit().type() = CORE_WORK_FAULTY;
       }
 
-      oCheckpt->doIt(app.currentStep);
-      app.finalize();
-      checkpoint();
-
     } catch (const ProtoMol::Exception &e) {
-      cerr << "ProtoMol ERROR: " << e << endl;
-      throw e;
+      THROWS("ProtoMol ERROR: " << e.getMessage());
     }
 
     return 0;

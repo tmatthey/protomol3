@@ -17,13 +17,14 @@ env = config.make_env(['compiler', 'libfah', 'dist', 'build_info'],
 env.__setitem__('static', os.getenv('STATIC_BUILD', 1)) # static build
 
 # Configure
-if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
-  conf = Configure(env)
+conf = Configure(env)
 
+config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
+config.configure('dist', conf, default_distver = '0.0.2')
+
+if not env.GetOption('clean'):
   # Configure compiler
   config.configure('compiler', conf)
-
-  config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
 
   # libprotomol-fah
   env.Append(CPPPATH = [PROTOMOL_HOME])
@@ -41,7 +42,6 @@ if not env.GetOption('clean') and not 'tidy' in BUILD_TARGETS:
   # libfah
   config.configure('libfah', conf)
 
-  config.configure('dist', conf, default_distver = '0.0.2')
 
 info = env.BuildInfo('build_info.cpp', [])
 AlwaysBuild(info)
