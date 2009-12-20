@@ -6,13 +6,11 @@
 #include <protomol/config.h>
 
 #include <fah/core/Core.h>
-#include <fah/checksum/ChecksumManager.h>
 #include <fah/Exception.h>
 #include <fah/util/Logger.h>
-#include <fah/os/SystemUtilities.h>
 
 #include <iostream>
-#include <climits>
+#include <new> // For std::bad_alloc
 
 using namespace std;
 using namespace ProtoMol;
@@ -22,7 +20,7 @@ extern void moduleInitFunction(ModuleManager *);
 
 class ProtoMolCore : public Core {
 public:
-  ProtoMolCore() : Core("ProtoMol", 180, 19) {}
+  ProtoMolCore() : Core("ProtoMol", 180, 20) {}
 
   int init(int argc, char *argv[]) {
     options.add("steps-per-gen")->setType(Option::INTEGER_TYPE);
@@ -111,6 +109,9 @@ public:
         checkpoint();
 
       } catch (const ProtoMol::Exception &e) {
+        getUnit().type() = CORE_WORK_FAULTY;
+
+      } catch (const std::bad_alloc &e) {
         getUnit().type() = CORE_WORK_FAULTY;
       }
 
