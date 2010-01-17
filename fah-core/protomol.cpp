@@ -6,6 +6,7 @@
 #include <protomol/config.h>
 
 #include <fah/core/Core.h>
+#include <fah/core/ExitCodes.h>
 #include <fah/Exception.h>
 #include <fah/util/Logger.h>
 
@@ -87,7 +88,7 @@ public:
         LOG_ERROR("Invalid step " << app.currentStep << " not in ["
                   << firstStep << ", " << lastStep << "]");
 
-        return BAD_WORK_UNIT;
+        return BAD_CORE_FILES;
       }
 
       // Print configuration
