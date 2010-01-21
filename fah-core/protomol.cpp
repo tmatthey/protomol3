@@ -21,7 +21,7 @@ extern void moduleInitFunction(ModuleManager *);
 
 class ProtoMolCore : public Core {
 public:
-  ProtoMolCore() : Core("ProtoMol", 180, 22) {}
+  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 22) {}
 
   int init(int argc, char *argv[]) {
     options.add("steps-per-gen")->setType(Option::INTEGER_TYPE);
@@ -110,10 +110,10 @@ public:
         checkpoint();
 
       } catch (const ProtoMol::Exception &e) {
-        getUnit().type() = CORE_WORK_FAULTY;
+        getUnit().type() = CorePacketType::FAULTY;
 
       } catch (const std::bad_alloc &e) {
-        getUnit().type() = CORE_WORK_FAULTY;
+        getUnit().type() = CorePacketType::FAULTY;
       }
 
     } catch (const ProtoMol::Exception &e) {
