@@ -148,6 +148,8 @@ def configure(conf, c99_mode = 1):
         elif env['CC'] == 'gcc' or env['CC'] == 'icc': compiler_mode = 'gnu'
         else: compiler_mode = 'unknown'
 
+    env['compiler_mode'] = compiler_mode
+
     if compiler == 'default':
         cc = env['CC']
         if cc == 'cl': compiler = 'msvc'
@@ -378,6 +380,8 @@ def findLibPath(env, lib):
 
 
 def mostly_static_libs(env, ignore = ['pthread', 'dl']):
+    if env.get('compiler_mode', '') != 'gnu': return
+
     eenv = copy.copy(os.environ)
     eenv['LIBRARY_PATH'] = ':'.join(env['LIBPATH'])
     cmd = env['CXX'].split()
