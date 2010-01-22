@@ -1,82 +1,68 @@
-import os
-import sys
-import imp
+# Configure system boilerplate
+import os, sys
+#sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '.'))
+import config
 
-# This allows the use of the F@H configuration scripts as is.
-sys.path.append(os.getcwd())
-import compiler
-import boost
+# Setup
+env = config.make_env(['compiler', 'dist', 'libprotomol'])
 
-execfile('config.py')
-execfile('configfah.py')
-
-# Command Line Options
-configs = []
-if os.environ.has_key('SCONS_OPTIONS'):
-    configs.append(os.environ['SCONS_OPTIONS'])
-configs.append('options.py')
-
-vars = Variables(configs)
-
-# Add options
-add_fah_vars(vars)
-add_config_vars(vars)
-compiler.add_vars(vars)
-
-# Create environment and import external PATH
-env = Environment(variables = vars, ENV = os.environ)
-Export('env')
-
-# FAH Options
-fah = int(env.get('fah', 0))
-
-# Include protomol
-env.Append(CPPPATH = '#')
-
-# Generate Help
-Help(vars.GenerateHelpText(env))
+# Configure
+conf = Configure(env)
 
 # Do configuration
 if not env.GetOption('clean'):
-    execfile('package_h.py')
+    # Configure compiler
+    config.configure('compiler', conf)
 
-    # Configure
-    conf = Configure(env)
-    Export('conf')
+    # Dependencies
+    lib = config.load_conf_module('libprotomol', '.')
+    lib.configure_deps(conf)
 
-    # Run Configurations
-    compiler.configure(conf)
-    config_configure()
+    # Mostly static libraries
+    if env.get('mostly_static', 0): config.compiler.mostly_static_libs(env)
 
-    if fah: fah_configure()
+    # libprotomol path
+    env.Append(CPPPATH = ['#'])
 
-    env = conf.Finish()
+conf.Finish()
+
+
+# package.h
+execfile('package_h.py')
+
+
+# libfah
+use_fah = int(env.get('fah', 0))
+
 
 # ProtoMol Library
 libname = 'protomol'
-if fah: libname = libname + '-fah'
+if use_fah: libname = libname + '-fah'
 libsrc = []
 
 # Import subdir build files
 for s in SConscript('protomol/SConscript'):
     libsrc.append('#/protomol/' + s)
 
-if fah:
+if use_fah:
     libsrc.append('#/protomol/modules.cpp')
 
-# Build Library
 lib = env.Library(libname, libsrc)
 
-# ProtoMol Sources
-src = ['protomol/main.cpp', 'protomol/modules.cpp']
 
 # Build Application
+src = ['protomol/main.cpp', 'protomol/modules.cpp']
 name = 'ProtoMol'
 if (env['PLATFORM'] == 'darwin'): name += '-app' # Why?
 protomol = env.Program(name, src + [lib])
+Default(protomol)
 
-if fah: Default(lib)
-else: Default(protomol)
+# Dist
+config.configure('dist', conf, default_distver = '3.0.0')
+tar = env.TarBZ2Dist('ProtoMol', ['ProtoMol' + env['PROGSUFFIX']])
+Alias('dist', tar)
+AlwaysBuild(tar)
+
 
 # Build Visual Studio Project
 if env['PLATFORM'] == 'win32':

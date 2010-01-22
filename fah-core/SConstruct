@@ -3,16 +3,8 @@ import os, sys
 sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '../config'))
 import config
 
-# ProtoMol
-PROTOMOL_HOME = os.environ.get('PROTOMOL_HOME', '../protomol')
-if not os.path.isdir(PROTOMOL_HOME):
-  print 'Cannot find protomol.  Please set PROTOMOL_HOME.'
-  Exit(1)
-
 # Setup
-env = config.make_env(['compiler', 'libfah', 'dist', 'build_info'],
-                      [BoolVariable('lapack', 'Use LAPACK', 0),
-                       BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0)])
+env = config.make_env(['compiler', 'libprotomol', 'dist', 'build_info'])
 
 env.__setitem__('static', os.getenv('STATIC_BUILD', 1)) # static build
 
@@ -27,20 +19,7 @@ if not env.GetOption('clean'):
   config.configure('compiler', conf)
 
   # libprotomol-fah
-  env.Append(CPPPATH = [PROTOMOL_HOME])
-  env.Append(LIBPATH = [PROTOMOL_HOME])
-
-  if not conf.CheckLib('protomol-fah'):
-    print 'Need protomol >= 3.0 please set PROTOMOL_HOME';
-    Exit(1)
-
-  # ProtoMol dependencies
-  env.Append(LIBPATH = ['/usr/lib/atlas']) # get atlas version of libblas
-  execfile(PROTOMOL_HOME + '/config.py')
-  config_configure()
-
-  # libfah
-  config.configure('libfah', conf)
+  config.configure('libprotomol', conf)
 
 
 info = env.BuildInfo('build_info.cpp', [])

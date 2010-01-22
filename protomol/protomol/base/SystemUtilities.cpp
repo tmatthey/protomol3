@@ -111,7 +111,7 @@ namespace ProtoMol {
   void protomolAbort() {
     if (myAbortFunction) (*myAbortFunction)();
 
-    THROW("EXIT");
+    THROW("ABORT");
   }
 
 //____ setProtomolAbort

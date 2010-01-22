@@ -6,25 +6,25 @@ from SCons.Script import *
 from subprocess import *
 from SCons.Util import MD5signature
 
-class static_lib_decider_hack:
+class decider_hack:
     def __init__(self, env):
         self.env = env
         self.decider = env.decide_source
 
     def __call__(self, dep, target, prev_ni):
-        if str(dep).endswith(self.env['LIBSUFFIX']):
-            try:
-                csig = dep.csig
-            except AttributeError:
-                csig = MD5signature(dep.get_contents())
-                dep.csig = csig
-                dep.get_ninfo().csig = csig
+        try:
+            csig = dep.csig
+        except AttributeError:
+            csig = MD5signature(dep.get_contents())
+            dep.csig = csig
+            dep.get_ninfo().csig = csig
 
-            #print dependency, csig, "?=", prev_ni.csig
-            if prev_ni is None: return True
+        #print dependency, csig, "?=", prev_ni.csig
+        if prev_ni is None: return True
+        try:
             return csig != prev_ni.csig
-
-        return self.decider(dep, target, prev_ni)
+        except AttributeError:
+            return True
 
 
 def add_vars(vars):
@@ -61,8 +61,8 @@ def configure(conf, c99_mode = 1):
 
     if env.GetOption('clean'): return
 
-    # Static lib decider hack
-    env.Decider(static_lib_decider_hack(env))
+    # Decider hack.  Works around some SCons bugs.
+    env.Decider(decider_hack(env))
 
     # Get options
     debug = env.get('debug')
@@ -195,6 +195,12 @@ def configure(conf, c99_mode = 1):
 
         env.Append(CPPDEFINES = ['DEBUG'])
 
+        if not optimize and compiler == 'intel':
+            if compiler_mode == 'gnu':
+                env.Append(CCFLAGS = ['-mia32'])
+            elif compiler_mode == 'msvc':
+                env.Append(CCFLAGS = ['/arch:IA32'])
+
     else:
         if compiler_mode == 'gnu':
             # Strip symbols
@@ -280,7 +286,6 @@ def configure(conf, c99_mode = 1):
                 env.Append(CCFLAGS = ['-axSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
             elif compiler_mode == 'msvc':
                 env.Append(CCFLAGS = ['/QaxSSE2,SSE3,SSSE3,SSE4.1,SSE4.2'])
-
 
     # Pointer disambiguation
     if compiler == 'intel':
