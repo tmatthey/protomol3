@@ -59,7 +59,7 @@ Default(protomol)
 
 # Dist
 config.configure('dist', conf, default_distver = '3.0.0')
-tar = env.TarBZ2Dist('ProtoMol', ['ProtoMol' + env['PROGSUFFIX']])
+tar = env.TarBZ2Dist('ProtoMol-bin', ['ProtoMol' + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)
 
