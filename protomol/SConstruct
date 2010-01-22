@@ -4,10 +4,12 @@ import os, sys
 import config
 
 # Setup
-env = config.make_env(['compiler', 'dist', 'libprotomol'])
+env = config.make_env(['compiler', 'libprotomol', 'dist', 'build_info'])
 
 # Configure
 conf = Configure(env)
+config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
+config.configure('dist', conf, default_distver = '3.0.0')
 
 # Do configuration
 if not env.GetOption('clean'):
@@ -30,6 +32,9 @@ conf.Finish()
 # package.h
 execfile('package_h.py')
 
+# Build info
+info = env.BuildInfo('build_info.cpp', [])
+AlwaysBuild(info)
 
 # libfah
 use_fah = int(env.get('fah', 0))
@@ -54,11 +59,10 @@ lib = env.Library(libname, libsrc)
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 name = 'ProtoMol'
 if (env['PLATFORM'] == 'darwin'): name += '-app' # Why?
-protomol = env.Program(name, src + [lib])
+protomol = env.Program(name, src + [lib, info])
 Default(protomol)
 
 # Dist
-config.configure('dist', conf, default_distver = '3.0.0')
 tar = env.TarBZ2Dist('ProtoMol-bin', ['ProtoMol' + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)

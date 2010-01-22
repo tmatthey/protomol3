@@ -7,7 +7,7 @@
 #include <protomol/base/StringUtilities.h>
 #include <protomol/base/Timer.h>
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
 #include <fah/checksum/ChecksumDevice.h>
 
 #else
@@ -98,7 +98,7 @@ namespace ProtoMol {
     Real myCloseTime;
     Timer myTimer;
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
     FAH::ChecksummedFile myFile;
 #else
     std::ofstream myFile;

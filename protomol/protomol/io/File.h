@@ -6,7 +6,7 @@
 #include <vector>
 #include <protomol/base/Exception.h>
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
 #include <fah/checksum/ChecksumDevice.h>
 #else
 #include <fstream>
@@ -32,7 +32,7 @@ namespace ProtoMol {
     std::ios::openmode mode;
     std::string filename;
     std::string comment;
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
     FAH::ChecksummedFile file;
 #else
     std::fstream file;

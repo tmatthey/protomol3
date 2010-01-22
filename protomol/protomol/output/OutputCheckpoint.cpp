@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iostream>
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
 #include <fah/checksum/ChecksumDevice.h>
 typedef FAH::ChecksummedFile fileStream;
 #else

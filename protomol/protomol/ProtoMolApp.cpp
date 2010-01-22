@@ -74,10 +74,10 @@ void ProtoMolApp::splash(ostream &stream) {
     << setw(w) << "Build platform: " << PACKAGE_PLATFORM << endl
 #endif // HAVE_PACKAGE_H
     << setw(w) << "Build date: " <<  __DATE__ << ", " << __TIME__ << endl
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
     << setw(w) << "Checksumming: "
     << "Enabled for Folding@Home file protection." << endl
-#endif // BUILD_FOR_FAH
+#endif // HAVE_LIBFAH
 #ifdef HAVE_PACKAGE_H
     << setw(w) << "Please cite: ";
   fillFormat(stream, PACKAGE_CITE, w, w);

@@ -34,7 +34,7 @@
 #include <string.h>
 #include <errno.h>
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
 #include <fah/checksum/overrides.h>
 #endif
 
@@ -198,7 +198,7 @@ namespace ProtoMol {
   }
 
   bool SystemUtilities::unlink(const string &path) {
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
     return fah_unlink(path.c_str()) == 0;
 #else
     return ::unlink(path.c_str()) == 0;
@@ -207,7 +207,7 @@ namespace ProtoMol {
 
   void SystemUtilities::rename(const string &src, const string &dst) {
     unlink(dst);
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
     int error = fah_rename(src.c_str(), dst.c_str());
 #else
     int error = ::rename(src.c_str(), dst.c_str());

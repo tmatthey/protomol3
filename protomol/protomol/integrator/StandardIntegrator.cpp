@@ -9,7 +9,7 @@
 #include <protomol/ProtoMolApp.h>
 #include <protomol/parallel/Parallel.h>
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
 #include <fah/core/Core.h>
 #endif
 
@@ -83,7 +83,7 @@ void StandardIntegrator::calculateForces() {
   //  calculateForces().
   myPotEnergy = app->energies.potentialEnergy() - myPotEnergy;
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
   FAH::Core::instance().checkIn();
 #endif
 }

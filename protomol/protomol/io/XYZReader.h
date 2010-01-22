@@ -5,7 +5,7 @@
 #include <protomol/io/Reader.h>
 #include <protomol/type/XYZ.h>
 
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
 namespace FAH {
   class Exception;
 };

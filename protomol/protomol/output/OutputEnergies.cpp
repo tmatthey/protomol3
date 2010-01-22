@@ -26,7 +26,7 @@ OutputEnergies::OutputEnergies(const string &filename, int freq,
              closeTime), myDoMolecularTemperature(doMolTemp) {}
 
 void OutputEnergies::doInitialize() {
-#ifdef BUILD_FOR_FAH
+#ifdef HAVE_LIBFAH
     FAH::ChecksummedFile allEnergiesHeaderFile;
 #else
     ofstream allEnergiesHeaderFile;
