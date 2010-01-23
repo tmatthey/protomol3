@@ -193,6 +193,7 @@ namespace ProtoMol {
 //____ http://www.dinkumware.com/htm_cpl/stdlib.html#strtol
   bool toInt(const string &word, int &i) {
     char *endptr = NULL;
+    errno = 0;
     long l = strtol(word.c_str(), &endptr, 10);
     i = static_cast<int> (l);
     if (!word.empty() && static_cast<long> (i) == l && errno != ERANGE &&

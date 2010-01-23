@@ -41,6 +41,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <exception>
 
 #ifdef HAVE_NO_SSTREAM
 #include <protomol/base/sstream_local.h>
@@ -78,7 +79,7 @@ namespace ProtoMol {
    * Throwing an exception instead of aborting overcomes some of the 
    * limitations of the standard assert.
    */
-  class Exception {
+  class Exception : public std::exception {
 #ifdef HAVE_STACK_TRACE
   public:
     typedef std::vector<std::string> trace_t;
@@ -140,7 +141,10 @@ namespace ProtoMol {
       message(e.message), location(e.location), cause(e.cause) {}
 #endif
 
-    virtual ~Exception() {}
+    virtual ~Exception() throw() {}
+
+    // From std::exception
+    virtual const char *what() const throw() {return message.c_str();}
 
     const std::string &getMessage() const {return message;}
     const FileLocation &getLocation() const {return location;}
