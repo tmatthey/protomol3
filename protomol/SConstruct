@@ -32,13 +32,14 @@ conf.Finish()
 # package.h
 execfile('package_h.py')
 
-# Build info
-info = env.BuildInfo('build_info.cpp', [])
-AlwaysBuild(info)
-
 # libfah
 use_fah = int(env.get('fah', 0))
 
+# Build info
+if use_fah:
+    info = env.BuildInfo('build_info.cpp', [])
+    AlwaysBuild(info)
+else: info = []
 
 # ProtoMol Library
 libname = 'protomol'
@@ -59,7 +60,7 @@ lib = env.Library(libname, libsrc)
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 name = 'ProtoMol'
 if (env['PLATFORM'] == 'darwin'): name += '-app' # Why?
-protomol = env.Program(name, src + [lib, info])
+protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
