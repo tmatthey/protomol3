@@ -36,6 +36,14 @@ using namespace ProtoMol;
       if (self->c != NULL && (self->c != (Real*)(((PyArrayObject*)rhs)->data))) {
 	delete self->c;
         self->c = 0;
+        self->c = (Real*)(((PyArrayObject*)rhs)->data);
+        int n = ((PyArrayObject*)rhs)->dimensions[0]/3;
+      if (n < self->size()) {
+         for (unsigned int i = 0; i < n; i++) {
+                self->vec[i].c = self->c+3*i;
+         }
+         self->vec.resize(n);
+
       }
       else if (n > self->size()) {
          for (unsigned int i = 0; i < self->size(); i++) {
