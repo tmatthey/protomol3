@@ -1,7 +1,7 @@
 if not 'PROTOMOL_HOME' in locals():
     PROTOMOL_HOME = '.'
 
-execfile(PROTOMOL_HOME + '/configfuncs.py')
+execfile(PROTOMOL_HOME + '/../mdl/configfuncs.py')
 
 def add_config_vars(vars):
     vars.AddVariables(
