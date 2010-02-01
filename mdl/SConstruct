@@ -104,7 +104,8 @@ if (os.environ.has_key('PROTOMOL_HOME')):
    pmhome=os.getenv('PROTOMOL_HOME')
 else:
    pmhome=pwd+'/../protomol/'
-execfile(pmhome+os.sep+'compiler.py')
+#execfile(pmhome+os.sep+'compiler.py')
+execfile('compiler.py')
 
 # Command Line Options
 opts = Options(pmhome+os.sep+'options.py')
