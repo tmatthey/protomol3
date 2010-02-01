@@ -209,7 +209,10 @@ class ForceField(ForceGroup):
       if (forces.forcevec.size() != phys.numAtoms()):
          forces.forcevec.resize(phys.numAtoms())
       forces.forcevec.zero()
+      #print len(phys.positions)
+      #print phys.app.positions.size()
       phys.app.energies.clear()
+      self.phys = forces.phys = phys
       #phys.posvec.setC(phys.positions)
       self.evaluateSystemForces(phys.app, forces.forcevec)
       #sys.exit(1)

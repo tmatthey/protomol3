@@ -13,5 +13,6 @@ using namespace ProtoMol;
 %include <protomol/force/system/SystemForce.h>
 %include <protomol/force/bonded/BondSystemForce.h>
 
+
 %template(BSF_Periodic) ProtoMol::BondSystemForce<ProtoMol::PeriodicBoundaryConditions >;
 %template(BSF_Vacuum) ProtoMol::BondSystemForce<ProtoMol::VacuumBoundaryConditions >;

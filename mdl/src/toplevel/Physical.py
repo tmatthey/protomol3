@@ -3,6 +3,7 @@ warnings.filterwarnings(action='ignore',
                         message='.*has API version.*',
                         category=RuntimeWarning)
 
+import Forces
 import Constants
 import Vector3DBlock
 import PARReader
@@ -27,7 +28,6 @@ def deepcopy(a, b):
 
 class MDVec(numpy.ndarray):
    def __eq__(self, b):
-    print "CALLED EQ"
     if (len(self) != len(b)):
       self.resize(len(b))
     for i in range (0, len(b)):
@@ -107,7 +107,9 @@ class HAcceptor:
       self.atom1 = a1    #: Atom index 1
       self.atom2 = a2    #: Atom index 2
 
-      
+
+global apps
+apps = []     
 
 class Physical:
    """
@@ -115,7 +117,7 @@ class Physical:
    boundary conditions, etc.
    """
 
-   
+
    def __init__(self):
       #####################################################################
       # USER-ACCESSIBLE STRUCTURES
@@ -139,6 +141,8 @@ class Physical:
       self.masses = numpy.ndarray(0)      #: Diagonal mass matrix
       self.invmasses = numpy.ndarray(0)   #: Diagonal inverse mass matrix
       self.masssum = 0                    #: Sum over all atomic masses
+      self.accept = 0
+      self.reject = 0
       # NOTE: self.positions and self.velocities are also
       # available numpy arrays.
       #####################################################################
@@ -163,23 +167,29 @@ class Physical:
 
       self.dirty = 1   #: Dirty bit
    
+   def __del__(self):
+      print "CALLING DELETE" 
+      pass
+
    # Copy which avoids object assignment
-   def copy(self, forces="", dt=-1):
+   def copy(self, retval, forces="", dt=-1):
       """
       Perform a deep copy, avoid reference assignment
       """
-      retval = Physical()
+      #retval = Physical()
       retval.seed = self.seed
       retval.exclude = self.exclude
       retval.cellsize = self.cellsize
       retval.bc = self.bc
-      retval.remcom = self.remcom
-      retval.remang = self.remang
       retval.defaultCBV = self.defaultCBV
-      if (retval.bc == "Periodic"):
-         retval.myTop = GenericTopology.T_Periodic()
-      else:
-         retval.myTop = GenericTopology.T_Vacuum()
+      retval.remcom = -1
+      retval.remang = -1
+      retval.defaultCBV = self.defaultCBV
+      retval.myTop = self.myTop
+      #if (retval.bc == "Periodic"):
+      #   retval.myTop = GenericTopology.T_Periodic()
+      #else:
+      #   retval.myTop = GenericTopology.T_Vacuum()
       retval.cB1 = self.cB1.copy()
       retval.cB2 = self.cB2.copy()
       retval.cB3 = self.cB3.copy()
@@ -188,7 +198,6 @@ class Physical:
       retval.masses = self.masses.copy()
       retval.invmasses = self.invmasses.copy()
       retval.masssum = self.masssum
-      print self.posvec.size()
       retval.posvec.resize(self.posvec.size())
       for i in range(len(self.positions)):
          retval.positions[i] = self.positions[i]
@@ -199,12 +208,16 @@ class Physical:
       retval.myPSF = self.myPSF
       retval.myPDB = self.myPDB
       retval.myEig = self.myEig
+      retval.accept = self.accept
+      retval.reject = self.reject
 
       if (dt != -1):
          retval.app = ProtoMolApp.ProtoMolApp()
-	 retval.app.makeApp(retval.myTop, retval.posvec, retval.velvec, forces.energies, dt)
-      retval.build()
-      return retval
+         f = Forces.Forces()
+      	 retval.app.makeApp(retval.myTop, retval.posvec, retval.velvec, f.energies, dt)
+         apps.append(retval.app)
+      #retval.build()
+      #return retval
       
 
    def deepcopy(self, forces, dt):

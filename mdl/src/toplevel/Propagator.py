@@ -353,7 +353,6 @@ class Propagator:
           self.io.build()
         
 
-       print forcefield.forcearray
        if (propFactory.getType(outerscheme) == "method"):
           # Calculate the forces, store them in force.
           if (not hasattr(self.phys, 'app')):
@@ -364,11 +363,14 @@ class Propagator:
           self.io.run(self.phys, self.forces, 0, outertime)
           self.io.myProp = self
           for ii in range(1, steps+1):
-             propFactory.create(1, outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
+             self.phys.app.energies.clear()
              self.forces.energies.initialize(self.phys)
+             propFactory.create(1, outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
              self.phys.time = ii*outertime*Constants.invTimeFactor()
              self.io.run(self.phys, self.forces, ii, outertime)
              self.phys.updateCOM_Momenta()
+             #self.phys.app.energies.clear()
+             #self.forces.forcevec.zero()
        else: # Object
 	  setPropagator(self, self.phys, self.forces, propFactory.applyModifiers(propFactory.create(1, outerscheme, outertime, outerforcefield, *chain), outerscheme))
           shake = False

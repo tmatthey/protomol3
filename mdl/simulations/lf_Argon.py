@@ -26,9 +26,10 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
 
 # OUTPUT
 #io.plots = {'totalenergy':2}
+io.files = {'energies':('argon.energies', 1)}
 io.screen = 1
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate(scheme="leapfrog", steps=50, dt=20.0, forcefield=ff, params={'T0':phys.temperature})
+gamma = prop.propagate(scheme="leapfrog", steps=4000, dt=20.0, forcefield=ff)
 

@@ -33,6 +33,7 @@ def leapfrog(phys, forces, io, steps, timestep, fg):
 
    """
    # Update velocities by half a step
+   print timestep
    phys.velocities += forces.force*0.5*timestep*phys.invmasses  # half kick
    # Update positions by a full step
    phys.positions += phys.velocities*timestep               # drift

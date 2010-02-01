@@ -45,6 +45,7 @@ def takahashi(phys, forces, io, steps, timestep, fg):
 
    step = 1
    # Run for the number of passed steps
+   print "TIMESTEP: ", timestep
    while (step < steps):
        # Run I/O
        io.run(phys, forces, step, timestep)

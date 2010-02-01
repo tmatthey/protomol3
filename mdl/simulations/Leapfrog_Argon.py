@@ -22,7 +22,7 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
                              'cutoff':8.0}
 
 # OUTPUT
-#io.files = {'energies':('leapfrog.energies',1),
+io.files = {'energies':('argon.Leap.energies',1)}
 #            'gui':('MDL', 1)}
 io.screen = 2
 

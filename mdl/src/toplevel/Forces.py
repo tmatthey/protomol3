@@ -26,7 +26,9 @@ class Forces:
       self.__dict__['forcevec'] = Vector3DBlock.Vector3DBlock()
       #self.force = 0  #: Atomic force vector.
       #########################################################
-
+ 
+      self.accept = 0
+      self.reject = 0
          
    # SPECIAL ACCESSOR FOR self.forces
    # TO GET DATA FROM WRAPPERS   

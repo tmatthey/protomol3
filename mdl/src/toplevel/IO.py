@@ -475,7 +475,9 @@ class IO:
          if (not hasattr(output, 'initflag')):
             output.initialize(phys.app)
             output.initflag = True
-         elif (i == 0): phys.app.uncache()
+         if (i == 0): phys.app.uncache()
+         #else:
+         #  phys.app.uncache() 
          # RUN THE OUTPUT
          output.run(step)
          i += 1

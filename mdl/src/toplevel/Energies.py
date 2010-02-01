@@ -60,7 +60,7 @@ class Energies(ScalarStructure):
       @param r: Quantity to accumulate.
       
       """
-      self.phys.app.energies.setTable(3, self.bondEnergy()+r)
+      self.phys.app.energies.setTable(2, self.bondEnergy()+r)
 
    def addAngleEnergy(self, r):
       """            
@@ -69,7 +69,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.phys.app.energies.setTable(4, self.angleEnergy()+r)
+      self.phys.app.energies.setTable(3, self.angleEnergy()+r)
       
    def addDihedralEnergy(self, r):
       """
@@ -78,7 +78,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.phys.app.energies.setTable(5, self.dihedralEnergy()+r)
+      self.phys.app.energies.setTable(4, self.dihedralEnergy()+r)
 
    def addImproperEnergy(self, r):
       """
@@ -87,7 +87,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.phys.app.energies.setTable(6, self.improperEnergy()+r)
+      self.phys.app.energies.setTable(5, self.improperEnergy()+r)
 
    def addShadowEnergy(self, r):
       """
@@ -105,7 +105,7 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.phys.app.energies.setTable(1, self.coulombEnergy()+r)
+      self.phys.app.energies.setTable(0, self.coulombEnergy()+r)
       #self.setTable(1, 4)
 
    def addLJEnergy(self, r):
@@ -115,71 +115,71 @@ class Energies(ScalarStructure):
       @type r: float
       @param r: Quantity to accumulate.      
       """
-      self.phys.app.energies.setTable(2, self.ljEnergy()+r)
+      self.phys.app.energies.setTable(1, self.ljEnergy()+r)
 
             
-   def coulombEnergy(self):
+   def coulombEnergy(self, phys):
       """
       @rtype: float
       @return: Electrostatic energy
       """
 
       # Coulomb energy is table index 1
-      return self.phys.app.energies.getTable(1)
+      return phys.app.energies.getTable(0)
    
-   def ljEnergy(self):
+   def ljEnergy(self, phys):
       """
       @rtype: float
       @return: van der Waals energy
       """
 
       # LJ energy is table index 2
-      return self.phys.app.energies.getTable(2)
+      return phys.app.energies.getTable(1)
 
-   def bondEnergy(self):
+   def bondEnergy(self, phys):
       """
       @rtype: float
       @return: Energy due to two-atom bond deviations from equilibrium lengths.
       """
 
       # Bond energy is table index 3
-      return self.phys.app.energies.getTable(3)
+      return phys.app.energies.getTable(2)
 
-   def angleEnergy(self):
+   def angleEnergy(self, phys):
       """
       @rtype: float
       @return: Energy due to three-atom angle deviations from equilibrium angles.
       """
 
       # Angle energy is table index 4
-      return self.phys.app.energies.getTable(4)
+      return phys.app.energies.getTable(3)
 
-   def dihedralEnergy(self):
+   def dihedralEnergy(self, phys):
       """
       @rtype: float
       @return: Energy due to four-atom dihedral deviations from equilibrium angles.
       """
 
       # Dihedral energy is table index 5
-      return self.phys.app.energies.getTable(5)
+      return phys.app.energies.getTable(4)
    
-   def improperEnergy(self):
+   def improperEnergy(self, phys):
       """
       @rtype: float
       @return: Energy due to four-atom improper deviations from equilibrium angles.
       """
 
       # Improper energy is table index 6
-      return self.phys.app.energies.getTable(6)
+      return phys.app.energies.getTable(5)
 
-   def shadowEnergy(self):
+   def shadowEnergy(self, phys):
       """
       @rtype: float
       @return: Shadow energy.
       """
 
       # Shadow energy is table index 4
-      return self.phys.app.energies.getTable(34)
+      return phys.app.energies.getTable(34)
 
    def kineticEnergy(self, phys):
       """
