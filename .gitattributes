@@ -78,6 +78,7 @@ mdl/RunMDL -text
 mdl/RunMDL.bat -text
 mdl/SConstruct -text
 mdl/compiler.py -text
+mdl/config.py -text
 mdl/data/1qcf/1QCF.min1.pdb -text
 mdl/data/1qcf/1QCF.min1.pdb.old -text
 mdl/data/1qcf/1QCF_autopsf.psf -text

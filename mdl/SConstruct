@@ -386,7 +386,8 @@ libs.append(libname)
 if not env.GetOption('clean'):
     os.chdir(pmhome)
     execfile(pmhome+os.sep+'package_h.py')
-    execfile(pmhome+os.sep+'config.py')
+    #execfile(pmhome+os.sep+'config.py')
+    execfile(pmhome+'../mdl/'+'config.py')
 
     # Folding@Home library version
     if fah:
