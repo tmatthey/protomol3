@@ -21,7 +21,7 @@ extern void moduleInitFunction(ModuleManager *);
 
 class ProtoMolCore : public Core {
 public:
-  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 22) {}
+  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 23) {}
 
   int init(int argc, char *argv[]) {
     options.add("steps-per-gen")->setType(Option::INTEGER_TYPE);
@@ -94,33 +94,32 @@ public:
       // Print configuration
       app.print(cout);
 
-      try {
-        do {
-          // Update shared info file etc.
-          step(app.currentStep - firstStep);
-          
-          if (shouldCheckpoint()) {
-            oCheckpt->doIt(app.currentStep);
-            checkpoint();
-          }
-        } while (!shouldQuit() && app.step(min(frameSize, 100)));
+      do {
+        // Update shared info file etc.
+        step(app.currentStep - firstStep);
+        
+        if (shouldCheckpoint()) {
+          oCheckpt->doIt(app.currentStep);
+          checkpoint();
+        }
+      } while (!shouldQuit() && app.step(min(frameSize, 100)));
+      
+      oCheckpt->doIt(app.currentStep);
+      app.finalize();
+      checkpoint();
+      
+      return 0;
 
-        oCheckpt->doIt(app.currentStep);
-        app.finalize();
-        checkpoint();
-
-      } catch (const ProtoMol::Exception &e) {
-        getUnit().type() = CorePacketType::FAULTY;
-
-      } catch (const std::bad_alloc &e) {
-        getUnit().type() = CorePacketType::FAULTY;
-      }
-
+    } catch (const std::bad_alloc &e) {
+      LOG_ERROR("ProtoMol std::bad_alloc");
+      
     } catch (const ProtoMol::Exception &e) {
-      THROWS("ProtoMol ERROR: " << e.getMessage());
+      LOG_ERROR("ProtoMol ERROR: " << e.getMessage());
     }
 
-    return 0;
+    getUnit().type() = CorePacketType::FAULTY;
+
+    return UNKNOWN_ERROR;
   }
 };
 
