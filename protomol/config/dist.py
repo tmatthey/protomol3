@@ -1,4 +1,5 @@
 import os
+import sys
 import tarfile
 import re
 import platform
@@ -13,6 +14,21 @@ exclude_pats = [
 
 distver = None
 distrev = '-%(version)s-%(system)s-%(bits)s'
+
+
+def find_files(path, exclude = None):
+    if not os.path.exists(path): return []
+    if exclude:
+        dir, filename = os.path.split(path)
+        if exclude.match(filename): return []
+    if not os.path.isdir(path): return [path]
+
+    files = []
+    for f in os.listdir(path):
+        files += find_files(path + '/' + f, exclude)
+
+    return files
+
 
 def add_vars(vars):
     vars.Add('dist_version', 'Set dist file version', None)
@@ -45,21 +61,9 @@ def build_function(target, source, env):
 
     source = map(lambda x: str(x), source)
 
-    def exclude(path):
-        return exclude_re.match(os.path.split(path)[1]) != None
-
-    def add_file(path):
-        tar.add(path, distname + '/' + path, exclude = exclude)
-
     for src in source:
-        if os.path.isdir(src):
-            for root, dirs, names in os.walk(src):
-                for dir in dirs:
-                    if exclude(dir): dirs.remove(dir)
-
-                for name in names:
-                    add_file(os.path.join(root, name))
-        else: add_file(src)
+        for file in find_files(src, exclude_re):
+            tar.add(file, distname + '/' + file)
 
     return None
 

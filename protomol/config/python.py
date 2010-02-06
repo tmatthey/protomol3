@@ -10,14 +10,12 @@ def add_vars(vars):
 
 def try_config(conf, command):
     env = conf.env
-    env_save = env.Clone()
 
     try:
         env.ParseConfig(command)
-        env.Append(LIBS = ['util', 'm', 'dl'])
+        env.Append(LIBS = ['util', 'm', 'dl', 'z'])
 
     except OSError:
-        conf.env = env_save
         return False
 
     if conf.CheckHeader('Python.h') and conf.CheckFunc('Py_Initialize'):
@@ -27,7 +25,6 @@ def try_config(conf, command):
 
         return True
 
-    conf.env = env_save
     return False
     
 
