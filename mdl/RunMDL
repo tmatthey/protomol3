@@ -6,9 +6,9 @@ export LD_LIBRARY_PATH=${PWD}:${LD_LIBRARY_PATH}
 
 if [ $1 ] 
 then
-  gdb python $*
+  python $*
 else
-  gdb python -i MDL.py
+  python -i MDL.py
 fi
 
 
