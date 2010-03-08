@@ -848,6 +848,8 @@ protomol/doc/protomol.html -text
 protomol/doc/protomol_icon.ico -text
 protomol/doc/scpism.inp -text
 protomol/doc/scpismQuartic.inp -text
+protomol/doc/testsuite.pdf -text
+protomol/doc/testsuite.tex -text
 protomol/libprotomol-config.py -text
 protomol/package_h.py -text
 protomol/protomol/ProtoMolApp.cpp -text
