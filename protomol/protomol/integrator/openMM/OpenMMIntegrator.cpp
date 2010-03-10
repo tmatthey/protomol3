@@ -64,17 +64,13 @@ struct NBForce{
   Real charge;
   Real sigma;
   Real epsilon;
-  Real c6;
-  Real c12;
   
-  NBForce( int a, int b, Real c, Real s, Real e, Real cs, Real ct ){
+  NBForce( int a, int b, Real c, Real s, Real e ){
     atom1 = a;
     atom2 = b;
     charge = c;
     sigma = s;
     epsilon = e;
-    c6 = cs;
-    c12 = ct;
   }
   
   bool operator< ( const NBForce &other ) const{
@@ -114,9 +110,9 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 #endif
 
   //Initialize system
-  system = new OpenMM::System(sz, numConstraints);
+  system = new OpenMM::System();
   for (unsigned int i = 0; i < sz; ++i)
-    system->setParticleMass(i, app->topology->atoms[i].scaledMass);
+    system->addParticle( app->topology->atoms[i].scaledMass);
 
   //remove common motion?
   if(myCommonMotionRate > 0)
@@ -140,7 +136,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   mFile << "Bonds " << numBonds - numConstBonds << std::endl;
 #endif
 
-    bonds = new OpenMM::HarmonicBondForce(numBonds - numConstBonds);
+    bonds = new OpenMM::HarmonicBondForce();
     system->addForce(bonds);
 
     unsigned int bondsIndex = 0;
@@ -158,7 +154,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
             mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
 #endif
 
-            bonds->setBondParameters(bondsIndex++, a1, a2, r_0, k);
+            //bonds->setBondParameters(bondsIndex++, a1, a2, r_0, k);
           }
       } else {
 
@@ -166,7 +162,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
         mFile << a1 << " " << a2 << " " << r_0 << " " << k << std::endl;
 #endif
 
-        bonds->setBondParameters(i, a1, a2, r_0, k);
+        bonds->addBond( a1, a2, r_0, k );
 
       }
     }
@@ -183,7 +179,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   mFile << "Angles " << numAngles << std::endl;
 #endif
 
-    angles = new OpenMM::HarmonicAngleForce(numAngles);
+    angles = new OpenMM::HarmonicAngleForce();
     system->addForce(angles);
     for (unsigned int i = 0; i < numAngles; i++){
         unsigned int a1 = app->topology->angles[i].atom1;
@@ -197,7 +193,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
         mFile << a1 << " " << a2 << " " << a3 << " " << theta0 << " " << k_t << std::endl;        
 #endif
 
-        angles->setAngleParameters(i, a1, a2, a3, theta0, k_t);
+        angles->addAngle( a1, a2, a3, theta0, k_t );
     }
   }
 
@@ -218,7 +214,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   mFile << "Periodic Force " << totalNumPTor << std::endl;
 #endif
 
-    PTorsion = new OpenMM::PeriodicTorsionForce(numPTor);//totalNumPTor);
+    PTorsion = new OpenMM::PeriodicTorsionForce();//totalNumPTor);
     system->addForce(PTorsion);
     for (unsigned int i = 0; i < numPTor; i++){
         unsigned int a1 = app->topology->dihedrals[i].atom1;
@@ -240,7 +236,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
               << mult << " " << phiA << " " << cpA << std::endl;   
 #endif
 
-          PTorsion->setTorsionParameters(i, a1, a2, a3, a4, mult, phiA, cpA);
+          PTorsion->addTorsion( a1, a2, a3, a4, mult, phiA, cpA );
         }
     }
   }
@@ -251,27 +247,13 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
   if ( RBDihedralForce ){
     unsigned int numRBDih = app->topology->rb_dihedrals.size();
-    unsigned int numRBDihNz = 0;
-
-    for (unsigned int i = 0; i < numRBDih; i++){
-      if ( app->topology->rb_dihedrals[i].C0 != 0 ||
-            app->topology->rb_dihedrals[i].C1 != 0 ||
-            app->topology->rb_dihedrals[i].C2 != 0 ||
-            app->topology->rb_dihedrals[i].C3 != 0 ||
-            app->topology->rb_dihedrals[i].C4 != 0 ||
-            app->topology->rb_dihedrals[i].C5 != 0 ) {
-
-              numRBDihNz++;
-      }
-    }
 
 #ifdef DEBUG
   mFile << "RBDihedrals " << numRBDihNz << std::endl;
 #endif
 
-    RBDihedral = new OpenMM::RBTorsionForce(numRBDihNz);
+    RBDihedral = new OpenMM::RBTorsionForce();
 
-    unsigned int rbdIndex = 0;
     system->addForce(RBDihedral);
     for (unsigned int i = 0; i < numRBDih; i++){
         unsigned int a1 = app->topology->rb_dihedrals[i].atom1;
@@ -290,7 +272,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
           mFile << a1 << " " << a2 << " " << a3 << " " << a4 << " " 
             << C0 << " " << C1 << " " << C2 << " " << C3 << " " << C4 << " " << C5 << std::endl;     
 #endif
-          RBDihedral->setTorsionParameters(rbdIndex++, a1, a2, a3, a4, C0, C1, C2, C3, C4, C5);
+          RBDihedral->addTorsion( a1, a2, a3, a4, C0, C1, C2, C3, C4, C5 );
 
         }
     }
@@ -305,18 +287,14 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
     //get 1-4 interaction size
     unsigned int exclSz = app->topology->exclusions.getTable().size();
-    unsigned int exclSzMod = 0;
-    for (unsigned int i = 0; i < exclSz; i++){
-      if ( (app->topology->exclusions.getTable())[i].excl == EXCLUSION_MODIFIED) exclSzMod++;
-    }
 
 #ifdef DEBUG
-  mFile << "NonBonded Force " << sz << std::endl;
+  mFile << "NonBonded Force " << sz << " " << exclSz << std::endl;
 #endif
 
-    nonbonded = new OpenMM::NonbondedForce(sz, exclSzMod);//0);
+    nonbonded = new OpenMM::NonbondedForce();//0);
     system->addForce(nonbonded);
-
+    
     //normal interactions
     for (unsigned int i = 0; i < sz; i++){
       int type1 = app->topology->atoms[i].type;
@@ -327,19 +305,11 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
       Real charge = app->topology->atoms[i].scaledCharge / Constant::SQRTCOULOMBCONSTANT;
       Real mass = app->topology->atoms[i].scaledMass;
       //
-      Real c6 = 4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6;
-      Real c12 = 4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12;
 #ifdef DEBUG
-      mFile << c6 << " " << c12 << " " << charge << " " << mass << std::endl;  
+      mFile << charge << " " << mass << std::endl;  
 #endif
-
-      if (c12 <= 0){
-        nonbonded->setParticleParameters(i, charge, 1.0, 0.0);
-      }else{
-        nonbonded->setParticleParameters(i, charge, pow(c12/c6, (1.0/6.0)), c6*c6/(4.0*c12));
-      }
-
-      //system->setParticleMass(i, mass);
+        
+      nonbonded->addParticle( charge, sigma * Constant::ANGSTROM_NM , epsilon * Constant::KCAL_KJ );
 
     }
 
@@ -347,15 +317,24 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     mFile << std::endl;
 #endif
 
-    //1-4 interactions	
+    //1-4 interactions, note fudgeQQ set to 0.6059 and fudgeLJ set to 0.33333.
     std::vector<NBForce> mForces;
 
-    unsigned int nonbonded14index = 0;
 
     for (unsigned int i = 0; i < exclSz; i++){
+        
+      unsigned int atom1 = (app->topology->exclusions.getTable())[i].a1;
+      unsigned int atom2 = (app->topology->exclusions.getTable())[i].a2;
+        
+      //full exclusion?
+      if ((app->topology->exclusions.getTable())[i].excl == EXCLUSION_FULL) {
+          
+          nonbonded->addException( atom1, atom2, 0.0, 0.0, 0.0 );
+            
+      }
+        
+      //modified exclusion?
       if ( (app->topology->exclusions.getTable())[i].excl == EXCLUSION_MODIFIED) {
-        unsigned int atom1 = (app->topology->exclusions.getTable())[i].a1;
-        unsigned int atom2 = (app->topology->exclusions.getTable())[i].a2;
 
         unsigned int type1 = app->topology->atoms[atom1].type;
         unsigned int type2 = app->topology->atoms[atom2].type;
@@ -363,28 +342,19 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
                               app->topology->atomTypes[type2].sigma);
         Real epsilon = sqrt(app->topology->atomTypes[type1].epsilon * 
                               app->topology->atomTypes[type2].epsilon);
-        Real chargeij =  app->topology->coulombScalingFactor * //FudgeQQ
+        Real chargeij =  //app->topology->coulombScalingFactor * //FudgeQQ
                           (app->topology->atoms[atom1].scaledCharge / Constant::SQRTCOULOMBCONSTANT) *
                             (app->topology->atoms[atom2].scaledCharge / Constant::SQRTCOULOMBCONSTANT); 
 
-        Real fudgeLJ = app->topology->LJScalingFactor; //FudgeLJ
-        Real c6 =  fudgeLJ * (4.0 * epsilon * pow(sigma, 6.0) * Constant::KCAL_KJ * 1e-6);
-        Real c12 = fudgeLJ * (4.0 * epsilon * pow(sigma, 12.0) * Constant::KCAL_KJ * 1e-12);
 
-        Real epsilon2 = (c6*c6)/(4.0*c12);
-        Real sigma2 = pow(c12/c6,  (1.0/6.0));
-        if (c12 <= 0) {
-          sigma2 = 1.0;
-          epsilon2 = 0.0;
-        }
-
-        mForces.push_back( NBForce( atom1, atom2, chargeij, sigma2, epsilon2, c6, c12 ) );
+        mForces.push_back( NBForce( atom1, atom2, chargeij, sigma, epsilon ) );
 #ifdef DEBUG
         mFile << i << " " << atom1 << " " << atom2 << " " << chargeij << " " << 
-            sigma2 << " " << epsilon2 << " " << c6 << " " << c12 << std::endl;  
+            sigma << " " << epsilon << std::endl;  
 #endif
-        nonbonded->setNonbonded14Parameters(nonbonded14index++, atom1, atom2, chargeij, sigma2, epsilon2);
-
+          
+        nonbonded->addException( atom1, atom2, chargeij, sigma * Constant::ANGSTROM_NM, epsilon * Constant::KCAL_KJ);
+          
       }
     }
   
@@ -405,12 +375,12 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
 
   // Add GBSA if needed.
   
-  if (app->topology->implicitSolvent  == GBSA) {
+    if (app->topology->implicitSolvent  == GBSA) {
 #ifdef DEBUG
     mFile << "Generalised Borne " << sz << std::endl;
 #endif
 
-    gbsa = new OpenMM::GBSAOBCForce(sz);
+    gbsa = new OpenMM::GBSAOBCForce();
     system->addForce(gbsa);
 
     gbsa->setSoluteDielectric(myGBSAEpsilon);//ir->epsilon_r);
@@ -434,7 +404,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
       mFile << i << " " << charge << " " << radius << " " << scaleFactors[i] << std::endl;  
 #endif
 
-      gbsa->setParticleParameters(i, charge, radius, scaleFactors[i]);
+      gbsa->addParticle( charge, radius, scaleFactors[i] );
 
     }
 
@@ -460,7 +430,7 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
     mFile << i << " " << atom1 << " " << atom2 << " " << restLength << std::endl;  
 #endif
 
-    system->setConstraintParameters(i, atom1, atom2, restLength);
+    system->addConstraint( atom1, atom2, restLength );
   }
 
 #ifdef DEBUG
@@ -471,9 +441,12 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   if( myIntegratorType == 1) {
     integrator = new OpenMM::LangevinIntegrator(myLangevinTemperature, myGamma, getTimestep() * Constant::FS_PS); //ps
   } else {
-    //integrator = new OpenMM::NMLIntegrator(myLangevinTemperature, myGamma, getTimestep() * Constant::FS_PS, &app->eigenInfo); //ps
+    //app->eigenInfo.myNumEigenvectors = app->eigenInfo.myNumUsedEigenvectors = 10;
+    //app->eigenInfo.myMaxEigenvalue = 3000.0;
+    //app->eigenInfo.myMinimumLimit = 0.1;
+    integrator = new OpenMM::NMLIntegrator(myLangevinTemperature, myGamma, getTimestep() * Constant::FS_PS, &app->eigenInfo); //ps
   }
-  context = new OpenMM::OpenMMContext(*system, *integrator);
+  context = new OpenMM::Context(*system, *integrator);
 
   OpenMM::Vec3 openMMvecp, openMMvecv;
   for (unsigned int i = 0; i < sz; ++i){
@@ -490,7 +463,8 @@ void OpenMMIntegrator::initialize(ProtoMolApp *app) {
   context->setVelocities(openMMvelocities);
 
   //print platform
-  report << plain << "OpenMM platform is: '" << context->getPlatform().getName() << "'." << endr;
+  report << plain << "OpenMM platform is: '" << context->getPlatform().getName() 
+    << "' Integrator " << myIntegratorType << "." << endr;
   const OpenMM::State state = context->getState(OpenMM::State::Positions | 
                                                 OpenMM::State::Velocities |
                                                 OpenMM::State::Forces |
@@ -523,16 +497,23 @@ void OpenMMIntegrator::run(int numTimesteps) {
   openMMpositions = state.getPositions();
   openMMvelocities = state.getVelocities();
   openMMforces = state.getForces();
-
+  report.precision(5);
+  //report << plain << "x1 " << openMMpositions[0][0] << ",y1 " << openMMpositions[0][1] << ",z1 " << openMMpositions[0][2] << endr;
+  //report << plain << "vx1 " << openMMvelocities[0][0] << ",vy1 " << openMMvelocities[0][1] << ",vz1 " << openMMvelocities[0][2] << endr;
+  
   for (unsigned int i = 0; i < sz; ++i){
    for (int j = 0; j < 3; j++){
      app->positions[i].c[j] = openMMpositions[i][j] * Constant::NM_ANGSTROM; //nm to A
-     app->velocities[i].c[j] = openMMvelocities[i][j] * Constant::NM_ANGSTROM * 
+     app->velocities[i].c[j] = openMMvelocities[i][j] * Constant::NM_ANGSTROM *
        Constant::TIMEFACTOR * Constant::FS_PS; //nm/ps to A/fs?
      (*myForces)[i].c[j] = openMMforces[i][j] * Constant::INV_NM_ANGSTROM * Constant::KJ_KCAL; //KJ/nm to Kcal/A
     }
   }
 
+  app->energies.clear();
+  //calculateForces();
+
+  //std::cout << "Forces " << (*myForces)[0].c[0] << std::endl;
   //clear old energies
   app->energies[ScalarStructure::COULOMB] =
     app->energies[ScalarStructure::LENNARDJONES] =
@@ -544,6 +525,8 @@ void OpenMMIntegrator::run(int numTimesteps) {
   //save total potential energy
   app->energies[ScalarStructure::OTHER] = state.getPotentialEnergy() * Constant::KJ_KCAL;
 
+  //std::cout << "Temp " << temperature(app->topology, &app->velocities) << std::endl;
+  
   //state.getKineticEnergy();
 
   //fix time as no forces calculated
@@ -566,7 +549,7 @@ void OpenMMIntegrator::getParameters(vector<Parameter> &parameters)
 const {
   STSIntegrator::getParameters(parameters);
   parameters.push_back(Parameter("temperature", Value(myLangevinTemperature, ConstraintValueType::NotNegative())));
-  parameters.push_back(Parameter("gamma", Value(myGamma * (1000 * Constant::INV_TIMEFACTOR), ConstraintValueType::NotNegative())));
+  parameters.push_back(Parameter("gamma", Value(myGamma, ConstraintValueType::NotNegative())));// * (1000 * Constant::INV_TIMEFACTOR)
   parameters.push_back(Parameter("seed", Value(mySeed, ConstraintValueType::NotNegative()), 1234));
   //OpenMM forces
   parameters.push_back(Parameter( "HarmonicBondForce", Value( HarmonicBondForce, ConstraintValueType::NoConstraints() ), false ));
@@ -598,7 +581,7 @@ void OpenMMIntegrator::setupValues(std::vector<Value> &values) {
 
   //these must be in the same order as getParameters()
   myLangevinTemperature = values[0];
-  myGamma = (Real)values[1] / (1000.0 * Constant::INV_TIMEFACTOR);
+  myGamma = (Real)values[1];// / (1000.0 * Constant::INV_TIMEFACTOR);
   // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
   mySeed = values[2];
   HarmonicBondForce = values[3];

@@ -5,27 +5,7 @@
 #include <protomol/integrator/STSIntegrator.h>
 
 #if defined (HAVE_OPENMM)
-
-#include "OpenMMContext.h"
-#include "Vec3.h"
-#include "State.h"
-#include "System.h"
-
-//forces
-#include "HarmonicBondForce.h"
-#include "HarmonicAngleForce.h"
-#include "NonbondedForce.h"
-#include "RBTorsionForce.h"
-#include "PeriodicTorsionForce.h"
-#include "GBSAOBCForce.h"
-#include "CMMotionRemover.h"
-#include "internal/OpenMMContextImpl.h"
-//integrators
-#include "Integrator.h"
-#include "LangevinIntegrator.h"
-//other
-#include "OpenMMContext.h"
-
+  #include <OpenMM.h>
 #endif
 
 namespace ProtoMol {
@@ -104,7 +84,7 @@ namespace ProtoMol {
     OpenMM::NonbondedForce * nonbonded;
     OpenMM::GBSAOBCForce* gbsa;
     OpenMM::Integrator *integrator;//Langevin
-    OpenMM::OpenMMContext *context;
+    OpenMM::Context *context;
     vector<OpenMM::Vec3> openMMpositions, openMMvelocities, openMMforces;
 
 #endif
