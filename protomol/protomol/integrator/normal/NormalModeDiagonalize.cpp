@@ -153,6 +153,9 @@ namespace ProtoMol
 
     }
 
+    //flag used eigs
+    app->eigenInfo.myNumUsedEigenvectors = _rfM;
+
     //Initialize BlockHessianDiagonalize, pass BlockHessian if Blocks (not full diag)
     if ( fullDiag ) {
       blockDiag.initialize( _3N );
