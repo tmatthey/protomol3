@@ -19,11 +19,13 @@ namespace ProtoMol
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EigenvectorInfo() : myEigenvectorLength ( 0 ), myNumEigenvectors ( 0 ), 
+        myNumUsedEigenvectors( 0 ),
         myEigenvectors ( 0 ), myOrigCEigval( 0.0 ), myNewCEigval( 0.0 ), myOrigTimestep( 0.0 ), 
         reDiagonalize( false ),
         mySingleEigs( 0 ), myEigVecChanged( true ), myMinimumLimit( 0.5 ), currentMode( -1 ) {};
 
-    EigenvectorInfo( unsigned int n, unsigned int m ) : myEigenvectorLength( n ), myNumEigenvectors( m ),
+    EigenvectorInfo( unsigned int n, unsigned int m ) : myEigenvectorLength( n ), 
+        myNumEigenvectors( m ), myNumUsedEigenvectors( 0 ),
         myMaxEigenvalue( 0.0 ), myEigenvectors ( new double[n * m * 3] ), 
         myOrigCEigval( 0.0 ), myNewCEigval( 0.0 ), myOrigTimestep( 0.0 ), reDiagonalize( false ),
         mySingleEigs( 0 ),
@@ -96,6 +98,7 @@ namespace ProtoMol
     // Eigenvector information
     unsigned int myEigenvectorLength;
     unsigned int myNumEigenvectors;
+    unsigned int myNumUsedEigenvectors;
     double myMaxEigenvalue;
     double *myEigenvectors;
     
