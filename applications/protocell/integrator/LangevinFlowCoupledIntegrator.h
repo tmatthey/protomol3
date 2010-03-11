@@ -19,6 +19,7 @@ namespace ProtoMol {
     LangevinFlowCoupledIntegrator();
     LangevinFlowCoupledIntegrator(Real timestep, Real LangevinTemperature,
                               Real gamma, int seed,
+                              Real avVX, Real avVY, Real avVZ,
                               ForceGroup *overloadedForces);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -64,6 +65,8 @@ namespace ProtoMol {
     Real myLangevinTemperature;
     Real myGamma;
     int mySeed;
+    Real averageVelocityX, averageVelocityY, averageVelocityZ;
+
   };
   //____ INLINES
 }
