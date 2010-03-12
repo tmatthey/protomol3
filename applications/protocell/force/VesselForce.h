@@ -130,11 +130,12 @@ namespace ProtoMol {
 
     //get atom type
     const int type = topo->atoms[atomIndex].type;
+    
     //Get parameters
     Real sigma = topo->atomTypes[type].sigma;
     Real epsilon = topo->atomTypes[type].epsilon;
-    //Real vesselSigma = 1.15;
-    //Real vesselEpsilon = -0.01;//-0.000511;
+
+    //calculate factors
     Real r_ij = sigma + mySigma;
     Real e_ij = sqrt(epsilon * myEpsilon);
     Real A = power<12>(r_ij) * e_ij;
@@ -143,63 +144,37 @@ namespace ProtoMol {
     //report << hint << "i " << atomIndex << " name " << topo->atoms[atomIndex].name <<  " A " << A << " B " << B << " sigma " << sigma << " epsilon "<< epsilon << endr;
     
     //Calculate SCE-Vessel force
-    // Distance squared, diff and offs vector
+    // Distance squared, diff vector
     Real distSquared(0.0);
 
     Vector3D diff(0.0,0.0,0.0);
 
-    Vector3D offs(0.0,0.0,0.0);
-
     //get MINIMAL difference vector, removes PBC extents
-    Vector3D diff1 = boundary.minimalDifference((*positions)[atomIndex], offs );
+    Vector3D diff1 = boundary.minimalDifference((*positions)[atomIndex], Vector3D(0.0,0.0,0.0) );
 
-    //assume cylinder diameter
-    const Real cylinderDia = myDiameter;
+    //get smallest Y distance to cylinder
+    Real ydiff = fabs(diff1[1] - myDiameter) < fabs(diff1[1] + myDiameter) ?
+                diff1[1] - myDiameter : diff1[1] + myDiameter;
 
-    // find nearest 'side' of cylinder (either add or subtract the diameter)
+    //then Z-component smallest distance
+    Real zdiff = fabs(diff1[2] - myDiameter) < fabs(diff1[2] + myDiameter) ?
+                diff1[2] - myDiameter : diff1[2] + myDiameter;
 
-    //Y- component first
-    //ydiff will be the distance to cylinder, yOffs the cylinder position
-    Real ydiff, yOffs;
-
-    //smallest
-    if(fabs(diff1[1] - cylinderDia) < fabs(diff1[1] + cylinderDia)){
-      ydiff = diff1[1] - cylinderDia;
-      yOffs = -cylinderDia;
-    }else{
-      ydiff = diff1[1] + cylinderDia;
-      yOffs = cylinderDia;
-    }
-
-    //then Z-component
-    Real zdiff, zOffs;
-
-    if(fabs(diff1[2] - cylinderDia) < fabs(diff1[2] + cylinderDia)){
-      zdiff = diff1[2] - cylinderDia;
-      zOffs = -cylinderDia;
-    }else{
-      zdiff = diff1[2] + cylinderDia;
-      zOffs = cylinderDia;
-    }
-
-    //find closest, Y or Z and change the diff vector (direction of force) and distSquared to represent it
+    //find closest, Y or Z and change the diff vector (direction of force) to represent it
     //diff zero here
     //
-    if(fabs(ydiff) < fabs(zdiff)){ //added fabs 1/2/10, also changed to ydiff, zdiff below
-      diff[1] = ydiff;//yOffs;
-      distSquared = ydiff * ydiff;
+    if(fabs(ydiff) < fabs(zdiff)){ 
+      diff[1] = ydiff;
     }else{
-      diff[2] = zdiff;//zOffs;
-      distSquared = zdiff * zdiff;
+      diff[2] = zdiff;
     }
 
     //figure out granularity of vessel, to represent cells
-    const double vessel_granularity = myGranularity;
 
     //find last "cell" and next cell
-    double last_vessel_cell = diff1[0] - floor( diff1[0] / vessel_granularity ) * vessel_granularity;
+    double last_vessel_cell = diff1[0] - floor( diff1[0] / myGranularity ) * myGranularity;
 
-    //double next_vessel_cell = vessel_granularity - last_vessel_cell;
+    //double next_vessel_cell = myGranularity - last_vessel_cell;
 
     //find smallest
     //if( fabs(last_vessel_cell) < fabs(next_vessel_cell)){
@@ -220,7 +195,7 @@ namespace ProtoMol {
 
     //report << hint << "Distance " << distSquared << endr;
     
-    //Test!
+    //Test for non zero distance squared
     if( distSquared ){
         Real rDistSquared = 1.0 / distSquared;
 
