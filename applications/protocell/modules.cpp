@@ -24,6 +24,8 @@
 #include <protomol/module/NonbondedSimpleFullForceModule.h>
 #include <protomol/module/NonbondedIntermittentFullForceModule.h>
 
+#include "module/OutputModuleUnits.h"
+
 using namespace ProtoMol;
 
 void moduleInitFunction(ModuleManager *manager) {
@@ -32,6 +34,10 @@ void moduleInitFunction(ModuleManager *manager) {
   manager->add(new ConfigurationModule());
   manager->add(new TopologyModule());
   manager->add(new OutputModule());
+  //Note: OutputModuleUnits un-registers the current "screen"
+  //output so must be called after OutputModule
+  manager->add(new OutputModuleUnits());
+  //
   manager->add(new ModifierModule());
   manager->add(new IOModule());
   manager->add(new CheckpointModule());
