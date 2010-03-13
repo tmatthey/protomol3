@@ -2,7 +2,7 @@
 #ifndef VESSELFORCE_H
 #define VESSELFORCE_H
 
-#include <protomol/force/system/SystemForce.h>
+#include <protomol/force/extended/ExtendedForce.h>
 #include <protomol/type/ScalarStructure.h>
 #include <protomol/parallel/Parallel.h>
 
@@ -15,7 +15,7 @@ namespace ProtoMol {
   //____ VesselForce
 
   template<class TBoundaryConditions>
-  class VesselForce : public SystemForce {
+  class VesselForce : public ExtendedForce {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,7 +32,8 @@ namespace ProtoMol {
   public:
     void calcInteraction(const GenericTopology *topo,
                   const TBoundaryConditions &boundary, const int atomIndex,
-                  const Vector3DBlock *positions, Vector3DBlock *forces,
+                  const Vector3DBlock *positions, const Vector3DBlock *velocities,
+                  Vector3DBlock *forces,
                   ScalarStructure *energies);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -40,11 +41,14 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     virtual void evaluate(const GenericTopology *topo,
-                          const Vector3DBlock *positions, Vector3DBlock *forces,
+                          const Vector3DBlock *positions,
+                          const Vector3DBlock *velocities,
+                          Vector3DBlock *forces,
                           ScalarStructure *energies);
 
     virtual void parallelEvaluate(const GenericTopology *topo,
                                   const Vector3DBlock *positions,
+                                  const Vector3DBlock *velocities,
                                   Vector3DBlock *forces,
                                   ScalarStructure *energies);
 
@@ -83,6 +87,7 @@ namespace ProtoMol {
   template<class TBoundaryConditions>
   inline void VesselForce<TBoundaryConditions>::evaluate(
     const GenericTopology *topo, const Vector3DBlock *positions,
+    const Vector3DBlock *velocities,
     Vector3DBlock *forces, ScalarStructure *energies) {
     const TBoundaryConditions &boundary =
       ((SemiGenericTopology<TBoundaryConditions> &)(*topo)).
@@ -91,7 +96,8 @@ namespace ProtoMol {
     const unsigned int count = positions->size();
 
     for (unsigned int i = 0; i < count; i++){
-        calcInteraction(topo, boundary, i, positions, forces, energies);
+        calcInteraction(topo, boundary, i, 
+                positions, velocities, forces, energies);
     }
     
   }
@@ -100,6 +106,7 @@ namespace ProtoMol {
   template<class TBoundaryConditions>
   inline void VesselForce<TBoundaryConditions>::parallelEvaluate(
     const GenericTopology *topo, const Vector3DBlock *positions,
+    const Vector3DBlock *velocities,
     Vector3DBlock *forces, ScalarStructure *energies) {
     const TBoundaryConditions &boundary =
       (dynamic_cast<const SemiGenericTopology<TBoundaryConditions> &>(*topo)).
@@ -115,7 +122,8 @@ namespace ProtoMol {
           to = n;
         int from = (n * i) / count;
         for (int j = from; j < to; j++){
-            calcInteraction(topo, boundary, i, positions, forces, energies);
+            calcInteraction(topo, boundary, i, 
+                    positions, velocities, forces, energies);
         }
       }
 
@@ -125,7 +133,8 @@ namespace ProtoMol {
   inline void VesselForce<TBoundaryConditions>::calcInteraction(
     const GenericTopology *topo,
     const TBoundaryConditions &boundary, const int atomIndex,
-    const Vector3DBlock *positions, Vector3DBlock *forces,
+    const Vector3DBlock *positions, const Vector3DBlock *velocities,
+    Vector3DBlock *forces,
     ScalarStructure *energies) {
 
     //get atom type
@@ -171,24 +180,18 @@ namespace ProtoMol {
 
     //figure out granularity of vessel, to represent cells
 
-    //find last "cell" and next cell
+    //find last "cell" and next cell on vessel
     double last_vessel_cell = diff1[0] - floor( diff1[0] / myGranularity ) * myGranularity;
 
-    //double next_vessel_cell = myGranularity - last_vessel_cell;
+    double next_vessel_cell = myGranularity - last_vessel_cell;
 
-    //find smallest
-    //if( fabs(last_vessel_cell) < fabs(next_vessel_cell)){
-      //if(diff1[0] > 0.0 )
-        diff[0] = last_vessel_cell; //orig -
-      //else
-      //  diff[0] = last_vessel_cell;
-
-    //}else{
-      //if(diff1[0] > 0.0 )
-        //diff[0] = next_vessel_cell; //orig +
-      //else
-      //  diff[0] = -next_vessel_cell;
-    //}
+    //find direction of SCE, chose trailing restraint
+    //x velocity > 0?
+    if( (*velocities)[atomIndex][0] > 0.0 ) {
+        diff[0] = last_vessel_cell;
+    }else{
+        diff[0] = -next_vessel_cell;
+    }
 
     //get distance to vessel cell
     distSquared = diff.normSquared();

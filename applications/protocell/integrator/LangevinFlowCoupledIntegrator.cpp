@@ -28,7 +28,7 @@ LangevinFlowCoupledIntegrator(Real timestep, Real LangevinTemperature, Real gamm
                           ForceGroup *overloadedForces) :
   STSIntegrator(timestep, overloadedForces),
   myLangevinTemperature(LangevinTemperature),
-  myGamma(gamma / (1000 * Constant::INV_TIMEFACTOR)),
+  myGamma(gamma),// / (1000 * Constant::INV_TIMEFACTOR)),
   // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
   mySeed(seed),
   averageVelocityX(avVX), averageVelocityY(avVY), averageVelocityZ(avVZ)
@@ -73,7 +73,7 @@ void LangevinFlowCoupledIntegrator::initialize(ProtoMolApp *app) {
 }
 
 void LangevinFlowCoupledIntegrator::doDrift() {
-  const Real h = getTimestep() * Constant::INV_TIMEFACTOR;
+  const Real h = getTimestep();// * Constant::INV_TIMEFACTOR;
   app->positions.intoWeightedAdd(h, app->velocities);
   buildMolecularCenterOfMass(&app->positions, app->topology);
   buildMolecularMomentum(&app->velocities, app->topology);
@@ -81,7 +81,7 @@ void LangevinFlowCoupledIntegrator::doDrift() {
 
 void LangevinFlowCoupledIntegrator::doHalfKick() {
     const unsigned int count = app->positions.size();
-    const Real dt = getTimestep() * Constant::INV_TIMEFACTOR; // in fs
+    const Real dt = getTimestep();// * Constant::INV_TIMEFACTOR; // in fs
 
     //variables for diagnostics
     Real average_velocity = 0.0;
@@ -166,7 +166,7 @@ const {
     (Parameter("temperature", Value(myLangevinTemperature,
                                     ConstraintValueType::NotNegative())));
   parameters.push_back
-    (Parameter("gamma", Value(myGamma * (1000 * Constant::INV_TIMEFACTOR),
+    (Parameter("gamma", Value(myGamma /** (1000 * Constant::INV_TIMEFACTOR)*/,
                               ConstraintValueType::NotNegative())));
   parameters.push_back
     (Parameter("seed", Value(mySeed, ConstraintValueType::NotNegative()),
