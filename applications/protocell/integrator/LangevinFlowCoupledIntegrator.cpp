@@ -35,8 +35,41 @@ LangevinFlowCoupledIntegrator(Real timestep, Real LangevinTemperature, Real gamm
   {}
 
 void LangevinFlowCoupledIntegrator::initialize(ProtoMolApp *app) {
+
   STSIntegrator::initialize(app);
   initializeForces();
+
+  // Get the cell centers
+
+  const GenericTopology *topo = app->topology;
+  const unsigned int csize = topo->atoms.size();
+
+  //loop to find cells
+  for (unsigned int i=0; i < csize; i++) {
+
+    //by convention CA, GA etc.
+    if((topo->atoms[i].name.c_str())[1] == 'A'){
+
+      //report << hint << "Center Atom name " << i << endr;
+      //save center atom as index by residue
+      cellCenters[topo->atoms[i].residue_seq] = i;
+
+    }
+    
+  }
+
+  //get size=number of cells
+  numCells = cellCenters.size();
+
+  //loop to test for cell centers cells
+  for (unsigned int i=0; i < csize; i++)
+      cellCenters[topo->atoms[i].residue_seq];
+
+  //if more cels than centers size will be greater as map will be extended
+  if( cellCenters.size() != numCells || cellCenters.size() == 0 ){
+      report << error << "Not all cell centers defined!"<<endr;
+  }
+
 }
 
 void LangevinFlowCoupledIntegrator::doDrift() {
@@ -50,16 +83,18 @@ void LangevinFlowCoupledIntegrator::doHalfKick() {
     const unsigned int count = app->positions.size();
     const Real dt = getTimestep() * Constant::INV_TIMEFACTOR; // in fs
 
-
+    //variables for diagnostics
     Real average_velocity = 0.0;
     Real ke = 0.0;
 
     for (unsigned int i = 0; i < count; i++ ) {
 
+        //user defined fixed velocity
         Vector3D fluidVelocity(averageVelocityX, averageVelocityY, averageVelocityZ);
-        //Vector3D projectedVelocity(0.0, 0.0, 0.0);
 
-        /*const unsigned int myCellCenter = app->topology->atoms[i].cell_center;
+        //find damping factor relative to the
+        //vector connecting thr SCE to the cell center
+        const unsigned int myCellCenter = cellCenters[app->topology->atoms[i].residue_seq];
         const Real normFluidV = fluidVelocity.norm();
         Real factor = 1.0;
 
@@ -69,25 +104,23 @@ void LangevinFlowCoupledIntegrator::doHalfKick() {
                         //app->topology->minimalDifference( app->positions[i], app->positions[myCellCenter]);
           factor = sc.dot(fluidVelocity) / ( normFluidV * sc.norm() );
           //if(factor > 1.0) report << hint << "factor too big " << factor << endr;
-          if(factor > 0.0){
-            //report << hint << "factor " << factor << endr;
-            projectedVelocity = fluidVelocity;// * fabs(factor);
-          }else{
+          if(factor < 0.0){
             factor = 0.1;
           }
         }
-        if( myCellCenter == i ) factor = 0.1;*/
 
+        //if cell center
+        if( myCellCenter == i ) factor = 0.1;
+
+        //factor must be +ve here, so scale gamma
         Real aGamma = myGamma;// * factor;  //####Removed factor
-        if(aGamma < 0.1){ //####was 0.1
-          aGamma = 1.0;
-          //report << hint << "aGamma < 0" << endr;
-        }
+
+        //Langevin leapfrog from here
         const Real fdt = ( 1.0 - exp( -0.5 * aGamma * dt ) ) / aGamma;
         const Real vdt = exp(-0.5*aGamma*dt);
         const Real ndt = sqrt( ( 1.0 - exp( -aGamma * dt ) ) / (2.0 * aGamma) );
         const Real forceConstant = 2 * Constant::BOLTZMANN * myLangevinTemperature *
-                  aGamma; //SI::BOLTZMANN* 1.0e21
+                  aGamma; //SI::BOLTZMANN* 1.0e21 for SI units
 
         //  Generate gaussian random numbers for each spatial direction
         Vector3D gaussRandCoord1(randomGaussianNumber(mySeed),
@@ -95,10 +128,6 @@ void LangevinFlowCoupledIntegrator::doHalfKick() {
                                  randomGaussianNumber(mySeed));
         Real mass = app->topology->atoms[i].scaledMass;
         Real sqrtFCoverM = sqrt(forceConstant / mass);
-        //Real sqrtFCoverMf = sqrt(forceConstant) / mass;
-        // fluid velocity (use fixed initially with random purtubation)
-        //Vector3D fluidVelocity(0.0 + (randomNumber(1234) - 0.5) * 0.1,0.00+(randomNumber(1234) - 0.5) * 0.1,(randomNumber(1234) - 0.5) * 0.1),
-        //                       projectedVelocity(0,0,0);
 
         //remove velocity
         app->velocities[i] -= fluidVelocity;
@@ -118,12 +147,12 @@ void LangevinFlowCoupledIntegrator::doHalfKick() {
         //replace velocity
         app->velocities[i] += fluidVelocity;
 
-        //find average
+        //find average for diagnostics
         average_velocity += app->velocities[i].c[0];
 
-
-
     }
+
+    //diagnostic output
     //report << hint << "Average velocity  " << average_velocity / (Real)count
     //        << " Set velocity " << averageVelocityX << " Temp " << 2.0 * ke / Constant::BOLTZMANN / count / 3.0 << endr;
 

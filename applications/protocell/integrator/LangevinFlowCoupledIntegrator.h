@@ -66,6 +66,8 @@ namespace ProtoMol {
     Real myGamma;
     int mySeed;
     Real averageVelocityX, averageVelocityY, averageVelocityZ;
+    map<int, int>  cellCenters;
+    unsigned int numCells;
 
   };
   //____ INLINES
