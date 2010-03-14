@@ -4,7 +4,7 @@
 #include <protomol/module/MainModule.h>
 #include <protomol/base/StringUtilities.h>
 #include <protomol/topology/GenericTopology.h>
-#include <protomol/io/DCDTrajectoryWriter.h>
+#include "DCDTrajectoryWriter.h"
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/Exception.h>
 
@@ -21,9 +21,7 @@ OutputDCDTrajectoryPlus::OutputDCDTrajectoryPlus() :
 OutputDCDTrajectoryPlus::OutputDCDTrajectoryPlus(const string &filename, int freq,
                                          bool minimal) :
   Output(freq), myDCD(new DCDTrajectoryWriter(filename)),
-  myMinimalImage(minimal) {
-    myDCD->setComment("Hello Chris 2");
-  }
+  myMinimalImage(minimal) {}
 
 OutputDCDTrajectoryPlus::~OutputDCDTrajectoryPlus() {
   if (myDCD != NULL) delete myDCD;
@@ -33,6 +31,24 @@ void OutputDCDTrajectoryPlus::doInitialize() {
   if (myDCD == NULL || !myDCD->open())
     THROW(string("Can not open '") + (myDCD ? myDCD->getFilename() : "") +
           "' for " + getId() + ".");
+
+  //get data for data n header
+  const int size = app->topology->bonds.size();
+
+  std::ostringstream stm;
+
+  //start
+  stm << "BONDS " << size;
+
+  //add bonds
+  for( int i=0; i<size; i++ ){
+      stm << " " << app->topology->bonds[i].atom1 << " "
+              << app->topology->bonds[i].atom2;
+  }
+
+  //set it
+  myDCD->setComment(stm.str());
+
 }
 
 void OutputDCDTrajectoryPlus::doRun(int) {
