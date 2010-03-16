@@ -71,6 +71,7 @@ applications/dcd-reader/modules.cpp -text
 applications/protocell/SConstruct -text
 applications/protocell/force/LJSCEExcludeForce.cpp -text
 applications/protocell/force/LJSCEExcludeForce.h -text
+applications/protocell/force/SConscript -text
 applications/protocell/force/SlimeForce.h -text
 applications/protocell/force/VesselForce.h -text
 applications/protocell/integrator/LangevinFlowCoupledIntegrator.cpp -text

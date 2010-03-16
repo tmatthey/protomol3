@@ -148,7 +148,7 @@ namespace ProtoMol {
 
           if( norm ){
             // Add to the total force.
-            (*forces)[atomIndex] -= diff * myForce / norm;
+            (*forces)[atomIndex] += diff * myForce / norm;
 
             // Add energy
             //(*energies)[ScalarStructure::OTHER] += 0.0;
