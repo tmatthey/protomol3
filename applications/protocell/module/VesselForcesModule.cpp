@@ -2,6 +2,7 @@
 
 #include <protomol/force/bonded/DihedralSystemForce.h>
 #include "../force/VesselForce.h"
+#include "../force/SlimeForce.h"
 #include "../force/LJSCEExcludeForce.h"
 
 #include <protomol/ProtoMolApp.h>
@@ -34,6 +35,9 @@ void VesselForcesModule::registerForces(ProtoMolApp *app) {
     //Vessel wall
     f.registerExemplar(new VesselForce<PeriodicBoundaryConditions>());
 
+    //slime
+    f.registerExemplar(new SlimeForce<PeriodicBoundaryConditions>());
+
     //Inter-SCE LJ, C2 and Cn switching
     f.reg(new NonbondedCutoffSystemForce<CubicCellManager,
             OneAtomPair<PeriodicBoundaryConditions,
@@ -48,6 +52,9 @@ void VesselForcesModule::registerForces(ProtoMolApp *app) {
 
     //Vessel wall
     f.registerExemplar(new VesselForce<VacuumBoundaryConditions>());
+
+    //slime
+    f.registerExemplar(new SlimeForce<VacuumBoundaryConditions>());
 
     //Inter-SCE LJ, C2 and Cn switching
     f.reg(new NonbondedCutoffSystemForce<CubicCellManager,
