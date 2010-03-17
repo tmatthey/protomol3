@@ -38,13 +38,16 @@ void OutputDCDTrajectoryPlus::doInitialize() {
   std::ostringstream stm;
 
   //start
-  stm << "BONDS " << size;
+  stm << "<BONDS> " << size;
 
   //add bonds
   for( int i=0; i<size; i++ ){
       stm << " " << app->topology->bonds[i].atom1 << " "
               << app->topology->bonds[i].atom2;
   }
+
+  //end
+  stm << " </BONDS> " << size;
 
   //set it
   myDCD->setComment(stm.str());
