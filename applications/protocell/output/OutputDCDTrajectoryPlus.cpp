@@ -47,7 +47,7 @@ void OutputDCDTrajectoryPlus::doInitialize() {
   }
 
   //end
-  stm << " </BONDS> " << size;
+  stm << " </BONDS> ";
 
   //set it
   myDCD->setComment(stm.str());
