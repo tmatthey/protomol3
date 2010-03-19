@@ -12,22 +12,32 @@ using namespace ProtoMol;
 
 DCDTrajectoryWriter::DCDTrajectoryWriter(Real timestep, unsigned int firststep,
                                          bool isLittleEndian) :
-  Writer(ios::binary | ios::trunc), myIsLittleEndian(isLittleEndian),
-  myFirstStep(firststep), myTimeStep(timestep) {}
+  Writer(ios::binary | ios::trunc), myFrameOffset(0),
+  myIsLittleEndian(isLittleEndian),
+  myFirstStep(firststep), myTimeStep(timestep), 
+  firstWrite(true) {}
 
 DCDTrajectoryWriter::DCDTrajectoryWriter(const string &filename, Real timestep,
                                          unsigned int firststep,
                                          bool isLittleEndian) :
-  Writer(ios::binary | ios::trunc, filename),
+  Writer(ios::binary | ios::trunc, filename), myFrameOffset(0),
   myIsLittleEndian(isLittleEndian), myFirstStep(firststep),
-  myTimeStep(timestep) {}
+  myTimeStep(timestep), firstWrite(true) {}
+
+DCDTrajectoryWriter::DCDTrajectoryWriter(std::ios::openmode mode, int frameoffs,
+                                         const string &filename, Real timestep,
+                                         unsigned int firststep,
+                                         bool isLittleEndian) :
+  Writer(mode, filename), myFrameOffset(frameoffs),
+  myIsLittleEndian(isLittleEndian), myFirstStep(firststep),
+  myTimeStep(timestep), firstWrite(true) {}
 
 DCDTrajectoryWriter::DCDTrajectoryWriter(const char *filename, Real timestep,
                                          unsigned int firststep,
                                          bool isLittleEndian) :
-  Writer(ios::binary | ios::trunc, string(filename)),
+  Writer(ios::binary | ios::trunc, string(filename)), myFrameOffset(0),
   myIsLittleEndian(isLittleEndian), myFirstStep(firststep),
-  myTimeStep(timestep) {}
+  myTimeStep(timestep), firstWrite(true) {}
 
 bool DCDTrajectoryWriter::openWith(Real timestep, unsigned int firststep,
                                    bool isLittleEndian) {
@@ -76,7 +86,50 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     read((char *)&numSets, 4);
     
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
-    ++numSets;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //if frame offset is set, check file length against
+    //what we expect. Need to do this each time as file may have
+    //numerous additional frames
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //offset for first "end of file"
+    streamoff fileoffset = 0;
+
+    //if non zero offset (i.e. checkpoint re-start)
+    if( myFrameOffset != 0 ){
+
+      //calculate header size
+      const int csize = comment.size() + 9; //9 for "Remarks:"
+      int lines = (csize + 80) / 80;        // was 2, now allows for >2 lines
+      if((csize % 80) != 0) lines++;
+      const int headerSize = 116 + lines * 80;
+
+      //calculate the expected file size
+      const unsigned int calculateSize = ( numAtoms * 4 * 3 + 6 * 4 ) * myFrameOffset
+                                        + headerSize;
+
+      //report if debug set
+      report << debug(2) <<"File size " << size << ", calculated " <<
+                calculateSize << ", frame offset " << myFrameOffset << "." << endr;
+
+      //set offset
+      fileoffset = calculateSize - size;
+
+      //cannot seek past end, so must be <= 0
+      if( fileoffset > 0 )
+          THROWS("Corrupt DCD file. Size is " << size << ", should be >= " << calculateSize << ".");
+
+      //correct numsets
+      numSets = ++myFrameOffset;
+      
+    }else{
+        //original code here
+        ++numSets;
+    }
+
+    //back to original code
+    
     if (myIsLittleEndian != ISLITTLEENDIAN) swapBytes(numSets);
 
     //  8: Number of sets of coordinates, NAMD=0 ???
@@ -87,7 +140,7 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     file.seekp(20, ios::beg);
     file.write((char *)&numSets, 4);   
 
-    file.seekg(0, ios::end);
+    file.seekg(fileoffset, ios::end);
     
   } else {
     // First time ...
@@ -100,12 +153,19 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     float4 timeStep =
       static_cast<float4>(myTimeStep) * Constant::INV_TIMEFACTOR;
 
+    //find comment size
+    const int csize = comment.size() + 9; //9 for "Remarks:"
+
     int32 n0 = 0;
-    int32 n2 = 2;
+    //int32 n2 = 2;
+    int32 n2 = (csize + 80) / 80; // was 2, now allows for >2 lines
+    if((csize % 80) != 0) n2++;
+
     int32 n4 = 4;
     int32 n24 = 24;
     int32 n84 = 84;
-    int32 n164 = 164;
+    //int32 n164 = 164;
+    int32 n164 = n2 * 80 + 4; //was 164, allows for longer comments;
 
     if (myIsLittleEndian != ISLITTLEENDIAN) {
       swapBytes(nAtoms);
@@ -151,7 +211,11 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
     string remarks = string("Remarks: File '") + filename + "'. ProtoMol (" +
       __DATE__ + " at " + __TIME__ + ")";
     file.write(getRightFill(remarks, 80).c_str(), 80);
-    file.write(getRightFill(string("Remarks: " + comment), 80).c_str(), 80);
+
+    //file.write(getRightFill(string("Remarks: " + comment), 80).c_str(), 80);
+    const int numChars = (n2 - 1) * 80; //alow longer comments
+    file.write(getRightFill(string("Remarks: " + comment), numChars).c_str(), numChars);
+
     file.write((char *)&n164, 4);
 
     // 264: Write DCD num-atoms record
@@ -164,6 +228,15 @@ bool DCDTrajectoryWriter::reopen(unsigned int numAtoms) {
 }
 
 bool DCDTrajectoryWriter::write(const Vector3DBlock &coords) {
+
+  //don't write first frame if checkpoint re-start
+  if(firstWrite && myFrameOffset != 0 ){
+    //one shot
+    firstWrite = false;
+    return true;
+  }
+
+  //original code
   const unsigned int count = coords.size();
   if (!reopen(count)) return false;
 

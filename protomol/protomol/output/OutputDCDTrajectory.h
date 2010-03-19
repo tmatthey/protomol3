@@ -14,7 +14,8 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     OutputDCDTrajectory();
-    OutputDCDTrajectory(const std::string &filename, int freq, bool minimal);
+    OutputDCDTrajectory(const std::string &filename, int freq, 
+                            bool minimal, int frameoffs);
     virtual ~OutputDCDTrajectory();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class Output
@@ -48,6 +49,7 @@ namespace ProtoMol {
   private:
     DCDTrajectoryWriter *myDCD;
     bool myMinimalImage;
+    int myFrameOffset;
   };
 }
 #endif

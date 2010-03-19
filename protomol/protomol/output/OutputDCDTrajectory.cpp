@@ -19,9 +19,29 @@ OutputDCDTrajectory::OutputDCDTrajectory() :
   Output(), myDCD(NULL), myMinimalImage(false) {}
 
 OutputDCDTrajectory::OutputDCDTrajectory(const string &filename, int freq,
-                                         bool minimal) :
-  Output(freq), myDCD(new DCDTrajectoryWriter(filename)),
-  myMinimalImage(minimal) {}
+                                         bool minimal, int frameoffs) :
+  Output(freq), //myDCD(new DCDTrajectoryWriter(filename)),
+  myMinimalImage(minimal), myFrameOffset(frameoffs) {
+
+    
+    //if myFrameOffset is zero default to overwrite data
+    if( myFrameOffset == 0){
+        myDCD = new DCDTrajectoryWriter(filename);  //original call
+        
+    //else append to file
+    }else{
+        //flag value
+        report << plain << "DCD FrameOffset parameter set to " << myFrameOffset << "." << endr;
+
+        //file mode
+        const std::ios::openmode mode = ios::binary | ios::ate | ios_base::in;
+        
+        //open DCD for writing with flags 'mode'
+        myDCD = new DCDTrajectoryWriter(mode, myFrameOffset, filename);
+
+    }
+
+}
 
 OutputDCDTrajectory::~OutputDCDTrajectory() {
   if (myDCD != NULL) delete myDCD;
@@ -47,7 +67,7 @@ void OutputDCDTrajectory::doFinalize(int) {
 }
 
 Output *OutputDCDTrajectory::doMake(const vector<Value> &values) const {
-  return new OutputDCDTrajectory(values[0], values[1], values[2]);
+  return new OutputDCDTrajectory(values[0], values[1], values[2], values[3]);
 }
 
 void OutputDCDTrajectory::getParameters(vector<Parameter> &parameter) const {
@@ -56,11 +76,14 @@ void OutputDCDTrajectory::getParameters(vector<Parameter> &parameter) const {
                               ConstraintValueType::NotEmpty())));
   parameter.push_back
     (Parameter(keyword + "OutputFreq",
-               Value(getOutputFreq(), ConstraintValueType::Positive())));
+               Value(getOutputFreq(), ConstraintValueType::Positive()) ));
   parameter.push_back
     (Parameter(keyword + "MinimalImage", Value(myMinimalImage),
                Text("whether the coordinates should be transformed to minimal "
                     "image or not")));
+  parameter.push_back
+    (Parameter(keyword + "FrameOffset", 
+                Value(myFrameOffset, ConstraintValueType::NotNegative()), 0 ));
 }
 
 bool OutputDCDTrajectory::adjustWithDefaultParameters(
@@ -72,7 +95,7 @@ bool OutputDCDTrajectory::adjustWithDefaultParameters(
 
   if (config->valid(InputMinimalImage::keyword) && !values[2].valid())
     values[2] = (*config)[InputMinimalImage::keyword];
-
+  
   return checkParameters(values);
 }
 

@@ -65,6 +65,28 @@ bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
   if (numsteps < 0) numsteps = 0;
   conf["numsteps"] = numsteps;
 
+  // DCD file in use?
+  if( conf.valid("DCDFile") ){
+
+      //get DCD write frequency
+      int dcdFrequency = 1; //if not set default is 1
+
+      //set explicitly?
+      if( conf.valid("DCDFileOutputFreq")) {
+          dcdFrequency = toInt(conf["DCDFileOutputFreq"]);
+      }else{    //else use default output frequency
+          if(conf.valid("outputfreq")){
+            dcdFrequency = toInt(conf["outputfreq"]);
+          }
+      }
+
+      //set frame offset value, number of frames stored since simulation began
+      //dcdFrequency guarenteed +ve by parser
+      //add 1 for first frame output
+      conf["DCDFileFrameOffset"] = (step - firststep) / dcdFrequency + 1;
+
+  }
+
   return !file.fail();
 }
 

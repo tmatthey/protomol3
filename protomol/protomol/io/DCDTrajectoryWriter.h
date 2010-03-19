@@ -42,6 +42,13 @@ namespace ProtoMol {
                                  Real timestep = 1.0, unsigned int firststep =
                                    1,
                                  bool isLittleEndian = ISLITTLEENDIAN);
+    
+    //special create for append to DCD
+    explicit DCDTrajectoryWriter(std::ios::openmode mode, int frameoffs,
+                                 const std::string &filename, Real timestep =
+                                   1.0, unsigned int firststep = 1,
+                                 bool isLittleEndian = ISLITTLEENDIAN);
+    
     // Need this implementation, otherwise const char* will bee converted to 
     // bool or int ...
 
@@ -80,9 +87,11 @@ namespace ProtoMol {
     // My data members
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
+    int myFrameOffset;
     bool myIsLittleEndian;
     unsigned int myFirstStep;
     Real myTimeStep;
+    bool firstWrite;
     std::vector<float4> myX;
     std::vector<float4> myY;
     std::vector<float4> myZ;
