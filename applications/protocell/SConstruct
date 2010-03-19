@@ -29,10 +29,10 @@ if not env.GetOption('clean'):
     Exit(1)
   if not conf.CheckLib('lapack'):
     print 'Need Lapack';
-    Exit(1)
+    #Exit(1)
   if not conf.CheckLib('blas'):
     print 'Need Blas';
-    Exit(1)
+    #Exit(1)
   if not conf.CheckLib('g2c'):
     print 'Need G1C';
     
