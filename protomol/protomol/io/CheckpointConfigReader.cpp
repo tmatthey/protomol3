@@ -107,6 +107,9 @@ bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
           }
 
       }
+      
+      delete dcdTestRead;
+
   }
 
   return !file.fail();
