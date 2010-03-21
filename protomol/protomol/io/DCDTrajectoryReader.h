@@ -45,6 +45,7 @@ namespace ProtoMol {
 
     bool read(Vector3DBlock &coords);
     void doRead(Vector3DBlock &coords);
+    int readFirstStep();
 
     Vector3DBlock *orphanXYZ();
 
@@ -74,7 +75,8 @@ namespace ProtoMol {
     struct {
       char cord[4];
       int32 frames;
-      char ignore1[28];
+      int32 firststep;
+      char ignore1[24];
       int32 freeIndexes;
       char ignore2[44];
     } header;

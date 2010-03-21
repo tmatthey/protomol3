@@ -35,13 +35,28 @@ bool DCDTrajectoryReader::tryFormat() {
   int32 m = n;
   swapBytes(m);
 
+  //get header
+  swap = false;
+  if (m == 84)
+    swap = true;
+
+  //back to start for read
+  file.seekg(0, ios::beg);
+
+  fortranRead((char *)&header, sizeof(header), "header");
+  if (swap) {
+    swapBytes(header.frames);
+    swapBytes(header.firststep);
+    swapBytes(header.freeIndexes);
+  }
 
   // Read DCD magic
   char coord[5];
-  File::read(coord, 4);
+  //File::read(coord, 4);
+  for(int i=0; i<4; i++)
+      coord[i] = header.cord[i];
   coord[4] = '\0';
   close();
-
 
   // Check it
   if (size >= 104 && (n == 84 || m == 84) && string(coord) == "CORD")
@@ -100,6 +115,7 @@ void DCDTrajectoryReader::doRead(Vector3DBlock &xyz) {
       fortranRead((char *)&header, sizeof(header), "header");
       if (swap) {
 	swapBytes(header.frames);
+	swapBytes(header.firststep);
 	swapBytes(header.freeIndexes);
       }
 
@@ -212,6 +228,10 @@ char *DCDTrajectoryReader::fortranReadX(char *data, unsigned int &size,
   return data;
 }
 
+int DCDTrajectoryReader::readFirstStep(){
+    return header.firststep;
+}
+
 
 DCDTrajectoryReader &ProtoMol::
 operator>>(DCDTrajectoryReader &reader, Vector3DBlock &xyz) {
@@ -224,3 +244,5 @@ operator>>(DCDTrajectoryReader &reader, Vector3DBlock &xyz) {
 
   return reader;
 }
+
+

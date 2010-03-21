@@ -3,6 +3,8 @@
 #include <protomol/base/Report.h>
 #include <protomol/base/StringUtilities.h>
 
+#include <protomol/io/DCDTrajectoryReader.h>
+
 using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;
@@ -68,23 +70,43 @@ bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
   // DCD file in use?
   if( conf.valid("DCDFile") ){
 
-      //get DCD write frequency
-      int dcdFrequency = 1; //if not set default is 1
+      //test for file exists and recover 'firstframe'
+      const std::string temp = conf["DCDFile"];
+      DCDTrajectoryReader *dcdTestRead = new DCDTrajectoryReader( temp );
 
-      //set explicitly?
-      if( conf.valid("DCDFileOutputFreq")) {
-          dcdFrequency = toInt(conf["DCDFileOutputFreq"]);
-      }else{    //else use default output frequency
-          if(conf.valid("outputfreq")){
-            dcdFrequency = toInt(conf["outputfreq"]);
+      //sucessfully opened?
+      //If not then Protomol will just pen a new DCD with the updated 'firststep'
+      if( dcdTestRead->tryFormat() ){
+
+          int dcdFirststep = dcdTestRead->readFirstStep();
+
+          report << plain << "'DCD to append to' first step was " << dcdFirststep << "." << endr;
+
+          //valid first step?
+          //if not start again!
+          if( dcdFirststep >= 0 ){
+          
+              //get DCD write frequency
+              int dcdFrequency = 1; //if not set default is 1
+
+              //set explicitly?
+              if( conf.valid("DCDFileOutputFreq")) {
+                  dcdFrequency = toInt(conf["DCDFileOutputFreq"]);
+              }else{    //else use default output frequency
+                  if(conf.valid("outputfreq")){
+                    dcdFrequency = toInt(conf["outputfreq"]);
+                  }
+              }
+
+              //set frame offset value, number of frames stored since simulation began
+              //dcdFrequency guarenteed +ve by parser
+              //add 1 for first frame output
+              conf["DCDFileFrameOffset"] = (step - dcdFirststep) / dcdFrequency + 1;
+                                            //(step - firststep) / dcdFrequency + 1;
+
           }
+
       }
-
-      //set frame offset value, number of frames stored since simulation began
-      //dcdFrequency guarenteed +ve by parser
-      //add 1 for first frame output
-      conf["DCDFileFrameOffset"] = (step - firststep) / dcdFrequency + 1;
-
   }
 
   return !file.fail();

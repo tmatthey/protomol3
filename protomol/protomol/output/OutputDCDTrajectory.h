@@ -50,6 +50,8 @@ namespace ProtoMol {
     DCDTrajectoryWriter *myDCD;
     bool myMinimalImage;
     int myFrameOffset;
+    string myFilename;
+    
   };
 }
 #endif

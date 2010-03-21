@@ -16,31 +16,17 @@ using namespace ProtoMol;
 const string OutputDCDTrajectory::keyword("DCDFile");
 
 OutputDCDTrajectory::OutputDCDTrajectory() :
-  Output(), myDCD(NULL), myMinimalImage(false) {}
+  Output(), myDCD(NULL), myMinimalImage(false), myFrameOffset(0), myFilename("") {}
 
 OutputDCDTrajectory::OutputDCDTrajectory(const string &filename, int freq,
                                          bool minimal, int frameoffs) :
-  Output(freq), //myDCD(new DCDTrajectoryWriter(filename)),
-  myMinimalImage(minimal), myFrameOffset(frameoffs) {
+  Output(freq), myDCD(NULL),//new DCDTrajectoryWriter(filename)),
+  myMinimalImage(minimal), myFrameOffset(frameoffs), myFilename(filename) {
 
     
-    //if myFrameOffset is zero default to overwrite data
-    if( myFrameOffset == 0){
-        myDCD = new DCDTrajectoryWriter(filename);  //original call
-        
-    //else append to file
-    }else{
-        //flag value
-        report << plain << "DCD FrameOffset parameter set to " << myFrameOffset << "." << endr;
-
-        //file mode
-        const std::ios::openmode mode = ios::binary | ios::ate | ios_base::in;
-        
-        //open DCD for writing with flags 'mode'
-        myDCD = new DCDTrajectoryWriter(mode, myFrameOffset, filename);
-
-    }
-
+    //flag value
+    report << plain << "DCD FrameOffset parameter set to " << myFrameOffset << "." << endr;
+    
 }
 
 OutputDCDTrajectory::~OutputDCDTrajectory() {
@@ -48,6 +34,29 @@ OutputDCDTrajectory::~OutputDCDTrajectory() {
 }
 
 void OutputDCDTrajectory::doInitialize() {
+  
+  //Get first frame (must exist or error)
+  const int firstframe = toInt(app->config["firststep"]);
+  
+  report << debug(2) << "Firstframe " << firstframe << "." << endr;
+
+  //open file
+  //if myFrameOffset is zero default to overwrite data
+  //note: now include "firstframe" data.
+  if( myFrameOffset == 0){
+    myDCD = new DCDTrajectoryWriter(myFilename, 1.0, firstframe);  //original call
+   
+  //else append to file
+  }else{
+   
+    //file mode
+    const std::ios::openmode mode = ios::binary | ios::ate | ios_base::in;
+
+    //open DCD for writing with flags 'mode'
+    myDCD = new DCDTrajectoryWriter(mode, myFrameOffset, myFilename);
+   
+  }
+  
   if (myDCD == NULL || !myDCD->open())
     THROW(string("Can not open '") + (myDCD ? myDCD->getFilename() : "") +
           "' for " + getId() + ".");
