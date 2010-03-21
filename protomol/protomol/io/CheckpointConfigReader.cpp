@@ -72,13 +72,13 @@ bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
 
       //test for file exists and recover 'firstframe'
       const std::string temp = conf["DCDFile"];
-      DCDTrajectoryReader *dcdTestRead = new DCDTrajectoryReader( temp );
+      DCDTrajectoryReader dcdTestRead( temp );
 
       //sucessfully opened?
       //If not then Protomol will just pen a new DCD with the updated 'firststep'
-      if( dcdTestRead->tryFormat() ){
+      if( dcdTestRead.tryFormat() ){
 
-          int dcdFirststep = dcdTestRead->readFirstStep();
+          int dcdFirststep = dcdTestRead.readFirstStep();
 
           report << plain << "'DCD to append to' first step was " << dcdFirststep << "." << endr;
 
@@ -108,8 +108,6 @@ bool CheckpointConfigReader::readBase(Configuration &conf, Random &rand) {
 
       }
       
-      delete dcdTestRead;
-
   }
 
   return !file.fail();
