@@ -85,8 +85,6 @@ applications/protocell/module/SConscript -text
 applications/protocell/module/VesselForcesModule.cpp -text
 applications/protocell/module/VesselForcesModule.h -text
 applications/protocell/modules.cpp -text
-applications/protocell/output/DCDTrajectoryWriter.cpp -text
-applications/protocell/output/DCDTrajectoryWriter.h -text
 applications/protocell/output/OutputDCDTrajectoryPlus.cpp -text
 applications/protocell/output/OutputDCDTrajectoryPlus.h -text
 applications/protocell/output/OutputScreenUnit.cpp -text

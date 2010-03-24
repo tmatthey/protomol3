@@ -4,7 +4,7 @@
 #include <protomol/module/MainModule.h>
 #include <protomol/base/StringUtilities.h>
 #include <protomol/topology/GenericTopology.h>
-#include "DCDTrajectoryWriter.h"
+#include <protomol/io/DCDTrajectoryWriter.h>
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/Exception.h>
 
