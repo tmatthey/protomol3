@@ -59,7 +59,9 @@ lib = env.Library(libname, libsrc)
 # Build Application
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 name = 'ProtoMol'
-if (env['PLATFORM'] == 'darwin'): name += '-app' # Why?
+if (sys.platform == 'darwin'): name += '-app' # Without this build fails on Macs as it belives 
+                                              # the 'protomol' folder prevents the creation
+                                              # ProtoMol
 protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
