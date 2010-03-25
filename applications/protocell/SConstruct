@@ -2,7 +2,15 @@ import glob
 import os
 
 opts = Options('options.py')
-opts.AddOptions( BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0) )
+
+# Command Line Options
+Export('opts')
+
+#get config routines
+execfile('config.py')
+
+#add boolean options
+add_config_options()
 
 env = Environment(options = opts, ENV = os.environ)
 conf = Configure(env)
@@ -27,18 +35,10 @@ if not env.GetOption('clean'):
   if not conf.CheckLib('libprotomol'):
     print 'Need protomol >= 3.0 please set PROTOMOL_HOME';
     Exit(1)
-  if not conf.CheckLib('lapack'):
-    print 'Need Lapack';
-    #Exit(1)
-  if not conf.CheckLib('blas'):
-    print 'Need Blas';
-    #Exit(1)
-  if not conf.CheckLib('g2c'):
-    print 'Need G1C';
-    
+
   use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
-  execfile(PROTOMOL_HOME + os.sep + 'config.py')
+  config_configure()
 
 # Import subdir build files
 src = []

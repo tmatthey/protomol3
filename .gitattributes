@@ -69,6 +69,8 @@ applications/dcd-reader/SConstruct -text
 applications/dcd-reader/dcd-reader.cpp -text
 applications/dcd-reader/modules.cpp -text
 applications/protocell/SConstruct -text
+applications/protocell/config.py -text
+applications/protocell/configfuncs.py -text
 applications/protocell/force/LJSCEExcludeForce.cpp -text
 applications/protocell/force/LJSCEExcludeForce.h -text
 applications/protocell/force/SConscript -text
