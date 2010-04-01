@@ -20,8 +20,23 @@ namespace ProtoMol {
     // Constructors, destructors, assignment
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    SlimeForce() : myForce(0.0) {}
-    SlimeForce( double frc ) : myForce(frc) {}
+    SlimeForce() : myForce(0.0), myReverseSteps(0), 
+            myDwellSteps(0), currentStep(0), forward(true), dwell(false) {}
+    SlimeForce( double frc, int rstep, int dstep ) : myForce(frc),
+        myReverseSteps(rstep), myDwellSteps(dstep), forward(true), dwell(false) {
+
+        if( myReverseSteps ){
+            currentStep = (int)( randomNumber() * (myReverseSteps + myDwellSteps) );
+
+            //initial direction
+            const Real rand = randomNumber();
+
+            if( rand > 0.5 )
+                forward = true;
+            else
+                forward = false;
+        }
+    }
     virtual ~SlimeForce() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,6 +90,11 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private:
     double myForce;
+    int myReverseSteps;
+    int myDwellSteps;
+    
+    int currentStep;
+    bool forward, dwell;
 
   };
 
@@ -88,6 +108,20 @@ namespace ProtoMol {
       ((SemiGenericTopology<TBoundaryConditions> &)(*topo)).
         boundaryConditions;
 
+    if( myReverseSteps ){
+        if(++currentStep > myReverseSteps){ //increment reverse counter
+
+            if(currentStep > ( myReverseSteps + myDwellSteps )){
+                dwell = false;
+                if(forward) forward = false;
+                else forward = true;
+                currentStep %= myReverseSteps + myDwellSteps;
+            }else{
+                dwell = true;
+            }
+        }
+    }
+    
     const unsigned int count = positions->size();
 
     for (unsigned int i = 0; i < count; i++){
@@ -105,6 +139,20 @@ namespace ProtoMol {
       (dynamic_cast<const SemiGenericTopology<TBoundaryConditions> &>(*topo)).
         boundaryConditions;
 
+    if( myReverseSteps ){
+        if(++currentStep > myReverseSteps){ //increment reverse counter
+
+            if(currentStep > ( myReverseSteps + myDwellSteps )){
+                dwell = false;
+                if(forward) forward = false;
+                else forward = true;
+                currentStep %= myReverseSteps + myDwellSteps;
+            }else{
+                dwell = true;
+            }
+        }
+    }
+    
     unsigned int n = positions->size();
     unsigned int count = numberOfBlocks(topo, positions);
 
@@ -130,18 +178,31 @@ namespace ProtoMol {
     Vector3DBlock *forces,
     ScalarStructure *energies) {
 
+    //dwell? then return
+    if( dwell ){
+        return;
+    }
+
     //by convention CE?, GE? etc. for end cells
     //E2 is the tail, so add slime force
     if( (topo->atoms[atomIndex].name.c_str())[1] == 'E' ){
 
-      //Tail force
-      if( (topo->atoms[atomIndex].name.c_str())[2] == '2'
-                && atomIndex > 0){
+      //Head or Tail motility force (slime)
+      if( 
+          ( forward && (topo->atoms[atomIndex].name.c_str())[2] == '2' && atomIndex > 0 )
+            || ( !forward && (topo->atoms[atomIndex].name.c_str())[2] == '1' && atomIndex  < (int)positions->size() - 1 )
+               ){
 
           //Assume previous node is connected, hence atomIndex>0
           //get MINIMAL difference vector, removes PBC extents if necesary
-          Vector3D diff = boundary.minimalDifference( (*positions)[atomIndex],
-                                                        (*positions)[atomIndex - 1] );
+          Vector3D diff;
+
+          if(forward) //CE2?
+                diff = boundary.minimalDifference( (*positions)[atomIndex],
+                                                            (*positions)[atomIndex - 1] );
+          else //then CE1
+                diff = boundary.minimalDifference( (*positions)[atomIndex],
+                                                            (*positions)[atomIndex + 1] );
 
           //find norm of vector
           const Real norm = diff.norm();
@@ -155,12 +216,13 @@ namespace ProtoMol {
           }
       }
 
-      //Head force, assumes next node is connected
-      if( (topo->atoms[atomIndex].name.c_str())[2] == '1'
-                && atomIndex < (int)positions->size() - 1 ){
-          //TODO
-      }
+      //Head or Tail social force (pilli)
+      if(
+          ( !forward && (topo->atoms[atomIndex].name.c_str())[2] == '2' && atomIndex > 0 )
+            || ( forward && (topo->atoms[atomIndex].name.c_str())[2] == '1' && atomIndex  < (int)positions->size() - 1 )
+               ){
 
+      }
     }
     
     // Add virial
@@ -177,18 +239,20 @@ namespace ProtoMol {
 
   template<class TBoundaryConditions>
    inline Force* SlimeForce<TBoundaryConditions>::doMake(const std::vector<Value> & values) const {
-        return new SlimeForce(values[0]);
+        return new SlimeForce(values[0], values[1], values[2]);
 
   }
 
   template<class TBoundaryConditions>
   inline void SlimeForce<TBoundaryConditions>::getParameters(std::vector<Parameter>& parameters) const {
       parameters.push_back(Parameter("-force", Value(myForce)));
+      parameters.push_back(Parameter("-reversesteps", Value(myReverseSteps), 0));
+      parameters.push_back(Parameter("-dwellsteps", Value(myDwellSteps), 0));
   }
 
   template<class TBoundaryConditions>
   inline unsigned int SlimeForce<TBoundaryConditions>::getParameterSize() const {
-      return 1;
+      return 3;
   }
 
 }
