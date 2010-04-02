@@ -250,4 +250,4 @@ namespace ProtoMol {
 
 }
 
-#endif /* VESSELFORCE_H */
+#endif /* PLANEFORCE_H */
