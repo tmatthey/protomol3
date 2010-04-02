@@ -73,6 +73,7 @@ applications/protocell/config.py -text
 applications/protocell/configfuncs.py -text
 applications/protocell/force/LJSCEExcludeForce.cpp -text
 applications/protocell/force/LJSCEExcludeForce.h -text
+applications/protocell/force/PlaneForce.h -text
 applications/protocell/force/SConscript -text
 applications/protocell/force/SlimeForce.h -text
 applications/protocell/force/VesselForce.h -text

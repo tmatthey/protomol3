@@ -4,6 +4,7 @@
 #include "../force/VesselForce.h"
 #include "../force/SlimeForce.h"
 #include "../force/LJSCEExcludeForce.h"
+#include "../force/PlaneForce.h"
 
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/StringUtilities.h>
@@ -34,6 +35,8 @@ void VesselForcesModule::registerForces(ProtoMolApp *app) {
   if (equalNocase(boundConds, PeriodicBoundaryConditions::keyword)) {
     //Vessel wall
     f.registerExemplar(new VesselForce<PeriodicBoundaryConditions>());
+    //Plane
+    f.registerExemplar(new PlaneForce<PeriodicBoundaryConditions>());
 
     //slime
     f.registerExemplar(new SlimeForce<PeriodicBoundaryConditions>());
@@ -52,6 +55,8 @@ void VesselForcesModule::registerForces(ProtoMolApp *app) {
 
     //Vessel wall
     f.registerExemplar(new VesselForce<VacuumBoundaryConditions>());
+    //Plane
+    f.registerExemplar(new PlaneForce<VacuumBoundaryConditions>());
 
     //slime
     f.registerExemplar(new SlimeForce<VacuumBoundaryConditions>());
