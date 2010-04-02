@@ -7,6 +7,9 @@
 #include <protomol/io/DCDTrajectoryWriter.h>
 #include <protomol/ProtoMolApp.h>
 #include <protomol/base/Exception.h>
+#include <protomol/type/String.h>
+
+#include <string>
 
 using namespace std;
 using namespace ProtoMol::Report;
@@ -63,6 +66,31 @@ void OutputDCDTrajectoryPlus::doInitialize() {
   //end types
   stm << " </ATOMTYPE> ";
   
+  //Plane data?
+  string intg = String::toLower( app->config["integrator"] );
+  size_t ppos = intg.find("plane");
+  
+  //exists?
+  if( ppos != string::npos ){
+
+      //get plane section of string
+      intg = intg.substr(ppos, string::npos);
+
+      stm << "\n<PLANE> ";
+
+      parsePlane( intg, (string)"sigma", stm );
+
+      parsePlane( intg, (string)"normx", stm );
+      parsePlane( intg, (string)"normy", stm );
+      parsePlane( intg, (string)"normz", stm );
+
+      parsePlane( intg, (string)"pointx", stm );
+      parsePlane( intg, (string)"pointy", stm );
+      parsePlane( intg, (string)"pointz", stm );
+
+      stm << " </PLANE> ";
+  }
+  
   //set it
   myDCD->setComment(stm.str());
 
@@ -111,3 +139,18 @@ bool OutputDCDTrajectoryPlus::adjustWithDefaultParameters(
   return checkParameters(values);
 }
 
+void OutputDCDTrajectoryPlus::parsePlane( std::string &str, std::string prs,
+                                            std::ostringstream &stm){
+  float tintg;
+  size_t ppos;
+
+  //get data
+  if( (ppos = str.find(prs)) != string::npos ){
+      std::istringstream istm( str.substr( ppos + prs.length(), string::npos) );
+      istm >> tintg;
+      stm << " " << tintg;
+  }else{
+      stm << " " << 0;
+  }
+
+}
