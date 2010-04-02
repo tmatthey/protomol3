@@ -184,7 +184,7 @@ namespace ProtoMol {
 
     Vector3D diff(myNormX, myNormY, myNormZ);
 
-    report << hint << "Distance " << distSquared << " y " << diff1.c[1] << " real y " << (*positions)[atomIndex].c[1] << endr;
+    //report << hint << "Distance " << distSquared << " y " << diff1.c[1] << " real y " << (*positions)[atomIndex].c[1] << endr;
     
     //Test for non zero distance squared
     if( distSquared ){
