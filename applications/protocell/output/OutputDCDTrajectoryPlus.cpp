@@ -37,8 +37,8 @@ void OutputDCDTrajectoryPlus::doInitialize() {
 
   std::ostringstream stm;
 
-  //start
-  stm << "<BONDS> " << size;
+  //start bonds
+  stm << "\n<BONDS> " << size;
 
   //add bonds
   for( int i=0; i<size; i++ ){
@@ -46,9 +46,23 @@ void OutputDCDTrajectoryPlus::doInitialize() {
               << app->topology->bonds[i].atom2;
   }
 
-  //end
+  //end bonds
   stm << " </BONDS> ";
+  
+  //start types
+  const int tsize = app->topology->atoms.size();
 
+  stm << "\n<ATOMTYPE> " << tsize;
+  
+  //add types
+  for( int i=0; i<tsize; i++ ){
+    const int indx = app->topology->atoms[i].type;
+    stm << " " << app->topology->atomTypes[indx].name;
+  }
+  
+  //end types
+  stm << " </ATOMTYPE> ";
+  
   //set it
   myDCD->setComment(stm.str());
 

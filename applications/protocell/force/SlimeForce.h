@@ -7,6 +7,8 @@
 #include <protomol/parallel/Parallel.h>
 
 #include <string>
+#include <map>
+#include <iostream>     // required for cout
 
 #include <protomol/base/Report.h>
 using namespace ProtoMol::Report;
@@ -21,34 +23,24 @@ namespace ProtoMol {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
     SlimeForce() : myForce(0.0), myReverseSteps(0), 
-            myDwellSteps(0), currentStep(0), forward(true), dwell(false) {}
+            myDwellSteps(0), setInitialData(true) {}
     SlimeForce( double frc, int rstep, int dstep ) : myForce(frc),
-        myReverseSteps(rstep), myDwellSteps(dstep), forward(true), dwell(false) {
-
-        if( myReverseSteps ){
-            currentStep = (int)( randomNumber() * (myReverseSteps + myDwellSteps) );
-
-            //initial direction
-            const Real rand = randomNumber();
-
-            if( rand > 0.5 )
-                forward = true;
-            else
-                forward = false;
-        }
+        myReverseSteps(rstep), myDwellSteps(dstep), 
+        setInitialData(true) {
     }
     virtual ~SlimeForce() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // New methods of class SlimeForce
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  public:
+  private:
     void calcInteraction(const GenericTopology *topo,
                   const TBoundaryConditions &boundary, const int atomIndex,
                   const Vector3DBlock *positions,
                   Vector3DBlock *forces,
                   ScalarStructure *energies);
 
+    void initializeData( const GenericTopology *topo );
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class SystemForce
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,8 +85,17 @@ namespace ProtoMol {
     int myReverseSteps;
     int myDwellSteps;
     
-    int currentStep;
-    bool forward, dwell;
+    bool setInitialData;
+
+    //per bacteria motion control
+    struct motion{
+        bool forward, dwell;
+        int currentStep;
+    };
+
+    //bacteria data storage
+    map< int, motion > bacteria;
+    vector< int > bacteriaLookup;
 
   };
 
@@ -108,20 +109,35 @@ namespace ProtoMol {
       ((SemiGenericTopology<TBoundaryConditions> &)(*topo)).
         boundaryConditions;
 
-    if( myReverseSteps ){
-        if(++currentStep > myReverseSteps){ //increment reverse counter
+    //initialize?
+    if( setInitialData ){
+        initializeData( topo );
+        setInitialData = false;
+    }
 
-            if(currentStep > ( myReverseSteps + myDwellSteps )){
-                dwell = false;
-                if(forward) forward = false;
-                else forward = true;
-                currentStep %= myReverseSteps + myDwellSteps;
-            }else{
-                dwell = true;
-            }
+    //do updates
+    if( myReverseSteps ){
+
+        const int sz = bacteriaLookup.size();
+
+        for( int i=0; i<sz; i++){
+            
+            const int bindx = bacteriaLookup[i];
+            
+            if(++bacteria[bindx].currentStep > myReverseSteps){ //increment reverse counter
+
+                if(bacteria[bindx].currentStep > ( myReverseSteps + myDwellSteps )){
+                    bacteria[bindx].dwell = false;
+                    if(bacteria[bindx].forward) bacteria[bindx].forward = false;
+                    else bacteria[bindx].forward = true;
+                    bacteria[bindx].currentStep %= myReverseSteps + myDwellSteps;
+                }else{
+                    bacteria[bindx].dwell = true;
+                }
+            }            
         }
     }
-    
+
     const unsigned int count = positions->size();
 
     for (unsigned int i = 0; i < count; i++){
@@ -139,16 +155,31 @@ namespace ProtoMol {
       (dynamic_cast<const SemiGenericTopology<TBoundaryConditions> &>(*topo)).
         boundaryConditions;
 
-    if( myReverseSteps ){
-        if(++currentStep > myReverseSteps){ //increment reverse counter
+    //initialize?
+    if( setInitialData ){
+        initializeData( topo );
+        setInitialData = false;
+    }
 
-            if(currentStep > ( myReverseSteps + myDwellSteps )){
-                dwell = false;
-                if(forward) forward = false;
-                else forward = true;
-                currentStep %= myReverseSteps + myDwellSteps;
-            }else{
-                dwell = true;
+    //do updates
+    if( myReverseSteps ){
+
+        const int sz = bacteriaLookup.size();
+
+        for( int i=0; i<sz; i++){
+
+            const int bindx = bacteriaLookup[i];
+
+            if(++bacteria[bindx].currentStep > myReverseSteps){ //increment reverse counter
+
+                if(bacteria[bindx].currentStep > ( myReverseSteps + myDwellSteps )){
+                    bacteria[bindx].dwell = false;
+                    if(bacteria[bindx].forward) bacteria[bindx].forward = false;
+                    else bacteria[bindx].forward = true;
+                    bacteria[bindx].currentStep %= myReverseSteps + myDwellSteps;
+                }else{
+                    bacteria[bindx].dwell = true;
+                }
             }
         }
     }
@@ -178,26 +209,30 @@ namespace ProtoMol {
     Vector3DBlock *forces,
     ScalarStructure *energies) {
 
-    //dwell? then return
-    if( dwell ){
-        return;
-    }
-
     //by convention CE?, GE? etc. for end cells
     //E2 is the tail, so add slime force
     if( (topo->atoms[atomIndex].name.c_str())[1] == 'E' ){
 
+      //find index of bacteria map
+      const int resindx = topo->atoms[atomIndex].residue_seq;
+
+      //dwell? then return
+      if( bacteria[resindx].dwell ){
+        return;
+      }
+
+
       //Head or Tail motility force (slime)
       if( 
-          ( forward && (topo->atoms[atomIndex].name.c_str())[2] == '2' && atomIndex > 0 )
-            || ( !forward && (topo->atoms[atomIndex].name.c_str())[2] == '1' && atomIndex  < (int)positions->size() - 1 )
+          ( bacteria[resindx].forward && (topo->atoms[atomIndex].name.c_str())[2] == '2' && atomIndex > 0 )
+            || ( !bacteria[resindx].forward && (topo->atoms[atomIndex].name.c_str())[2] == '1' && atomIndex  < (int)positions->size() - 1 )
                ){
 
           //Assume previous node is connected, hence atomIndex>0
           //get MINIMAL difference vector, removes PBC extents if necesary
           Vector3D diff;
 
-          if(forward) //CE2?
+          if(bacteria[resindx].forward) //CE2?
                 diff = boundary.minimalDifference( (*positions)[atomIndex],
                                                             (*positions)[atomIndex - 1] );
           else //then CE1
@@ -218,8 +253,8 @@ namespace ProtoMol {
 
       //Head or Tail social force (pilli)
       if(
-          ( !forward && (topo->atoms[atomIndex].name.c_str())[2] == '2' && atomIndex > 0 )
-            || ( forward && (topo->atoms[atomIndex].name.c_str())[2] == '1' && atomIndex  < (int)positions->size() - 1 )
+          ( !bacteria[resindx].forward && (topo->atoms[atomIndex].name.c_str())[2] == '2' && atomIndex > 0 )
+            || ( bacteria[resindx].forward && (topo->atoms[atomIndex].name.c_str())[2] == '1' && atomIndex  < (int)positions->size() - 1 )
                ){
 
       }
@@ -253,6 +288,54 @@ namespace ProtoMol {
   template<class TBoundaryConditions>
   inline unsigned int SlimeForce<TBoundaryConditions>::getParameterSize() const {
       return 3;
+  }
+
+  template<class TBoundaryConditions>
+  inline void SlimeForce<TBoundaryConditions>::initializeData( const GenericTopology *topo ) {
+
+    const unsigned int csize = topo->atoms.size();
+
+    //loop to find cells/bacteria
+    for (unsigned int i=0; i < csize; i++) {
+
+        const unsigned int sz = bacteria.size();
+
+        const int resindx = topo->atoms[i].residue_seq;
+
+        bacteria[resindx];
+
+        //did map increase in size? f so new entry
+        if( bacteria.size() != sz ){
+
+            //create motion struct
+            motion mot;
+
+            mot.dwell = false;
+
+            if( myReverseSteps ){
+                mot.currentStep = (int)( randomNumber() * (myReverseSteps + myDwellSteps) );
+
+                //initial direction
+                const Real rand = randomNumber();
+
+                if( rand > 0.5 )
+                    mot.forward = true;
+                else
+                    mot.forward = false;
+            }else{
+                mot.currentStep = 0;
+                mot.forward = true;
+            }
+
+            //store it
+            bacteria[resindx] = mot;
+
+            //update lookup
+            bacteriaLookup.push_back( resindx );
+
+        }
+    }
+
   }
 
 }
