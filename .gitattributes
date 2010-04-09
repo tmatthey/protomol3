@@ -406,6 +406,7 @@ mdl/simulations/contour_dielec56.py -text
 mdl/simulations/contour_scpism.py -text
 mdl/simulations/extractDihedrals.py -text
 mdl/simulations/lf_Argon.py -text
+mdl/simulations/s2hmc_Water.py -text
 mdl/simulations/takahashi_Argon.py -text
 mdl/src/__init__.py -text
 mdl/src/factories/ForceFactory.py -text
