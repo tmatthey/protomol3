@@ -251,29 +251,33 @@ class PropagatorFactory:
       print "Type".ljust(10),
       print "Parameters/Defaults"
       print ""
-      firstindex = 0
-      lastindex = len(self.names)
       if (name != "None"):
-	      # TRAPS IF NOT FOUND
-	      firstindex = self.names.index(name)
-	      lastindex = firstindex+1
-		      
-      for i in range(firstindex, lastindex):
-	      print self.names[i].ljust(25),
-	      if (self.types[i] == "protomol"):
-		      print "predefined".ljust(10),
-	      else:
-		      print self.types[i].ljust(10),
-	      for j in range(0, len(self.defaults[i]), 2):
-		      print self.defaults[i][j],"(",
-		      b = type(self.defaults[i][j+1])
-		      print str(b)[7:len(str(b))-2],")",
-		      print ": ", self.defaults[i][j+1]
-		      if (j != len(self.defaults[i])-2):
-			      print "".ljust(25),"".ljust(10),
-	      if (self.defaults[i].__len__() == 0):
-		      print "none"
-
+              if (not self.registry.has_key(name)):
+                 print "Propagator ", name, " is not defined."
+              else: 
+                 print name.ljust(25),
+                 print self.registry[name]['type'].ljust(10),
+                 j = 0
+                 while (j < len(self.registry[name]['defaults'])):
+                    print self.registry[name]['defaults'][j],
+                    print ':',
+                    print self.registry[name]['defaults'][j+1]
+                    print "".ljust(25),
+                    print "".ljust(10),
+                    j += 2
+      else:
+              for i in self.registry.keys():
+                 print str(i).ljust(25),
+                 print self.registry[i]['type'].ljust(10),
+                 j = 0
+                 while (j < len(self.registry[i]['defaults'])):
+                    print self.registry[i]['defaults'][j],
+                    print ':',
+                    print self.registry[i]['defaults'][j+1]
+                    print "".ljust(25),
+                    print "".ljust(10),
+                    j += 2
+                 print ""
 
    # Name: Integrator name, string
    # Defaults: Parameters and values, tuple
