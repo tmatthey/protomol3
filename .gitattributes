@@ -319,6 +319,7 @@ mdl/interface/integrator/base/ImpulseIntegrator.cpp -text
 mdl/interface/integrator/base/ImpulseIntegrator.h -text
 mdl/interface/integrator/base/ImpulseIntegrator.i -text
 mdl/interface/integrator/base/LangevinImpulseIntegrator.i -text
+mdl/interface/integrator/base/LangevinLeapfrogIntegrator.i -text
 mdl/interface/integrator/base/NumericalDifferentiation.i -text
 mdl/interface/integrator/hessian/HessianInt.i -text
 mdl/interface/integrator/leapfrog/DMDLeapfrogIntegrator.i -text
