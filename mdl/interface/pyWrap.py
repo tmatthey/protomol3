@@ -10,7 +10,7 @@ import os
 # file, source file and shared object.
 mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator'],
               'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
-	      'integrator/base':['LangevinImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
+	      'integrator/base':['LangevinImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation', 'LangevinLeapfrogIntegrator'],
               'type':['Vector3DBlock', 'ScalarStructure'],
 	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax'],
               'integrator/hessian':['HessianInt'],

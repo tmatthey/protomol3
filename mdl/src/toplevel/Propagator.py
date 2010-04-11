@@ -6,6 +6,7 @@ import TopologyUtilities
 import numpy
 import ProtoMolApp
 import copy
+import ModifierShake
 
 class Propagator:
    """

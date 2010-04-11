@@ -6,7 +6,7 @@ import sys
 
 mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator', 'NPTVerletIntegrator'],
               'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
-	      'integrator/base':['LangevinImpulseIntegrator', 'ImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
+	      'integrator/base':['LangevinImpulseIntegrator', 'ImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation', 'LangevinLeapfrogIntegrator'],
               'type':['Vector3DBlock', 'ScalarStructure'],
 	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator'],
               'integrator/hessian':['HessianInt'],
@@ -14,6 +14,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
               'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
 	      'io/gromacs':['GromacsParameterFileReader', 'GromacsTopologyReader', 'PortGromacsParameters'],
               'output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
+              'modifier':['ModifierShake'],
               'base':['MathUtilities'],
 	      'topology':['TopologyUtilities', 'GenericTopology'],
 	      'force/bonded':['BondForce','AngleForce','DihedralForce','HarmDihedralForce','ImproperForce'],

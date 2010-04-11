@@ -538,6 +538,10 @@ class PropagatorFactory:
                        ('temp', 300,
                         'gamma', 2,
                         'seed', 1234))
+      self.registerPMObject("LangevinLeapfrog",
+                       ('temp', 300,
+                        'gamma', 2,
+                        'seed', 1234))
       self.registerPMObject("CGMinimizer",
       		       ('alpha', 0.001,
 			'beta', 0.05,
