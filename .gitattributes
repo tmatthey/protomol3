@@ -389,6 +389,7 @@ mdl/simulations/FTSM_ALA_SOLV.py -text
 mdl/simulations/FTSM_ALA_SOLV_MPI.py -text
 mdl/simulations/FTSM_ALA_VAC.py -text
 mdl/simulations/LangevinImpulse_Butane.py -text
+mdl/simulations/LangevinLeapfrog_Butane.py -text
 mdl/simulations/Leapfrog_Argon.py -text
 mdl/simulations/NPTVerlet_Argon.py -text
 mdl/simulations/NormalMode_ALA.py -text
