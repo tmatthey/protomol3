@@ -45,7 +45,7 @@ class HDForce:
     Modify energy and force vector to include this force term.
     """
     # COMPUTE DIHEDRAL DIFFERENCE
-    diff = self.phys.angle(self.dihedral) - self.phi;
+    diff = self.phys.dihedral(self.dihedral) - self.phi;
     if (diff < -numpy.pi):
       diff += 2 * numpy.pi;
     elif (diff > numpy.pi):

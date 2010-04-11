@@ -376,7 +376,8 @@ class Propagator:
           shake = False
           if (params.has_key('shake') and params['shake'] == 'on'):
               shake = True
-              shakeMod = self.myPropagator.createShakeModifier(0.000001, 30)
+              shakeMod = ModifierShake.ModifierShake(0.000001, 30)
+              #shakeMod = self.myPropagator.createShakeModifier(0.000001, 30)
               self.myPropagator.adoptPostDriftOrNextModifier(shakeMod)
           rattle = False
           if (params.has_key('rattle') and params['rattle'] == 'on'):

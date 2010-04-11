@@ -449,10 +449,10 @@ def M(phys, alpha, beta):
     if (alpha == beta):
        # alpha and beta are the same dihedral, so we have four
        # terms in the sum for M
-       atomI = phys.dihedral(alpha).atom1-1
-       atomJ = phys.dihedral(alpha).atom2-1
-       atomK = phys.dihedral(alpha).atom3-1
-       atomL = phys.dihedral(alpha).atom4-1
+       atomI = phys.getDihedral(alpha).atom1-1
+       atomJ = phys.getDihedral(alpha).atom2-1
+       atomK = phys.getDihedral(alpha).atom3-1
+       atomL = phys.getDihedral(alpha).atom4-1
        rij = phys.positions[atomJ*3:atomJ*3+3] - phys.positions[atomI*3:atomI*3+3]
        rkj = phys.positions[atomJ*3:atomJ*3+3] - phys.positions[atomK*3:atomK*3+3]
        rkl = phys.positions[atomL*3:atomL*3+3] - phys.positions[atomK*3:atomK*3+3]
@@ -473,10 +473,10 @@ def M(phys, alpha, beta):
 	       tmp = alpha
 	       alpha = beta
 	       beta = tmp
-       atomI = phys.dihedral(alpha).atom1-1
-       atomJ = phys.dihedral(alpha).atom2-1
-       atomK = phys.dihedral(alpha).atom3-1
-       atomL = phys.dihedral(alpha).atom4-1
+       atomI = phys.getDihedral(alpha).atom1-1
+       atomJ = phys.getDihedral(alpha).atom2-1
+       atomK = phys.getDihedral(alpha).atom3-1
+       atomL = phys.getDihedral(alpha).atom4-1
        rij = phys.positions[atomJ*3:atomJ*3+3] - phys.positions[atomI*3:atomI*3+3]
        rkj = phys.positions[atomJ*3:atomJ*3+3] - phys.positions[atomK*3:atomK*3+3]
        rkl = phys.positions[atomL*3:atomL*3+3] - phys.positions[atomK*3:atomK*3+3]
@@ -486,10 +486,10 @@ def M(phys, alpha, beta):
        dphidxK = -(dphidxI + dphidxJ + dphidxL)
        
        # DERIVATIVES FOR PSI
-       atomI = phys.dihedral(beta).atom1-1
-       atomJ = phys.dihedral(beta).atom2-1
-       atomK = phys.dihedral(beta).atom3-1
-       atomL = phys.dihedral(beta).atom4-1
+       atomI = phys.getDihedral(beta).atom1-1
+       atomJ = phys.getDihedral(beta).atom2-1
+       atomK = phys.getDihedral(beta).atom3-1
+       atomL = phys.getDihedral(beta).atom4-1
        rij = phys.positions[atomJ*3:atomJ*3+3] - phys.positions[atomI*3:atomI*3+3]
        rkj = phys.positions[atomJ*3:atomJ*3+3] - phys.positions[atomK*3:atomK*3+3]
        rkl = phys.positions[atomL*3:atomL*3+3] - phys.positions[atomK*3:atomK*3+3]    

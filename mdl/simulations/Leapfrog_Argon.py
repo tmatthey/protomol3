@@ -28,4 +28,5 @@ io.screen = 2
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate("Leapfrog", steps=4000, dt=20.0, forcefield=ff)
+gamma = prop.propagate("Leapfrog", steps=4000, dt=20.0, forcefield=ff,
+                       params={'shake':'on'})

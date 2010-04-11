@@ -18,6 +18,7 @@ ff = forces.makeForceField(phys, "charmm")
 # OUTPUT
 io.screen = 2
 
+propFactory.query("RMT")
 # PROPAGATION
 prop = Propagator(phys, forces, io)
 prop.propagate(scheme="RMT", steps=200, dt=0.5, forcefield=ff)

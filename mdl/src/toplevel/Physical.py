@@ -421,7 +421,7 @@ class Physical:
 
 
    # GET BOND #(index)
-   def bond(self, index):
+   def getBond(self, index):
       """
       Get a bond at the passed index.
 
@@ -436,7 +436,7 @@ class Physical:
                   self.myPSF.getAttributeInt("bond", index-1, "atom2"))
 
    # GET ANGLE #(index)
-   def ang(self, index):
+   def getAngle(self, index):
       """
       Get an angle at the passed index.
 
@@ -452,7 +452,7 @@ class Physical:
                    self.myPSF.getAttributeInt("angle", index-1, "atom3"))
 
    # GET DIHEDRAL #(index)
-   def dihedral(self, index):
+   def getDihedral(self, index):
       """
       Get a dihedral at the passed index.
 
@@ -469,7 +469,7 @@ class Physical:
                       self.myPSF.getAttributeInt("dihedral", index-1, "atom4"))
 
    # GET IMPROPER #(index)
-   def improper(self, index):
+   def getImproper(self, index):
       """
       Get an improper at the passed index.
 
@@ -487,7 +487,7 @@ class Physical:
 
 
    # GET DONOR #(index)
-   def donor(self, index):
+   def getDonor(self, index):
       """
       Get an H+ donor at the passed index.
 
@@ -502,7 +502,7 @@ class Physical:
                     self.myPSF.getAttributeInt("donor", index-1, "atom2"))
 
    # GET ACCEPTOR #(index)
-   def acceptor(self, index):
+   def getAcceptor(self, index):
       """
       Get an H+ acceptor at the passed index.
 
@@ -553,7 +553,7 @@ class Physical:
       """
       return TopologyUtilities.temperature(self.myTop, self.velvec)
 
-   def angle(self, index):
+   def dihedral(self, index):
       """
       Dihedral angle (rad, -PI to PI) at passed index
 
