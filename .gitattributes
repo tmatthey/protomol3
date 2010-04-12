@@ -343,6 +343,7 @@ mdl/interface/integrator/normal/BBKIntegrator.h -text
 mdl/interface/integrator/normal/BBKIntegrator.i -text
 mdl/interface/integrator/normal/NormalModeBrownian.i -text
 mdl/interface/integrator/normal/NormalModeDiagonalize.i -text
+mdl/interface/integrator/normal/NormalModeLangLf.i -text
 mdl/interface/integrator/normal/NormalModeLangevin.i -text
 mdl/interface/integrator/normal/NormalModeMinimizer.i -text
 mdl/interface/integrator/normal/NormalModeMori.i -text
