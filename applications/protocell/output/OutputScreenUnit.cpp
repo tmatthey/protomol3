@@ -17,17 +17,20 @@ using namespace ProtoMol;
 const string OutputScreenUnit::keyword("Screen");
 
 OutputScreenUnit::OutputScreenUnit() :
-  Output(), myUnit("ms"), myFactor(1.0) {}
+  Output(), myUnit("us"), myFactor(1.0) {}
 
 OutputScreenUnit::OutputScreenUnit(int freq) :
-  Output(freq), myUnit("ms"), myFactor(1.0) {}
+  Output(freq), myUnit("us"), myFactor(1.0) {}
 
 void OutputScreenUnit::doInitialize() {
   Real step = app->integrator->getTimestep() *
     max(1, getOutputFreq());
 
-  if (step >= 1e3) {
+  if (step >= 1e6) {
     myUnit = "s";
+    myFactor = 1e-6;
+  }else if (step >= 1e3) {
+    myUnit = "ms";
     myFactor = 1e-3;
   }
 }
@@ -43,7 +46,7 @@ void OutputScreenUnit::doRun(int step) {
   report << app->outputCache.time() * myFactor << " [" << myUnit << "], TE : ";
   report.precision(4);
   report.width(12);
-  report << app->outputCache.totalEnergy() << " [pJ]";
+  report << app->outputCache.totalEnergy() << " [fJ]";
   report << ", T : ";
   report.precision(4);
   report.width(10);

@@ -119,8 +119,9 @@ void LangevinFlowCoupledIntegrator::doHalfKick() {
         const Real fdt = ( 1.0 - exp( -0.5 * aGamma * dt ) ) / aGamma;
         const Real vdt = exp(-0.5*aGamma*dt);
         const Real ndt = sqrt( ( 1.0 - exp( -aGamma * dt ) ) / (2.0 * aGamma) );
-        const Real forceConstant = 2 * Constant::BOLTZMANN * myLangevinTemperature *
-                  aGamma; //SI::BOLTZMANN* 1.0e21 for SI units
+        const Real forceConstant = 2 * Constant::SI::BOLTZMANN * 1.0e15 //for SI units, BOLTZMANN //
+                                        * myLangevinTemperature 
+                                            * aGamma; 
 
         //  Generate gaussian random numbers for each spatial direction
         Vector3D gaussRandCoord1(randomGaussianNumber(mySeed),
