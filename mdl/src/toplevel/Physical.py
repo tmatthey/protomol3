@@ -174,6 +174,9 @@ class Physical:
    def __str__(self):
       return "Physical.Physical"
 
+   def __repr__(self):
+      return "Physical.Physical"
+
    # Copy which avoids object assignment
    def copy(self, retval, forces="", dt=-1):
       """

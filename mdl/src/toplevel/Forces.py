@@ -48,6 +48,10 @@ class Forces:
 
    def __str__(self):
       return "Forces.Forces"
+   
+   def __repr__(self):
+      return "Forces.Forces"
+
 
    def initializeEnergies(self, app):
       """
