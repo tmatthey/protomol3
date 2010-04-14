@@ -46,6 +46,9 @@ class Forces:
       else:
          self.__dict__[name] = val
 
+   def __str__(self):
+      return "Forces.Forces"
+
    def initializeEnergies(self, app):
       """
       Initialize the energies structure.

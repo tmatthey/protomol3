@@ -171,6 +171,9 @@ class Physical:
    def __del__(self):
       pass
 
+   def __str__(self):
+      return "Physical.Physical"
+
    # Copy which avoids object assignment
    def copy(self, retval, forces="", dt=-1):
       """
@@ -236,6 +239,7 @@ class Physical:
       elif (name == 'time'):
          return self.myTop.time
       else:
+         print name
          return self.__dict__[name]
 
    # SPECIAL ASSIGNMENT FOR self.positions or self.velocities
