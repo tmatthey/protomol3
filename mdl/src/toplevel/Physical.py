@@ -168,7 +168,6 @@ class Physical:
       self.dirty = 1   #: Dirty bit
    
    def __del__(self):
-      print "CALLING DELETE" 
       pass
 
    # Copy which avoids object assignment
