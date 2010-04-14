@@ -540,13 +540,13 @@ class Physical:
 
    def charge(self, atom):
       """
-      Mass of an atom.
+      Charge of an atom.
 
       @type atom: int
       @param atom: Atom index (1 to N)
 
       @rtype: float
-      @return: Atom mass [amu]
+      @return: Atomic charge [e]
       """
       return self.myPSF.getAttributeReal("atom", atom-1, "charge")
 
