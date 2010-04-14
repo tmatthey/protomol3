@@ -4,6 +4,7 @@
 #include <protomol/type/Real.h>
 #include <protomol/ProtoMolApp.h>
 #include <protomol/integrator/leapfrog/LeapfrogIntegrator.h>
+#include <protomol/base/Report.h>
 using namespace ProtoMol;
 %}
 
@@ -13,6 +14,9 @@ using namespace ProtoMol;
 %include <protomol/ProtoMolApp.h>
 
 %extend ProtoMol::ProtoMolApp {
+static void turnOffHints() {
+   Report::report << Report::donthint;
+}
 void uncache() {
    self->outputCache.uncache();
 }
@@ -21,6 +25,7 @@ void makeApp(GenericTopology* topo,
              ProtoMol::Vector3DBlock& velocities,
              ScalarStructure energies,
              Real timestep) {
+   cout << "MADE APP" << endl;
    self->topology = topo;
    self->positions.vec = positions.vec;
    self->positions.c = positions.c;

@@ -143,6 +143,7 @@ class Physical:
       self.masssum = 0                    #: Sum over all atomic masses
       self.accept = 0
       self.reject = 0
+      ProtoMolApp.ProtoMolApp.turnOffHints()
       # NOTE: self.positions and self.velocities are also
       # available numpy arrays.
       #####################################################################
