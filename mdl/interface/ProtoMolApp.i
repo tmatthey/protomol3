@@ -25,7 +25,7 @@ void makeApp(GenericTopology* topo,
              ProtoMol::Vector3DBlock& velocities,
              ScalarStructure energies,
              Real timestep) {
-   cout << "MADE APP" << endl;
+   self->config.registerKeyword("firststep", Value(0));
    self->topology = topo;
    self->positions.vec = positions.vec;
    self->positions.c = positions.c;
