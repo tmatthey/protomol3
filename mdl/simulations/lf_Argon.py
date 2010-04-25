@@ -26,7 +26,8 @@ ff.params['LennardJones'] = {'algorithm':'Cutoff',
 
 # OUTPUT
 #io.plots = {'totalenergy':2}
-io.files = {'energies':('argon.energies', 1)}
+io.files = {'energies':('argon.energies', 1),
+            'dcdtrajpos':('argon.pos.dcd', 2)}
 io.screen = 1
 
 # EXECUTE
