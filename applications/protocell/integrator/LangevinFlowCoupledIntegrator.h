@@ -20,6 +20,7 @@ namespace ProtoMol {
     LangevinFlowCoupledIntegrator(Real timestep, Real LangevinTemperature,
                               Real gamma, int seed,
                               Real avVX, Real avVY, Real avVZ,
+                              Real slVX, Real slVY, Real slVZ,
                               ForceGroup *overloadedForces);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,6 +67,7 @@ namespace ProtoMol {
     Real myGamma;
     int mySeed;
     Real averageVelocityX, averageVelocityY, averageVelocityZ;
+    Real slopeVelocityX, slopeVelocityY, slopeVelocityZ;
     map<int, int>  cellCenters;
     unsigned int numCells;
 

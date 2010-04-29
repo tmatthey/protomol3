@@ -19,19 +19,22 @@ LangevinFlowCoupledIntegrator::LangevinFlowCoupledIntegrator() :
   STSIntegrator(), myLangevinTemperature(-1.0), myGamma(-1.0),
   // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
   mySeed(-1),
-  averageVelocityX(0.0), averageVelocityY(0.0), averageVelocityZ(0.0)
+  averageVelocityX(0.0), averageVelocityY(0.0), averageVelocityZ(0.0),
+  slopeVelocityX(0.0), slopeVelocityY(0.0), slopeVelocityZ(0.0)
    {}
 
 LangevinFlowCoupledIntegrator::
 LangevinFlowCoupledIntegrator(Real timestep, Real LangevinTemperature, Real gamma,
                           int seed, Real avVX, Real avVY, Real avVZ,
+                          Real slVX, Real slVY, Real slVZ,
                           ForceGroup *overloadedForces) :
   STSIntegrator(timestep, overloadedForces),
   myLangevinTemperature(LangevinTemperature),
   myGamma(gamma),// / (1000 * Constant::INV_TIMEFACTOR)),
   // gamma is in Kcal/ps, myGamma is in Kcal/(fs*INV_TIMEFACTOR)
   mySeed(seed),
-  averageVelocityX(avVX), averageVelocityY(avVY), averageVelocityZ(avVZ)
+  averageVelocityX(avVX), averageVelocityY(avVY), averageVelocityZ(avVZ),
+  slopeVelocityX(slVX), slopeVelocityY(slVY), slopeVelocityZ(slVZ)
   {}
 
 void LangevinFlowCoupledIntegrator::initialize(ProtoMolApp *app) {
@@ -90,7 +93,10 @@ void LangevinFlowCoupledIntegrator::doHalfKick() {
     for (unsigned int i = 0; i < count; i++ ) {
 
         //user defined fixed velocity
-        Vector3D fluidVelocity(averageVelocityX, averageVelocityY, averageVelocityZ);
+        Vector3D fluidVelocity(
+                               slopeVelocityX * app->positions[i][0] + averageVelocityX, 
+                               slopeVelocityY * app->positions[i][1] + averageVelocityY, 
+                               slopeVelocityZ * app->positions[i][2] + averageVelocityZ);
 
         //find damping factor relative to the
         //vector connecting thr SCE to the cell center
@@ -181,11 +187,21 @@ const {
   parameters.push_back
     (Parameter("averageflowvelocityz", Value(averageVelocityZ, ConstraintValueType::NoConstraints()),
              0.0, Text("Average flow velocity z")));
+  parameters.push_back
+    (Parameter("slopeflowvelocityx", Value(slopeVelocityX, ConstraintValueType::NoConstraints()),
+             0.0, Text("Slope of flow velocity x")));
+  parameters.push_back
+    (Parameter("slopeflowvelocityy", Value(slopeVelocityY, ConstraintValueType::NoConstraints()),
+             0.0, Text("Slope of flow velocity y")));
+  parameters.push_back
+    (Parameter("slopeflowvelocityz", Value(slopeVelocityZ, ConstraintValueType::NoConstraints()),
+             0.0, Text("Slope of flow velocity z")));
 }
 
 STSIntegrator *LangevinFlowCoupledIntegrator::doMake(const vector<Value> &values,
                                                  ForceGroup *fg) const {
   return new LangevinFlowCoupledIntegrator(values[0], values[1], values[2],
                                             values[3], values[4], values[5], values[6],
+                                            values[7], values[8], values[9],
                                             fg);
 }
