@@ -29,9 +29,11 @@ bool File::open() {
   try {
     file.open(filename.c_str(), mode);
 
+#ifdef HAVE_LIBFAH
     // Work around a boost::iostreams bug for F@H core
     if (!((mode & ios::app) || (mode & ios::ate)))
       file.seekg(0);
+#endif
 
   } catch (const ios::failure &e) {}
 

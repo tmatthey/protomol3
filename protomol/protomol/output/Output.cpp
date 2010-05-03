@@ -35,17 +35,20 @@ void Output::initialize(const ProtoMolApp *app) {
   doInitialize();
 }
 
-void Output::run(int step) {
+bool Output::run(int step) {
   if (step >= nextStep) {
     int n = (step - nextStep) / outputFreq;
     nextStep += max(n, 1) * outputFreq;
 
-    if (app->energies.output()) doRun(step);
+    doRun(step);
+    return true;
   }
+
+  return false;
 }
 
 void Output::finalize(int step) {
-  if (app->energies.output()) doRun(step);
+  doRun(step);
   doFinalize(step);
 }
 

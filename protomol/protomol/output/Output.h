@@ -32,10 +32,10 @@ namespace ProtoMol {
 
     ///< To initialize the object, before the simulation starts.
 
-    void run(int step);
+    bool run(int step);
 
     //< Called at each step (e.g., printing total energy on the screen),   
-    //< takes care of the output frequency.
+    //< takes care of the output frequency.  Returns true if it ran.
 
     void finalize(int step);
 

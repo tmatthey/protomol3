@@ -33,6 +33,10 @@
 #include <protomol/package.h>
 #endif
 
+#ifdef HAVE_LIBFAH
+#include <fah/core/Core.h>
+#endif
+
 using namespace std;
 using namespace ProtoMol;
 using namespace ProtoMol::Report;
@@ -302,7 +306,12 @@ bool ProtoMolApp::step(unsigned inc) {
 
   TimerStatistic::timer[TimerStatistic::RUN].start();
 
-  outputs->run(currentStep);
+  if (outputs->run(currentStep)) {
+#ifdef HAVE_LIBFAH
+    // Make sure we save the latest checksum information after writing data.
+    FAH::Core::instance().checkpoint();
+#endif
+  }
 
   if (!inc) inc = outputs->getNext() - currentStep;
   inc = std::min(lastStep, (int)(currentStep + inc)) - currentStep;

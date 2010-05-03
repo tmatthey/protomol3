@@ -21,7 +21,7 @@ extern void moduleInitFunction(ModuleManager *);
 
 class ProtoMolCore : public Core {
 public:
-  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 23) {}
+  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 24) {}
 
   int init(int argc, char *argv[]) {
     options.add("steps-per-gen")->setType(Option::INTEGER_TYPE);
@@ -107,7 +107,7 @@ public:
       oCheckpt->doIt(app.currentStep);
       app.finalize();
       checkpoint();
-      
+
       return 0;
 
     } catch (const std::bad_alloc &e) {

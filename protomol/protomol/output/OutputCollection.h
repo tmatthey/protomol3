@@ -34,8 +34,8 @@ namespace ProtoMol {
     /// Initialize all Output objects
     void initialize(const ProtoMolApp *app);
 
-    /// Invoke all Output objects with run()
-    void run(int step);
+    /// Invoke all Output objects with run().  Returns true if an Output ran.
+    bool run(int step);
 
     /// Finalize all Outout objects
     void finalize(int step);

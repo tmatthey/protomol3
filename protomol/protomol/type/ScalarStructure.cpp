@@ -3,7 +3,7 @@
 using namespace ProtoMol;
 //____ ScalarStructure
 ScalarStructure::ScalarStructure() :
-  Proxy(), myDoVirial(true), myDoMolecularVirial(true), myDoOutput(true) {
+  Proxy(), myDoVirial(true), myDoMolecularVirial(true) {
   clear();
 }
 
@@ -114,12 +114,6 @@ void ScalarStructure::addVirial(const Vector3D &force12, const Vector3D &diff,
 bool ScalarStructure::virial(bool doVirial) {
   bool tmp = myDoVirial;
   myDoVirial = doVirial;
-  return tmp;
-}
-
-bool ScalarStructure::output(bool doOutput) {
-  bool tmp = myDoOutput;
-  myDoOutput = doOutput;
   return tmp;
 }
 

@@ -27,10 +27,14 @@ void OutputCollection::initialize(const ProtoMolApp *app) {
     (*i)->initialize(app);
 }
 
-void OutputCollection::run(int step) {
+bool OutputCollection::run(int step) {
+  bool outputRan = false;
+
   app->outputCache.uncache();
   for (iterator i = begin(); i != end(); ++i)
-    (*i)->run(step);
+    outputRan |= (*i)->run(step);
+
+  return outputRan;
 }
 
 void OutputCollection::finalize(int step) {

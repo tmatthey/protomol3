@@ -114,9 +114,6 @@ namespace ProtoMol {
     /// test if molecular virial tensor desired
     bool molecularVirial() const {return myDoMolecularVirial;}
     bool molecularVirial(bool doMolecularVirial);
-    /// test if output desired, can be used to suppress output
-    bool output() const {return myDoOutput;}
-    bool output(bool doOutput);
     /// test if virial tensor desired
     bool virial() const {return myDoVirial;}
     bool virial(bool doVirial);
@@ -131,7 +128,6 @@ namespace ProtoMol {
     // Table of all relevant scalars
     bool myDoVirial;
     bool myDoMolecularVirial;
-    bool myDoOutput;
 
     // flag telling when to write out the coordinate or velocity trajectory for
     // oSGMD (grand canonical or semigrand canonical) simulations.  For these
