@@ -21,7 +21,7 @@ extern void moduleInitFunction(ModuleManager *);
 
 class ProtoMolCore : public Core {
 public:
-  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 24) {}
+  ProtoMolCore() : Core("ProtoMol", CoreType::PROTOMOL, 25) {}
 
   int init(int argc, char *argv[]) {
     options.add("steps-per-gen")->setType(Option::INTEGER_TYPE);
