@@ -6,7 +6,7 @@
 #include <protomol/config.h>
 
 #include <fah/core/Core.h>
-#include <fah/core/ExitCodes.h>
+#include <fah/core/ExitCode.h>
 #include <fah/Exception.h>
 #include <fah/util/Logger.h>
 
@@ -88,7 +88,7 @@ public:
         LOG_ERROR("Invalid step " << app.currentStep << " not in ["
                   << firstStep << ", " << lastStep << "]");
 
-        return BAD_CORE_FILES;
+        return ExitCode::BAD_CORE_FILES;
       }
 
       // Print configuration
@@ -119,7 +119,7 @@ public:
 
     getUnit().type() = CorePacketType::FAULTY;
 
-    return UNKNOWN_ERROR;
+    return ExitCode::UNKNOWN_ERROR;
   }
 };
 

@@ -28,10 +28,6 @@ AlwaysBuild(info)
 
 # Main
 src = ['protomol.cpp', info]
-
-if not env['PLATFORM'] == 'win32':
-  env.Append(PROGSUFFIX = '.exe')
-
 name = 'FahCore_b4'
 Default(env.Program(name, src))
 
