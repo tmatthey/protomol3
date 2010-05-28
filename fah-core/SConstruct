@@ -32,6 +32,7 @@ name = 'FahCore_b4'
 Default(env.Program(name, src))
 
 # Dist
-tar = env.TarBZ2Dist('Protomol-FAHCore', [name + '.exe'])
+if env['PLATFORM'] == 'win32': name += '.exe'
+tar = env.TarBZ2Dist('Protomol-FAHCore', name)
 Alias('dist', tar)
 AlwaysBuild(tar)
