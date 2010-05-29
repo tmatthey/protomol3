@@ -13,7 +13,7 @@ env.__setitem__('fah', 1) # Always use fah
 conf = Configure(env)
 
 config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
-config.configure('dist', conf, default_distver = '0.0.2')
+config.configure('dist', conf, version = '26')
 
 if not env.GetOption('clean'):
   # Configure compiler
