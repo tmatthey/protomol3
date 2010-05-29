@@ -12,8 +12,8 @@ exclude_pats = [
     r'.*\.obj'
     ]
 
-distver = None
-distrev = '-%(version)s-%(system)s-%(bits)s'
+dist_ver = None
+dist_build = '-%(version)s-%(system)s-%(bits)s'
 
 
 def find_files(path, exclude = None):
@@ -32,7 +32,7 @@ def find_files(path, exclude = None):
 
 def add_vars(vars):
     vars.Add('dist_version', 'Set dist file version', None)
-    vars.Add('dist_revision', 'Set dist file revision info', distrev)
+    vars.Add('dist_build', 'Set dist file build info', dist_build)
 
 
 def modify_targets(target, source, env):
@@ -41,19 +41,31 @@ def modify_targets(target, source, env):
         'bits' : platform.architecture()[0],
         'system' : platform.system(),
         'release' : platform.release(),
-        'version' : env.get('dist_version', distver),
+        'version' : env.get('dist_version', dist_ver),
         'date' : time.strftime('%Y%m%d'),
         }
 
-    rev = env.get('dist_revision', distrev)
-    target = ((str(target[0]) + rev) % vars % env._dict) + '.tar.bz2'
+    build = env.get('dist_build', dist_build)
+    if len(build) and build[0] != '-': build = '-' + build
+
+    if len(dist_ver): build = '-' + dist_ver + build
+
+    target = ((str(target[0]) + build) % vars % env._dict) + '.tar.bz2'
+
+    # Write 'dist.txt'
+    f = None
+    try:
+        f = open('dist.txt', 'w')
+        f.write(target)
+    finally:
+        if f is not None: f.close()
 
     return [target, source]
 
 
 def build_function(target, source, env):
     target = str(target[0])
-    distname = os.path.splitext(os.path.splitext(target)[0])[0]
+    dist_name = os.path.splitext(os.path.splitext(target)[0])[0]
 
     tar = tarfile.open(target, mode = 'w:bz2')
 
@@ -63,19 +75,17 @@ def build_function(target, source, env):
 
     for src in source:
         for file in find_files(src, exclude_re):
-            tar.add(file, distname + '/' + file)
+            tar.add(file, dist_name + '/' + file)
 
     return None
 
 
-def configure(conf, default_distver, default_distrev = None,
-              no_default_excludes = False, excludes = []):
-    global exclude_pats, distver, distrev
+def configure(conf, version = '', no_default_excludes = False, excludes = []):
+    global exclude_pats, dist_ver, dist_build
 
     env = conf.env
 
-    distver = default_distver
-    if default_distrev: distrev = default_distrev
+    dist_ver = version
 
     if no_default_excludes: exclude_pats = []
     exclude_pats += excludes

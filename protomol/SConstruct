@@ -9,7 +9,7 @@ env = config.make_env(['compiler', 'libprotomol', 'dist', 'build_info'])
 # Configure
 conf = Configure(env)
 config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
-config.configure('dist', conf, default_distver = '3.0.0')
+config.configure('dist', conf, version = '3.0.0')
 
 # Do configuration
 if not env.GetOption('clean'):
