@@ -72,7 +72,7 @@ protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
-tar = env.TarBZ2Dist('ProtoMol', ['ProtoMol' + env['PROGSUFFIX']])
+tar = env.TarBZ2Dist('ProtoMol-bin', ['ProtoMol' + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)
 
