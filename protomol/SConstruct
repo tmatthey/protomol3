@@ -72,8 +72,8 @@ protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
+distname = 'ProtoMol'
 if sys.platform == 'win32': distname += '-app' # (Silly Windows)
-else: distname = 'ProtoMol'
 tar = env.TarBZ2Dist(distname, [name + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)
