@@ -3,6 +3,10 @@ import os, sys
 sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '../config'))
 import config
 
+# Version
+version = '0.0.26'
+major, minor, revision = version.split('.')
+
 # Setup
 env = config.make_env(['compiler', 'libprotomol', 'dist', 'build_info'])
 
@@ -12,8 +16,9 @@ env.__setitem__('fah', 1) # Always use fah
 # Configure
 conf = Configure(env)
 
-config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
-config.configure('dist', conf, version = '26')
+config.configure('build_info', conf, namespace = 'FAH::BuildInfo',
+                 version = version)
+config.configure('dist', conf, version = version)
 
 if not env.GetOption('clean'):
   # Configure compiler
@@ -33,6 +38,6 @@ Default(env.Program(name, src))
 
 # Dist
 if env['PLATFORM'] == 'win32': name += '.exe'
-tar = env.TarBZ2Dist('Protomol-FAHCore', name)
+tar = env.TarBZ2Dist('Protomol_FAHCore', name)
 Alias('dist', tar)
 AlwaysBuild(tar)

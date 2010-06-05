@@ -3,13 +3,17 @@ import os, sys
 #sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '.'))
 import config
 
+# Version
+version = '3.2.0'
+major, minor, revision = version.split('.')
+
 # Setup
 env = config.make_env(['compiler', 'libprotomol', 'dist', 'build_info'])
 
 # Configure
 conf = Configure(env)
 config.configure('build_info', conf, namespace = 'FAH::BuildInfo')
-config.configure('dist', conf, version = '3.0.0')
+config.configure('dist', conf, version = version)
 
 # Do configuration
 if not env.GetOption('clean'):
@@ -59,14 +63,16 @@ lib = env.Library(libname, libsrc)
 # Build Application
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 name = 'ProtoMol'
-if (sys.platform == 'darwin'): name += '-app' # Without this build fails on Macs as it belives 
-                                              # the 'protomol' folder prevents the creation
-                                              # ProtoMol
+
+# Without this build fails on Macs as it belives the 'protomol' folder prevents
+# the creation ProtoMol (Silly Mac)
+if (sys.platform == 'darwin'): name += '-app'
+                                             
 protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
-tar = env.TarBZ2Dist('ProtoMol-bin', ['ProtoMol' + env['PROGSUFFIX']])
+tar = env.TarBZ2Dist('ProtoMol', ['ProtoMol' + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)
 
