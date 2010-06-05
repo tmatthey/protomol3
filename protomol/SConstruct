@@ -64,15 +64,17 @@ lib = env.Library(libname, libsrc)
 src = ['protomol/main.cpp', 'protomol/modules.cpp']
 name = 'ProtoMol'
 
-# Without this build fails on Macs as it belives the 'protomol' folder prevents
-# the creation ProtoMol (Silly Mac)
-if (sys.platform == 'darwin'): name += '-app'
-                                             
+# Without this build fails on Macs as it belives the 'protomol'
+# folder prevents the creation ProtoMol (Silly OS)
+if sys.platform == 'darwin': name += '-app'
+
 protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
-tar = env.TarBZ2Dist('ProtoMol-bin', ['ProtoMol' + env['PROGSUFFIX']])
+if sys.platform == 'win32': distname += '-app' # (Silly Windows)
+else: distname = 'ProtoMol'
+tar = env.TarBZ2Dist(distname, [name + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)
 
