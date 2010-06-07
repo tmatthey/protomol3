@@ -28,7 +28,7 @@ if not env.GetOption('clean'):
     if env.get('mostly_static', 0): config.compiler.mostly_static_libs(env)
 
     # libprotomol path
-    env.Append(CPPPATH = ['#'])
+    env.Append(CPPPATH = ['#/src'])
 
 conf.Finish()
 
@@ -51,30 +51,23 @@ if use_fah: libname = libname + '-fah'
 libsrc = []
 
 # Import subdir build files
-for s in SConscript('protomol/SConscript'):
-    libsrc.append('#/protomol/' + s)
+for s in SConscript('src/protomol/SConscript'):
+    libsrc.append('#/src/protomol/' + s)
 
 if use_fah:
-    libsrc.append('#/protomol/modules.cpp')
+    libsrc.append('#/src/protomol/modules.cpp')
 
 lib = env.Library(libname, libsrc)
 
 
 # Build Application
-src = ['protomol/main.cpp', 'protomol/modules.cpp']
+src = ['src/protomol/main.cpp', 'src/protomol/modules.cpp']
 name = 'ProtoMol'
-
-# Without this build fails on Macs as it belives the 'protomol'
-# folder prevents the creation ProtoMol (Silly OS)
-if sys.platform == 'darwin': name += '-app'
-
 protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
-distname = 'ProtoMol'
-if sys.platform == 'win32': distname += '-app' # (Silly Windows)
-tar = env.TarBZ2Dist(distname, [name + env['PROGSUFFIX']])
+tar = env.TarBZ2Dist(name, [name + env['PROGSUFFIX']])
 Alias('dist', tar)
 AlwaysBuild(tar)
 
@@ -89,10 +82,10 @@ if env['PLATFORM'] == 'win32':
             if file.endswith(arg):
                 src += [dir + os.sep + file]
 
-    os.path.walk('protomol', add_hdrs, '.h')
+    os.path.walk('src/protomol', add_hdrs, '.h')
     inc = src
     src = []
-    os.path.walk('protomol', add_hdrs, '.cpp')
+    os.path.walk('src/protomol', add_hdrs, '.cpp')
 
     if env.get('debug'): variant = 'Debug'
     else: variant = 'Release'

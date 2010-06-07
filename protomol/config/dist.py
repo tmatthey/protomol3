@@ -52,6 +52,12 @@ def modify_targets(target, source, env):
 
     target = ((str(target[0]) + build) % vars % env._dict) + '.tar.bz2'
 
+    return [target, source]
+
+
+def build_function(target, source, env):
+    target = str(target[0])
+
     # Write 'dist.txt'
     f = None
     try:
@@ -60,11 +66,6 @@ def modify_targets(target, source, env):
     finally:
         if f is not None: f.close()
 
-    return [target, source]
-
-
-def build_function(target, source, env):
-    target = str(target[0])
     dist_name = os.path.splitext(os.path.splitext(target)[0])[0]
 
     tar = tarfile.open(target, mode = 'w:bz2')

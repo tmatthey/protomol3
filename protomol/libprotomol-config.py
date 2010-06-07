@@ -147,7 +147,7 @@ def configure(conf):
 
     # Libprotomol
     if home:
-        env.Append(CPPPATH = [home])
+        env.Append(CPPPATH = [home + '/src'])
         env.Append(LIBPATH = [home])
 
     lib = 'protomol'
