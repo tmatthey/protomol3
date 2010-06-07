@@ -40,7 +40,7 @@ computed_tags = [
     ['PLATFORM', env.subst('$PLATFORM')],
 ]
 
-f = open('protomol/package.h', 'w')
+f = open('src/protomol/package.h', 'w')
 try:
     f.write('#ifndef PROTOMOL_PACKAGE_H\n')
     f.write('#define PROTOMOL_PACKAGE_H\n\n')
