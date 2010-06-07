@@ -403,6 +403,7 @@ mdl/simulations/OpenMM_Calmodulin.py -text
 mdl/simulations/OpenMM_WW.py -text
 mdl/simulations/PIT_ALA.py -text
 mdl/simulations/PLeapfrog_Butane.py -text
+mdl/simulations/PRE.py -text
 mdl/simulations/RMT_Butane.py -text
 mdl/simulations/contour.py -text
 mdl/simulations/contour_dielec.py -text
