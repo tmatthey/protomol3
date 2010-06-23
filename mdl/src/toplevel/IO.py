@@ -314,6 +314,7 @@ class IO:
         @param xyzname: XYZ file name.
         """
         XYZReader.XYZReader(self.checkPath(xyzname)).read(phys.myXYZ)
+	phys.velvec.resize(phys.myXYZ.coords.size())
         for ii in range(0, phys.myXYZ.coords.size()*3, 3):
            phys.velocities[ii] = phys.myXYZ.coords[ii]
            phys.velocities[ii+1] = phys.myXYZ.coords[ii+1]
@@ -479,7 +480,7 @@ class IO:
          #else:
          #  phys.app.uncache() 
          # RUN THE OUTPUT
-         output.run(step)
+	 output.run(step)
          i += 1
    #####################################################################################
 
