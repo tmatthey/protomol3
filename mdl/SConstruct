@@ -6,8 +6,8 @@ import sys
 
 mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator', 'NPTVerletIntegrator'],
               'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
-	      'integrator/base':['LangevinImpulseIntegrator', 'ImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation', 'LangevinLeapfrogIntegrator'],
-              'type':['Vector3DBlock', 'ScalarStructure'],
+	      'integrator/base':['LangevinImpulseIntegrator', 'LangevinLeapfrogIntegrator', 'ImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
+             'type':['Vector3DBlock', 'ScalarStructure'],
 	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator'],
               'integrator/hessian':['HessianInt'],
               'integrator/openMM':['OpenMMIntegrator'],
@@ -28,7 +28,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
 
 def pyWrap(env, pmhome):
   import distutils.sysconfig
-  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509', '-I'+pmhome],
+  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509', '-I'+pmhome, '-I'+pmhome+os.sep+'src'+os.sep+'protomol'],
                      CPPPATH=[distutils.sysconfig.get_python_inc()],
                      SHLIBPREFIX=""#,
                      #ENV={'PATH':os.environ['PATH']})
@@ -338,7 +338,6 @@ fah = int(env.get('fah', 0))
 
 use_lapack = int(env.get('lapack', 0))
 use_simtk_lapack = int(env.get('simtk_lapack', 0))
-
 gui = int(env.get('gui', 0))
 if gui:
     env.Append(CCFLAGS = '-DHAVE_GUI')
@@ -350,7 +349,6 @@ fah = int(env.get('fah', 0))
 # LAPACK Options
 use_lapack = int(env.get('lapack', 0))
 use_simtk_lapack = int(env.get('simtk_lapack', 0))
-
 # OpenMM Options
 openmm_type = env.get('openmm')
 if( openmm_type == 'none' ):
@@ -366,7 +364,9 @@ else:
         use_openmm_cuda = 1
 
 # Configure compiler
+print "SHOULD CALL IT HERE"
 compiler_configure()
+print "DO?NE"
 
 # Include protomol
 env.Append(CPPPATH = '#')
@@ -387,9 +387,12 @@ libs.append(libname)
 if not env.GetOption('clean'):
     os.chdir(pmhome)
     execfile(pmhome+os.sep+'package_h.py')
+    locals()["PROTOMOL_HOME"] = "../protomol"
     #execfile(pmhome+os.sep+'config.py')
-    execfile(pmhome+'../mdl/'+'config.py')
 
+    # Run Configurations
+    compiler_configure()
+    #config_configure()
     # Folding@Home library version
     if fah:
       execfile(pmhome+os.sep+'configfah.py')
