@@ -28,7 +28,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
 
 def pyWrap(env, pmhome):
   import distutils.sysconfig
-  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509', '-I'+pmhome, '-I'+pmhome+os.sep+'src'+os.sep+'protomol'],
+  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509', '-I'+pmhome, '-I'+pmhome+os.sep+'src'+os.sep+'protomol', '-I'+pmhome+os.sep+'src'],
                      CPPPATH=[distutils.sysconfig.get_python_inc()],
                      SHLIBPREFIX=""#,
                      #ENV={'PATH':os.environ['PATH']})
@@ -106,7 +106,7 @@ if (os.environ.has_key('PROTOMOL_HOME')):
 else:
    pmhome=pwd+'/../protomol/'
 #execfile(pmhome+os.sep+'compiler.py')
-execfile('compiler.py')
+#execfile('compiler.py')
 
 # Command Line Options
 opts = Options(pmhome+os.sep+'options.py')
