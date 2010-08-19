@@ -75,7 +75,8 @@ def pyWrap(env, pmhome):
      env.Append(CXXFLAGS='-I'+pmhome)
      env.Append(SHCXXFLAGS=' -I'+numpypath)
      env.Append(SHCXXFLAGS=' -I'+numpypath2)
-     env.Append(SHCXXFLAGS='-I'+pmhome)
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'src')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'src'+os.sep+'protomol')
   if (env['PLATFORM'] != 'darwin'):
      env.Append(SHLINKFLAGS=' -Wl,-E')
   env.Append(_LIBDIRFLAGS="-L.")
@@ -331,7 +332,7 @@ Export('conf')
 
 
 # Import subdir build files
-subsrc = SConscript(pmhome+os.sep+'protomol'+os.sep+'SConscript')
+subsrc = SConscript(pmhome+os.sep+'src'+os.sep+'protomol'+os.sep+'SConscript')
 
 # Get options
 fah = int(env.get('fah', 0))
@@ -437,7 +438,7 @@ for s in subsrc:
      # compilation - it's only used if HAVE_MPI is true, which
      # will never be true for MDL.
      #if (s != 'parallel/FFTComplex.cpp'):
-     libsrc2.append(pmhome+os.sep+'protomol'+os.sep+s)
+     libsrc2.append(pmhome+os.sep+'src'+os.sep+'protomol'+os.sep+s)
 env.Prepend(LIBS = [''])
 libname2 = 'mdl'
 if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
