@@ -142,11 +142,11 @@ The Generalized-Born potential energy function in OpenMM is given by
 \begin{equation}
 \label{GBPotential_OpenMM}
 E_{GB} = -\frac{1}{2}\left(
-\frac{1}{{\epsilon}_{S}} - \frac{1}{{\epsilon}_{w}}\right)\displaystyle\sum_{i}\displaystyle\sum_{j\ne i}\frac{q_{i}q_{j}}{f_{ij}^{GB}(r_{ij},R_{i},R_{j})}.
+\frac{1}{{\epsilon}_{S}} - \frac{1}{{\epsilon}_{w}}\right)\displaystyle\sum_{i}\displaystyle\sum_{j}\frac{q_{i}q_{j}}{f_{ij}^{GB}(r_{ij},R_{i},R_{j})}.
 \end{equation}
 In Equation (\ref{GBPotential_OpenMM}), ${\epsilon}_{S}$ is the solute dielectric,
 $R_{i}$ and $R_{j}$ are effective Born radii of atoms $i$ and $j$ respectively.
-Note we have not calculated the `self' term as OpenMM assumes the derivative of the `self' term is zero.
+Note we have now calculated the `self' term as OpenMM assumes the derivative of the `self' term is non-zero, i.e. includes the $j=1$ term.
 The function
 $f_{ij}^{GB}$ is given by,
 \begin{equation}
@@ -159,13 +159,19 @@ f_{ij}^{GB} =\left(r_{ij}^{2} + R_{i}R_{j}\exp\left(-\frac{r_{ij}^{2}}{4R_{i}R_{
 %f_{ii}^{GB} = \sqrt{r_{ii}^{2} + R_{i}R_{i}\exp^{-\frac{r_{ii}^{2}}{4R_{i}R_{i}}}} = R_{i}.
 %\end{equation}
 The pairwise force term can be obtained by taking the negative of the derivative of $E_{GB}$ w.~r.~t.~$r_{ij}$.
-\begin{equation}
+\begin{eqnarray}
 \label{eq:EGBderv1}
-\frac{\partial E_{GB}}{\partial r_{ij}} = \left(\frac{1}{{\epsilon}_{S}} - \frac{1}{{\epsilon}_{w}}\right)
+\nonumber\frac{\partial E_{GB}}{\partial r_{ij}} &=& \left(\frac{1}{{\epsilon}_{S}} - \frac{1}{{\epsilon}_{w}}\right)
 \left(\displaystyle\sum_{k\ne i, j}\frac{q_{i}q_{k}}{\left(f_{ik}^{GB}\right)^2}\frac{\partial f_{ik}^{GB}}{\partial r_{ij}}+
-\displaystyle\sum_{l\ne i,j}\frac{q_{j}q_{l}}{\left(f_{jl}^{GB}\right)^2}\frac{\partial f_{jl}^{GB}}{\partial r_{ij}}+
-\frac{q_{i}q_{j}}{\left(f_{ij}^{GB}\right)^2}\frac{\partial f_{ij}^{GB}}{\partial r_{ij}}\right).
-\end{equation}
+\displaystyle\sum_{l\ne i,j}\frac{q_{j}q_{l}}{\left(f_{jl}^{GB}\right)^2}\frac{\partial f_{jl}^{GB}}{\partial r_{ij}}+\right.\\
+&&\left.\qquad\frac{q_{i}q_{j}}{\left(f_{ij}^{GB}\right)^2}\frac{\partial f_{ij}^{GB}}{\partial r_{ij}}
++\frac{1}{2}\frac{q_{i}^2}{R_i^2}\frac{\partial R_i}{\partial r_{ij}}+
+\frac{1}{2}\frac{q_{j}^2}{R_j^2}\frac{\partial R_j}{\partial r_{ij}}
+\right).
+\end{eqnarray}
+\textbf{Note} that this equation removes the factor of one half in Eqn.(\ref{GBPotential_OpenMM}), for the first three terms in the second brackets, by
+observing that $f_{ik}^{GB} =f_{ki}^{GB}$, from Eqn.(\ref{fGBEq}), and only summing terms in  $f_{i*}^{GB}$ and $f_{j*}^{GB}$.
+Also note that the `self terms' (the last two terms in Eqn.(\ref{eq:EGBderv1})) were not used in the first implementation of the code.
 %where $k=i,j$ and $l{\neq}j$ if $k=i$ and $l{\neq}i$ if $k=j$.
 %Derivative of  $E_{GB}$ w.~r.~t.~$r_{ij}$ is given by
 %\begin{equation}
@@ -365,9 +371,6 @@ We can now differentiate w.r.t. $\mathbf{r}_{ij}$ to get the Hessian for atoms $
 -\hat{\mathbf{r}}_{ij}\hat{\mathbf{r}}_{ij}^{\mathrm{T}} & \hat{\mathbf{r}}_{ij}\hat{\mathbf{r}}_{ij}^{\mathrm{T}}
 \end{array}\right].
 \end{equation}
-
-
-
 
 
 \end{document}
