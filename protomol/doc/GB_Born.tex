@@ -171,7 +171,14 @@ The pairwise force term can be obtained by taking the negative of the derivative
 \end{eqnarray}
 \textbf{Note} that this equation removes the factor of one half in Eqn.(\ref{GBPotential_OpenMM}), for the first three terms in the second brackets, by
 observing that $f_{ik}^{GB} =f_{ki}^{GB}$, from Eqn.(\ref{fGBEq}), and only summing terms in  $f_{i*}^{GB}$ and $f_{j*}^{GB}$.
-Also note that the `self terms' (the last two terms in Eqn.(\ref{eq:EGBderv1})) were not used in the first implementation of the code.
+Also note that the `self terms' (the last two terms in Eqn.(\ref{eq:EGBderv1})) were not used in the first implementation of the code,
+and 
+\begin{equation}
+\frac{q_{i}q_{i}}{\left(f_{ii}^{GB}\right)^2}\frac{\partial f_{ii}^{GB}}{\partial r_{ij}}=
+\frac{q_{i}^2}{R_i^2}\frac{\partial R_i}{\partial r_{ij}},
+\end{equation}
+etc.
+
 %where $k=i,j$ and $l{\neq}j$ if $k=i$ and $l{\neq}i$ if $k=j$.
 %Derivative of  $E_{GB}$ w.~r.~t.~$r_{ij}$ is given by
 %\begin{equation}
