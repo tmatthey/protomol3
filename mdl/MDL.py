@@ -4,7 +4,7 @@ import sys
 pythondir = sys.exec_prefix
 numpydir = pythondir
 gnuplotdir = pythondir
-pyversion = 'python2.5'
+pyversion = 'python2.6'
 
 if (sys.platform == 'win32'):
    pwd = os.getenv('PYTHONPATH')
@@ -71,7 +71,9 @@ else:
  sys.path.append(numpydir+'/lib/'+pyversion+'/site-packages/numpy/')
 
 
-os.environ['MDLROOT'] = pwd
+if 'MDLROOT' not in os.environ:
+    os.environ['MDLROOT'] = pwd
+
 if (sys.platform == "win32"):
    os.system('set LD_LIBRARY_PATH='+pythondir+'/lib/'+pyversion+';%LD_LIBRARY_PATH%')
 else:

@@ -1,5 +1,7 @@
 #! /bin/sh
 
+PWD=$(dirname $0)
+
 export PYTHONPATH=${PWD}
 export LD_LIBRARY_PATH=${PWD}:${LD_LIBRARY_PATH}
 
@@ -8,7 +10,7 @@ if [ $1 ]
 then
   python $*
 else
-  python -i MDL.py
+  python -i ${PWD}/MDL.py
 fi
 
 
