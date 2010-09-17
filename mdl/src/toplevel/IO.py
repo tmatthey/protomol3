@@ -889,9 +889,9 @@ class IO:
             if (output == 'energies'):
                self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0))
             elif (output == 'dcdtrajpos'):
-               self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1))
+               self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1, 0))
             elif (output == 'dcdtrajvel'):
-               self.myOutputs.append(OutputDCDTrajectoryVel.OutputDCDTrajectoryVel(filename, freq, 1))
+               self.myOutputs.append(OutputDCDTrajectoryVel.OutputDCDTrajectoryVel(filename, freq, 1, 0))
             elif (output == 'xyztrajforce'):
                self.myOutputs.append(OutputXYZTrajectoryForce.OutputXYZTrajectoryForce(filename, freq))
             elif (output == 'xyztrajpos'):
