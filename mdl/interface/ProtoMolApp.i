@@ -19,6 +19,7 @@ static void turnOffHints() {
 }
 void uncache() {
    self->outputCache.uncache();
+   self->config.registerKeyword("firststep", Value(0));
 }
 void makeApp(GenericTopology* topo,
              ProtoMol::Vector3DBlock& positions,
