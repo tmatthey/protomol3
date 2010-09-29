@@ -206,7 +206,10 @@ def configure(conf, c99_mode = 1):
     else:
         if compiler_mode == 'gnu':
             # Strip symbols
-            env.Append(LINKFLAGS = ['-Wl,-s'])
+            if env['PLATFORM'] == 'darwin':
+               env.Append(LINKFLAGS = ['-Wl'])
+            else:
+               env.Append(LINKFLAGS = ['-Wl,-s'])
 
         env.Append(CPPDEFINES = ['NDEBUG'])
 
