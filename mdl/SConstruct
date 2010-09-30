@@ -63,6 +63,7 @@ def pyWrap(env, pmhome):
      env.Prepend(LIBS = [libname2])
   elif (env['PLATFORM'] == 'darwin'):
      env['LIBS'] = ''
+     env.Append(CCFLAGS=' -D__APPLE__')
      env.Append(CXXFLAGS='-I'+pmhome)
      env.Append(SHCXXFLAGS=' -I'+numpypath)
      env.Append(SHCXXFLAGS=' -I'+numpypath2)
@@ -70,6 +71,14 @@ def pyWrap(env, pmhome):
      env.Append(LIBPATH=sys.exec_prefix+'/lib/python'+sys.version[0:3]+'/config/')
      env.Append(CPPPATH=sys.exec_prefix+'/include')
      env.Prepend(LIBS = ['blas', 'lapack', 'python2.5', libname2])
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'src')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'src'+os.sep+'protomol')
+     env.Append(CXXFLAGS='-fno-common')
+     env.Append(SHCXXFLAGS='-fno-common')
+     env.Append(LINKFLAGS='-fno-common')
+     env['SHLINKFLAGS'].remove('-dynamiclib')
+     env.Append(SHLINKFLAGS='-bundle')
+     env.Append(SHLINKFLAGS='-bundle_loader')
   else:
      env.Append(CXXFLAGS=' -fPIC')
      env.Append(CXXFLAGS='-I'+pmhome)
@@ -97,7 +106,6 @@ def pyWrap(env, pmhome):
           env.AddPostAction(os.getcwd()+'/interface/'+dir+'/_'+module+'.dll', copyToPYD)
        else:
           env.SharedLibrary(target='interface/'+dir+'/_'+module+'.so', source=['interface/'+dir+'/'+module+'.i'], SHLIBPREFIX="", LIBS=['mdl']+env['LIBS'])
-
 
 
 
@@ -244,7 +252,7 @@ def compiler_configure(c99_mode = 1):
         env.Append(CPPDEFINES = ['DEBUG'])
  
     else:
-        if env['CC'] == 'gcc':
+        if env['CC'] == 'gcc' and env['PLATFORM'] != 'darwin':
             env.Append(LINKFLAGS = ['-Wl,--strip-all'])
  
  
