@@ -866,6 +866,7 @@ protomol/config/python-config.py -text
 protomol/config/python.py -text
 protomol/config/qt4.py -text
 protomol/config/resources.py -text
+protomol/config/valgrind.py -text
 protomol/config/xml.py -text
 protomol/doc/Doxyfile -text
 protomol/doc/GB_Born.pdf -text

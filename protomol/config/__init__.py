@@ -4,7 +4,8 @@ import imp
 from SCons.Script import *
 
 modules = ['compiler', 'boost', 'python', 'xml', 'pthreads', 'expat', 'openssl',
-           'qt4', 'dist', 'resources', 'build_info', 'packager', 'tools']
+           'qt4', 'dist', 'resources', 'build_info', 'packager', 'tools',
+           'valgrind']
 
 # Child modules
 for name in modules:
