@@ -82,12 +82,12 @@ def configure_deps(conf):
             env.Append(CPPDEFINES = ['HAVE_LAPACK'])
             have_lapack = True
 
-            if env['PLATFORM'] == 'posix':
-                # BLAS
-                home = check_envvar('BLAS_HOME')
-                if home != None: env.Append(LIBPATH = [home])
-                conf.CheckLib('blas-3') or check_library(conf, 'blas')
+            # BLAS
+            home = check_envvar('BLAS_HOME')
+            if home != None: env.Append(LIBPATH = [home])
+            conf.CheckLib('blas-3') or check_library(conf, 'blas')
 
+            if env['PLATFORM'] in ['posix', 'darwin']:
                 # G2C
                 home = check_envvar('G2C_HOME')
                 if home != None: env.Append(LIBPATH = [home])

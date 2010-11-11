@@ -1,7 +1,7 @@
 import copy
 import re
 import os
-from platform import machine
+from platform import machine, architecture
 from SCons.Script import *
 from subprocess import *
 from SCons.Util import MD5signature
@@ -27,6 +27,18 @@ class decider_hack:
             return True
 
 
+def check_rdynamic(context):
+    context.Message('Checking for -rdynamic...')
+    env = context.env
+    flags = env['LINKFLAGS']
+    context.env.Append(LINKFLAGS = ['-rdynamic'])
+    result = context.TryLink('int main(int argc, char *argv[]) {return 0;}',
+                             '.c')
+    context.Result(result)
+    env['LINKFLAGS'] = flags
+    return result
+
+
 def add_vars(vars):
     vars.AddVariables(
         ('optimize', 'Enable or disable optimizations', -1),
@@ -43,7 +55,7 @@ def add_vars(vars):
         BoolVariable('distcc', 'Enable or disable distributed builds', 0),
         BoolVariable('ccache', 'Enable or disable cached builds', 0),
         EnumVariable('platform', 'Override default platform', '',
-                   allowed_values = ('', 'win32', 'posix')),
+                   allowed_values = ('', 'win32', 'posix', 'darwin')),
         EnumVariable('cxxstd', 'Set C++ language standard', 'gnu++98',
                    allowed_values = ('gnu++98', 'c++98', 'c++0x')),
         EnumVariable('compiler', 'Select compiler', 'default',
@@ -58,6 +70,8 @@ def add_vars(vars):
 
 def configure(conf, c99_mode = 1):
     env = conf.env
+
+    conf.AddTests({'check_rdynamic': check_rdynamic})
 
     if env.GetOption('clean'): return
 
@@ -180,16 +194,19 @@ def configure(conf, c99_mode = 1):
 
 
     # Debug flags
+    if compiler_mode == 'msvc':
+        env['PDB'] = '${TARGET}.pdb'
+
     if debug:
         if compiler_mode == 'msvc':
             env.Append(CCFLAGS = ['/W1', '/Zi'])
             env.Append(LINKFLAGS = ['/DEBUG', '/MAP:${TARGET}.map'])
-            env['PDB'] = '${TARGET}.pdb'
 
         elif compiler_mode == 'gnu':
             if compiler == 'gnu':
                 env.Append(CCFLAGS = ['-ggdb', '-Wall'])
-                env.Append(LINKFLAGS = ['-rdynamic']) # for backtrace
+                if conf.check_rdynamic():
+                    env.Append(LINKFLAGS = ['-rdynamic']) # for backtrace
             elif compiler == 'intel':
                 env.Append(CCFLAGS = ['-g', '-diag-enable', 'warn'])
 
@@ -205,11 +222,8 @@ def configure(conf, c99_mode = 1):
 
     else:
         if compiler_mode == 'gnu':
-            # Strip symbols
-            if env['PLATFORM'] == 'darwin':
-               env.Append(LINKFLAGS = ['-Wl'])
-            else:
-               env.Append(LINKFLAGS = ['-Wl,-s'])
+            # Don't add debug info and enable dead code removal
+            env.Append(LINKFLAGS = ['-Wl,-S', '-Wl,-x'])
 
         env.Append(CPPDEFINES = ['NDEBUG'])
 
@@ -217,7 +231,8 @@ def configure(conf, c99_mode = 1):
     # Optimizations
     if optimize:
         # Machine
-        if machine() != 'x86_64' and not (sse2 or sse3):
+        # Darwin reports 'i386' from platform.machine()
+        if architecture()[0] != '64bit' and not (sse2 or sse3):
             if compiler == 'intel':
                 if compiler_mode == 'gnu':
                     env.Append(CCFLAGS = ['-mia32'])
@@ -311,8 +326,7 @@ def configure(conf, c99_mode = 1):
             env.Append(CFLAGS = ['-std=c99'])
             env.Append(CXXFLAGS = ['-std=' + cxxstd])
         elif compiler_mode == 'msvc':
-            env.Append(CFLAGS = ['/TP']) # C++ mode
-
+            env.Append(CFLAGS = ['/Qstd=c99'])
 
     # Threads
     if threaded:
@@ -335,7 +349,7 @@ def configure(conf, c99_mode = 1):
 
     # static
     if static:
-        if compiler_mode == 'gnu':
+        if compiler_mode == 'gnu' and env['PLATFORM'] != 'darwin':
             env.Append(LINKFLAGS = ['-static'])
 
 
@@ -366,12 +380,22 @@ def configure(conf, c99_mode = 1):
     # For darwin
     if env['PLATFORM'] == 'darwin':
         env.Append(CPPDEFINES = ['__APPLE__'])
-        env['PLATFORM'] = 'posix'
+
+
+def get_lib_path_env(env):
+    eenv = copy.copy(os.environ)
+
+    path = list(env['LIBPATH'])
+    if 'LIBRARY_PATH' in eenv:
+        path += eenv['LIBRARY_PATH'].split(':')
+
+    eenv['LIBRARY_PATH'] = ':'.join(path)
+
+    return eenv
 
 
 def findLibPath(env, lib):
-    eenv = copy.copy(os.environ)
-    eenv['LIBRARY_PATH'] = ':'.join(env['LIBPATH'])
+    eenv = get_lib_path_env(env)
     cmd = env['CXX'].split()
     libpat = env['LIBPREFIX'] + '%s' + env['LIBSUFFIX']
 
@@ -385,8 +409,7 @@ def findLibPath(env, lib):
 def mostly_static_libs(env, ignore = ['pthread', 'dl']):
     if env.get('compiler_mode', '') != 'gnu': return
 
-    eenv = copy.copy(os.environ)
-    eenv['LIBRARY_PATH'] = ':'.join(env['LIBPATH'])
+    eenv = get_lib_path_env(env)
     cmd = env['CXX'].split()
     libpat = env['LIBPREFIX'] + '%s' + env['LIBSUFFIX']
 
