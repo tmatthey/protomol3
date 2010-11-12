@@ -67,7 +67,9 @@ protomol = env.Program(name, src + [lib] + info)
 Default(protomol)
 
 # Dist
-tar = env.TarBZ2Dist(name, [name + env['PROGSUFFIX']])
+distfiles = [name + env['PROGSUFFIX']]
+if env['PLATFORM'] == 'win32': distfiles.append(name + '.exe.pdb')
+tar = env.TarBZ2Dist(name, distfiles)
 Alias('dist', tar)
 AlwaysBuild(tar)
 
