@@ -214,9 +214,36 @@ class IO:
         phys.myPAR.readFlag = 1
         phys.build()
 
+   def readAMBERCrd(self, phys, filename):
+        """
+	Read AMBER coordinate file
+
+	@type phys: Physical
+	@param phys: The physical system.
+
+	@type filename: string
+	@param filename: AMBER coordinate file name.
+        """
+
+	f = open(filename, 'r')
+	data = f.read()
+	# Keep going with this!!!
+        numbers = data.split(' ')
+        while (numbers.count('') != 0):
+           numbers.remove('')
+        
+        phys.posvec.resize(int(numbers[0].replace('\n', '')))
+        for i in range(1, len(numbers), 3):
+           if (numbers[i].find('\n') != -1):
+              numbers[i].replace('\n', '')
+           phys.positions[i-1] = numbers[i]
+           phys.positions[i] = numbers[i+1]
+           phys.positions[i+1] = numbers[i+2]
+
+
    def readGromacs(self, phys, topname, parname, gbname=""):
         """
-	Read Gromacs input files, and convert them
+        Read Gromacs input files, and convert them
 
 	@type phys: Physical
         @param phys: The physical system.
