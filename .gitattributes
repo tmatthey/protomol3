@@ -1331,6 +1331,8 @@ protomol/src/protomol/topology/BankLennardJonesParameterTable.h -text
 protomol/src/protomol/topology/Bond.h -text
 protomol/src/protomol/topology/BuildTopology.cpp -text
 protomol/src/protomol/topology/BuildTopology.h -text
+protomol/src/protomol/topology/BuildTopologyFromTpr.cpp -text
+protomol/src/protomol/topology/BuildTopologyFromTpr.h -text
 protomol/src/protomol/topology/CellListEnumerator.h -text
 protomol/src/protomol/topology/CellListEnumeratorPeriodicBoundaries.h -text
 protomol/src/protomol/topology/CellListEnumeratorStandard.h -text
@@ -1545,6 +1547,12 @@ test/tests/expected/wwdomain_CHARMM_VACUUM_LL.energy -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.forces -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.pos -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.vel -text
+test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.dcd -text
+test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.energy -text
+test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.energy.header -text
+test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.forces -text
+test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.pos -text
+test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.vel -text
 test/tests/expected/www-fip35_FFAMBER_GB_LL.dcd -text
 test/tests/expected/www-fip35_FFAMBER_GB_LL.energy -text
 test/tests/expected/www-fip35_FFAMBER_GB_LL.forces -text

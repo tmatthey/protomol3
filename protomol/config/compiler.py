@@ -50,6 +50,7 @@ def add_vars(vars):
                      os.getenv('DEBUG_MODE', 0)),
         BoolVariable('strict', 'Enable or disable strict options', 1),
         BoolVariable('threaded', 'Enable or disable thread support', 1),
+        BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
         BoolVariable('profile', 'Enable or disable profiler', 0),
         BoolVariable('depends', 'Enable or disable dependency files', 0),
         BoolVariable('distcc', 'Enable or disable distributed builds', 0),
@@ -88,6 +89,7 @@ def configure(conf, c99_mode = 1):
     auto_dispatch = int(env.get('auto_dispatch', 1))
     strict = int(env.get('strict', 1))
     threaded = int(env.get('threaded', 1))
+    gromacs = int(env.get('gromacs', 0))
     profile = int(env.get('profile', 0))
     depends = int(env.get('depends', 0))
     compiler = env.get('compiler', 0)
@@ -341,6 +343,30 @@ def configure(conf, c99_mode = 1):
         elif compiler_mode == 'msvc':
             if debug: env.Append(CCFLAGS = ['/MTd'])
             else: env.Append(CCFLAGS = ['/MT'])
+
+    if gromacs:
+       if compiler_mode == 'gnu':
+            if os.environ.has_key('GROMACS_HOME'):
+                ghome = os.environ['GROMACS_HOME']
+    
+                env.Append(LIBPATH = [ghome + '/lib'])
+                env.Append(CPPPATH = [ghome + '/include/gromacs'])
+                if not conf.CheckLib('md'):
+                    print 'Need gromacs MD'
+                    Exit(1)
+                if not conf.CheckLib('gmx'):
+                    print 'Need gromacs gmx'
+                    Exit(1)
+                if not conf.CheckHeader('txtdump.h'):
+                    print 'Need gromacs txtdump.h'
+                    Exit(1)
+                if not conf.CheckHeader('names.h'):
+                    print 'Need gromacs names.h'
+                    Exit(1)
+                env.Append(CPPDEFINES = ['HAVE_GROMACS'])
+            else:
+                print 'Environmental variable GROMACS_HOME required.'
+                Exit(1)
 
 
     # Link flags
