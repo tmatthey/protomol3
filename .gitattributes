@@ -1293,6 +1293,8 @@ protomol/src/protomol/output/OutputFinalXYZVel.cpp -text
 protomol/src/protomol/output/OutputFinalXYZVel.h -text
 protomol/src/protomol/output/OutputScreen.cpp -text
 protomol/src/protomol/output/OutputScreen.h -text
+protomol/src/protomol/output/OutputXTCTrajectory.cpp -text
+protomol/src/protomol/output/OutputXTCTrajectory.h -text
 protomol/src/protomol/output/OutputXYZTrajectoryForce.cpp -text
 protomol/src/protomol/output/OutputXYZTrajectoryForce.h -text
 protomol/src/protomol/output/OutputXYZTrajectoryPos.cpp -text
