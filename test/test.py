@@ -12,7 +12,11 @@ for file in files:
 	base = os.path.splitext( os.path.basename( file ) )[0]
 
 	print( "Executing Test: " + base )
-	p = subprocess.Popen( shlex.split( os.path.join( pwd, "ProtoMol" ) + " " + file ), stdout=subprocess.PIPE, stderr=subprocess.PIPE ).communicate()
+	if os.path.exists( os.path.join( pwd, "ProtoMol" ) ) == True:
+		p = subprocess.Popen( shlex.split( os.path.join( pwd, "ProtoMol" ) + " " + file ), stdout=subprocess.PIPE, stderr=subprocess.PIPE ).communicate()
+	else:
+		cmd = os.path.join( pwd, "ProtoMol.exe" ) + " " + file
+		p = subprocess.Popen( cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE ).communicate()
 
 	expects = []
 	outputs = glob.glob( "tests/output/" + base + ".*" )
