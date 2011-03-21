@@ -146,7 +146,7 @@ def make_env(deps, extra_vars = None, tool_deps=[]):
     add_vars(deps, vars)
     if extra_vars:
         for var in extra_vars: vars.AddVariables(var)
-    env = Environment(variables = vars, ENV = os.environ)
+    env = Environment(variables = vars, ENV = os.environ, MSVC_SETUP_RUN=True)
     Help(vars.GenerateHelpText(env))
 
     try:
