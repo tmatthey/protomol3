@@ -1,4 +1,7 @@
+import numpy
+
 import TopologyUtilities
+import GenericTopology
 
 import PSFReader
 import PARReader
@@ -39,6 +42,7 @@ except:
   
 
 import numpy
+
 
 class IO:
    """
@@ -239,6 +243,344 @@ class IO:
            phys.positions[i-1] = numbers[i]
            phys.positions[i] = numbers[i+1]
            phys.positions[i+1] = numbers[i+2]
+
+
+
+   def readAMBERTop(self, phys, filename):
+      """
+      Read AMBER topology file
+      Format Source: http://ambermd.org/formats.html
+
+      @type phys: Physical
+      @param phys: The physical system.
+
+      @type filename: string
+      @param filename: AMBER topology file name.
+      """
+
+      def skipLine(data):
+         nl = data.index('\n')
+         return data[nl+1:len(data)]
+
+      def jumpTo(data, target):
+         fp = data.index(target)
+         return data[fp:len(data)]
+
+      def readRemove(data, size):
+         retval = data[0:size-1]
+         return data[size:len(data)]
+
+      def getInteger(data):
+         pos = 0
+         retval = ""
+         while (not data[pos].isdigit()):
+            pos = pos + 1
+         while (data[pos].isdigit()):
+            retval = retval + data[pos]
+            pos = pos + 1
+         data = data[pos:len(data)]
+         return int(retval), data
+
+      def parse(data, arr, str, count, dtype, tupsize=1):
+         data = jumpTo(data, "%FLAG "+str)
+         data = jumpTo(data, "%FORMAT")
+         numPerLine, data = getInteger(data)
+         fieldsize, data = getInteger(data)
+         data = skipLine(data)      
+   
+         arr2 = []
+         numread = 0
+         for j in range(0, (tupsize*count-1) / numPerLine + 1):
+          for i in range(0, numPerLine):
+            if (tupsize == 1):
+               arr.append(dtype(data[0:fieldsize].strip()))
+            else:
+               arr2.append(dtype(data[0:fieldsize].strip()))
+               if (len(arr2) == tupsize):
+                  arr.append(arr2)
+                  arr2 = []
+            numread += 1
+            data = data[fieldsize:len(data)]
+            if (numread == tupsize*count):
+               break
+          data = skipLine(data)     
+         return data
+
+      def scan(data, str):
+         return (data.count(str) != 0)
+
+
+      f = open(filename, 'r')
+      data = f.read()
+
+      # First Line: VERSION ...
+      data = skipLine(data)
+
+      # Go To: %FLAG POINTERS
+      data = jumpTo(data, '%FLAG POINTERS')
+
+      data = jumpTo(data, '%FORMAT')
+      numPerLine, data = getInteger(data)
+      fieldsize, data = getInteger(data)
+      data = skipLine(data)
+      
+      temp = []
+      numread = 0
+      for j in range(0, 31 / numPerLine + 1):
+       for i in range(0, numPerLine):
+         temp.append(int(data[0:8]))
+         data = data[8:len(data)]
+         numread += 1
+         if (numread == 31):
+            break
+       data = skipLine(data)
+       
+      [natoms, ntypes, nbonh, mbona, ntheth, mtheta, nphih, mphia, nhparm, nparm, nnb, nres, nbona, ntheta, nphia, numbnd, numang, nptra, natyp, nphb, ifpert, nbper, ngper, ndper, mbper, mgper, mdper, ifbox, nmxrs, ifcap, numextra] = temp  
+
+
+      #################################################
+      # Read AtomTypes
+      atomnames = []
+      charges = []
+      masses = []
+      atindex = []
+      exclusions = []
+      nparams = []
+      reslabels = []
+      respointers = []
+      forceconstants = [[], [], []] # bond, angle, dihedral
+      equilvals = [[], [], [[], []]]      # bond, angle, dihedral
+      scee_scales = []
+      scnb_scales = []
+      solty = []
+      lj_acoef = []
+      lj_bcoef = []
+
+      data = parse(data, atomnames, "ATOM_NAME", natoms, str)      
+      data = parse(data, charges, "CHARGE", natoms, float)
+      data = parse(data, masses, "MASS", natoms, float)
+      data = parse(data, atindex, "ATOM_TYPE_INDEX", natoms, int)
+      data = parse(data, exclusions, "NUMBER_EXCLUDED_ATOMS", natoms, int)
+      data = parse(data, nparams, "NONBONDED_PARM_INDEX", ntypes*ntypes, int)
+      data = parse(data, reslabels, "RESIDUE_LABEL", nres, str)
+      data = parse(data, respointers, "RESIDUE_POINTER", nres, int)
+      data = parse(data, forceconstants[0], "BOND_FORCE_CONSTANT", numbnd, float)
+      data = parse(data, equilvals[0], "BOND_EQUIL_VALUE", numbnd, float)
+      data = parse(data, forceconstants[1], "ANGLE_FORCE_CONSTANT", numang, float)
+      data = parse(data, equilvals[1], "ANGLE_EQUIL_VALUE", numang, float)
+      data = parse(data, forceconstants[2], "DIHEDRAL_FORCE_CONSTANT", nptra, float)
+      data = parse(data, equilvals[2][0], "DIHEDRAL_PERIODICITY", nptra, float)
+      data = parse(data, equilvals[2][1], "DIHEDRAL_PHASE", nptra, float)
+      if (scan(data, "SCEE_SCALE_FACTOR")):
+         data = parse(data, scee_scales, "SCEE_SCALE_FACTORS", nptra, float)
+      else:
+         for i in range(0, nptra):
+            scee_scales.append(1.2)    # Default 
+      if (scan(data, "SCNB_SCALE_FACTOR")):
+         data = parse(data, scnb_scales, "SCNB_SCALE_FACTORS", nptra, float)
+      else:
+         for i in range(0, nptra):
+            scnb_scales.append(2.0)    # Default 
+
+      data = parse(data, solty, "SOLTY", natyp, float)
+      data = parse(data, lj_acoef, "LENNARD_JONES_ACOEF", ntypes*(ntypes+1)/2, float)
+      data = parse(data, lj_bcoef, "LENNARD_JONES_BCOEF", ntypes*(ntypes+1)/2, float)
+
+
+      ##########################################################
+      # STRUCTURE
+
+      bonds = [[], []]    # With H, Without H
+      angles = [[], []]   # With H, Without H
+      dihedrals = [[], []] # With H, Without H
+      impropers = [[], []] # With H, Without H
+      excluded_atoms = [] 
+      hbond_acoef = []
+      hbond_bcoef = []
+      hbcut = []
+      amber_atom_types = []
+      tree_chain = []
+      join_array = []
+      irotat = []
+      radii = []
+      screen = []
+
+      data = parse(data, bonds[0], "BONDS_INC_HYDROGEN", nbonh, int, 3)
+      data = parse(data, bonds[1], "BONDS_WITHOUT_HYDROGEN", nbona, int, 3)
+      data = parse(data, angles[0], "ANGLES_INC_HYDROGEN", ntheth, int, 4)
+      data = parse(data, angles[1], "ANGLES_WITHOUT_HYDROGEN", ntheta, int, 4)
+      data = parse(data, dihedrals[0], "DIHEDRALS_INC_HYDROGEN", nphih, int, 5)
+      data = parse(data, dihedrals[1], "DIHEDRALS_WITHOUT_HYDROGEN", nphia, int, 5)
+      
+      # MERGE ARRAYS - PM HANDLES THE H+
+      final_bonds = bonds[0] + bonds[1]
+      final_angles = angles[0] + angles[1]
+      final_dihedrals = dihedrals[0] + dihedrals[1]
+      final_impropers = []
+      
+      # CLEAN UP THE TRASH
+      del(bonds)
+      del(angles)
+      del(dihedrals)
+      
+
+      # Move impropers into their own array
+      i = 0
+      while (i < len(final_dihedrals)):
+         if (final_dihedrals[i][2] < 0):   # 1-4 exclusions are handled by our back end
+            final_dihedrals[i][2] *= -1
+         if (final_dihedrals[i][3] < 0):
+            final_dihedrals[i][3] *= -1    # Make + again
+            final_impropers.append(final_dihedrals[i])
+            final_dihedrals.remove(final_dihedrals[i])
+            i -= 1
+         i += 1
+
+      # Convert charge units
+      for i in range(0, len(charges)):
+         charges[i] /= 18.223
+
+
+      data = parse(data, excluded_atoms, "EXCLUDED_ATOMS_LIST", nnb, int)
+      data = parse(data, hbond_acoef, "HBOND_ACOEF", nphb, float)
+      data = parse(data, hbond_bcoef, "HBOND_BCOEF", nphb, float)
+      data = parse(data, hbcut, "HBCUT", nphb, float)
+      data = parse(data, amber_atom_types, "AMBER_ATOM_TYPE", natoms, str)
+      data = parse(data, tree_chain, "TREE_CHAIN_CLASSIFICATION", natoms, str)
+      data = parse(data, join_array, "JOIN_ARRAY", natoms, int)
+      data = parse(data, irotat, "IROTAT", natoms, int)
+      data = parse(data, radii, "RADII", natoms, float)
+      data = parse(data, screen, "SCREEN", natoms, float)
+
+      # Further process dihedrals and impropers
+      # Deal with multiplicity
+      # A bit ugly, but the fastest for now
+      # forceconstants[2][dihedrals[0][i][4]-1], int(equilvals[2][0][dihedrals[0][i][4]-1]), equilvals[2][1][dihedrals[0][i][4]-1]
+
+      mult_di = dict()
+      mult_im = dict()
+      for i in range(0, len(final_dihedrals)):
+         di_id = str(final_dihedrals[i][0])+' '+str(final_dihedrals[i][1])+' '+str(final_dihedrals[i][2])+' '+str(final_dihedrals[i][3])
+         if (not mult_di.has_key(di_id)):
+            mult_di[di_id] = [1, False, [forceconstants[2][final_dihedrals[i][4]-1]], [int(equilvals[2][0][final_dihedrals[i][4]-1])], [equilvals[2][1][final_dihedrals[i][4]-1]]]
+         else:
+            mult_di[di_id][0] += 1
+            mult_di[di_id][2].append(forceconstants[2][final_dihedrals[i][4]-1])
+            mult_di[di_id][3].append(int(equilvals[2][0][final_dihedrals[i][4]-1]))
+            mult_di[di_id][4].append(equilvals[2][1][final_dihedrals[i][4]-1])
+ 
+      for i in range(0, len(final_impropers)):
+         im_id = str(final_impropers[i][0])+' '+str(final_impropers[i][1])+' '+str(final_impropers[i][2])+' '+str(final_impropers[i][3])
+         if (not mult_im.has_key(di_id)):
+            mult_im[im_id] = [1, False, [forceconstants[2][final_impropers[i][4]-1]], [int(equilvals[2][0][final_impropers[i][4]-1])], [equilvals[2][1][final_impropers[i][4]-1]]]
+         else:
+            mult_im[im_id][0] += 1
+            mult_im[im_id][2].append(forceconstants[2][final_impropers[i][4]-1])
+            mult_im[im_id][3].append(int(equilvals[2][0][final_impropers[i][4]-1]))
+            mult_im[im_id][4].append(equilvals[2][1][final_impropers[i][4]-1])
+
+
+
+       
+      #[natoms, ntypes, nbonh, mbona, ntheth, mtheta, nphih, mphia, nhparm, nparm, nnb, nres, nbona, ntheta, nphia, numbnd, numang, nptra, natyp, nphb, ifpert, nbper, ngper, ndper, mbper, mgper, mdper, ifbox, nmxrs, ifcap, numextra] = temp  
+      #phys.myPSF.createAll(natoms, nbonh+mbona, ntheth+mtheta,
+      #                     len(dihedrals[0])+len(dihedrals[1]),
+      #                     len(impropers[0])+len(impropers[1]),
+      #                     0, 0, 0, 0)
+       
+      # Add atoms
+      curres = 1
+      for i in range(0, natoms):
+         phys.myPSF.addAtom(i, 'SIM', curres, reslabels[curres-1],
+                             atomnames[i], atomnames[i], charges[i],
+                             masses[i])  
+         if (curres != nres and i >= respointers[curres]):
+            curres += 1
+
+      # Add bonds
+      for i in range(0, nbonh+nbona):
+         phys.myPSF.addBond(i+1, final_bonds[i][0]/3+1, final_bonds[i][1]/3+1)
+         phys.myPAR.addBond(i+1, atomnames[final_bonds[i][0]/3], atomnames[final_bonds[i][1]/3], forceconstants[0][final_bonds[i][2]/3], equilvals[0][final_bonds[i][2]/3])
+         
+      # Add angles
+      for i in range(0, ntheth+ntheta):
+         phys.myPSF.addAngle(i+1, final_angles[i][0]/3+1, final_angles[i][1]/3+1, final_angles[i][2]/3+1)
+         phys.myPAR.addAngle(i+1, atomnames[final_angles[i][0]/3], atomnames[final_angles[i][1]/3], atomnames[final_angles[i][2]/3], forceconstants[1][final_angles[i][3]/3], equilvals[1][final_angles[i][3]/3])
+      
+      # Add dihedrals
+      for i in range(0, len(final_dihedrals)):
+         di_id = str(final_dihedrals[i][0])+' '+str(final_dihedrals[i][1])+' '+str(final_dihedrals[i][2])+' '+str(final_dihedrals[i][3])
+         mult = mult_di[di_id][0]
+         checked = mult_di[di_id][1]
+         print di_id, " ", mult
+         if (not checked):
+            if (mult == 1):
+               phys.myPSF.addDihedral(i+1, final_dihedrals[i][0]/3+1, final_dihedrals[i][1]/3+1, int(numpy.abs(final_dihedrals[i][2]))/3+1, final_dihedrals[i][3]/3+1)
+               phys.myPAR.addDihedral(i+1, atomnames[final_dihedrals[i][0]/3], atomnames[final_dihedrals[i][1]/3], atomnames[int(numpy.abs(final_dihedrals[i][2]))/3], atomnames[final_dihedrals[i][3]/3], forceconstants[2][final_dihedrals[i][4]-1], int(equilvals[2][0][final_dihedrals[i][4]-1]), equilvals[2][1][final_dihedrals[i][4]-1])
+            else:
+               mult_di[di_id][1] = True
+               # Add dihedral with the appropriate multiplicity
+               # Force constants, periodicity and phase shifts are in [2], [3], and [4] respectively
+               fcvec = PARReader.VectorOfDouble()
+               periodvec = PARReader.VectorOfInt()
+               phasevec = PARReader.VectorOfDouble()      
+               for j in range(0, len(mult_di[di_id][2])):
+                  fcvec.push_back(mult_di[di_id][2][j])
+                  periodvec.push_back(mult_di[di_id][3][j])
+                  phasevec.push_back(mult_di[di_id][4][j])
+               phys.myPSF.addDihedral(i+1, final_dihedrals[i][0]/3+1, final_dihedrals[i][1]/3+1, int(numpy.abs(final_dihedrals[i][2]))/3+1, final_dihedrals[i][3]/3+1)
+               phys.myPAR.addDihedral(i+1, atomnames[final_dihedrals[i][0]/3], atomnames[final_dihedrals[i][1]/3], atomnames[int(numpy.abs(final_dihedrals[i][2]))/3], atomnames[final_dihedrals[i][3]/3], mult, fcvec, periodvec, phasevec)
+       
+
+
+
+      for i in range(0, len(final_impropers)):
+         im_id = str(final_impropers[i][0])+' '+str(final_impropers[i][1])+' '+str(final_impropers[i][2])+' '+str(final_impropers[i][3])
+         mult = mult_im[im_id][0]
+         checked = mult_im[im_id][1]
+         print im_id, " ", mult
+         if (not checked):
+            if (mult == 1):
+               phys.myPSF.addImproper(i+1, final_impropers[i][0]/3+1, final_impropers[i][1]/3+1, int(numpy.abs(final_impropers[i][2]))/3+1, final_impropers[i][3]/3+1)
+               phys.myPAR.addImproper(i+1, atomnames[final_impropers[i][0]/3], atomnames[final_impropers[i][1]/3], atomnames[int(numpy.abs(final_impropers[i][2]))/3], atomnames[final_impropers[i][3]/3], forceconstants[2][final_impropers[i][4]-1], int(equilvals[2][0][final_impropers[i][4]-1]), equilvals[2][1][final_impropers[i][4]-1])
+            else:
+               mult_im[im_id][1] = True
+               # Add dihedral with the appropriate multiplicity
+               # Force constants, periodicity and phase shifts are in [2], [3], and [4] respectively
+               fcvec = PARReader.VectorOfDouble()
+               periodvec = PARReader.VectorOfInt()
+               phasevec = PARReader.VectorOfDouble()      
+               for j in range(0, len(mult_im[im_id][2])):
+                  fcvec.push_back(mult_im[im_id][2][j])
+                  periodvec.push_back(mult_im[im_id][3][j])
+                  phasevec.push_back(mult_im[im_id][4][j])
+               phys.myPSF.addImproper(i+1, final_impropers[i][0]/3+1, final_impropers[i][1]/3+1, int(numpy.abs(final_impropers[i][2]))/3+1, final_impropers[i][3]/3+1)
+               phys.myPAR.addImproper(i+1, atomnames[final_impropers[i][0]/3], atomnames[final_impropers[i][1]/3], atomnames[int(numpy.abs(final_impropers[i][2]))/3], atomnames[final_impropers[i][3]/3], mult, fcvec, periodvec, phasevec)
+
+ 
+      # Need to add garbage nonbonded stuff for now
+      for i in range(0, natoms):
+         phys.myPAR.addNonbonded(i, atomnames[i], 1, 1, 1, 1, 1, 1)
+
+      # Add VDW parameters
+      # AMBER has the Aij and Bij already in the parameter file
+      # This actually makes life easier.
+      # CHARMM does not, they simply have the original sigma and epsilon.
+      # To compensate for this, for now we will leave the nonbondeds empty in phys.myPAR
+      # We will then access the LennardJones parameter table in Topology directly
+      k = 0
+      phys.myTop.resizeLennardJonesParameters(ntypes)
+      print "NTYPES: ", ntypes
+      for i in range(0, ntypes):
+         for j in range(i, ntypes):
+            params = GenericTopology.LennardJonesParameters(lj_acoef[k], lj_bcoef[k])
+            k += 1
+            phys.myTop.setLennardJonesParameters(i, j, params)
+      
+      phys.myPAR.readFlag = 1
+      phys.build()      
+      
+       
 
 
    def readGromacs(self, phys, topname, parname, gbname=""):
@@ -916,9 +1258,15 @@ class IO:
             if (output == 'energies'):
                self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0))
             elif (output == 'dcdtrajpos'):
-               self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1, 1))
+               if (os.path.exists(filename)):  # Continue
+                  self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1, 1))
+               else: # Overwrite
+                  self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1, 0))
             elif (output == 'dcdtrajvel'):
-               self.myOutputs.append(OutputDCDTrajectoryVel.OutputDCDTrajectoryVel(filename, freq, 1, 1))
+               if (os.path.exists(filename)):
+                  self.myOutputs.append(OutputDCDTrajectoryVel.OutputDCDTrajectoryVel(filename, freq, 1, 1))
+               else:
+                  self.myOutputs.append(OutputDCDTrajectoryVel.OutputDCDTrajectoryVel(filename, freq, 1, 0))
             elif (output == 'xyztrajforce'):
                self.myOutputs.append(OutputXYZTrajectoryForce.OutputXYZTrajectoryForce(filename, freq))
             elif (output == 'xyztrajpos'):
