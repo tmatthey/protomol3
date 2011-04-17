@@ -45,7 +45,7 @@ for i in range(0, numpoints):
     x[i].temperature = 300
     x[i].exclude = "scaled1-4"
     x[i].seed = 1234
-    y[i] = x[i].copy()
+    x[i].copy(y[i])
 
     prop.append([Propagator(x[i], force[i][0], io), Propagator(y[i], force[i][1], io)])
 
@@ -137,8 +137,8 @@ for iter in range(0, numsteps): # NUMBER OF FTSM ITERATIONS
         # USE SECOND SYSTEM TO OBTAIN PHI AND PSI DIFFERENCES
         # FROM TARGETS
         zp0 = z[p][0]
-        z[p][0] -= (kappa/gamma)*dt*(FTSM.M(x[p], PHI, PHI)*(z[p][0]-y[p].angle(PHI)) + FTSM.M(x[p], PHI, PSI)*(z[p][1] - y[p].angle(PSI)))
-        z[p][1] -= (kappa/gamma)*dt*(FTSM.M(x[p], PSI, PHI)*(zp0-y[p].angle(PHI)) + FTSM.M(x[p], PSI, PSI)*(z[p][1] - y[p].angle(PSI)))
+        z[p][0] -= (kappa/gamma)*dt*(FTSM.M(x[p], PHI, PHI)*(z[p][0]-y[p].dihedral(PHI)) + FTSM.M(x[p], PHI, PSI)*(z[p][1] - y[p].dihedral(PSI)))
+        z[p][1] -= (kappa/gamma)*dt*(FTSM.M(x[p], PSI, PHI)*(zp0-y[p].dihedral(PHI)) + FTSM.M(x[p], PSI, PSI)*(z[p][1] - y[p].dihedral(PSI)))
         # My own function which sets phi and psi for individual force objects
         # Saves performance since I only change 'angle', I don't want to define
         # all new force objects by changing params.
