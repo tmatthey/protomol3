@@ -236,6 +236,14 @@ mdl/data/decalanine_66/alanine.water.pdb -text
 mdl/data/decalanine_66/alanine.water.psf -text
 mdl/data/decalanine_66/dihedralIndexSet -text
 mdl/data/params.agb -text
+mdl/data/water_1002/water.1002.energies.s2hmc -text
+mdl/data/water_1002/water.1002.energies.s2hmc.header -text
+mdl/data/water_1002/water.1002.fin.xyz -text
+mdl/data/water_1002/water.1002.hmc.conf -text
+mdl/data/water_1002/water.1002.minim.xyz -text
+mdl/data/water_1002/water.1002.par -text
+mdl/data/water_1002/water.1002.psf -text
+mdl/data/water_1002/water.1002.s2hmc.conf -text
 mdl/data/water_216/water216.conf -text
 mdl/data/water_216/water216.coor.pdb -text
 mdl/data/water_216/water216.new.pos.pdb -text
