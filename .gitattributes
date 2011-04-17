@@ -97,8 +97,6 @@ applications/protocell/protocell.cpp -text
 fah-core/SConstruct -text
 fah-core/protomol.cpp -text
 mdl/MDL.py -text
-mdl/MDLSetup.bash -text
-mdl/MDLSetup.tcsh -text
 mdl/README -text
 mdl/RunMDL -text
 mdl/RunMDL.bat -text
