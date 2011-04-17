@@ -70,6 +70,11 @@ PHI=11
 PSI=18
 
 outdir=sys.argv[3]
+if not os.path.exists(outdir):
+  os.mkdir(outdir)
+
+   
+
 
 ff.params['HarmonicDihedral'] = {'kbias':[kappa, kappa],
                                  'dihedralnum':[PHI-1, PSI-1],
