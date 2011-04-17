@@ -555,7 +555,16 @@ class PropagatorFactory:
 			     'sortByAbs', 0,
 			     'fixedModes', 0,
 			     'textEigFile', 0,
-			     'massweight', 1))
+			     'fullDiag', 0,
+                             'eigenValueThresh', 5.0,
+                             'blockVectorCols', 0,
+                             'residuesPerBlock', 1,
+                             'blockCutoffDistance', 10,
+                             'massweight', 1,
+                             'noseMass', 0,
+                             'autoParameters', 0,
+                             'geometric', 0,
+                             'numerically', 0))
       self.registerPMObject("NormalModeBrownian",
 			    ('firstmode', -1,
 			     'numbermodes', -1,
@@ -576,7 +585,8 @@ class PropagatorFactory:
 			     'autoParameters', True,
 			     'autoDT', False,
 			     'pdm', False,
-			     'minimLim', 0.1))
+			     'minimLim', 0.1,
+                             'maxminsteps', 100))
                             #('averageSteps', 1,
 			    # 'avStepSize', 1.0,
 			    # 'reDiagFrequency', 0,
@@ -585,6 +595,13 @@ class PropagatorFactory:
 			    # 'minSteps', 0,
 			    # 'minLim', 1.0))
       self.registerPMObject("NormalModeLangevin",
+			    ('firstmode', 1,
+			     'numbermodes', 1,
+			     'gamma', 80,
+			     'seed', 1234,
+			     'temperature', 300,
+			     'gencompnoise', 0))
+      self.registerPMObject("NormalModeLangLf",
 			    ('firstmode', 1,
 			     'numbermodes', 1,
 			     'gamma', 80,
