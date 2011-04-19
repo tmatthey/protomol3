@@ -4,11 +4,12 @@ import sys
 
 
 
+execfile('configfuncs.py')
 mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedShadow', 'PLeapfrogIntegrator', 'DMDLeapfrogIntegrator', 'NoseNVTLeapfrogIntegrator', 'NPTVerletIntegrator'],
               'integrator/':['PySTSIntegrator', 'PyMTSIntegrator'],
 	      'integrator/base':['LangevinImpulseIntegrator', 'LangevinLeapfrogIntegrator', 'ImpulseIntegrator', 'CGMinimizerIntegrator', 'NumericalDifferentiation'],
              'type':['Vector3DBlock', 'ScalarStructure'],
-	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator'],
+	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator', 'NormalModeLangLf'],
               'integrator/hessian':['HessianInt'],
               'integrator/openMM':['OpenMMIntegrator'],
               'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
@@ -352,6 +353,12 @@ if gui:
     env.Append(CCFLAGS = '-DHAVE_GUI')
     env.Append(SWIGFLAGS = '-DHAVE_GUI')
 
+if (use_lapack):
+    env.Append(CCFLAGS = '-DHAVE_LAPACK')
+    env.Append(SWIGFLAGS = '-DHAVE_LAPACK')
+    env.Prepend(LIBS = ['blas', 'lapack'])
+
+#env.Prepend(LIBS = ['gromacs'])
 # FAH Options
 fah = int(env.get('fah', 0))
 
@@ -366,11 +373,39 @@ else:
     use_openmm = 1
 
     if ( openmm_type == 'reference' ):
+        print "USING REFERENCE"
         use_openmm_reference = 1
         use_openmm_cuda = 0
     elif ( openmm_type == 'cuda' ):
+        print "USING CUDA"
         use_openmm_reference = 0
         use_openmm_cuda = 1
+
+
+    openmm_type = env.get('openmm', 'none')
+    if openmm_type != 'none':       
+        # The following must bail if it is not found as openmm is not
+        # installed to a place that the compiler will locate by default. The
+        # same is also true for CUDA.
+        openmm_home = check_envvar('OPENMM_HOME', True)
+
+        env.Append(CPPPATH = [openmm_home + os.sep + 'include'])
+        env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
+
+        if openmm_type == 'reference':
+            if check_library('OpenMM_d', True):
+                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+
+        if openmm_type == 'cuda':
+            cuda_home = check_envvar('CUDA_HOME', True)
+
+            env.Append(LIBPATH = [cuda_home + os.sep + 'lib'])
+
+            print env['LIBPATH']
+            #check_library('OpenMMCuda_d', True) and 
+            if check_library(conf, 'OpenMMCuda', True) and check_library(conf, 'cudart', True):
+                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+
 
 # Configure compiler
 print "SHOULD CALL IT HERE"
