@@ -857,6 +857,7 @@ protomol-test/SConstruct -text
 protomol-test/src/DataComparator.cpp -text
 protomol-test/src/DataComparator.h -text
 protomol-test/testHarness -text
+protomol/CMakeLists.txt -text
 protomol/SConstruct -text
 protomol/config/__init__.py -text
 protomol/config/boost.py -text
