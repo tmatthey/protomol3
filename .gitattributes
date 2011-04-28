@@ -906,6 +906,8 @@ protomol/src/protomol/base/Exception.h -text
 protomol/src/protomol/base/Factory.h -text
 protomol/src/protomol/base/FileLocation.cpp -text
 protomol/src/protomol/base/FileLocation.h -text
+protomol/src/protomol/base/Lapack.cpp -text
+protomol/src/protomol/base/Lapack.h -text
 protomol/src/protomol/base/Makeable.cpp -text
 protomol/src/protomol/base/Makeable.h -text
 protomol/src/protomol/base/MakeableDefinition.h -text
