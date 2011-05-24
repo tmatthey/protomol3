@@ -71,7 +71,7 @@ def pyWrap(env, pmhome):
      env.Append(SHCXXFLAGS='-I'+pmhome)
      env.Append(LIBPATH=sys.exec_prefix+'/lib/python'+sys.version[0:3]+'/config/')
      env.Append(CPPPATH=sys.exec_prefix+'/include')
-     env.Prepend(LIBS = ['blas', 'lapack', 'python2.6', libname2])
+     env.Prepend(LIBS = ['blas', 'lapack', 'python2.6'])
      env.Append(CXXFLAGS='-I'+pmhome+os.sep+'src')
      env.Append(CXXFLAGS='-I'+pmhome+os.sep+'src'+os.sep+'protomol')
      env.Append(CXXFLAGS='-fno-common')
@@ -484,11 +484,12 @@ for s in subsrc:
      libsrc2.append(pmhome+os.sep+'src'+os.sep+'protomol'+os.sep+s)
 env.Prepend(LIBS = [''])
 libname2 = 'mdl'
+#if (env['PLATFORM'] == 'darwin'):
+#   sl = env.StaticLibrary(libname2, libsrc2, LIBSUFFIX=env['LIBSUFFIX'], LIBS=env['LIBS'])
 sl = env.SharedLibrary(libname2, libsrc2, env['LIBS'])
 #if (env['PLATFORM'] != 'win32' and env['PLATFORM'] != 'darwin'):
 #   sl = env.SharedLibrary(libname2, libsrc2, env['LIBS'])
 #else:
-#   sl = env.StaticLibrary(libname2, libsrc2, LIBSUFFIX=env['LIBSUFFIX'], LIBS=env['LIBS'])
 os.chdir(pwd)
 pyWrap(env, pmhome)
 Default('.')
