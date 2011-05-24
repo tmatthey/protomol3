@@ -6,7 +6,7 @@ def absDiff( one, two ):
 def sabsDiff( one, two ):
 	return math.fabs( one ) - math.fabs( two )
 
-def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign = False ):
+def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign = False, verbose = False ):
 	fone = open( fExpected, 'r' )
 	ftwo = open( fNew, 'r' )
 
@@ -28,8 +28,9 @@ def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign = False ):
 
 		if lenone != lentwo:
 			diffs = diffs + 1
-			print( "Line: %d differs in size." % ( i ) )
-			print( "Should be %d elements but there are %d." % ( lenone, lentwo ) )
+			if verbose == True:
+				print( "Line: %d differs in size." % ( i ) )
+				print( "Should be %d elements but there are %d." % ( lenone, lentwo ) )
 		else:
 			for j in range( lenone ):
 				try:
@@ -44,8 +45,9 @@ def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign = False ):
 
 					if fediff > epsilon:
 						diffs = diffs + 1
-						print( "Line %d, Element %d Differs" % ( i, j ) )
-						print( "Expected: %f, Actual: %f, Difference: %f" % ( feone, fetwo, fediff ) )
+						if verbose == True:
+							print( "Line %d, Element %d Differs" % ( i, j ) )
+							print( "Expected: %f, Actual: %f, Difference: %f" % ( feone, fetwo, fediff ) )
 				except ValueError:
 					x = 1
 	return diffs == 0
