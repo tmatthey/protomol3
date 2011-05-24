@@ -1,6 +1,32 @@
-import sys,os,glob,shlex,subprocess,comparator
+import sys,os,glob,shlex,subprocess,comparator, argparse
 
-files=glob.glob("tests/*.conf")
+parser = argparse.ArgumentParser(description='ProtoMol Test Suite')
+parser.add_argument( '--verbose', '-v', action='store_true', default = False, help = 'Verbose output' )
+
+group = parser.add_mutually_exclusive_group()
+group.add_argument( '--single', '-s', help = 'Single test to run. Must be within the tests directory.' )
+group.add_argument( '--regex', '-r', help = 'Regular expression of tests to run, Requires quotation marks around argument' )
+
+args = parser.parse_args()
+
+files = []
+
+if args.single == None and args.regex == None:
+	files=glob.glob("tests/*.conf")
+else:
+	if args.single != None:
+		if args.single.find( ".conf" ) != -1:
+			files.append( args.single )
+		else:
+			print("Invalid test configuartion")
+			sys.exit(1)
+	
+	if args.regex != None:
+		files=glob.glob("tests/"+args.regex+".conf")
+		
+files.sort()
+
+print( files )
 
 pwd = os.getcwd()
 
@@ -8,6 +34,10 @@ tests = 0
 testspassed = 0
 testsfailed = 0
 failedtests = []
+
+def printv( message ):
+	if args.verbose == True:
+		print( message )
 
 for file in files:
 	base = os.path.splitext( os.path.basename( file ) )[0]
@@ -41,31 +71,37 @@ for file in files:
 
 		if ftype != ".dcd" and ftype != ".header" : 
 			if ftype == ".vec":
-				print( "Testing: " + expects[i] + " " + outputs[i] )
-				if comparator.compare( expects[i], outputs[i], "0.00001", 1.0, True ):
-					print( "Passed" )
+				printv( "Testing: " + expects[i] + " " + outputs[i] )
+			
+				if comparator.compare( expects[i], outputs[i], "0.00001", 1.0, True, verbose = args.verbose ):
+					printv( "Passed" )
 					testspassed += 1
 				else:
-					print( "Failed" )
+					printv( "Failed" )
 					testsfailed += 1
 					failedtests.append( "Comparison of " + expects[i] + " and " + outputs[i] )
 			else:
-				print( "Testing: " + expects[i] + " " + outputs[i] )
-				if comparator.compare( expects[i], outputs[i], "0.00001" ):
-					print( "Passed" )
+				printv( "Testing: " + expects[i] + " " + outputs[i] )
+
+				if comparator.compare( expects[i], outputs[i], "0.00001", verbose = args.verbose ):
+					printv( "Passed" )
 					testspassed += 1
 				else:
-					print( "Failed" )
+					printv( "Failed" )
 					testsfailed += 1
 					failedtests.append( "Comparison of " + expects[i] + " and " + outputs[i] )
 
+testsnotrun = tests - (testspassed + testsfailed )
+
 print( "" )
 print( "Tests: %d" % ( tests ) )
-testsnotrun = tests - (testspassed + testsfailed )
-print( "Tests Not Run: %d\n" % ( testsnotrun ) )
-
+print( "Tests Not Run: %d" % ( testsnotrun ) )
+print( "" )
 print( "Tests Passed: %d" % ( testspassed ) )
 print( "Tests Failed: %d\n" % ( testsfailed ) )
 
-for i in range( len( failedtests ) ):
-	print( "%s failed." % ( failedtests[i] ) )
+if len( failedtests ) > 0:
+	print("")
+
+	for i in range( len( failedtests ) ):
+		print( "%s failed." % ( failedtests[i] ) )
