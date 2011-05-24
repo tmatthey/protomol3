@@ -20,7 +20,7 @@ def check_header( name, die = False ):
 	else:
 		return True
 
-def check_library( name, die = False ):
+def check_library(conf,  name, die = False ):
 	if not conf.CheckLib( name ):
 		if die:
 			print "Library Missing: " + name
