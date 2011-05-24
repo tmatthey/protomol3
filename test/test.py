@@ -7,6 +7,7 @@ pwd = os.getcwd()
 tests = 0
 testspassed = 0
 testsfailed = 0
+failedtests = []
 
 for file in files:
 	base = os.path.splitext( os.path.basename( file ) )[0]
@@ -47,6 +48,7 @@ for file in files:
 				else:
 					print( "Failed" )
 					testsfailed += 1
+					failedtests.append( "Comparison of " + expects[i] + " and " + outputs[i] )
 			else:
 				print( "Testing: " + expects[i] + " " + outputs[i] )
 				if comparator.compare( expects[i], outputs[i], "0.00001" ):
@@ -55,11 +57,15 @@ for file in files:
 				else:
 					print( "Failed" )
 					testsfailed += 1
+					failedtests.append( "Comparison of " + expects[i] + " and " + outputs[i] )
 
 print( "" )
 print( "Tests: %d" % ( tests ) )
-print( "Tests Passed: %d" % ( testspassed ) )
-print( "Tests Failed: %d" % ( testsfailed ) )
-
 testsnotrun = tests - (testspassed + testsfailed )
-print( "Tests Not Run: %d" % ( testsnotrun ) )
+print( "Tests Not Run: %d\n" % ( testsnotrun ) )
+
+print( "Tests Passed: %d" % ( testspassed ) )
+print( "Tests Failed: %d\n" % ( testsfailed ) )
+
+for i in range( len( failedtests ) ):
+	print( "%s failed." % ( failedtests[i] ) )
