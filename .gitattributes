@@ -1457,6 +1457,7 @@ test/tests/data/scpismQuartic.inp -text
 test/tests/data/water_423.pos.pdb -text
 test/tests/data/water_423.psf -text
 test/tests/data/water_423.vel.pdb -text
+test/tests/data/ww-fip35-ffamber-gb.tpr -text
 test/tests/data/ww-fip35-m3.pdb -text
 test/tests/data/ww-fip35.top -text
 test/tests/data/ww-fip35evec -text
@@ -1514,6 +1515,17 @@ test/tests/expected/water_CHARMM_PERIODIC_L.energy -text
 test/tests/expected/water_CHARMM_PERIODIC_L.forces -text
 test/tests/expected/water_CHARMM_PERIODIC_L.pos -text
 test/tests/expected/water_CHARMM_PERIODIC_L.vel -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL.dcd -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL.energy -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL.forces -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL.pos -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL.vel -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM.dcd -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM.energy -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM.forces -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM.pos -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM_vs_GROMACS4.0.5_OPENMM2.0.forces -text
+test/tests/expected/ww-fip35_FFAMBER_TPR_GB_LL_vs_GROMACS4.0.5_OPENMM2.0.forces -text
 test/tests/expected/wwdomain_CHARMM_IMPLICIT_LL.dcd -text
 test/tests/expected/wwdomain_CHARMM_IMPLICIT_LL.energy -text
 test/tests/expected/wwdomain_CHARMM_IMPLICIT_LL.forces -text
@@ -1575,6 +1587,10 @@ test/tests/expected/www-fip35_FFAMBER_VACUUM_LI.forces -text
 test/tests/expected/www-fip35_FFAMBER_VACUUM_LI.pos -text
 test/tests/expected/www-fip35_FFAMBER_VACUUM_LI.vel -text
 test/tests/water_CHARMM_PERIODIC_L.conf -text
+test/tests/ww-fip35_FFAMBER_TPR_GB_LL.conf -text
+test/tests/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM.conf -text
+test/tests/ww-fip35_FFAMBER_TPR_GB_LL_OPENMM_vs_GROMACS4.0.5_OPENMM2.0.conf -text
+test/tests/ww-fip35_FFAMBER_TPR_GB_LL_vs_GROMACS4.0.5_OPENMM2.0.conf -text
 test/tests/wwdomain_CHARMM_IMPLICIT_LL.conf -text
 test/tests/wwdomain_CHARMM_IMPLICIT_NML.conf -text
 test/tests/wwdomain_CHARMM_IMPLICIT_NML_REDIAG.conf -text

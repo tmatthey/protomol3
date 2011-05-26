@@ -33,6 +33,14 @@ def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign=False):
 			logging.debug( "Should be %d elements but there are %d." % ( lenone, lentwo ) )
 		else:
 			for j in range( lenone ):
+				# used to ignore XYZ meta data such as # of frames and # of atoms
+				try:
+					feone = int(elementsone[j])
+					fetwo = int(elementstwo[j])
+					# these are ints -- skip this pair
+					continue
+				except ValueError:
+					pass
 				try:
 					feone = float( elementsone[j] ) * scalar
 					fetwo = float( elementstwo[j] )
@@ -44,7 +52,7 @@ def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign=False):
 						logging.debug( "Line %d, Element %d Differs" % ( i, j ) )
 						logging.debug( "Expected: %f, Actual: %f, Difference: %f" % ( feone, fetwo, fediff ) )
 				except ValueError:
-					x = 1
+					pass
 	return diffs == 0
 
 

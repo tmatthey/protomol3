@@ -132,7 +132,8 @@ if __name__ == "__main__":
 	level = logging.INFO
 	if args.verbose:
 		level = logging.DEBUG
-	logging.basicConfig(level=level)
+	FORMAT = "%(message)s"
+	logging.basicConfig(level=level, format=FORMAT)
 	
 	files = find_conf_files(pwd, args)	
 	files.sort()
