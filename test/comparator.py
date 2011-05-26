@@ -1,12 +1,13 @@
-import sys,math
+import sys
+import math
+import logging
 
-def absDiff( one, two ):
-	return math.fabs( one - two )
+def absDiff( one, two , ignoreSign = False):
+	if ignoreSign:
+		one, two = math.fabs(one), math.fabs(two)
+	return max(one, two) - min(one, two)
 	
-def sabsDiff( one, two ):
-	return math.fabs( one ) - math.fabs( two )
-
-def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign = False, verbose = False ):
+def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign=False):
 	fone = open( fExpected, 'r' )
 	ftwo = open( fNew, 'r' )
 
@@ -28,26 +29,20 @@ def compare( fExpected, fNew, epsilon, scalar=1.0, ignoreSign = False, verbose =
 
 		if lenone != lentwo:
 			diffs = diffs + 1
-			if verbose == True:
-				print( "Line: %d differs in size." % ( i ) )
-				print( "Should be %d elements but there are %d." % ( lenone, lentwo ) )
+			logging.debug( "Line: %d differs in size." % ( i ) )
+			logging.debug( "Should be %d elements but there are %d." % ( lenone, lentwo ) )
 		else:
 			for j in range( lenone ):
 				try:
 					feone = float( elementsone[j] ) * scalar
 					fetwo = float( elementstwo[j] )
-					fediff = 0
-					
-					if ignoreSign == True:
-						fediff = sabsDiff( feone, fetwo )
-					else:
-						fediff = absDiff( feone, fetwo )
+
+					fediff = absDiff( feone, fetwo, ignoreSign)
 
 					if fediff > epsilon:
 						diffs = diffs + 1
-						if verbose == True:
-							print( "Line %d, Element %d Differs" % ( i, j ) )
-							print( "Expected: %f, Actual: %f, Difference: %f" % ( feone, fetwo, fediff ) )
+						logging.debug( "Line %d, Element %d Differs" % ( i, j ) )
+						logging.debug( "Expected: %f, Actual: %f, Difference: %f" % ( feone, fetwo, fediff ) )
 				except ValueError:
 					x = 1
 	return diffs == 0
