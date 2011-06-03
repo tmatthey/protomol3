@@ -1,6 +1,7 @@
 import os
 from SCons.Script import *
 import config
+from platform import machine, architecture
 
 deps = ['libfah']
 
@@ -41,8 +42,64 @@ def add_vars(vars):
         BoolVariable('lapack', 'Use LAPACK', 0),
         BoolVariable('simtk_lapack', 'Use SimTK LAPACK', 0),
         EnumVariable('openmm', 'Build with OpenMM', 'none',
-                     allowed_values = ('none', 'reference', 'cuda'))
+                     allowed_values = ('none', 'reference', 'cuda')),
+        BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
         )
+
+
+def CheckMKL(context):
+    env = context.env
+
+    context.Message('Checking for Intel MKL... ')
+
+    save_CPPPATH = env['CPPPATH']
+    save_LIBPATH = env['LIBPATH']
+
+    if os.getenv('MKLROOT'):
+        mkl_root = os.getenv('MKLROOT')
+        env.Append(CPPPATH = [mkl_root + '/include'])
+        env.Append(LIBPATH = [mkl_root + '/lib'])
+
+    source = """
+      #include "mkl.h"
+      int main()
+      {
+        char ta = 'N', tb = 'N';
+        int M = 1, N = 1, K = 1, lda = 1, ldb = 1, ldc = 1;
+        double alpha = 1.0, beta = 1.0, *A = 0, *B = 0, *C = 0;
+        dgemm(&ta, &tb, &M, &N, &K, &alpha, A, &lda, B, &ldb, &beta, C, &ldc);
+        return 0;
+      }
+    """
+    source = source.strip()
+    if architecture()[0] == '64bit': suffix = '_lp64'
+    else: suffix = ''
+    libs = ['mkl_intel' + suffix]
+
+    # Thread model
+    compiler = env.get('complier')
+    if compiler == 'gnu': libs += ['mkl_gnu_thread', 'pthread']
+    else: libs += ['mkl_intel_thread', 'iomp5']
+
+    libs += ['mkl_core']
+
+    if context.TryCompile(source, '.cpp'):
+        save_LIBS = env['LIBS']
+
+        env.Append(LIBS = libs)
+        env.Append(LIBS = libs) # Twice to resolve all deps
+        if context.TryLink(source, '.cpp'):
+            env.Append(CPPDEFINES = ['HAVE_MKL_LAPACK'])
+            context.Result(True)
+            return True
+
+        env.Replace(LIBS = save_LIBS)
+
+    env.Replace(CPPPATH = save_CPPPATH)
+    env.Replace(LIBPATH = save_LIBPATH)
+
+    context.Result(False)
+    return False
 
 
 def configure_deps(conf):
@@ -70,7 +127,7 @@ def configure_deps(conf):
 
     # LAPACK
     have_lapack = False
-    use_lapack = int(env.get('lapack', 0))
+    use_lapack = int(env.get('lapack', 1))
     if use_lapack:
         lapack_home = check_envvar('LAPACK_HOME')
 
@@ -78,7 +135,11 @@ def configure_deps(conf):
             env.Append(CPPPATH = [lapack_home])
             env.Append(LIBPATH = [lapack_home])
 
-        if conf.CheckLib('lapack-3') or check_library(conf, 'lapack'):
+        if not hasattr(conf, 'CheckMKL'): conf.AddTest('CheckMKL', CheckMKL)
+        have_lapack = conf.CheckMKL()
+
+        if not have_lapack and (
+            conf.CheckLib('lapack-3') or check_library(conf, 'lapack')):
             env.Append(CPPDEFINES = ['HAVE_LAPACK'])
             have_lapack = True
 
@@ -112,7 +173,7 @@ def configure_deps(conf):
             env.Append(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
             have_lapack = True
 
-    if not have_lapack and (use_simtk or use_lapack):
+    if not have_lapack:
         print "Missing lapack"
         sys.exit(1)
 
@@ -128,22 +189,43 @@ def configure_deps(conf):
         env.Append(LIBPATH = [openmm_home + os.sep + 'lib'    ])
 
         if openmm_type == 'reference':
-            if check_library(conf, 'OpenMM_d', True):
-                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+            check_library(conf, 'OpenMM_d', True)
+            env.Append(CPPDEFINES = ['HAVE_OPENMM'])
 
         if openmm_type == 'cuda':
             cuda_home = check_envvar('CUDA_HOME', True)
 
             env.Append(LIBPATH = [cuda_home + os.sep + 'lib'])
 
-            if check_library(conf, 'OpenMM_d', True) and \
-                    check_library(conf, 'OpenMMCuda_d', True) and \
-                    check_library(conf, 'cudart', True):
-                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+            check_library(conf, 'OpenMM_d', True)
+            check_library(conf, 'OpenMMCuda_d', True)
+            check_library(conf, 'cudart', True)
+
+            env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+
+    # Gromacs
+    gromacs = int(env.get('gromacs', 0))
+    if gromacs:
+        if os.environ.has_key('GROMACS_HOME'):
+            ghome = os.environ['GROMACS_HOME']
+            env.Append(LIBPATH = [ghome + '/lib'])
+            env.Append(CPPPATH = [ghome + '/include'])
+
+        check_library(conf, 'md', True)
+        check_library(conf, 'gmx', True)
+
+        for header in ['txtdump.h', 'names.h']:
+            if not conf.CheckHeader('gromacs/' + header):
+                print 'Need gromacs/' + header
+                Exit(1)
+
+        env.Append(CPPDEFINES = ['HAVE_GROMACS'])
 
 
 def configure(conf):
     env = conf.env
+
+    conf.AddTest('CheckMKL', CheckMKL)
 
     # Libprotomol
     if home:
