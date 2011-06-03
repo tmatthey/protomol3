@@ -1,0 +1,8 @@
+[submodule "protomol/config"]
+	path = protomol/config
+	owner = protomol
+	url = https://cauldrondevelopment.com/svn/pub/trunk/config/config
+	branch = /
+	fetch = :refs/remotes/git-svn
+	remote = svn
+	type = dir
