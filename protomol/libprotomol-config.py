@@ -23,7 +23,6 @@ def configure_deps(conf):
     env = conf.env
 
     # libfah
-    print 'fah =', env.get('fah', 0)
     if env.get('fah', 0): config.configure('libfah', conf)
 
     # DIAG Options
@@ -39,8 +38,8 @@ def configure_deps(conf):
     # LAPACK
     have_lapack = False
     lapack = env.get('lapack', 'any')
-    if lapack == 1: lapack = 'any'
-    elif lapack == 0: lapakc = 'none'
+    if lapack == '1' or lapack is True: lapack = 'any'
+    elif lapack == '0' or lapack is False: lapack = 'none'
 
     if lapack != 'none':
         # Intel MKL LAPACK
