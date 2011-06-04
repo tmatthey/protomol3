@@ -23,20 +23,17 @@ def configure_deps(conf):
     env = conf.env
 
     # libfah
-    use_fah = int(env.get('fah', 0))
-    if use_fah: config.configure('libfah', conf)
+    if env.get('fah', 0): config.configure('libfah', conf)
 
     # DIAG Options
-    use_qr = int(env.get('qrdiag', 0))
-    if use_qr: env.AppendUnique(CPPDEFINES = ['HAVE_QRDIAG'])
+    env.get('qrdiag', 0): env.AppendUnique(CPPDEFINES = ['HAVE_QRDIAG'])
 
     # GUI Options
-    use_gui = int(env.get('gui',0))
-    if use_gui:
-        env.AppendUnique(CPPDEFINES = ['HAVE_GUI'])
-
+    if env.get('gui',0):
         if env['PLATFORM'] == 'win32': config.require_lib(conf, 'wsock32')
         else: config.require_lib(conf, 'pthread')
+
+        env.AppendUnique(CPPDEFINES = ['HAVE_GUI'])
 
     # LAPACK
     have_lapack = False
@@ -114,7 +111,6 @@ def configure(conf):
 
     # Library name
     lib = 'protomol'
-    use_fah = int(env.get('fah', 0))
-    if use_fah: lib = lib + '-fah'
+    env.get('fah', 0): lib += '-fah'
 
     config.require_lib(conf, lib)
