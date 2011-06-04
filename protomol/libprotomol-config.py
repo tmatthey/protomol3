@@ -111,6 +111,6 @@ def configure(conf):
 
     # Library name
     lib = 'protomol'
-    env.get('fah', 0): lib += '-fah'
+    if env.get('fah', 0): lib += '-fah'
 
     config.require_lib(conf, lib)
