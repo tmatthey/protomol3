@@ -1065,7 +1065,6 @@ protomol/src/protomol/integrator/IntegratorDefinition.cpp -text
 protomol/src/protomol/integrator/IntegratorDefinition.h -text
 protomol/src/protomol/integrator/MTSIntegrator.cpp -text
 protomol/src/protomol/integrator/MTSIntegrator.h -text
-protomol/src/protomol/integrator/NonStandardIntegrator.cpp -text
 protomol/src/protomol/integrator/NonStandardIntegrator.h -text
 protomol/src/protomol/integrator/SConscript -text
 protomol/src/protomol/integrator/STSIntegrator.cpp -text
