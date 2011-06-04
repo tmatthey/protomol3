@@ -12,7 +12,7 @@ def add_vars(vars):
         BoolVariable('qrdiag', 'Set to 1 if QR diagonalization', 0),
         BoolVariable('gui', 'Set to 1 if using the GUI', 0),
         EnumVariable('lapack', 'Use LAPACK', 'any', allowed_values =
-                     ('any', 'none', 'mkl', 'simtk', 'system')),
+                     (1, 'any', 'none', 'mkl', 'simtk', 'system')),
         EnumVariable('openmm', 'Build with OpenMM', 'none',
                      allowed_values = ('none', 'reference', 'cuda')),
         BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
@@ -41,6 +41,8 @@ def configure_deps(conf):
     # LAPACK
     have_lapack = False
     lapack = env.get('lapack', 'any')
+    if lapack == 1: lapack = 'any'
+    elif lapack == 0: lapakc = 'none'
 
     if lapack != 'none':
         # Intel MKL LAPACK
