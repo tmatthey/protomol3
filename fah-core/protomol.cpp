@@ -5,17 +5,20 @@
 #include <protomol/output/OutputCheckpoint.h>
 #include <protomol/config.h>
 
+#include <cbang/Exception.h>
+#include <cbang/log/Logger.h>
+#include <cbang/os/DynamicLibrary.h>
+
 #include <fah/core/Core.h>
 #include <fah/core/ExitCode.h>
-#include <fah/Exception.h>
-#include <fah/util/Logger.h>
 
 #include <iostream>
 #include <new> // For std::bad_alloc
 
 using namespace std;
-using namespace ProtoMol;
+using namespace cb;
 using namespace FAH;
+using namespace ProtoMol;
 
 extern void moduleInitFunction(ModuleManager *);
 
@@ -125,5 +128,6 @@ public:
 
 
 int main(int argc, char *argv[]) {
+  DynamicLibrary::setEnabled(false); // Can crash in static builds
   return ProtoMolCore().run(argc, argv);
 }
