@@ -45,7 +45,9 @@ def configure_deps(conf):
         # Intel MKL LAPACK
         if not have_lapack and lapack in ['any', 'mkl']:
             have_lapack = config.configure('mkl', conf)
-            if not have_lapack and lapack == 'mkl':
+            if have_lapack:
+                env.AppendUnique(CPPDEFINES = ['HAVE_MKL_LAPACK'])
+            elif lapack == 'mkl':
                 raise Exception, "Missing MKL LAPACK"
 
         # System LAPACK
