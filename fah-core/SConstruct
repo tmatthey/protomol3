@@ -12,6 +12,7 @@ env = config.make_env(['compiler', 'libprotomol', 'dist', 'build_info'])
 
 env.__setitem__('static', os.getenv('STATIC_BUILD', 1)) # static build
 env.__setitem__('fah', 1) # Always use fah
+env.__setitem__('gromacs', 1) # Always use gromacs
 
 # Configure
 conf = Configure(env)
