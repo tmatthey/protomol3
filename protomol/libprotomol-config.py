@@ -3,7 +3,7 @@ from SCons.Script import *
 import config
 from platform import machine, architecture
 
-deps = ['libfah', 'mkl', 'lapack']
+deps = ['libfah', 'mkl', 'lapack', 'gromacs']
 
 
 def add_vars(vars):
@@ -66,7 +66,7 @@ def configure_deps(conf):
                 env.AppendUnique(CPPDEFINES = ['HAVE_SIMTK_LAPACK'])
                 have_lapack = True
  
-            if not have_lapack and lapack == 'simtk_lapack':
+            elif lapack == 'simtk_lapack':
                 raise Exception, "Missing SimTK LAPACK"
 
         if not have_lapack: raise Exception, "Missing LAPACK"
@@ -97,6 +97,8 @@ def configure_deps(conf):
     # Gromacs
     gromacs = env.get('gromacs', 0)
     if gromacs:
+        config.configure('gromacs', conf)
+        """
         config.check_home(conf, 'gromacs', '', '')
 
         config.require_lib(conf, 'md')
@@ -106,6 +108,7 @@ def configure_deps(conf):
         config.require_header(conf, 'gromacs/names.h')
 
         env.AppendUnique(CPPDEFINES = ['HAVE_GROMACS'])
+        """
 
 
 def configure(conf):
