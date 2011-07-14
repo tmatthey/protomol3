@@ -79,17 +79,19 @@ def configure_deps(conf):
         # installed to a place that the compiler will locate by default. The
         # same is also true for CUDA.
         config.check_home(conf, 'openmm')
+		
+        if conf.CheckType('OpenMM::NMLIntegrator', '#include <OpenMM.h>\n', language="C++"):
+            env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM_OLD'])
 
         if openmm_type == 'reference':
-            config.require_lib(conf, 'OpenMM_d')
+            config.require_lib(conf, 'OpenMM')
 
             env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
-
         elif openmm_type == 'cuda':
             config.check_home(conf, 'cuda')
 
-            config.require_lib(conf, 'OpenMM_d')
-            config.require_lib(conf, 'OpenMMCuda_d')
+            config.require_lib(conf, 'OpenMM')
+            config.require_lib(conf, 'OpenMMCuda')
             config.require_lib(conf, 'cudart')
 
             env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
