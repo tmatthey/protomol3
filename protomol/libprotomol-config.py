@@ -8,7 +8,7 @@ deps = ['libfah', 'mkl', 'lapack', 'gromacs']
 
 def add_vars(vars):
     vars.AddVariables(
-        BoolVariable('fah', 'Set to 1 to build library for Folding@Home', 0),
+        BoolVariable('fah', 'Set to 1 to build library for Folding@home', 0),
         BoolVariable('qrdiag', 'Set to 1 if QR diagonalization', 0),
         BoolVariable('gui', 'Set to 1 if using the GUI', 0),
         EnumVariable('lapack', 'Use LAPACK', 'any', allowed_values =
@@ -80,7 +80,8 @@ def configure_deps(conf):
         # same is also true for CUDA.
         config.check_home(conf, 'openmm')
 		
-        if conf.CheckType('OpenMM::NMLIntegrator', '#include <OpenMM.h>\n', language="C++"):
+        if conf.CheckType('OpenMM::NMLIntegrator', '#include <OpenMM.h>\n',
+                          language = "C++"):
             env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM_OLD'])
 
         if openmm_type == 'reference':
