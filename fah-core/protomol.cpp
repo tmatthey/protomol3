@@ -15,6 +15,10 @@
 #include <iostream>
 #include <new> // For std::bad_alloc
 
+#if HAVE_MKL
+#include <omp.h>
+#endif
+
 using namespace std;
 using namespace cb;
 using namespace FAH;
@@ -31,6 +35,10 @@ public:
 
     int ret = Core::init(argc, argv);
     if (ret) return ret;
+
+#if HAVE_MKL
+    omp_set_num_threads(getNumProcs());
+#endif
 
     // Add config file to args
     getArgs().push_front((char *)"protomol.conf");
