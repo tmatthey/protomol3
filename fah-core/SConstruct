@@ -4,7 +4,7 @@ sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '../config'))
 import config
 
 # Version
-version = '0.0.26'
+version = '0.0.27'
 major, minor, revision = version.split('.')
 
 # Setup
