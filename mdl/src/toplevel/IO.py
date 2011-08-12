@@ -570,7 +570,6 @@ class IO:
       # We will then access the LennardJones parameter table in Topology directly
       k = 0
       phys.myTop.resizeLennardJonesParameters(ntypes)
-      print "NTYPES: ", ntypes
       for i in range(0, ntypes):
          for j in range(i, ntypes):
             params = GenericTopology.LennardJonesParameters(lj_acoef[k], lj_bcoef[k])
@@ -841,11 +840,12 @@ class IO:
        # LOOP OVER ALL OUTPUTS
        i = 0
        for output in self.myOutputs:
+         if (i == 0): phys.app.uncache()
          # USING THE FACTORY, UPDATE THIS OUTPUT WITH SYSTEM DATA
          if (not hasattr(output, 'initflag')):
             output.initialize(phys.app)
             output.initflag = True
-         if (i == 0): phys.app.uncache()
+         #if (i == 0): phys.app.uncache()
          #else:
          #  phys.app.uncache() 
          # RUN THE OUTPUT
