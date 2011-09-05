@@ -1079,6 +1079,8 @@ protomol/src/protomol/integrator/base/LangevinLeapfrogIntegrator.cpp -text
 protomol/src/protomol/integrator/base/LangevinLeapfrogIntegrator.h -text
 protomol/src/protomol/integrator/base/NumericalDifferentiation.cpp -text
 protomol/src/protomol/integrator/base/NumericalDifferentiation.h -text
+protomol/src/protomol/integrator/base/NumericallyDifferentiatedHessian.cpp -text
+protomol/src/protomol/integrator/base/NumericallyDifferentiatedHessian.h -text
 protomol/src/protomol/integrator/base/RMTIntegrator.cpp -text
 protomol/src/protomol/integrator/base/RMTIntegrator.h -text
 protomol/src/protomol/integrator/base/SConscript -text
