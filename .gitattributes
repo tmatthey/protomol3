@@ -1277,8 +1277,6 @@ protomol/src/protomol/output/OutputFAHFile.cpp -text
 protomol/src/protomol/output/OutputFAHFile.h -text
 protomol/src/protomol/output/OutputFAHGUI.cpp -text
 protomol/src/protomol/output/OutputFAHGUI.h -text
-protomol/src/protomol/output/OutputFile.cpp -text
-protomol/src/protomol/output/OutputFile.h -text
 protomol/src/protomol/output/OutputFinalPDBPos.cpp -text
 protomol/src/protomol/output/OutputFinalPDBPos.h -text
 protomol/src/protomol/output/OutputFinalXYZPos.cpp -text
