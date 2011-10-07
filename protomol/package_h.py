@@ -19,7 +19,7 @@ if os.path.exists( '.svn/entries' ):
       f.close()
 
 tags = [
-    ['VERSION', '3.2'],
+    ['VERSION', '3.3'],
     ['BUGREPORT', '\nprotomol@cse.nd.edu, joseph@cauldrondevelopment.com'],
     ['HOMEPAGE', 'http://protomol.sourceforge.net/'],
     ['CITE',
