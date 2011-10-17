@@ -1,7 +1,7 @@
 [submodule "protomol/config"]
 	path = protomol/config
 	owner = protomol
-	url = https://cauldrondevelopment.com/svn/pub/trunk/config/config
+	url = https://cauldrondevelopment.com/svn/cbang/trunk/cbang/config
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
