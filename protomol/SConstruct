@@ -1,5 +1,5 @@
 import os, sys
-sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', '.'))
+sys.path.append(os.environ.get('CONFIG_SCRIPTS_HOME', './config-scripts'))
 import config # Configure system in ./config
 
 # Version
