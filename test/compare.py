@@ -18,6 +18,8 @@ if __name__ == "__main__":
 	if args.verbose:
 		level = logging.DEBUG
 
+	logging.basicConfig(level=level)
+
 	files_same = comparator.compare( args.original, args.new, args.epsilon, args.scale, ignoreSign=arg.ignore_sign)
 
 	if not files_same:
