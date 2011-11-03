@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
 	logging.basicConfig(level=level)
 
-	files_same = comparator.compare( args.original, args.new, args.epsilon, args.scale, ignoreSign=arg.ignore_sign)
+	files_same = comparator.compare( args.original, args.new, args.epsilon, args.scale, ignoreSign=args.ignore_sign)
 
 	if not files_same:
 		logging.warn("Files Differ")
