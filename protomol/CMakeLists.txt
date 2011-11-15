@@ -66,8 +66,6 @@ if( BUILD_OPENMM )
 	endif()
 endif()
 
-message( "LIBS: ${LIBS}" )
-
 # Compilation
 include_directories( src )
 
@@ -101,6 +99,13 @@ set( LIBRARY_BASE_HEADERS ${HEADERS} ${BASE_HEADERS} ${CONFIG_HEADERS}
 	${FACTORY_HEADERS} ${MODIFIER_HEADERS} ${MODULE_HEADERS} ${OS_HEADERS}
 	${OUTPUT_HEADERS} ${PARALLEL_HEADERS} ${SWITCH_HEADERS} ${TOPOLOGY_HEADERS}
 	${TYPE_HEADERS} )
+	
+if( NOT MSVC )
+	file( GLOB DEBUG_HEADERS "src/protomol/debug/*.h" )
+	source_group( "include\\Debug" FILES ${DEBUG_HEADERS} )
+
+	set( LIBRARY_BASE_HEADERS ${LIBRARY_BASE_HEADERS} ${DEBUG_HEADERS} )
+endif( NOT MSVC )
 
 # Library Force Headers
 file( GLOB FORCE_HEADERS "src/protomol/force/*.h" )
@@ -192,6 +197,13 @@ set( LIBRARY_BASE_SOURCES ${SOURCES} ${BASE_SOURCES} ${CONFIG_SOURCES}
 	${FACTORY_SOURCES} ${MODIFIER_SOURCES} ${MODULE_SOURCES} ${OS_SOURCES}
 	${OUTPUT_SOURCES} ${PARALLEL_SOURCES} ${SWITCH_SOURCES} ${TOPOLOGY_SOURCES}
 	${TYPE_SOURCES} )
+
+if( NOT MSVC )
+	file( GLOB DEBUG_SOURCES "src/protomol/debug/*.cpp" )
+	source_group( "src\\Debug" FILES ${DEBUG_SOURCES} )
+
+	set( LIBRARY_BASE_SOURCES ${LIBRARY_BASE_SOURCES} ${DEBUG_SOURCES} )
+endif( NOT MSVC )
 
 # Library Force sources
 file( GLOB FORCE_SOURCES "src/protomol/force/*.cpp" )
