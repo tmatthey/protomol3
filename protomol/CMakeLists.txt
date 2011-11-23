@@ -9,48 +9,86 @@ set( LIBS "" )
 
 option( BUILD_LAPACK "Build with Lapack" On )
 if( BUILD_LAPACK )
-	set( BUILD_LAPACK_LIBDIR "" CACHE PATH "Lapack type library directory" )
-	set( BUILD_LAPACK_INCDIR "" CACHE PATH "Lapack type include directory" )
 	set( BUILD_LAPACK_TYPE "lapack" CACHE STRING "Lapack type to compile against. Choices are: lapack simtk mkl" )
 
-	if( "${BUILD_LAPACK_INCDIR}" STRGREATER "" )
-		include_directories( "${BUILD_LAPACK_INCDIR}" )
+	if( ${BUILD_LAPACK_TYPE} MATCHES "lapack" )
+		find_library( LIB_BLAS "blas" )
+		find_library( LIB_LAPACK "lapack" )
+
+		if( LIB_BLAS AND LIB_LAPACK )
+			set( LIBS ${LIBS} ${LIB_BLAS} ${LIB_LAPACK} )
+			add_definitions( "-DHAVE_LAPACK" )
+		else()
+			if( LIB_BLAS-NOTFOUND )
+				set( BLAS_INCPATH "" CACHE PATH "Blas include directory" )
+				if( "${BLAS_INCPATH}" STRGREATER "" )
+					include_directories( "${BLAS_INCPATH}" )
+				endif()
+
+				set( BLAS_LIBPATH "" CACHE PATH "Blas library directory" )
+				if( "${BLAS_LIBPATH}" STRGREATER "" )
+					link_directories( "${BLAS_LIBPATH}" )
+				endif()
+			endif()
+
+			if( LIB_LAPACK-NOTFOUND )
+				set( LAPACK_INCPATH "" CACHE PATH "Lapack include directory" )
+				if( "${LAPACK_INCPATH}" STRGREATER "" )
+					include_directories( "${LAPACK_INCPATH}" )
+				endif()
+
+				set( LAPACK_LIBPATH "" CACHE PATH "Lapack library directory" )
+				if( "${LAPACK_LIBPATH}" STRGREATER "" )
+					link_directories( "${LAPACK_LIBPATH}" )
+				endif()
+			endif()
+		endif()
 	endif()
 
 	if( ${BUILD_LAPACK_TYPE} MATCHES "simtk" )
-		find_library( ZLIB_LAPACK "SimTKlapack" HINTS "${BUILD_LAPACK_LIBDIR}" )
-
-		set( LIBS ${LIBS} ${ZLIB_LAPACK} )
-		add_definitions( "-DHAVE_SIMTK_LAPACK" )
-	else()
-		if( ${BUILD_LAPACK_TYPE} MATCHES "mkl" )
-			find_library( ZLIB_MKLCORE "mkl_core" HINTS "${BUILD_BLAS_LIBDIR}" )
-			find_library( ZLIB_MKLSEQ "mkl_sequential" HINTS "${BUILD_LAPACK_LIBDIR}" )
-			find_library( ZLIB_MKLINTEL "mkl_intel_c" HINTS "${BUILD_LAPACK_LIBDIR}" )
-
-			set( LIBS ${LIBS} ${ZLIB_MKLINTEL} ${ZLIB_MKLSEQ} ${ZLIB_MKLCORE} )
-			add_definitions( "-DHAVE_MKL_LAPACK" )
+		find_library( LIB_LAPACK_SIMTK "SimTKlapack" )
+		if( LIB_LAPACK_SIMTK )
+			list( APPEND LIBS ${LIB_LAPACK_SIMTK} )
+			add_definitions( "-DHAVE_SIMTK_LAPACK" )
 		else()
-			set( BUILD_BLAS_LIBDIR "" CACHE PATH "Blas library directory" )
-			set( BUILD_BLAS_INCDIR "" CACHE PATH "Blas include directory" )
-
-			if( "${BUILD_BLAS_INCDIR}" STRGREATER "" )
-				include_directories( "${BUILD_BLAS_INCDIR}" )
+			set( SIMTK_LAPACK_INCPATH "" CACHE PATH "SimTK Lapack include directory" )
+			if( "${SIMTK_LAPACK_INCPATH}" STRGREATER "" )
+				include_directories( "${SIMTK_LAPACK_INCPATH}" )
 			endif()
 
-			find_library( ZLIB_BLAS "blas" HINTS "${BUILD_BLAS_LIBDIR}" )
-			find_library( ZLIB_LAPACK "lapack" HINTS "${BUILD_LAPACK_LIBDIR}" )
+			set( SIMTK_LAPACK_LIBPATH "" CACHE PATH "SimTK Lapack library directory" )
+			if( "${SIMTK_LAPACK_LIBPATH}" STRGREATER "" )
+				link_directories( "${SIMTK_LAPACK_LIBPATH}" )
+			endif()
+		endif()
+	endif()
 
-			set( LIBS ${LIBS} ${ZLIB_BLAS} ${ZLIB_LAPACK} )
-			add_definitions( "-DHAVE_LAPACK" )
+	if( ${BUILD_LAPACK_TYPE} MATCHES "mkl" )
+		find_library( LIB_MKL_CORE "mkl_core" )
+		find_library( LIB_MKL_SEQUENTIAL "mkl_sequential" )
+		find_library( LIB_MKL_INTEL_C "mkl_intel_c" )
+
+		if( LIB_LAPACK_SIMTK )
+			set( LIBS ${LIBS} ${LIB_MKL_CORE} ${LIB_MKL_SEQUENTIAL} ${LIB_MKL_INTEL_C} )
+			add_definitions( "-DHAVE_MKL_LAPACK" )
+		else()
+			set( MKL_INCDIR "" CACHE PATH "Math Kernel Library include directory" )
+			if( "${MKL_INCDIR}" STRGREATER "" )
+				include_directories( "${MKL_INCDIR}" )
+			endif()
+
+			set( MKL_LIBPATH "" CACHE PATH "Math Kernel Library library directory" )
+			if( "${MKL_LIBPATH}" STRGREATER "" )
+				link_directories( "${MKL_LIBPATH}" )
+			endif()
 		endif()
 	endif()
 endif()
 
-option( BUILD_OPENMM "Build with OpenMM" On )
+option( BUILD_OPENMM "Build with OpenMM" Off )
 if( BUILD_OPENMM )
 	add_definitions( "-DHAVE_OPENMM" )
-	
+
 	set( OPENMM_DIR "" CACHE PATH "OpenMM Install Directory")
 	if( OPENMM_DIR )
 		link_directories( "${OPENMM_DIR}/lib/" )
@@ -59,11 +97,16 @@ if( BUILD_OPENMM )
 
 	find_library( OPENMM_LIB "OpenMM" HINT ${OPENMM_DIR}/lib )
 	set( LIBS ${LIBS} ${OPENMM_LIB} )
-	
+
 	set( NMLPLUGIN_DIR "" CACHE PATH "NML OpenMM Install Directory")
 	if( NMLPLUGIN_DIR )
 		include_directories( "${NMLPLUGIN_DIR}/include/" )
 	endif()
+endif()
+
+option( BUILD_GUI "Build with GUI Support" Off )
+if( BUILD_GUI )
+	add_definitions( "-DHAVE_GUI" )
 endif()
 
 # Compilation
@@ -99,7 +142,7 @@ set( LIBRARY_BASE_HEADERS ${HEADERS} ${BASE_HEADERS} ${CONFIG_HEADERS}
 	${FACTORY_HEADERS} ${MODIFIER_HEADERS} ${MODULE_HEADERS} ${OS_HEADERS}
 	${OUTPUT_HEADERS} ${PARALLEL_HEADERS} ${SWITCH_HEADERS} ${TOPOLOGY_HEADERS}
 	${TYPE_HEADERS} )
-	
+
 if( NOT MSVC )
 	file( GLOB DEBUG_HEADERS "src/protomol/debug/*.h" )
 	source_group( "include\\Debug" FILES ${DEBUG_HEADERS} )
@@ -149,9 +192,9 @@ file( GLOB OPENMM_INTEGRATOR_HEADERS "src/protomol/integrator/openMM/*.h" )
 source_group( "include\\Integrator\\OpenMM" FILES ${OPENMM_INTEGRATOR_HEADERS} )
 
 set( LIBRARY_INTEGRATOR_HEADERS ${INTEGRATOR_HEADERS} ${BASE_INTEGRATOR_HEADERS}
-	${HESSIAN_INTEGRATOR_HEADERS} ${LEAPFROG_INTEGRATOR_HEADERS} 
+	${HESSIAN_INTEGRATOR_HEADERS} ${LEAPFROG_INTEGRATOR_HEADERS}
 	${NORMAL_INTEGRATOR_HEADERS} )
-	
+
 if( BUILD_OPENMM )
 	set( LIBRARY_INTEGRATOR_HEADERS ${LIBRARY_INTEGRATOR_HEADERS} ${OPENMM_INTEGRATOR_HEADERS} )
 endif( BUILD_OPENMM )
@@ -192,6 +235,10 @@ file( GLOB TOPOLOGY_SOURCES "src/protomol/topology/*.cpp" )
 source_group( "src\\Topology" FILES ${TOPOLOGY_SOURCES} )
 file( GLOB TYPE_SOURCES "src/protomol/type/*.cpp" )
 source_group( "src\\Type" FILES ${TYPE_SOURCES} )
+
+# Remove Application Sources
+list( REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/src/protomol/main.cpp" )
+list( REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/src/protomol/modules.cpp" )
 
 set( LIBRARY_BASE_SOURCES ${SOURCES} ${BASE_SOURCES} ${CONFIG_SOURCES}
 	${FACTORY_SOURCES} ${MODIFIER_SOURCES} ${MODULE_SOURCES} ${OS_SOURCES}
@@ -247,7 +294,7 @@ file( GLOB OPENMM_INTEGRATOR_SOURCES "src/protomol/integrator/openMM/*.cpp" )
 source_group( "src\\Integrator\\OpenMM" FILES ${OPENMM_INTEGRATOR_SOURCES} )
 
 set( LIBRARY_INTEGRATOR_SOURCES ${INTEGRATOR_SOURCES} ${BASE_INTEGRATOR_SOURCES}
-	${HESSIAN_INTEGRATOR_SOURCES} ${LEAPFROG_INTEGRATOR_SOURCES} 
+	${HESSIAN_INTEGRATOR_SOURCES} ${LEAPFROG_INTEGRATOR_SOURCES}
 	${NORMAL_INTEGRATOR_SOURCES} )
 
 if( BUILD_OPENMM )
@@ -266,9 +313,13 @@ set( LIBRARY_IO_SOURCES ${IO_SOURCES} ${GROMACS_IO_SOURCES} )
 set( LIBRARY_SOURCES ${LIBRARY_BASE_SOURCES} ${LIBRARY_FOURCE_SOURCES} ${LIBRARY_INTEGRATOR_SOURCES} ${LIBRARY_IO_SOURCES} )
 
 # Library Compilation
-add_library( protomol STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} )
-target_link_libraries( protomol ${LIBS} )
+add_library( Library STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} )
+target_link_libraries( Library ${LIBS} )
+
+set_target_properties( Library PROPERTIES OUTPUT_NAME ProtoMol )
 
 # Application Compilation
-add_executable( ProtoMol "src/protomol/main.cpp" "src/protomol/modules.cpp" )
-target_link_libraries( ProtoMol protomol )
+add_executable( Executable src/protomol/main.cpp src/protomol/modules.cpp )
+target_link_libraries( Executable Library )
+
+set_target_properties( Executable PROPERTIES OUTPUT_NAME ProtoMol )
