@@ -83,6 +83,21 @@ if( BUILD_GUI )
 	set( LIBS ${LIBS} ${CMAKE_THREAD_LIBS_INIT} )
 endif()
 
+option( BUILD_GROMACS "Build with GROMACS Support" Off )
+if( BUILD_GROMACS )
+	set( GROMACS_DIR "" CACHE PATH "GROMACS Install Directory" )
+	if( GROMACS_DIR )
+		link_directories( "${GROMACS_DIR}/lib" )
+		include_directories( "${GROMACS_DIR}/include" )
+	endif( GROMACS_DIR )
+
+	find_library( GROMACS_MD_LIB "md" HINT "${GROMACS_DIR}/lib" )
+	find_library( GROMACS_GMX_LIB "gmx" HINT "${GROMACS_DIR}/lib" )
+	set( LIBS ${LIBS} ${GROMACS_MD_LIB} ${GROMACS_GMX_LIB} )
+
+	add_definitions( "-DHAVE_GROMACS" )
+endif( BUILD_GROMACS )
+
 # Compilation
 include_directories( src )
 
