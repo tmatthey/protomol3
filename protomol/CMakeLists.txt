@@ -67,13 +67,17 @@ if( BUILD_OPENMM )
 		include_directories( "${OPENMM_DIR}/include/" )
 	endif()
 
-	find_library( OPENMM_LIB "OpenMM" HINT ${OPENMM_DIR}/lib )
+	find_library( OPENMM_LIB "OpenMM" HINT "${OPENMM_DIR}/lib" )
 	set( LIBS ${LIBS} ${OPENMM_LIB} )
 
-	set( NMLPLUGIN_DIR "" CACHE PATH "NML OpenMM Install Directory")
-	if( NMLPLUGIN_DIR )
-		include_directories( "${NMLPLUGIN_DIR}/include/" )
+	set( LTMDPLUGIN_DIR "" CACHE PATH "LTMD OpenMM Install Directory")
+	if( LTMDPLUGIN_DIR )
+		link_directories( "${LTMDPLUGIN_DIR}/lib/" )
+		include_directories( "${LTMDPLUGIN_DIR}/include/" )
 	endif()
+	
+	find_library( LTMDPLUGIN_LIB "OpenMMLTMD" HINT "${LTMDPLUGIN_DIR}/lib" )
+	set( LIBS ${LIBS} ${LTMDPLUGIN_LIB} )
 endif()
 
 option( BUILD_GUI "Build with GUI Support" Off )
