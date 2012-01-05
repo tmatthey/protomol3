@@ -16,6 +16,7 @@ def add_vars(vars):
         BoolVariable('openmm', 'Build with OpenMM support', 0),
         BoolVariable('ltmdopenmm', 'Build with LTMD OpenMM support', 0),
         BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
+        BoolVariable('gromacs_standard', 'Enable or disable gromacs support', 0),
         )
 
 
@@ -102,6 +103,14 @@ def configure_deps(conf):
 
         env.AppendUnique(CPPDEFINES = ['HAVE_GROMACS'])
         """
+        
+    # Gromacs Standard
+    gromacs_standard = env.get('gromacs_standard', 0)
+    if gromacs_standard:
+        config.check_home(conf, 'gromacs')
+        config.require_lib(conf, 'md')
+        config.require_lib(conf, 'gmx')
+        env.AppendUnique(CPPDEFINES = ['HAVE_GROMACS'])
 
 
 def configure(conf):
