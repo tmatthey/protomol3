@@ -1,15 +1,11 @@
 project( ProtoMol )
 cmake_minimum_required( VERSION 2.6 )
 
-option( BUILD_FAH "Build for Folding@Home" Off )
-if( BUILD_FAH )
-endif()
-
 set( LIBS "" )
 
 option( BUILD_LAPACK "Build with Lapack" On )
 if( BUILD_LAPACK )
-	set( BUILD_LAPACK_TYPE "lapack" CACHE STRING "Lapack type to compile against. Choices are: lapack simtk mkl" )
+	set( BUILD_LAPACK_TYPE "" CACHE STRING "Lapack type to compile against. Choices are: lapack simtk mkl" )
 
 	if( ${BUILD_LAPACK_TYPE} MATCHES "lapack" )
 		find_library( LIB_BLAS "blas" HINTS "${BLAS_LIBPATH}" )
@@ -56,7 +52,7 @@ option( BUILD_OPENMM "Build with OpenMM" Off )
 if( BUILD_OPENMM )
 	add_definitions( "-DHAVE_OPENMM" )
 
-	set( OPENMM_DIR "" CACHE PATH "OpenMM Install Directory")
+	set( OPENMM_DIR "$ENV{OPENMM_HOME}" CACHE PATH "OpenMM Install Directory")
 	if( OPENMM_DIR )
 		link_directories( "${OPENMM_DIR}/lib/" )
 		include_directories( "${OPENMM_DIR}/include/" )
@@ -65,11 +61,11 @@ if( BUILD_OPENMM )
 	find_library( OPENMM_LIB "OpenMM" HINT "${OPENMM_DIR}/lib" )
 	set( LIBS ${LIBS} ${OPENMM_LIB} )
 
-	option( BUILD_OPENMM_LTMD "Build with LTMD OpenMM" Off )
+	option( BUILD_OPENMM_LTMD "Build with LTMD OpenMM" On )
 	if( BUILD_OPENMM_LTMD )
 		add_definitions( "-DHAVE_OPENMM_LTMD" )
 		
-		set( LTMDPLUGIN_DIR "" CACHE PATH "LTMD OpenMM Install Directory")
+		set( LTMDPLUGIN_DIR "$ENV{LTMDOPENMM_HOME}" CACHE PATH "LTMD OpenMM Install Directory")
 		if( LTMDPLUGIN_DIR )
 			link_directories( "${LTMDPLUGIN_DIR}/lib/" )
 			include_directories( "${LTMDPLUGIN_DIR}/include/" )
@@ -89,7 +85,7 @@ endif()
 
 option( BUILD_GROMACS "Build with GROMACS Support" Off )
 if( BUILD_GROMACS )
-	set( GROMACS_DIR "" CACHE PATH "GROMACS Install Directory" )
+	set( GROMACS_DIR "$ENV{GROMACS_HOME}" CACHE PATH "GROMACS Install Directory" )
 	if( GROMACS_DIR )
 		link_directories( "${GROMACS_DIR}/lib" )
 		include_directories( "${GROMACS_DIR}/include" )

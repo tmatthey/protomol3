@@ -14,7 +14,7 @@ def add_vars(vars):
         EnumVariable('lapack', 'Use LAPACK', 'any', allowed_values =
                      ('1', 'any', 'none', 'mkl', 'simtk', 'system')),
         BoolVariable('openmm', 'Build with OpenMM support', 0),
-        BoolVariable('ltmdopenmm', 'Build with LTMD OpenMM support', 0),
+        BoolVariable('ltmdopenmm', 'Build with LTMD OpenMM support', 1),
         BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
         BoolVariable('gromacs_standard', 'Enable or disable gromacs support', 0),
         )
@@ -78,10 +78,9 @@ def configure_deps(conf):
         config.check_home(conf, 'openmm')
         config.require_lib(conf, 'OpenMM')
         env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
-            			
 						
     # LTMD OpenMM
-    ltmd = env.get('ltmdopenmm', 0)
+    ltmd = env.get('ltmdopenmm', 1)
     if ltmd and openmm:
         config.check_home(conf, 'ltmdopenmm')
         config.require_lib(conf, 'OpenMMLTMD')
