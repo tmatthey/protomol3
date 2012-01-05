@@ -13,8 +13,8 @@ def add_vars(vars):
         BoolVariable('gui', 'Set to 1 if using the GUI', 0),
         EnumVariable('lapack', 'Use LAPACK', 'any', allowed_values =
                      ('1', 'any', 'none', 'mkl', 'simtk', 'system')),
-        EnumVariable('openmm', 'Build with OpenMM', 'none',
-                     allowed_values = ('none', 'reference', 'cuda')),
+        BoolVariable('openmm', 'Build with OpenMM support', 0),
+        BoolVariable('ltmdopenmm', 'Build with LTMD OpenMM support', 0),
         BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
         )
 
@@ -70,32 +70,22 @@ def configure_deps(conf):
                 raise Exception, "Missing SimTK LAPACK"
 
         if not have_lapack: raise Exception, "Missing LAPACK"
-
-
-    # OpenMM Options
-    openmm_type = env.get('openmm', 'none')
-    if openmm_type != 'none':
-        # The following must bail if it is not found as openmm is not
-        # installed to a place that the compiler will locate by default. The
-        # same is also true for CUDA.
+						
+    # OpenMM
+    openmm = env.get('openmm', 0)
+    if openmm:
         config.check_home(conf, 'openmm')
-		
-        if conf.CheckType('OpenMM::NMLIntegrator', '#include <OpenMM.h>\n',
-                          language = "C++"):
-            env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM_OLD'])
-
-        if openmm_type == 'reference':
-            config.require_lib(conf, 'OpenMM')
-
-            env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
-        elif openmm_type == 'cuda':
-            config.check_home(conf, 'cuda')
-
-            config.require_lib(conf, 'OpenMM')
-            config.require_lib(conf, 'OpenMMCuda')
-            config.require_lib(conf, 'cudart')
-
-            env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
+        config.require_lib(conf, 'OpenMM')
+        env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
+            			
+						
+    # LTMD OpenMM
+    ltmd = env.get('ltmdopenmm', 0)
+    if ltmd and openmm:
+        config.check_home(conf, 'ltmdopenmm')
+        config.require_lib(conf, 'OpenMMLTMD')
+        env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM_LTMD'])
+			
 
     # Gromacs
     gromacs = env.get('gromacs', 0)
