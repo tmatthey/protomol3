@@ -192,8 +192,15 @@ file( GLOB LEAPFROG_INTEGRATOR_HEADERS "src/protomol/integrator/leapfrog/*.h" )
 source_group( "include\\Integrator\\Leapfrog" FILES ${LEAPFROG_INTEGRATOR_HEADERS} )
 file( GLOB NORMAL_INTEGRATOR_HEADERS "src/protomol/integrator/normal/*.h" )
 source_group( "include\\Integrator\\Normal" FILES ${NORMAL_INTEGRATOR_HEADERS} )
-file( GLOB OPENMM_INTEGRATOR_HEADERS "src/protomol/integrator/openMM/*.h" )
-source_group( "include\\Integrator\\OpenMM" FILES ${OPENMM_INTEGRATOR_HEADERS} )
+
+if( BUILD_OPENMM )
+    set( OPENMM_INTEGRATOR_HEADERS "src/protomol/integrator/openMM/OpenMMIntegrator.h" )
+    if( BUILD_OPENMM_LTMD )
+         set( OPENMM_INTEGRATOR_HEADERS ${OPENMM_INTEGRATOR_HEADERS} src/protomol/integrator/openMM/NormalModeOpenMM.h )
+    endif( BUILD_OPENMM_LTMD )
+    
+    source_group( "include\\Integrator\\OpenMM" FILES ${OPENMM_INTEGRATOR_HEADERS} )
+endif( BUILD_OPENMM )
 
 set( LIBRARY_INTEGRATOR_HEADERS ${INTEGRATOR_HEADERS} ${BASE_INTEGRATOR_HEADERS}
 	${HESSIAN_INTEGRATOR_HEADERS} ${LEAPFROG_INTEGRATOR_HEADERS}
@@ -294,8 +301,15 @@ file( GLOB LEAPFROG_INTEGRATOR_SOURCES "src/protomol/integrator/leapfrog/*.cpp" 
 source_group( "src\\Integrator\\Leapfrog" FILES ${LEAPFROG_INTEGRATOR_SOURCES} )
 file( GLOB NORMAL_INTEGRATOR_SOURCES "src/protomol/integrator/normal/*.cpp" )
 source_group( "src\\Integrator\\Normal" FILES ${NORMAL_INTEGRATOR_SOURCES} )
-file( GLOB OPENMM_INTEGRATOR_SOURCES "src/protomol/integrator/openMM/*.cpp" )
-source_group( "src\\Integrator\\OpenMM" FILES ${OPENMM_INTEGRATOR_SOURCES} )
+
+if( BUILD_OPENMM )
+    set( OPENMM_INTEGRATOR_SOURCES "src/protomol/integrator/openMM/OpenMMIntegrator.cpp" )
+    if( BUILD_OPENMM_LTMD )
+         set( OPENMM_INTEGRATOR_SOURCES ${OPENMM_INTEGRATOR_SOURCES} src/protomol/integrator/openMM/NormalModeOpenMM.cpp )
+    endif( BUILD_OPENMM_LTMD )
+    
+    source_group( "src\\Integrator\\OpenMM" FILES ${OPENMM_INTEGRATOR_SOURCES} )
+endif( BUILD_OPENMM )
 
 set( LIBRARY_INTEGRATOR_SOURCES ${INTEGRATOR_SOURCES} ${BASE_INTEGRATOR_SOURCES}
 	${HESSIAN_INTEGRATOR_SOURCES} ${LEAPFROG_INTEGRATOR_SOURCES}
