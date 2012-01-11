@@ -14,9 +14,10 @@ def add_vars(vars):
         EnumVariable('lapack', 'Use LAPACK', 'any', allowed_values =
                      ('1', 'any', 'none', 'mkl', 'simtk', 'system')),
         BoolVariable('openmm', 'Build with OpenMM support', 0),
-        BoolVariable('ltmdopenmm', 'Build with LTMD OpenMM support', 1),
+        BoolVariable('ltmdopenmm', 'Build with LTMD OpenMM support', 0),
         BoolVariable('gromacs', 'Enable or disable gromacs support', 0),
-        BoolVariable('gromacs_standard', 'Enable or disable gromacs support', 0),
+        BoolVariable('gromacs_standard', 'Enable or disable gromacs support',
+                     0),
         )
 
 
@@ -75,12 +76,20 @@ def configure_deps(conf):
     # OpenMM
     openmm = env.get('openmm', 0)
     if openmm:
-        config.check_home(conf, 'openmm')
+        home = config.check_env('OPENMM_HOME', True)
+
+        conf.env.AppendUnique(CPPPATH = [home + 'olla/include'])
+        conf.env.AppendUnique(CPPPATH = [home + 'openmmapi/include'])
+        config.require_cxx_header(conf, 'OpenMM.h')
+        config.require_cxx_header(conf, 'openmm/Kernel.h')
+
+        conf.env.Prepend(LIBPATH = [home])
         config.require_lib(conf, 'OpenMM')
+
         env.AppendUnique(CPPDEFINES = ['HAVE_OPENMM'])
 						
     # LTMD OpenMM
-    ltmd = env.get('ltmdopenmm', 1)
+    ltmd = env.get('ltmdopenmm', 0)
     if ltmd and openmm:
         config.check_home(conf, 'ltmdopenmm')
         config.require_lib(conf, 'OpenMMLTMD')
@@ -89,20 +98,9 @@ def configure_deps(conf):
 
     # Gromacs
     gromacs = env.get('gromacs', 0)
-    if gromacs:
-        config.configure('gromacs', conf)
-        """
-        config.check_home(conf, 'gromacs', '', '')
+    if gromacs: config.configure('gromacs', conf)
 
-        config.require_lib(conf, 'md')
-        config.require_lib(conf, 'gmx')
 
-        config.require_header(conf, 'gromacs/txtdump.h')
-        config.require_header(conf, 'gromacs/names.h')
-
-        env.AppendUnique(CPPDEFINES = ['HAVE_GROMACS'])
-        """
-        
     # Gromacs Standard
     gromacs_standard = env.get('gromacs_standard', 0)
     if gromacs_standard:
