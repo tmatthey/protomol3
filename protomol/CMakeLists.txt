@@ -337,3 +337,5 @@ add_executable( Executable src/protomol/main.cpp src/protomol/modules.cpp )
 target_link_libraries( Executable Library )
 
 set_target_properties( Executable PROPERTIES OUTPUT_NAME ProtoMol )
+
+install( TARGETS Executable RUNTIME DESTINATION bin )
