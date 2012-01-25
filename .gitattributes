@@ -1418,14 +1418,6 @@ test/tests/data/ffamber03/ffamber03.itp -text
 test/tests/data/ffamber03/ffamber03.rtp -text
 test/tests/data/ffamber03/ffamber03bon.itp -text
 test/tests/data/ffamber03/ffamber03nb.itp -text
-test/tests/data/ffamber96/._ffamber96-c.tdb -text
-test/tests/data/ffamber96/._ffamber96-n.tdb -text
-test/tests/data/ffamber96/._ffamber96.atp -text
-test/tests/data/ffamber96/._ffamber96.hdb -text
-test/tests/data/ffamber96/._ffamber96.itp -text
-test/tests/data/ffamber96/._ffamber96.rtp -text
-test/tests/data/ffamber96/._ffamber96bon.itp -text
-test/tests/data/ffamber96/._ffamber96nb.itp -text
 test/tests/data/ffamber96/ffamber96-c.tdb -text
 test/tests/data/ffamber96/ffamber96-n.tdb -text
 test/tests/data/ffamber96/ffamber96.atp -text
