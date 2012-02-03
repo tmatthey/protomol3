@@ -1363,6 +1363,7 @@ protomol/src/protomol/type/ArrayFastest.h -text
 protomol/src/protomol/type/ArrayNoPartialSpecialization.h -text
 protomol/src/protomol/type/BlockMatrix.cpp -text
 protomol/src/protomol/type/BlockMatrix.h -text
+protomol/src/protomol/type/EigenvectorInfo.cpp -text
 protomol/src/protomol/type/EigenvectorInfo.h -text
 protomol/src/protomol/type/GromacsParameters.cpp -text
 protomol/src/protomol/type/GromacsParameters.h -text
