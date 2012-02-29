@@ -143,6 +143,8 @@ file( GLOB OS_HEADERS "src/protomol/os/*.h" )
 source_group( "include\\OS" FILES ${OS_HEADERS} )
 file( GLOB OUTPUT_HEADERS "src/protomol/output/*.h" )
 source_group( "include\\Output" FILES ${OUTPUT_HEADERS} )
+file( GLOB PARALLEL_HEADERS "src/protomol/parallel/*.h" )
+source_group( "include\\Parallel" FILES ${PARALLEL_HEADERS} )
 file( GLOB SWITCH_HEADERS "src/protomol/switch/*.h" )
 source_group( "include\\Switch" FILES ${SWITCH_HEADERS} )
 file( GLOB TOPOLOGY_HEADERS "src/protomol/topology/*.h" )
@@ -152,7 +154,8 @@ source_group( "include\\Type" FILES ${TYPE_HEADERS} )
 
 set( LIBRARY_BASE_HEADERS ${HEADERS} ${BASE_HEADERS} ${CONFIG_HEADERS}
 	${FACTORY_HEADERS} ${MODIFIER_HEADERS} ${MODULE_HEADERS} ${OS_HEADERS}
-	${OUTPUT_HEADERS} ${SWITCH_HEADERS} ${TOPOLOGY_HEADERS} ${TYPE_HEADERS} )
+	${OUTPUT_HEADERS} ${PARALLEL_HEADERS} ${SWITCH_HEADERS} ${TOPOLOGY_HEADERS} 
+	${TYPE_HEADERS} )
 
 if( NOT MSVC )
 	file( GLOB DEBUG_HEADERS "src/protomol/debug/*.h" )
@@ -160,13 +163,6 @@ if( NOT MSVC )
 
 	set( LIBRARY_BASE_HEADERS ${LIBRARY_BASE_HEADERS} ${DEBUG_HEADERS} )
 endif( NOT MSVC )
-
-if( BUILD_PARALLEL )
-	file( GLOB PARALLEL_HEADERS "src/protomol/parallel/*.h" )
-	source_group( "include\\Parallel" FILES ${PARALLEL_HEADERS} )
-
-	set( LIBRARY_BASE_HEADERS ${LIBRARY_BASE_HEADERS} ${PARALLEL_HEADERS} )
-endif( BUILD_PARALLEL )
 
 # Library Force Headers
 file( GLOB FORCE_HEADERS "src/protomol/force/*.h" )
@@ -252,6 +248,8 @@ file( GLOB OS_SOURCES "src/protomol/os/*.cpp" )
 source_group( "src\\OS" FILES ${OS_SOURCES} )
 file( GLOB OUTPUT_SOURCES "src/protomol/output/*.cpp" )
 source_group( "src\\Output" FILES ${OUTPUT_SOURCES} )
+file( GLOB PARALLEL_SOURCES "src/protomol/parallel/*.cpp" )
+source_group( "src\\Parallel" FILES ${PARALLEL_SOURCES} )
 file( GLOB SWITCH_SOURCES "src/protomol/switch/*.cpp" )
 source_group( "src\\Switch" FILES ${SWITCH_SOURCES} )
 file( GLOB TOPOLOGY_SOURCES "src/protomol/topology/*.cpp" )
@@ -274,13 +272,6 @@ if( NOT MSVC )
 
 	set( LIBRARY_BASE_SOURCES ${LIBRARY_BASE_SOURCES} ${DEBUG_SOURCES} )
 endif( NOT MSVC )
-
-if( BUILD_PARALLEL )
-	file( GLOB PARALLEL_SOURCES "src/protomol/parallel/*.cpp" )
-	source_group( "src\\Parallel" FILES ${PARALLEL_SOURCES} )
-
-	set( LIBRARY_BASE_SOURCES ${LIBRARY_BASE_SOURCES} ${PARALLEL_SOURCES} )
-endif( BUILD_PARALLEL )
 
 # Library Force sources
 file( GLOB FORCE_SOURCES "src/protomol/force/*.cpp" )
