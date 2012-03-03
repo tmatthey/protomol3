@@ -58,7 +58,6 @@ def run_test(protomol_path, conf_file, pwd):
 		s += "stdout: " + stdout + "\n"
 		s += "stderr: " + stderr + "\n"
 		logging.critical(s)
-		raise Exception, "Unable to execute Protomol!"
 	expects = []
 	outputs = glob.glob( "tests/output/" + base + ".*" )
 	outputtemp = []
@@ -165,3 +164,4 @@ if __name__ == "__main__":
 	if len( failedtests ) > 0:
 		for test in failedtests:
 			logging.warning( "%s failed." % test )
+		sys.exit( 1 )
