@@ -109,20 +109,6 @@ if( BUILD_OPENMP )
     endif( OPENMP_FOUND )
 endif( BUILD_OPENMP )
 
-# Parallel
-option( BUILD_PARALLEL "Build with MPI Support" Off )
-if( BUILD_PARALLEL )
-	include( FindMPI )
-	if( MPI_FOUND )
-		add_definitions( "-DHAVE_MPI" )
-		
-		include_directories( ${MPI_INCLUDE_PATH} )
-		
-		set( LIBS ${LIBS} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARY})
-		set( CMAKE_EXE_LINKER_FLAGS ${MPI_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS} )
-	endif( MPI_FOUND )
-endif( BUILD_PARALLEL )
-
 # Compilation
 include_directories( src )
 
@@ -154,7 +140,7 @@ source_group( "include\\Type" FILES ${TYPE_HEADERS} )
 
 set( LIBRARY_BASE_HEADERS ${HEADERS} ${BASE_HEADERS} ${CONFIG_HEADERS}
 	${FACTORY_HEADERS} ${MODIFIER_HEADERS} ${MODULE_HEADERS} ${OS_HEADERS}
-	${OUTPUT_HEADERS} ${PARALLEL_HEADERS} ${SWITCH_HEADERS} ${TOPOLOGY_HEADERS} 
+	${OUTPUT_HEADERS} ${PARALLEL_HEADERS} ${SWITCH_HEADERS} ${TOPOLOGY_HEADERS}
 	${TYPE_HEADERS} )
 
 if( NOT MSVC )
