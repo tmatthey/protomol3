@@ -1548,7 +1548,6 @@ test/tests/expected/wwdomain_CHARMM_VACUUM_LL.pos -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.vel -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.dcd -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.energy -text
-test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.energy.header -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.forces -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.pos -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.vel -text
