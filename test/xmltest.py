@@ -15,8 +15,8 @@ args = parser.parse_args()
 
 # Setup Results XML
 xml_root = ET.Element("TestRun")
-xml_pass = ET.SubElement(xml_root, "SuccessfulTests")
 xml_fail = ET.SubElement(xml_root, "FailedTests")
+xml_pass = ET.SubElement(xml_root, "SuccessfulTests")
 
 # Setup Statistics
 stats_test = 0
@@ -116,6 +116,9 @@ for test in tests:
 
         xml_test_name = ET.SubElement(xml_test,"Name")
         xml_test_name.text = name
+
+        xml_test_type = ET.SubElement(xml_test,"FailureType")
+        xml_test_type.text = "Assertion"
 
         def combine(a,b):
             return a + "\n" + b
