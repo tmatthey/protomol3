@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import sys
 import os
 import glob
@@ -55,7 +56,10 @@ def run_test(protomol_path, conf_file, pwd):
 
     base = os.path.splitext(os.path.basename(conf_file))[0]
     logging.info('Executing Test: ' + base)
-    cmd = [protomol_path, conf_file]
+
+    cmd = protomol_path[:]
+    cmd.append(conf_file)
+
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
     (stdout, stderr) = p.communicate()
@@ -121,12 +125,19 @@ def find_conf_files(pwd, args):
 
 
 def find_protomol(pwd):
+    path = []
+    if args.parallel:
+        path.append('mpirun')
+        path.append('-np')
+        path.append('2')
     unix_path = os.path.join(pwd, 'ProtoMol')
     win_path = os.path.join(pwd, 'ProtoMol.exe')
     if os.path.exists(unix_path):
-        return unix_path
+        path.append(unix_path)
+        return path
     elif os.path.exists(win_path):
-        return win_path
+        path.append(win_path)
+        return path
     else:
         raise Exception, 'Cannot find ProtoMol executable in ' + pwd \
             + ' . Please put the ProtoMol executable in this directory'
@@ -136,6 +147,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='ProtoMol Test Suite')
     parser.add_argument('--verbose', '-v', action='store_true',
                         default=False, help='Verbose output')
+    parser.add_argument('--parallel', '-p', action='store_true',
+                        default=False, help='MPI Testing')
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--single', '-s',
