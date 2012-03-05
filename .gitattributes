@@ -1577,3 +1577,4 @@ test/tests/wwdomain_CHARMM_VACUUM_LL.conf -text
 test/tests/www-fip35_FFAMBER-TPR_VACUUM_LL.conf -text
 test/tests/www-fip35_FFAMBER_GB_LL.conf -text
 test/tests/www-fip35_FFAMBER_VACUUM_LI.conf -text
+test/xmltest.py -text
