@@ -141,11 +141,11 @@ fXML.write("<TestRun>\n")
 
 fXML.write("\t<FailedTests>\n")
 for test in failed_tests:
-    fXML.write("\t\t<Test id=\"" + str(test['id']) + "\">\n")
+    fXML.write("\t\t<FailedTest id=\"" + str(test['id']) + "\">\n")
     fXML.write("\t\t\t<Name>" + test['name'] + "</Name>\n")
     fXML.write("\t\t\t<FailureType>Assertion</FailureType>\n")
     fXML.write("\t\t\t<Message>" + test['message'] + "</Message>\n")
-    fXML.write("\t\t</Test>\n")
+    fXML.write("\t\t</FailedTest>\n")
 fXML.write("\t</FailedTests>\n")
 
 fXML.write("\t<SuccessfulTests>\n")
