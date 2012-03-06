@@ -123,6 +123,18 @@ if( BUILD_PARALLEL )
 	endif( MPI_FOUND )
 endif( BUILD_PARALLEL )
 
+# Code Coverage
+option( CODE_COVERAGE "Build library with code coverage instrumentation" Off )
+if( CODE_COVERAGE )
+	set( COVERAGE_COMMAND "gcov" )
+
+	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage" )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage" )
+	set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage" )
+
+	set( CMAKE_CXX_STANDARD_LIBRARIES "-lgcov" )
+endif( CODE_COVERAGE )
+
 # Warnings
 option( BUILD_WARNINGS "Build with all warnings turned on" Off )
 if( BUILD_WARNINGS )
