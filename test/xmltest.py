@@ -177,8 +177,17 @@ xml_stat_error.text = str(stats_error)
 xml_stat_fail = ET.SubElement(xml_stat, "Failures")
 xml_stat_fail.text = str(stats_fail)
 
-# Write Results
-results = ET.tostring(xml_root)
+# Ensure nodes are expanded
+dom = parseString( ET.tostring(xml_root) )
 
+for element in dom.getElementsByTagName( "FailedTests"):
+    if len( element.childNodes ) == 0:
+        element.appendChild( dom.createTextNode("") )
+
+for element in dom.getElementsByTagName( "SuccessfulTests"):
+    if len( element.childNodes ) == 0:
+        element.appendChild( dom.createTextNode("") )
+
+# Write result
 fResult = open("results.xml", "w")
-fResult.write( parseString(results).toprettyxml() )
+fResult.write( dom.toprettyxml() )
