@@ -3,6 +3,11 @@ cmake_minimum_required( VERSION 2.6 )
 
 set( LIBS "" )
 
+# Set Standard
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c++98")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+
+# Lapack
 option( BUILD_LAPACK "Build with Lapack" On )
 if( BUILD_LAPACK )
 	set( BUILD_LAPACK_TYPE "" CACHE STRING "Lapack type to compile against. Choices are: lapack simtk mkl" )
@@ -138,8 +143,8 @@ endif( CODE_COVERAGE )
 # Warnings
 option( BUILD_WARNINGS "Build with all warnings turned on" Off )
 if( BUILD_WARNINGS )
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wstrict-aliasing")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wstrict-aliasing")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wstrict-aliasing -pedantic -fpermissive")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wstrict-aliasing -pedantic -fpermissive")
 endif( BUILD_WARNINGS )
 
 # Compilation
