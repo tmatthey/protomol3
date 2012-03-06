@@ -1,5 +1,3 @@
-from xml.dom.minidom import parseString
-import elementtree.ElementTree as ET
 import glob
 import os
 import subprocess
@@ -9,18 +7,7 @@ import argparse
 DEFAULT_EPSILON = 0.00001
 DEFAULT_SCALINGFACTOR = 1.0
 
-
 def parse_params(flname):
-    """
-....Parses test parameters from Protomol configuration files.
-....Paramaters are used to change how testing is performed.
-....It is assumed that parameters will be in the form:
-            ## key = value
-....where key will be a string, value will by any python structure
-....that fits on one line, and the hashmarks will be the first two
-        characters on the line.
-...."""
-
     fl = open(flname)
     params = dict()
     for ln in fl:
@@ -44,11 +31,6 @@ parser.add_argument('--parallel', '-p', action='store_true', default=False, help
 
 args = parser.parse_args()
 
-# Setup Results XML
-xml_root = ET.Element("TestRun")
-xml_fail = ET.SubElement(xml_root, "FailedTests")
-xml_pass = ET.SubElement(xml_root, "SuccessfulTests")
-
 # Setup Statistics
 stats_test = 0
 stats_pass = 0
@@ -71,6 +53,8 @@ stats_test = len(tests)
 
 # Run Tests
 testid = 0
+failed_tests = []
+passed_tests = []
 for test in tests:
     conf_param_overrides = parse_params(test)
     epsilon = conf_param_overrides.get('epsilon', DEFAULT_EPSILON)
@@ -140,54 +124,44 @@ for test in tests:
     # Create XML
     if len(output_pass) == output_size:
         stats_pass += 1
-        xml_test = ET.SubElement(xml_pass,"Test")
-        xml_test.set("id", str(testid))
-
-        xml_test_name = ET.SubElement(xml_test,"Name")
-        xml_test_name.text = name
+        passed_tests.append( { 'id': testid, 'name': name } )
     else:
         stats_fail += 1
-        xml_test = ET.SubElement(xml_fail,"FailedTest")
-        xml_test.set("id", str(testid))
-
-        xml_test_name = ET.SubElement(xml_test,"Name")
-        xml_test_name.text = name
-
-        xml_test_type = ET.SubElement(xml_test,"FailureType")
-        xml_test_type.text = "Assertion"
 
         def combine(a,b):
             return a + "\n" + b
 
-        xml_test_message = ET.SubElement(xml_test,"Message")
-        xml_test_message.text = reduce(combine, output_fail)
+        message = reduce(combine, output_fail)
+        failed_tests.append( { 'id': testid, 'name': name, 'message': message } )
 
-# Create Test Statistics
-xml_stat = ET.SubElement(xml_root, "Statistics")
+# Write XML File
+fXML = open( "results.xml", "w" )
+fXML.write("<?xml version=\"1.0\" encoding='ISO-8859-1' standalone='yes'?>\n")
+fXML.write("<TestRun>\n")
 
-xml_stat_test = ET.SubElement(xml_stat, "Tests")
-xml_stat_test.text = str(stats_test)
+fXML.write("\t<FailedTests>\n")
+for test in failed_tests:
+    fXML.write("\t\t<Test id=\"" + str(test['id']) + "\">\n")
+    fXML.write("\t\t\t<Name>" + test['name'] + "</Name>\n")
+    fXML.write("\t\t\t<FailureType>Assertion</FailureType>\n")
+    fXML.write("\t\t\t<Message>" + test['message'] + "</Message>\n")
+    fXML.write("\t\t</Test>\n")
+fXML.write("\t</FailedTests>\n")
 
-xml_stat_failt = ET.SubElement(xml_stat, "FailuresTotal")
-xml_stat_failt.text = str(stats_fail)
+fXML.write("\t<SuccessfulTests>\n")
+for test in passed_tests:
+    fXML.write("\t\t<Test id=\"" + str(test['id']) + "\">\n")
+    fXML.write("\t\t\t<Name>" + test['name'] + "</Name>\n")
+    fXML.write("\t\t</Test>\n")
+fXML.write("\t</SuccessfulTests>\n")
 
-xml_stat_error = ET.SubElement(xml_stat, "Errors")
-xml_stat_error.text = str(stats_error)
+fXML.write("\t<Statistics>\n")
+fXML.write("\t\t<Tests>" + str(stats_test) + "</Tests>\n")
+fXML.write("\t\t<FailuresTotal>" + str(stats_fail) + "</FailuresTotal>\n")
+fXML.write("\t\t<Errors>" + str(stats_error) + "</Errors>\n")
+fXML.write("\t\t<Failures>" + str(stats_fail) + "</Failures>\n")
+fXML.write("\t</Statistics>\n")
 
-xml_stat_fail = ET.SubElement(xml_stat, "Failures")
-xml_stat_fail.text = str(stats_fail)
+fXML.write("</TestRun>\n")
 
-# Ensure nodes are expanded
-dom = parseString( ET.tostring(xml_root) )
-
-for element in dom.getElementsByTagName( "FailedTests"):
-    if len( element.childNodes ) == 0:
-        element.appendChild( dom.createTextNode("") )
-
-for element in dom.getElementsByTagName( "SuccessfulTests"):
-    if len( element.childNodes ) == 0:
-        element.appendChild( dom.createTextNode("") )
-
-# Write result
-fResult = open("results.xml", "w")
-fResult.write( dom.toprettyxml() )
+fXML.close()
