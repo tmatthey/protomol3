@@ -6,6 +6,37 @@ import subprocess
 import comparator
 import argparse
 
+DEFAULT_EPSILON = 0.00001
+DEFAULT_SCALINGFACTOR = 1.0
+
+
+def parse_params(flname):
+    """
+....Parses test parameters from Protomol configuration files.
+....Paramaters are used to change how testing is performed.
+....It is assumed that parameters will be in the form:
+            ## key = value
+....where key will be a string, value will by any python structure
+....that fits on one line, and the hashmarks will be the first two
+        characters on the line.
+...."""
+
+    fl = open(flname)
+    params = dict()
+    for ln in fl:
+
+        if ln[:2] != '##':
+            continue
+        eq_pos = ln.find('=')
+        if eq_pos == -1:
+            continue
+        param_name = ln[2:eq_pos].strip()
+        param_str = ln[eq_pos + 1:].strip()
+        param_val = eval(param_str)
+        params[param_name] = param_val
+    fl.close()
+    return params
+
 # Arguments
 parser = argparse.ArgumentParser(description='ProtoMol Test Suite')
 parser.add_argument('--verbose', '-v', action='store_true', default=False, help='Verbose output')
@@ -41,6 +72,11 @@ stats_test = len(tests)
 # Run Tests
 testid = 0
 for test in tests:
+    conf_param_overrides = parse_params(test)
+    epsilon = conf_param_overrides.get('epsilon', DEFAULT_EPSILON)
+    scaling_factor = conf_param_overrides.get('scaling_factor',
+        DEFAULT_SCALINGFACTOR)
+
     testid += 1
     name = os.path.splitext(os.path.basename(test))[0]
 
@@ -90,7 +126,7 @@ for test in tests:
         if ftype == '.vec':
             ignoreSign = True
 
-        if comparator.compare(expects[i], outputs[i], 0.00001, 1.0, ignoreSign):
+        if comparator.compare(expects[i], outputs[i], epsilon, scaling_factor, ignoreSign):
             string = outputs[i] + " matches"
             output_pass.append( string )
             print string
