@@ -123,6 +123,13 @@ if( BUILD_PARALLEL )
 	endif( MPI_FOUND )
 endif( BUILD_PARALLEL )
 
+# Warnings
+option( BUILD_WARNINGS "Build with all warnings turned on" Off )
+if( BUILD_WARNINGS )
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wstrict-aliasing")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wstrict-aliasing")
+endif( BUILD_WARNINGS )
+
 # Compilation
 include_directories( src )
 
