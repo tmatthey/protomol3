@@ -2,7 +2,7 @@ import glob
 import os
 import subprocess
 import comparator
-import argparse
+import optparse
 
 DEFAULT_EPSILON = 0.00001
 DEFAULT_SCALINGFACTOR = 1.0
@@ -25,11 +25,12 @@ def parse_params(flname):
     return params
 
 # Arguments
-parser = argparse.ArgumentParser(description='ProtoMol Test Suite')
-parser.add_argument('--verbose', '-v', action='store_true', default=False, help='Verbose output')
-parser.add_argument('--parallel', '-p', action='store_true', default=False, help='MPI Testing')
+parser = optparse.OptionParser(description='ProtoMol Test Suite')
+parser.add_option('--verbose', '-v', action='store_true', dest='verbose', default=False, help='Verbose output')
+parser.add_option('--parallel', '-p', action='store_true', dest='parallel', default=False, help='MPI Testing')
 
-args = parser.parse_args()
+(options, args) = parser.parse_args()
+print args
 
 # Setup Statistics
 stats_test = 0
@@ -39,7 +40,7 @@ stats_error = 0
 
 # Find Executable
 executable = []
-if args.parallel:
+if options.parallel:
     executable.append( "mpirun" )
     executable.append( "-np" )
     executable.append( "2" )
