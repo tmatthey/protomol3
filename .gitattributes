@@ -1077,6 +1077,8 @@ protomol/src/protomol/integrator/base/LangevinImpulseIntegrator.cpp -text
 protomol/src/protomol/integrator/base/LangevinImpulseIntegrator.h -text
 protomol/src/protomol/integrator/base/LangevinLeapfrogIntegrator.cpp -text
 protomol/src/protomol/integrator/base/LangevinLeapfrogIntegrator.h -text
+protomol/src/protomol/integrator/base/LangevinVVVRIntegrator.cpp -text
+protomol/src/protomol/integrator/base/LangevinVVVRIntegrator.h -text
 protomol/src/protomol/integrator/base/NumericalDifferentiation.cpp -text
 protomol/src/protomol/integrator/base/NumericalDifferentiation.h -text
 protomol/src/protomol/integrator/base/NumericallyDifferentiatedHessian.cpp -text
@@ -1546,6 +1548,11 @@ test/tests/expected/wwdomain_CHARMM_VACUUM_LL.energy -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.forces -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.pos -text
 test/tests/expected/wwdomain_CHARMM_VACUUM_LL.vel -text
+test/tests/expected/wwdomain_CHARMM_VACUUM_VVVR.dcd -text
+test/tests/expected/wwdomain_CHARMM_VACUUM_VVVR.energy -text
+test/tests/expected/wwdomain_CHARMM_VACUUM_VVVR.forces -text
+test/tests/expected/wwdomain_CHARMM_VACUUM_VVVR.pos -text
+test/tests/expected/wwdomain_CHARMM_VACUUM_VVVR.vel -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.dcd -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.energy -text
 test/tests/expected/www-fip35_FFAMBER-TPR_VACUUM_LL.forces -text
@@ -1574,6 +1581,7 @@ test/tests/wwdomain_CHARMM_VACUUM_HESSIAN.conf -text
 test/tests/wwdomain_CHARMM_VACUUM_HESSIAN_COARSE.conf -text
 test/tests/wwdomain_CHARMM_VACUUM_L.conf -text
 test/tests/wwdomain_CHARMM_VACUUM_LL.conf -text
+test/tests/wwdomain_CHARMM_VACUUM_VVVR.conf -text
 test/tests/www-fip35_FFAMBER-TPR_VACUUM_LL.conf -text
 test/tests/www-fip35_FFAMBER_GB_LL.conf -text
 test/tests/www-fip35_FFAMBER_VACUUM_LI.conf -text
