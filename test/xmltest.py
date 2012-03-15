@@ -30,13 +30,16 @@ parser.add_option('--verbose', '-v', action='store_true', dest='verbose', defaul
 parser.add_option('--parallel', '-p', action='store_true', dest='parallel', default=False, help='MPI Testing')
 
 (options, args) = parser.parse_args()
-print args
 
 # Setup Statistics
 stats_test = 0
 stats_pass = 0
 stats_fail = 0
 stats_error = 0
+
+# Empty Output Directory
+outdata = glob.glob( os.path.join(os.getcwd(),'tests','output','*' ) )
+map( os.remove, outdata )
 
 # Find Executable
 executable = []
