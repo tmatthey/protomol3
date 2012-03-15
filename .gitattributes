@@ -976,6 +976,8 @@ protomol/src/protomol/force/GB/GBBornRadii.cpp -text
 protomol/src/protomol/force/GB/GBBornRadii.h -text
 protomol/src/protomol/force/GB/GBForce.cpp -text
 protomol/src/protomol/force/GB/GBForce.h -text
+protomol/src/protomol/force/GB/GBPartialSum.cpp -text
+protomol/src/protomol/force/GB/GBPartialSum.h -text
 protomol/src/protomol/force/GB/SConscript -text
 protomol/src/protomol/force/LennardJonesForce.cpp -text
 protomol/src/protomol/force/LennardJonesForce.h -text
