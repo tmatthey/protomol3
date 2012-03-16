@@ -53,6 +53,10 @@ executable.append( os.path.join(os.getcwd(), 'ProtoMol') )
 tests = glob.glob(os.path.join(os.getcwd(), 'tests', '*.conf'))
 tests.sort()
 
+for test in tests:
+	if test.find( "-benchmark" ) != -1:
+		tests.remove( test )
+
 stats_test = len(tests)
 
 # Run Tests
