@@ -970,8 +970,6 @@ protomol/src/protomol/force/ForceGroup.cpp -text
 protomol/src/protomol/force/ForceGroup.h -text
 protomol/src/protomol/force/GB/GBACEForce.cpp -text
 protomol/src/protomol/force/GB/GBACEForce.h -text
-protomol/src/protomol/force/GB/GBBornBurialTerm.cpp -text
-protomol/src/protomol/force/GB/GBBornBurialTerm.h -text
 protomol/src/protomol/force/GB/GBBornRadii.cpp -text
 protomol/src/protomol/force/GB/GBBornRadii.h -text
 protomol/src/protomol/force/GB/GBForce.cpp -text
