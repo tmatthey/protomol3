@@ -59,6 +59,8 @@ stats_test = len(tests)
 testid = 0
 failed_tests = []
 passed_tests = []
+disabled_tests = []
+
 for test in tests:
     conf_param_overrides = parse_params(test)
     epsilon = conf_param_overrides.get('epsilon', DEFAULT_EPSILON)
@@ -77,6 +79,7 @@ for test in tests:
 
     if p.returncode > 0:
         stats_error += 1
+        disabled_tests.append( { 'id': testid, 'name': name }  )
         continue
 
     # Find Outputs
@@ -137,6 +140,21 @@ for test in tests:
 
         message = reduce(combine, output_fail)
         failed_tests.append( { 'id': testid, 'name': name, 'message': message } )
+
+print ""
+
+# Print Information
+if len( failed_tests ) > 0:
+    print "Failed: "
+
+    for test in failed_tests:
+        print str(test['id']) + ":" + test['name']
+
+if len(disabled_tests) > 0:
+    print "Disabled:"
+
+    for test in disabled_tests:
+        print str(test['id']) + ":" + test['name']
 
 # Write XML File
 fXML = open( "results.xml", "w" )
