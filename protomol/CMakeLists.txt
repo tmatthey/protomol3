@@ -147,6 +147,21 @@ if( BUILD_WARNINGS )
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wstrict-aliasing -pedantic -fpermissive")
 endif( BUILD_WARNINGS )
 
+# Package.h
+if(EXISTS ".svn/")
+  include(FindSubversion)
+  Subversion_WC_INFO(${CMAKE_SOURCE_DIR} SVN_VERSION )
+else()
+  set( SVN_VERSION "exported" )
+endif()
+
+set( USER $ENV{USER} )
+
+add_definitions( "-DHAVE_PACKAGE_H" )
+configure_file( ${CMAKE_SOURCE_DIR}/src/protomol/package.h.cmake ${CMAKE_BINARY_DIR}/include/protomol/package.h )
+
+include_directories( ${CMAKE_BINARY_DIR}/include )
+
 # Compilation
 include_directories( src )
 
