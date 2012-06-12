@@ -1133,6 +1133,8 @@ protomol/src/protomol/integrator/normal/NormalModeQuadratic.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeQuadratic.h -text
 protomol/src/protomol/integrator/normal/NormalModeRelax.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeRelax.h -text
+protomol/src/protomol/integrator/normal/NormalModeSubspaceSampling.cpp -text
+protomol/src/protomol/integrator/normal/NormalModeSubspaceSampling.h -text
 protomol/src/protomol/integrator/normal/NormalModeUtilities.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeUtilities.h -text
 protomol/src/protomol/integrator/normal/SConscript -text
