@@ -1115,6 +1115,8 @@ protomol/src/protomol/integrator/leapfrog/SConscript -text
 protomol/src/protomol/integrator/normal/ModifierForceProjection.h -text
 protomol/src/protomol/integrator/normal/NormalModeBrownian.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeBrownian.h -text
+protomol/src/protomol/integrator/normal/NormalModeCompLang.cpp -text
+protomol/src/protomol/integrator/normal/NormalModeCompLang.h -text
 protomol/src/protomol/integrator/normal/NormalModeDamping.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeDamping.h -text
 protomol/src/protomol/integrator/normal/NormalModeDiagonalize.cpp -text
