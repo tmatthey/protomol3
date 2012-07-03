@@ -898,6 +898,7 @@ protomol/src/protomol/base/Makeable.h -text
 protomol/src/protomol/base/MakeableDefinition.h -text
 protomol/src/protomol/base/MathUtilities.cpp -text
 protomol/src/protomol/base/MathUtilities.h -text
+protomol/src/protomol/base/Module.cpp -text
 protomol/src/protomol/base/Module.h -text
 protomol/src/protomol/base/ModuleManager.cpp -text
 protomol/src/protomol/base/ModuleManager.h -text
