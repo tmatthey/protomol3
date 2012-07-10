@@ -1408,6 +1408,7 @@ test/comparator.py -text
 test/compare.py -text
 test/test.py -text
 test/tests/alanine_CHARMM_IMPLICIT_LL.conf -text
+test/tests/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.conf -text
 test/tests/alanine_CHARMM_VACUUM_ANGLEFORCE.conf -text
 test/tests/alanine_CHARMM_VACUUM_BONDFORCE.conf -text
 test/tests/alanine_CHARMM_VACUUM_IMPROPERFORCE.conf -text
@@ -1461,6 +1462,12 @@ test/tests/expected/alanine_CHARMM_IMPLICIT_LL.energy -text
 test/tests/expected/alanine_CHARMM_IMPLICIT_LL.forces -text
 test/tests/expected/alanine_CHARMM_IMPLICIT_LL.pos -text
 test/tests/expected/alanine_CHARMM_IMPLICIT_LL.vel -text
+test/tests/expected/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.dcd -text svneol=unset#unset
+test/tests/expected/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.energy -text
+test/tests/expected/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.forces -text
+test/tests/expected/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.pos -text
+test/tests/expected/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.vec -text
+test/tests/expected/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.vel -text
 test/tests/expected/alanine_CHARMM_VACUUM_ANGLEFORCE.dcd -text
 test/tests/expected/alanine_CHARMM_VACUUM_ANGLEFORCE.energy -text
 test/tests/expected/alanine_CHARMM_VACUUM_ANGLEFORCE.forces -text
