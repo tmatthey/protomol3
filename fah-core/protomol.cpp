@@ -96,8 +96,8 @@ public:
 
       // Check that the unit is still on track
       if (app.currentStep < firstStep || lastStep < app.currentStep) {
-        LOG_ERROR("Invalid step " << app.currentStep << " not in ["
-                  << firstStep << ", " << lastStep << "]");
+        CBANG_LOG_ERROR("Invalid step " << app.currentStep << " not in ["
+                        << firstStep << ", " << lastStep << "]");
 
         return ExitCode::BAD_CORE_FILES;
       }
@@ -122,10 +122,10 @@ public:
       return 0;
 
     } catch (const std::bad_alloc &e) {
-      LOG_ERROR("ProtoMol std::bad_alloc");
+      CBANG_LOG_ERROR("ProtoMol std::bad_alloc");
       
     } catch (const ProtoMol::Exception &e) {
-      LOG_ERROR("ProtoMol ERROR: " << e.getMessage());
+      CBANG_LOG_ERROR("ProtoMol ERROR: " << e.getMessage());
     }
 
     getUnit().type() = CorePacketType::FAULTY;
