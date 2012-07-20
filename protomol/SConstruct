@@ -24,7 +24,12 @@ if not env.GetOption('clean'):
     lib.configure_deps(conf)
 
     # Mostly static libraries
-    if env.get('mostly_static', 0): config.compiler.mostly_static_libs(env)
+    if env.get('mostly_static', 0):
+        if env['PLATFORM'] == 'posix':
+            ignores = ['pthread', 'dl', 'bz2', 'z', 'm']
+        else: ignores = None
+        
+        config.compiler.mostly_static_libs(env, ignores)
 
     # libprotomol path
     env.Append(CPPPATH = ['#/src'])
