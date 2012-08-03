@@ -53,6 +53,19 @@ if( BUILD_LAPACK )
 	endif()
 endif()
 
+# Magma
+# WARNING: HARD CODED.  CHANGE LATER!!!
+#set( LIBS ${LIBS} "/afs/crc.nd.edu/x86_64_linux/cuda/4.0/cuda/lib64/libcublas.so" )
+#set( LIBS ${LIBS} "/afs/crc.nd.edu/user/t/tcickovs/Research/magma-1.2.0/lib/libmagma.a" )
+
+#set ( MAGMA_SOURCE_DIR "$ENV{MAGMA_SOURCE}" CACHE PATH "Magma InstallDirectory")
+#if ( MAGMA_SOURCE_DIR )
+#        link_directories( "${MAGMA_SOURCE_DIR}/lib/" )
+#	include_directories( "${MAGMA_SOURCE_DIR}/include/" )
+#endif()
+#find_library( MAGMA_LIB "Magma" HINT ${MAGMA_SOURCE_DIR}/lib )
+#set( LIBS ${LIBS} ${MAGMA_LIB} )
+
 option( BUILD_OPENMM "Build with OpenMM" Off )
 if( BUILD_OPENMM )
 	add_definitions( "-DHAVE_OPENMM" )
@@ -66,7 +79,7 @@ if( BUILD_OPENMM )
 	find_library( OPENMM_LIB "OpenMM" HINT "${OPENMM_DIR}/lib" )
 	set( LIBS ${LIBS} ${OPENMM_LIB} )
 
-	option( BUILD_OPENMM_LTMD "Build with LTMD OpenMM" On )
+	option( BUILD_OPENMM_LTMD "Build with LTMD OpenMM" Off )
 	if( BUILD_OPENMM_LTMD )
 		add_definitions( "-DHAVE_OPENMM_LTMD" )
 		
@@ -75,10 +88,23 @@ if( BUILD_OPENMM )
 			link_directories( "${LTMDPLUGIN_DIR}/lib/" )
 			include_directories( "${LTMDPLUGIN_DIR}/include/" )
 		endif()
-        
-        find_library( LTMDPLUGIN_LIB "OpenMMLTMD" HINT "${LTMDPLUGIN_DIR}/lib" )
-        set( LIBS ${LIBS} ${LTMDPLUGIN_LIB} )
+
+		find_library( LTMDPLUGIN_LIB "OpenMMLTMD" HINT "${LTMDPLUGIN_DIR}/lib" )
+		set( LIBS ${LIBS} ${LTMDPLUGIN_LIB} )
 	endif()
+	
+	option(BUILD_OPENMM_FBM "Build with OpenMM FBM" Off)
+	if(BUILD_OPENMM_LTMD)
+		add_definitions("-DHAVE_OPENMM_FBM")
+		set(OPENMM_FBM_DIR "$ENV{OPENMMFBM_HOME}" CACHE PATH "OpenMM FBM Install Directory")
+		if(OPENMM_FBM_DIR)
+			link_directories("${OPENMM_FBM_DIR}/lib/")
+			include_directories("${OPENMM_FBM_DIR}/include/")
+		endif()
+		find_library( OPENMM_FBM_LIB "OpenMMFBM" HINT "${OPENMM_FBM_DIR}/lib" )
+		set( LIBS ${LIBS} ${OPENMM_FBM_LIB} )
+	endif()
+
 endif()
 
 option( BUILD_GUI "Build with GUI Support" Off )
@@ -102,6 +128,7 @@ if( BUILD_GROMACS )
 
 	add_definitions( "-DHAVE_GROMACS" )
 endif( BUILD_GROMACS )
+
 
 # OpenMP
 option( BUILD_OPENMP "Build with openmp support" Off )
@@ -384,9 +411,6 @@ add_library( Library STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} )
 target_link_libraries( Library ${LIBS} )
 
 set_target_properties( Library PROPERTIES OUTPUT_NAME ProtoMol )
-
-install( DIRECTORY "src/protomol" DESTINATION "include" PATTERN "*.h" )
-install( TARGETS Library RUNTIME DESTINATION "bin" LIBRARY DESTINATION "lib" ARCHIVE DESTINATION "lib" )
 
 # Application Compilation
 add_executable( Executable src/protomol/main.cpp src/protomol/modules.cpp )
