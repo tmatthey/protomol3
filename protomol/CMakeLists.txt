@@ -75,10 +75,10 @@ if( BUILD_OPENMM )
 			link_directories( "${LTMDPLUGIN_DIR}/lib/" )
 			include_directories( "${LTMDPLUGIN_DIR}/include/" )
 		endif()
+        
+        find_library( LTMDPLUGIN_LIB "OpenMMLTMD" HINT "${LTMDPLUGIN_DIR}/lib" )
+        set( LIBS ${LIBS} ${LTMDPLUGIN_LIB} )
 	endif()
-	
-	find_library( LTMDPLUGIN_LIB "OpenMMLTMD" HINT "${LTMDPLUGIN_DIR}/lib" )
-	set( LIBS ${LIBS} ${LTMDPLUGIN_LIB} )
 endif()
 
 option( BUILD_GUI "Build with GUI Support" Off )
