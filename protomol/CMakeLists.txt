@@ -427,6 +427,9 @@ target_link_libraries( Library ${LIBS} )
 
 set_target_properties( Library PROPERTIES OUTPUT_NAME ProtoMol )
 
+install( DIRECTORY "src/protomol" DESTINATION "include" PATTERN "*.h" )
+install( TARGETS Library RUNTIME DESTINATION "bin" LIBRARY DESTINATION "lib" ARCHIVE DESTINATION "lib" )
+
 # Application Compilation
 add_executable( Executable src/protomol/main.cpp src/protomol/modules.cpp )
 target_link_libraries( Executable Library )
