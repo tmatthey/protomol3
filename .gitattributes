@@ -857,7 +857,6 @@ protomol-test/SConstruct -text
 protomol-test/src/DataComparator.cpp -text
 protomol-test/src/DataComparator.h -text
 protomol-test/testHarness -text
-protomol/CMakeLists.txt -text
 protomol/SConstruct -text
 protomol/doc/Doxyfile -text
 protomol/doc/GB_Born.pdf -text
@@ -882,6 +881,7 @@ protomol/scripts/TemplateModule.cpp -text
 protomol/scripts/TemplateModule.h -text
 protomol/scripts/findModules -text
 protomol/scripts/makeModule -text
+protomol/src/protomol/CMakeLists.txt -text
 protomol/src/protomol/ProtoMolApp.cpp -text
 protomol/src/protomol/ProtoMolApp.h -text
 protomol/src/protomol/SConscript -text
