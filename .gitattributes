@@ -881,7 +881,7 @@ protomol/scripts/TemplateModule.cpp -text
 protomol/scripts/TemplateModule.h -text
 protomol/scripts/findModules -text
 protomol/scripts/makeModule -text
-protomol/src/protomol/CMakeLists.txt -text
+protomol/src/CMakeLists.txt -text
 protomol/src/protomol/ProtoMolApp.cpp -text
 protomol/src/protomol/ProtoMolApp.h -text
 protomol/src/protomol/SConscript -text
