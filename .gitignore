@@ -2,3 +2,4 @@ GUI/JProtomol/build
 GUI/JProtomol/dist
 protomol/.sconf_temp
 protomol/.sconsign.dblite
+protomol/src/build
