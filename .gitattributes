@@ -1415,6 +1415,7 @@ scripts/clean-protomol-core.bat -text
 test/comparator.py -text
 test/compare.py -text
 test/test.py -text
+test/tests/alan_droplet_harmonic_switching_tether.conf -text
 test/tests/alanine_CHARMM_IMPLICIT_LL.conf -text
 test/tests/alanine_CHARMM_IMPLICIT_LL_GENERATE_MODES.conf -text
 test/tests/alanine_CHARMM_VACUUM_ANGLEFORCE.conf -text
@@ -1446,6 +1447,8 @@ test/tests/data/ffamber96/ffamber96.itp -text
 test/tests/data/ffamber96/ffamber96.rtp -text
 test/tests/data/ffamber96/ffamber96bon.itp -text
 test/tests/data/ffamber96/ffamber96nb.itp -text
+test/tests/data/large_water_droplet_alan.pdb -text
+test/tests/data/large_water_droplet_alan.psf -text
 test/tests/data/par_all27_prot_lipid.inp -text
 test/tests/data/params.agb -text
 test/tests/data/scpismQuartic.inp -text
@@ -1465,6 +1468,11 @@ test/tests/data/ww_domain_vac.pdb -text
 test/tests/data/ww_structure_22_vac_4.0.7.sim.tpr -text
 test/tests/data/www-fip35.pdb -text
 test/tests/data/www-fip35.top -text
+test/tests/expected/alan_droplet_harmonic_switching_tether.dcd -text
+test/tests/expected/alan_droplet_harmonic_switching_tether.energy -text
+test/tests/expected/alan_droplet_harmonic_switching_tether.forces -text
+test/tests/expected/alan_droplet_harmonic_switching_tether.pos -text
+test/tests/expected/alan_droplet_harmonic_switching_tether.vel -text
 test/tests/expected/alanine_CHARMM_IMPLICIT_LL.dcd -text
 test/tests/expected/alanine_CHARMM_IMPLICIT_LL.energy -text
 test/tests/expected/alanine_CHARMM_IMPLICIT_LL.forces -text
