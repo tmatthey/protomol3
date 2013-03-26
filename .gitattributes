@@ -992,6 +992,8 @@ protomol/src/protomol/force/OneAtomPairFull.h -text
 protomol/src/protomol/force/OneAtomPairNoExclusion.h -text
 protomol/src/protomol/force/OneAtomPairThree.h -text
 protomol/src/protomol/force/OneAtomPairTwo.h -text
+protomol/src/protomol/force/ProteinRestraintForce.cpp -text
+protomol/src/protomol/force/ProteinRestraintForce.h -text
 protomol/src/protomol/force/SConscript -text
 protomol/src/protomol/force/TimeForce.cpp -text
 protomol/src/protomol/force/TimeForce.h -text
@@ -1080,6 +1082,8 @@ protomol/src/protomol/integrator/base/LangevinImpulseIntegrator.cpp -text
 protomol/src/protomol/integrator/base/LangevinImpulseIntegrator.h -text
 protomol/src/protomol/integrator/base/LangevinLeapfrogIntegrator.cpp -text
 protomol/src/protomol/integrator/base/LangevinLeapfrogIntegrator.h -text
+protomol/src/protomol/integrator/base/LangevinLeapfrogSwitchingIntegrator.cpp -text
+protomol/src/protomol/integrator/base/LangevinLeapfrogSwitchingIntegrator.h -text
 protomol/src/protomol/integrator/base/LangevinVVVRIntegrator.cpp -text
 protomol/src/protomol/integrator/base/LangevinVVVRIntegrator.h -text
 protomol/src/protomol/integrator/base/NumericalDifferentiation.cpp -text
