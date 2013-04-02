@@ -11,10 +11,10 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
              'type':['Vector3DBlock', 'ScalarStructure'],
 	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator', 'NormalModeLangLf'],
               'integrator/hessian':['HessianInt'],
-              'integrator/openMM':['OpenMMIntegrator'],
+             # 'integrator/openMM':['OpenMMIntegrator'],
               'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
 	      'io/gromacs':['GromacsParameterFileReader', 'GromacsTopologyReader', 'PortGromacsParameters'],
-              'output':['OutputCache', 'OutputDCDTrajectory', 'OutputDCDTrajectoryVel', 'OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
+              'output':['OutputCache','OutputDCDTrajectory', 'OutputDCDTrajectoryVel','OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
               'modifier':['ModifierShake'],
               'base':['MathUtilities'],
 	      'topology':['TopologyUtilities', 'GenericTopology'],
@@ -22,14 +22,14 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
               'force/nonbonded':['SimpleFullForce', 'CutoffForce'],
               'force/system':['PySystemForce'],
               'force':['ForceGroup'],
-              './force/nonbonded':['EwaldForce', 'PMEForce', 'MultiGridForce'],
+              './force/nonbonded':['EwaldForce', 'PMEForce'],
               './':['ProtoMolApp']
 	     }
-
-
 def pyWrap(env, pmhome):
   import distutils.sysconfig
-  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509', '-I'+pmhome, '-I'+pmhome+os.sep+'src'+os.sep+'protomol', '-I'+pmhome+os.sep+'src'],
+  env.Append(SWIGFLAGS=['-c++', '-python', '-w312', '-w314', '-w315', '-w317', '-w361', '-w362', '-w389', '-w401', '-w454', '-w503', '-w509'
+'-I'+pmhome+os.sep+'..'+'protomol'+os.sep+'src'+os.sep+'protomol'+'integrator'+os.sep+'leapfrog','-I'+pmhome+os.sep+'..'+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep,
+'-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'output','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep,'-I'+pmhome+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded','-I'+pmhome+os.sep+'interface' ,'-I'+pmhome+os.sep+'interface'+os.sep+'type','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'integrator'+os.sep+'openMM','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'factory','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'factory','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'topology','-I'+pmhome,'-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'config' ,'-I'+pmhome,'-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src','-I'+pmhome,'-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'base' ,'-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol', '-I'+pmhome+os.sep+'src', '-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src','-I' +pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'type','-I'+ pmhome+os.sep+'..'+os.sep+'protomol','-I'+pmhome+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog', '-I'+pmhome+os.sep+'..'+os.sep+'src'+os.sep+'protomol','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol','-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'base'],
                      CPPPATH=[distutils.sysconfig.get_python_inc()],
                      SHLIBPREFIX=""#,
                      #ENV={'PATH':os.environ['PATH']})
@@ -81,20 +81,53 @@ def pyWrap(env, pmhome):
      #env.Append(SHLINKFLAGS='-bundle')
      #env.Append(SHLINKFLAGS='-bundle_loader')
   else:
+     print pmhome
      env.Append(CXXFLAGS=' -fPIC')
      env.Append(CXXFLAGS='-I'+pmhome)
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'output')
+     #env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'os')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'type')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'base')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'type')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'base')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'config')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'factory')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'topology')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog')
+     #env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'os')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'output')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'integrator'+os.sep+'leapfrog')
+     env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'integrator'+os.sep+'openMM')
      env.Append(SHCXXFLAGS=' -I'+numpypath)
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded')
      env.Append(SHCXXFLAGS=' -I'+numpypath2)
      env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'src')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src')
      env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'src'+os.sep+'protomol')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'interface'+os.sep+'integrator'+os.sep+'leapfrog')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'integrator'+os.sep+'leapfrog')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'type')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'base')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'type')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'factory')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'topology')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'base')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'config')
+     env.Append(SHCXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'integrator'+os.sep+'openMM')
+
+
   if (env['PLATFORM'] != 'darwin'):
      env.Append(SHLINKFLAGS=' -Wl,-E')
   env.Append(_LIBDIRFLAGS="-L.")
 
-  #if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
-  #  env.Append(SWIGFLAGS='-DHAVE_GUI')
-  #if (str(env['CCFLAGS']).find('HAVE_OPENMM') != -1):
-  #  env.Append(SWIGFLAGS='-DHAVE_OPENMM')
+  if (str(env['CCFLAGS']).find('HAVE_GUI') != -1):
+    env.Append(SWIGFLAGS='-DHAVE_GUI')
+  if (str(env['CCFLAGS']).find('HAVE_OPENMM') != -1):
+    env.Append(SWIGFLAGS='-DHAVE_OPENMM')
   for dir in mdlmodules.iterkeys():
     modulelist = mdlmodules[dir]
     for i in range(0, len(modulelist)):
@@ -108,15 +141,13 @@ def pyWrap(env, pmhome):
        else:
           env.SharedLibrary(target='interface/'+dir+'/_'+module+'.so', source=['interface/'+dir+'/'+module+'.i'], SHLIBPREFIX="", LIBS=['mdl']+env['LIBS'])
 
-
-
 pwd = os.getcwd()
 if (os.environ.has_key('PROTOMOL_HOME')):
    pmhome=os.getenv('PROTOMOL_HOME')
 else:
-   pmhome=pwd+'/../protomol/'
-#execfile(pmhome+os.sep+'compiler.py')
-#execfile('compiler.py')
+   pmhome=pwd+''
+   execfile(pmhome+os.sep+'compiler.py')
+   execfile('compiler.py')
 
 # Command Line Options
 opts = Options(pmhome+os.sep+'options.py')
@@ -126,12 +157,12 @@ def novalidate(a, b, c):
    return
 
 opts.AddOptions(
-    BoolOption('gui', 'Set to 1 if using the GUI', 0),
-    BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
-    BoolOption('lapack', 'Use LAPACK', 1),
-    BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
-    PathOption('numpy', 'Numpy Root Directory', '', novalidate),
-    EnumOption('openmm', 'Build with OpenMM', 'none', allowed_values=('none', 'reference', 'cuda'))
+   BoolOption('gui', 'Set to 1 if using the GUI', 0),
+   BoolOption('fah', 'Set to 1 to build library for Folding@Home', 0),
+   BoolOption('lapack', 'Use LAPACK', 1),
+   BoolOption('simtk_lapack', 'Use SimTK LAPACK', 0),
+   PathOption('numpy', 'Numpy Root Directory', '', novalidate),
+   EnumOption('openmm', 'Build with OpenMM','none',allowed_values=('none', 'reference', 'cuda'))
     )
 
 
@@ -147,7 +178,7 @@ def compiler_add_opts():
         BoolOption('distcc', 'Set to 1 to enable distributed builds', 0),
         BoolOption('ccache', 'Set to 1 to enable cached builds', 0),
         EnumOption('platform', 'Override default platform', '',
-                   allowed_values = ('', 'win32', 'posix')),
+                  allowed_values = ('', 'win32', 'posix')),
         EnumOption('cxxstd', 'Set C++ language standard', 'c++98',
                    allowed_values = ('c++98', 'c++0x')),
         EnumOption('compiler', 'Select compiler', 'default',
@@ -155,7 +186,7 @@ def compiler_add_opts():
                                      'linux-mingw', 'aix', 'posix', 'hp', 'sgi',
                                      'sun')))
  
-    opts.Add('static', 'Link to static libraries', 0)
+   # opts.Add('static', 'Link to static libraries', 0)
 
 
 def compiler_configure(c99_mode = 1):
@@ -333,16 +364,14 @@ compiler_add_opts()
 env = Environment(options = opts, ENV = os.environ)
 
 Export('env')
-
+env.Append(CPPDEFINES = ['_REENTRANT'])
  
 # Configure
 conf = Configure(env)
 Export('conf')
 
-
 # Import subdir build files
-subsrc = SConscript(pmhome+os.sep+'src'+os.sep+'protomol'+os.sep+'SConscript')
-
+subsrc = SConscript(pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'SConscript')
 # Get options
 fah = int(env.get('fah', 0))
 
@@ -371,6 +400,7 @@ if( openmm_type == 'none' ):
     use_openmm = 0
 else:
     use_openmm = 1
+    mdlmodules['integrator/openMM'] = ['OpenMMIntegrator']
 
     if ( openmm_type == 'reference' ):
         print "USING REFERENCE"
@@ -458,9 +488,8 @@ if fah:
 
 
 # Get source
-for s in subsrc:
-    libsrc.append('#/protomol' + os.sep+ s)
-
+for i in range(0,len(subsrc)):
+    libsrc.append('#/protomol' + os.sep)
 src = [pmhome+'protomol'+os.sep+'main.cpp', pmhome+os.sep+'protomol'+os.sep+'modules.cpp']
 
 # Build Protomol
@@ -481,7 +510,7 @@ for s in subsrc:
      # compilation - it's only used if HAVE_MPI is true, which
      # will never be true for MDL.
      #if (s != 'parallel/FFTComplex.cpp'):
-     libsrc2.append(pmhome+os.sep+'src'+os.sep+'protomol'+os.sep+s)
+   libsrc2.append(pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+s)
 env.Prepend(LIBS = [''])
 libname2 = 'mdl'
 #if (env['PLATFORM'] == 'darwin'):
