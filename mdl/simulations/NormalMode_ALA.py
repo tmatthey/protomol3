@@ -47,7 +47,7 @@ ff3.params['Coulomb'] = {'algorithm':'SCPISM',
                         'cutoff':12}
 
 io.screen = 1
-io.files = {'gui':('MDL', 1)}
+#io.files = {'gui':('MDL', 1)}
 
 prop = Propagator(phys, forces, io)
 
@@ -57,7 +57,8 @@ prop.propagate(scheme=['NormalModeDiagonalize', 'NormalModeLangevin', 'NormalMod
                        dt=4.0,
                        forcefield=[ff, ff2, ff3],
                        params={'NormalModeDiagonalize':{'reDiagFrequency':100,
-                                                        'removeRand':1},
+                                                        'removeRand':1,
+ 							'fullDiag':True},
                                'NormalModeLangevin':{'firstmode':1,
                                                      'numbermodes':22,
                                                      'gamma':80,
