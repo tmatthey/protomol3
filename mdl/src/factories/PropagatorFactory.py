@@ -575,7 +575,7 @@ class PropagatorFactory:
 			     'inForceFile', ""))
       self.registerPMObject("NormalModeDiagonalize",
 			    ('reDiagFrequency', 0,
-                             'fullDiag', 1,
+                             'fullDiag', False,
                              'removeRand', 0,
                              'rediagHysteresis', 0,
                              'eigenValueThresh', 5,
@@ -586,7 +586,9 @@ class PropagatorFactory:
 			     'autoDT', False,
 			     'pdm', False,
 			     'minimLim', 0.1,
-                             'maxminsteps', 100))
+                             'maxminsteps', 100,
+                             'geometricdof', False,
+                             'numericHessians', False))
                             #('averageSteps', 1,
 			    # 'avStepSize', 1.0,
 			    # 'reDiagFrequency', 0,
@@ -650,19 +652,19 @@ class PropagatorFactory:
                         'temp', 300,
                         'seed', 1234
                        ))
-      self.registerPMObject("OpenMM",
-                       ('temp', 300,
-      		        'gamma', 2,
-      			'seed', 1234,
-      			'HarmonicBondForce', True,
-      			'HarmonicAngleForce', True,
-      			'RBDihedralForce', True,
-      			'PeriodicTorsion', True,
-      			'NonbondedForce', True,
-      			'IntegratorType', 1,
-      			'GBSAEpsilon', 1.0,
-                        'GBSASolvent', 78.3,
-                        'commonmotion', 0))
+      #self.registerPMObject("OpenMM",
+       #                ('temp', 300,
+      	#	        'gamma', 2,
+      	#		'seed', 1234,
+      	#		'HarmonicBondForce', True,
+      	#		'HarmonicAngleForce', True,
+      	#		'RBDihedralForce', True,
+      	#		'PeriodicTorsion', True,
+      	#		'NonbondedForce', True,
+      	#		'IntegratorType', 1,
+      	#		'GBSAEpsilon', 1.0,
+         #               'GBSASolvent', 78.3,
+          #              'commonmotion', 0))
 
    
 

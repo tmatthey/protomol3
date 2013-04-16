@@ -1,17 +1,16 @@
 %module ProtoMolApp
 %{
-#include <protomol/ProtoMolApp.h>
-#include <protomol/type/Real.h>
-#include <protomol/ProtoMolApp.h>
-#include <protomol/integrator/leapfrog/LeapfrogIntegrator.h>
-#include <protomol/base/Report.h>
+#include <Real.h>
+#include <ProtoMolApp.h>
+#include <LeapfrogIntegrator.h>
+#include <Report.h>
 using namespace ProtoMol;
 %}
 
-%include <protomol/type/Real.h>
-%include <interface/type/Vector3DBlock.i>
-%include <interface/type/ScalarStructure.i>
-%include <protomol/ProtoMolApp.h>
+%include <Real.h>
+%include <Vector3DBlock.i>
+%include <ScalarStructure.i>
+%include <ProtoMolApp.h>
 
 %extend ProtoMol::ProtoMolApp {
 static void turnOffHints() {

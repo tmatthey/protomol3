@@ -4,6 +4,7 @@ from ForceField import *
 from ForceFactory import *
 import MathUtilities
 import numpy
+import Forces
 from PySystemForce import *
 
 class Forces:

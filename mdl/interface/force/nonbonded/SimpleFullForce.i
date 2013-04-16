@@ -17,7 +17,7 @@
 #include <protomol/force/LennardJonesForce.h>
 #include <protomol/force/GB/GBForce.h>
 #include <protomol/force/GB/GBACEForce.h>
-#include <protomol/force/GB/GBBornBurialTerm.h>
+//#include <protomol/force/GB/GBBornBurialTerm.h>
 #include <protomol/force/GB/GBBornRadii.h>
 #include <protomol/force/nonbonded/NonbondedSimpleFullSystemForce.h>
 using namespace ProtoMol;
@@ -174,7 +174,7 @@ using namespace ProtoMol;
 				   ProtoMol::OneAtomPairTwo<ProtoMol::VacuumBoundaryConditions,ProtoMol::ComplementSwitchingFunction<ProtoMol::CnSwitchingFunction>,ProtoMol::LennardJonesForce,ProtoMol::ComplementSwitchingFunction<ProtoMol::C1SwitchingFunction>,ProtoMol::CoulombForceDiElec> >;
 
 
-%template(NSFSF_V_U_GB_GBORNBUR) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBBornBurialTerm> >;
+//%template(NSFSF_V_U_GB_GBORNBUR) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBBornBurialTerm> >;
 
 %template(NSFSF_V_U_GB_GBORN) ProtoMol::NonbondedSimpleFullSystemForce<ProtoMol::OneAtomPairNoExclusion<ProtoMol::VacuumBoundaryConditions, ProtoMol::UniversalSwitchingFunction, ProtoMol::GBBornRadii> >;
 

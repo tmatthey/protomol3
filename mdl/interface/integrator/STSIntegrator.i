@@ -17,7 +17,7 @@ using namespace ProtoMol;
 %include <protomol/integrator/Integrator.h>
 %include <protomol/integrator/StandardIntegrator.h>
 %include <protomol/integrator/STSIntegrator.h>
-%include "STSIntegrator.h"
+//%include "STSIntegrator.h"
 
 
 %extend ProtoMol::STSIntegrator {

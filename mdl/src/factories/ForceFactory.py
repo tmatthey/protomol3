@@ -8,7 +8,7 @@ import SimpleFullForce
 import CutoffForce
 import EwaldForce
 import PMEForce 
-import MultiGridForce   
+#import MultiGridForce   
 
 
 class ForceFactory:
@@ -93,7 +93,8 @@ class ForceFactory:
                                              'C1':EwaldForce.EWALD_V_TTT_C1},
                                     'PME':{'Cutoff':PMEForce.PME_V_TTT_B,
                                            'C1':PMEForce.PME_V_TTT_B_C1},
-                                    'MultiGrid':{'Cutoff':MultiGridForce.MG_V_TTT}},
+                                   # 'MultiGrid':{'Cutoff':MultiGridForce.MG_V_TTT}
+			},
 
                           'Periodic':{'SimpleFull':{'Universal':SimpleFullForce.NSFSF_P_U_C},
                                       'Cutoff':{'C1':CutoffForce.NCSF_CCM_OAPPBC_C1SF_CF,
@@ -105,7 +106,8 @@ class ForceFactory:
                                                'C1':EwaldForce.EWALD_P_TTT_C1},
                                       'PME':{'Cutoff':PMEForce.PME_P_TTT_B,
                                              'C1':PMEForce.PME_P_TTT_B_C1},
-                                      'MultiGrid':{'Cutoff':MultiGridForce.MG_P_TTT}}
+                                      #'MultiGrid':{'Cutoff':MultiGridForce.MG_P_TTT}
+			}
                                       
 
                           } #: Maps boundary conditions, algorithm and switching function to electrostatic force object constructor.  

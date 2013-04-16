@@ -2,6 +2,7 @@
 %{
 //#include "CubicCellManager.h"
 #include <protomol/type/Vector3DBlock.h>
+#include <protomol/topology/CubicCellManager.h>
 #include <protomol/topology/PeriodicBoundaryConditions.h>
 #include <protomol/topology/VacuumBoundaryConditions.h>
 #include <protomol/topology/Topology.h>
@@ -16,6 +17,7 @@ using namespace ProtoMol;
 %include <protomol/type/Real.h>
 %include "std_vector.i"
 %include <protomol/type/Vector3DBlock.h>
+%include <protomol/topology/CubicCellManager.h>
 %include <protomol/topology/Atom.h>
 %include <protomol/topology/Bond.h>
 %include <protomol/topology/Angle.h>
@@ -37,6 +39,7 @@ using namespace ProtoMol;
         void setExclusion(char* e) {self->exclude = ExclusionType((const char*)e);}
         CoulombSCPISMParameterTable* makeSCPISM() {CoulombSCPISMParameterTable* SCPISMParameters = new CoulombSCPISMParameterTable(); SCPISMParameters->populateTable(); return SCPISMParameters;}
 };
+
 %extend ProtoMol::Topology<ProtoMol::VacuumBoundaryConditions, ProtoMol::CubicCellManager> {
 	void resizeLennardJonesParameters(int sz) {
            self->lennardJonesParameters.resize(sz);
@@ -45,7 +48,7 @@ using namespace ProtoMol;
            self->lennardJonesParameters.set(type1, type2, params);
         }
         void setCellSize(ProtoMol::Real r){
-	   self->cellManager.setCellSize(r);
+self->cellManager = ProtoMol::CubicCellManager(r);
 	}
         Atom getAtom(int i) {return self->atoms[i];}
         Bond getBond(int i) {return self->bonds[i];}
@@ -56,9 +59,12 @@ using namespace ProtoMol;
 }
 
 %extend ProtoMol::Topology<ProtoMol::PeriodicBoundaryConditions, ProtoMol::CubicCellManager> {
-	void setCellSize(ProtoMol::Real r){
-	   self->cellManager.setCellSize(r);
+        void setCellSize(ProtoMol::Real r){
+self->cellManager = ProtoMol::CubicCellManager(r);
 	}
+	//void setCellSize(ProtoMol::Real r){
+	//   self->cellManager.setCellSize(r);
+	//}
 	void resizeLennardJonesParameters(int sz) {
            self->lennardJonesParameters.resize(sz);
         }

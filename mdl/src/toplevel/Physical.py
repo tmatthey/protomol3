@@ -603,6 +603,7 @@ class Physical:
       if (hasattr(self, "myTop")):
           tm = self.myTop.time
       if (self.bc == "Periodic"):
+          self.myTop.setCellSize(self.cellsize)
           if (self.defaultCBV):
              # TEMPORARY STRUCTURES USED TO COMPUTE
              # BOUNDING BOX
@@ -653,8 +654,8 @@ class Physical:
 	   TopologyUtilities.removeLinearMomentum(self.velvec, self.myTop).disown()
          if (self.remang >= 0):
 	   TopologyUtilities.removeAngularMomentum(self.posvec, self.velvec, self.myTop).disown()
-      if (self.bc == "Periodic"):
-           self.myTop.setCellSize(self.cellsize)
+      #if (self.bc == "Periodic"):
+      #     self.myTop.setCellSize(self.cellsize)
       # COMPUTE INV MASS MATRIX
       temp = list()
       ii = 0

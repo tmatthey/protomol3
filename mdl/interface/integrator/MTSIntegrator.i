@@ -20,7 +20,7 @@ using namespace ProtoMol;
 %include <protomol/integrator/StandardIntegrator.h>
 %include <protomol/integrator/STSIntegrator.h>
 %include <protomol/integrator/MTSIntegrator.h>
-%include "MTSIntegrator.h"
+//%include "MTSIntegrator.h"
 
 
 %extend ProtoMol::MTSIntegrator {

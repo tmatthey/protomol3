@@ -56,7 +56,7 @@ pwd = os.getenv('PWD')
 if (os.environ.has_key('PROTOMOL_HOME')):
    pmhome=os.getenv('PROTOMOL_HOME')
 else:
-   pmhome=pwd+'../'
+   pmhome=pwd+''
 execfile(pmhome+'/compiler.py')
 
 
@@ -72,7 +72,7 @@ opts.AddOptions(
 
 
 
-compiler_add_opts()
+#compiler_add_opts()
 
 # Create environment and import external PATH
 env = Environment(options = opts, ENV = os.environ)
@@ -96,7 +96,7 @@ use_simtk_lapack = int(env.get('simtk_lapack', 0))
 
 
 # Configure compiler
-compiler_configure()
+#compiler_configure()
 
 
 # Include protomol
