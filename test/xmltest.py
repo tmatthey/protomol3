@@ -3,6 +3,7 @@ import os
 import subprocess
 import comparator
 import optparse
+import logging
 
 DEFAULT_EPSILON = 0.00001
 DEFAULT_SCALINGFACTOR = 1.0
@@ -48,6 +49,10 @@ if options.parallel:
     executable.append( "-np" )
     executable.append( "2" )
 executable.append( os.path.join(os.getcwd(), 'ProtoMol') )
+
+# Verbose
+if options.verbose:
+    logging.basicConfig(level=logging.DEBUG)
 
 # Find Tests
 tests = glob.glob(os.path.join(os.getcwd(), 'tests', '*.conf'))
