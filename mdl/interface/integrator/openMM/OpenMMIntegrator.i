@@ -40,8 +40,10 @@ ProtoMolApp* appInit(GenericTopology* topo,
 }
 
 OpenMMIntegrator* setParams(float ts, float temperature, float gamma, int seed, 
-                            bool hbf, bool haf, bool rbdf, bool pt, bool nf,
-			    int it, float gbsae, float gbsaf, int com, ForceGroup* fg) {
+                            bool hbf, bool haf, bool rbdf, bool pt, bool nf, bool gbf,
+			    bool scpism,bool itf, bool ubf, bool charmm,int common,
+                            float gbsae,float gbsaf,int platform,int steps,float tolerance,float conb,float cogb,
+                            int did, int bdid ,ForceGroup* fg) {
    std::vector<Value> v;
    v.push_back(Value(ts));
    v.push_back(Value(temperature));
@@ -52,10 +54,24 @@ OpenMMIntegrator* setParams(float ts, float temperature, float gamma, int seed,
    v.push_back(Value(rbdf));
    v.push_back(Value(pt));
    v.push_back(Value(nf));
-   v.push_back(Value(it));
+   v.push_back(Value(gbf));
+   v.push_back(Value(scpism));
+   v.push_back(Value(itf));
+   v.push_back(Value(ubf));
+   v.push_back(Value(charmm));
+   v.push_back(Value(common));
    v.push_back(Value(gbsae));
    v.push_back(Value(gbsaf));
-   v.push_back(Value(com));
+   v.push_back(Value(platform));
+   v.push_back(Value(steps));
+   v.push_back(Value(tolerance));
+   v.push_back(Value(conb));
+   v.push_back(Value(cogb));
+   v.push_back(Value(did));
+   v.push_back(Value(bdid));
+
+
+   
    return (OpenMMIntegrator*)(self->make(v, fg)); 
 }
 };

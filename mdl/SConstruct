@@ -11,7 +11,7 @@ mdlmodules = {'integrator/leapfrog':['LeapfrogIntegrator', 'LeapfrogTruncatedSha
              'type':['Vector3DBlock', 'ScalarStructure'],
 	      'integrator/normal':['NormalModeBrownian', 'NormalModeDiagonalize', 'NormalModeMinimizer', 'NormalModeLangevin', 'NormalModeUtilities', 'NormalModeMori', 'NormalModeRelax', 'BBKIntegrator', 'NormalModeLangLf'],
               'integrator/hessian':['HessianInt'],
-             # 'integrator/openMM':['OpenMMIntegrator'],
+              'integrator/openMM':['OpenMMIntegrator'],
               'io':['DCDTrajectoryReader', 'EigenvectorReader', 'EigenvectorTextReader', 'PARReader', 'PDBReader', 'PDBWriter', 'PSFReader', 'XYZBinReader', 'XYZReader', 'XYZTrajectoryReader', 'XYZTrajectoryWriter', 'XYZWriter'],
 	      'io/gromacs':['GromacsParameterFileReader', 'GromacsTopologyReader', 'PortGromacsParameters'],
               'output':['OutputCache','OutputDCDTrajectory', 'OutputDCDTrajectoryVel','OutputEnergies', 'OutputFAHGUI', 'OutputFinalPDBPos', 'OutputFinalXYZPos', 'OutputFinalXYZVel', 'OutputScreen', 'OutputXYZTrajectoryForce', 'OutputXYZTrajectoryPos', 'OutputXYZTrajectoryVel'],
@@ -407,6 +407,7 @@ else:
         use_openmm_reference = 1
         use_openmm_cuda = 0
     elif ( openmm_type == 'cuda' ):
+        env.Prepend(LIBS = ['OpenMM'])
         print "USING CUDA"
         use_openmm_reference = 0
         use_openmm_cuda = 1
@@ -433,8 +434,8 @@ else:
 
             print env['LIBPATH']
             #check_library('OpenMMCuda_d', True) and 
-            if check_library(conf, 'OpenMMCuda', True) and check_library(conf, 'cudart', True):
-                env.Append(CPPDEFINES = ['HAVE_OPENMM'])
+          #  if check_library(conf, 'OpenMMCuda', True) and check_library(conf, 'cudart', True):
+            env.Append(CPPDEFINES = ['HAVE_OPENMM'])
 
 
 # Configure compiler
@@ -509,8 +510,10 @@ for s in subsrc:
      # I am removing this file from the shared object
      # compilation - it's only used if HAVE_MPI is true, which
      # will never be true for MDL.
-     #if (s != 'parallel/FFTComplex.cpp'):
+     #if (s != 'parallel/FFTComplex.cpp'): 
+   print "SUBSRC: ", s
    libsrc2.append(pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+s)
+libsrc2.append(pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+"integrator"+os.sep+"openMM"+os.sep+"OpenMMIntegrator.cpp")
 env.Prepend(LIBS = [''])
 libname2 = 'mdl'
 #if (env['PLATFORM'] == 'darwin'):
