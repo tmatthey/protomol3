@@ -652,19 +652,30 @@ class PropagatorFactory:
                         'temp', 300,
                         'seed', 1234
                        ))
-      #self.registerPMObject("OpenMM",
-       #                ('temp', 300,
-      	#	        'gamma', 2,
-      	#		'seed', 1234,
-      	#		'HarmonicBondForce', True,
-      	#		'HarmonicAngleForce', True,
-      	#		'RBDihedralForce', True,
-      	#		'PeriodicTorsion', True,
-      	#		'NonbondedForce', True,
-      	#		'IntegratorType', 1,
-      	#		'GBSAEpsilon', 1.0,
-         #               'GBSASolvent', 78.3,
-          #              'commonmotion', 0))
+      self.registerPMObject("OpenMM",
+                       ('temp', 300,
+      		        'gamma', 2,
+      			'seed', 1234,
+      			'HarmonicBondForce', True,
+      			'HarmonicAngleForce', True,
+      			'RBDihedralForce', True,
+      			'PeriodicTorsion', True,
+      			'NonbondedForce', True,
+      			'GBForce',False,
+                        'SCPISMForce',False,
+                        'ImproperTorsionForce',False,
+                        'UreyBradleyForce',False,
+		        'CHARMMLennardJonesForce',False,
+                        'commonmotion',0,
+                        'GBSAEpsilon', 1.0,
+                        'GBSASolvent',78.3,
+                        'platform',2,
+                        'miniSteps',0,
+                        'tolerance',1.0,
+                        'CutoffNonBonded',0.0,
+                        'CutoffGB',0.0,
+                        'DeviceID',-1,
+                        'BlockDeviceID',-1))
 
    
 
