@@ -127,15 +127,15 @@ class IO:
       self.dirty = 1        #: Dirty bit, set to 1 if data members have been modified since the last propagation
 
    def __setattr__(self, att, val):
-      if (att == 'params'):
+      if (att == 'params'): # if the attribute is equivalent to 'params' then set dirty to 1.
          self.dirty = 1
-      self.__dict__[att] = val
+      self.__dict__[att] = val # then set the diction[att] to the value
          
    def reset(self):
       """
       Reset the state of the IO object.
       """
-      self.myOutputs = list()
+      self.myOutputs = list() 
       self.myPlots = list()
       self.pause = 0
       self.doMPL = False
@@ -150,13 +150,15 @@ class IO:
       self.mplFigCount = 0
 
    def nextLargest(self, step, freq):
-      rem = step % freq
-      return step+(freq-rem)
+      rem = step % freq # calculate the remaining value by doing step modulo freq
+      return step+(freq-rem) # returns the next largest spot
 
    def computeNext(self, currentstep, remcom, remang):
       # Find the next highest step whose value modulo an output frequency is zero
-      val = numpy.inf
-      if (remcom > 0):
+      # for self.screen, self.plots, and self.files iterate to see where they have values
+      # then return the value
+      val = numpy.inf # setting the val to infinity
+      if (remcom > 0): 
          val = numpy.minimum(val, self.nextLargest(currentstep, remcom))
       if (remang > 0):
          val = numpy.remang(val, self.nextLargest(currentstep, remang))
@@ -184,12 +186,12 @@ class IO:
       @rtype: string
       @return: Absolute path to the file (MDL root directory appended if the supplied path was relative).
       """
-      if (not os.path.exists(filename)):
-         filename = os.getenv('MDLROOT')+'/'+filename
-      if (not os.path.exists(filename)):
-         print "[MDL] ERROR, FILE", filename, "DOES NOT EXIST."
-         sys.exit(1)
-      return filename
+      if (not os.path.exists(filename)): # if the file in the suggested path does not exist
+         filename = os.getenv('MDLROOT')+'/'+filename # set the filename to the root directory
+      if (not os.path.exists(filename)): # if it still does not exist
+         print "[MDL] ERROR, FILE", filename, "DOES NOT EXIST." # say that the 'filename' does not exist
+         sys.exit(1) # exit
+      return filename # return the filename (root directory)
    
    def readPSF(self,phys,psfname):
         """
@@ -201,8 +203,8 @@ class IO:
         @type psfname: string
         @param psfname: PSF file name.
         """
-        PSFReader.PSFReader(self.checkPath(psfname)).read(phys.myPSF)
-        phys.build()
+        PSFReader.PSFReader(self.checkPath(psfname)).read(phys.myPSF) # check the path for the 'psfname' file, read the entire myPSF file
+        phys.build() # then build
 
    def readPAR(self,phys,parname):
         """
@@ -214,9 +216,9 @@ class IO:
         @type parname: string
         @param parname: CHARMM parameter file name.
         """
-        PARReader.PARReader(self.checkPath(parname),0).read(phys.myPAR)
-        phys.myPAR.readFlag = 1
-        phys.build()
+        PARReader.PARReader(self.checkPath(parname),0).read(phys.myPAR) # check the path of parname and read the myPAR file
+        phys.myPAR.readFlag = 1 
+        phys.build() # then build
 
    def readAMBERCrd(self, phys, filename):
         """
@@ -229,21 +231,22 @@ class IO:
 	@param filename: AMBER coordinate file name.
         """
 
-	f = open(filename, 'r')
-	data = f.read()
+	f = open(filename, 'r') # open the file and return the object, 'r'
+	data = f.read() # read the object of file
 	# Keep going with this!!!
-        numbers = data.split(' ')
-        while (numbers.count('') != 0):
-           numbers.remove('')
+        numbers = data.split(' ') # return the list of data and set it to numbers
+        while (numbers.count('') != 0): # while the number count is not equal to 0, which means while there is still data to read
+           numbers.remove('') # remove the numbers
         
-        phys.posvec.resize(int(numbers[0].replace('\n', '')))
-        for i in range(1, len(numbers), 3):
-           if (numbers[i].find('\n') != -1):
-              numbers[i].replace('\n', '')
-           phys.positions[i-1] = numbers[i]
-           phys.positions[i] = numbers[i+1]
+        phys.posvec.resize(int(numbers[0].replace('\n', ''))) # resize the position vector. Also replace what is at position 0 of numbers with '\ n'
+        for i in range(1, len(numbers), 3):  # go to the size 1,length of numbers, 3. this assumes a 3 index array
+           if (numbers[i].find('\n') != -1): # find '\n' in numbers at position i where it is not equal to -1.
+           phys.positions[i] = numbers[i+1]  # then iterate through positions and set it equal to numbers at spot i+1
+          	 numbers[i].replace('\n', '') # and replace it with '\n'
+           phys.positions[i-1] = numbers[i] # set postions[i-1] to number[i] since numbers[i+1] = positions[i] 
+           phys.positions[i] = numbers[i+1] 
            phys.positions[i+1] = numbers[i+2]
-
+          # keep iterating through the files matching positions and numbers with their appropriate spots
 
 
    def readAMBERTop(self, phys, filename):
@@ -260,32 +263,33 @@ class IO:
 
       def skipLine(data):
          nl = data.index('\n')
-         return data[nl+1:len(data)]
+         return data[nl+1:len(data)]# skips a spot
 
       def jumpTo(data, target):
          fp = data.index(target)
-         return data[fp:len(data)]
+         return data[fp:len(data)]# jumps to a specific spot in the array
 
       def readRemove(data, size):
          retval = data[0:size-1]
-         return data[size:len(data)]
+         return data[size:len(data)] # removes one less from the size and returns the data of from size-1
 
       def getInteger(data):
          pos = 0
          retval = ""
-         while (not data[pos].isdigit()):
-            pos = pos + 1
-         while (data[pos].isdigit()):
-            retval = retval + data[pos]
-            pos = pos + 1
-         data = data[pos:len(data)]
-         return int(retval), data
+         while (not data[pos].isdigit()): # while there is no data at the position
+            pos = pos + 1 # iterate position up by 1
+         while (data[pos].isdigit()): # then when there is data
+            retval = retval + data[pos] # set retval to the data
+            pos = pos + 1 # move the position up by 1 again
+         data = data[pos:len(data)] # data is set to the postion it's at and the length of the data
+         return int(retval), data # retrieve the integer at populated spots
 
-      def parse(data, arr, str, count, dtype, tupsize=1):
+      def parse(data, arr, str, count, dtype, tupsize=1): 
+         # this function analyzes a string of data and returns the data.
          data = jumpTo(data, "%FLAG "+str)
          data = jumpTo(data, "%FORMAT")
          numPerLine, data = getInteger(data)
-         fieldsize, data = getInteger(data)
+         fieldsize, data = getInteger(data) 
          data = skipLine(data)      
    
          arr2 = []
@@ -307,7 +311,7 @@ class IO:
          return data
 
       def scan(data, str):
-         return (data.count(str) != 0)
+         return (data.count(str) != 0) # scans through the data and counts
 
 
       f = open(filename, 'r')
@@ -596,14 +600,15 @@ class IO:
 	@param parname: AMBER parameter file name.
 	"""
 
-	groTop = GromacsTopologyReader.GromacsTopology()
-	groPar = GromacsParameterFileReader.GromacsParameters()
-	portGro = PortGromacsParameters.PortGromacsParameters()
-	portGro.Read_Basic_Gromacs_Parameters(phys.myPSF, phys.myPAR, groTop, groPar, self.checkPath(topname), self.checkPath(parname))
-	if (gbname != ""):
-	   portGro.Read_Gromacs_GB_Parameters(self.checkPath(gbname))
-	phys.myPAR.readFlag = 1
-	phys.build()
+	groTop = GromacsTopologyReader.GromacsTopology() # set groTop as GromacsTopology
+	groPar = GromacsParameterFileReader.GromacsParameters() # set groPar as GromacsParameters
+	portGro = PortGromacsParameters.PortGromacsParameters() # set portGro as PortGromacsParameter
+        # what this means is that these functions groTop, groPar and portGro are now assigned with designated paramters and functions
+	portGro.Read_Basic_Gromacs_Parameters(phys.myPSF, phys.myPAR, groTop, groPar, self.checkPath(topname), self.checkPath(parname)) # read portGro gromacs paramters and checkpath for topname and parname
+	if (gbname != ""): # if gbname, designated as a paramter for the readGromacs function, is not set with its default
+	   portGro.Read_Gromacs_GB_Parameters(self.checkPath(gbname)) # read gromacs parameters for portGro and check path of gbname 
+	phys.myPAR.readFlag = 1 # set the readFlag to 1, to read the myPar function
+	phys.build() # then build
 
    def readPDBPos(self,phys,pdbname):
         """
@@ -615,13 +620,15 @@ class IO:
         @type pdbname: string
         @param pdbname: PDB file name.
         """
-        PDBReader.PDBReader(self.checkPath(pdbname)).read(phys.myPDB)
-        phys.posvec.resize(phys.myPDB.coords.size())
-        for ii in range(0, phys.myPDB.coords.size()*3, 3):
-           phys.positions[ii] = phys.myPDB.coords[ii]
+        PDBReader.PDBReader(self.checkPath(pdbname)).read(phys.myPDB) # check the path of pdbname and read myPDB
+        phys.posvec.resize(phys.myPDB.coords.size()) # resize position vector to the size of the coordinates of myPDB
+        for ii in range(0, phys.myPDB.coords.size()*3, 3): # loop through the size of myPDB 0,myPDB coordinate size *3, 3
+          # then set positions at spot ii to myPDB at ii
+          # same goes with positions ii+1 and ii+2
+	   phys.positions[ii] = phys.myPDB.coords[ii] 
            phys.positions[ii+1] = phys.myPDB.coords[ii+1]
            phys.positions[ii+2] = phys.myPDB.coords[ii+2]
-        self.pdbname = pdbname
+        self.pdbname = pdbname 
 
 
    def readPDBVel(self,phys,pdbname):
@@ -634,13 +641,15 @@ class IO:
         @type pdbname: string
         @param pdbname: PDB file name.
         """
-        PDBReader.PDBReader(self.checkPath(pdbname)).read(phys.myPDB)
-        phys.velvec.resize(phys.myPDB.coords.size())
-        for ii in range(0, phys.myPDB.coords.size()*3, 3):
-           phys.velocities[ii] = phys.myPDB.coords[ii]
+        PDBReader.PDBReader(self.checkPath(pdbname)).read(phys.myPDB) # check the path of pdbname and read myPDB
+        phys.velvec.resize(phys.myPDB.coords.size()) # resize the velocity vector to the size of the coordinates of myPDB
+        for ii in range(0, phys.myPDB.coords.size()*3, 3): # range from 0, to the size of the coordinates *3, and 3
+	# this loop will iterate and set velocities[ii] to myPDB.coords[ii]
+        # the same will go through the iteration doing the same for ii+1 and ii+2
+           phys.velocities[ii] = phys.myPDB.coords[ii] 
            phys.velocities[ii+1] = phys.myPDB.coords[ii+1]
            phys.velocities[ii+2] = phys.myPDB.coords[ii+2]
-        phys.velocities *= (1.0 / 20.45482706)
+        phys.velocities *= (1.0 / 20.45482706) # veclocities is set to itself * 1/20.45 (atomic velocities)
 
    def readXYZPos(self,phys,xyzname):
         """
@@ -652,10 +661,12 @@ class IO:
         @type xyzname: string
         @param xyzname: XYZ file name.
         """
-        XYZReader.XYZReader(self.checkPath(xyzname)).read(phys.myXYZ)
-	phys.posvec.resize(phys.myXYZ.coords.size())
-        for ii in range(0, phys.myXYZ.coords.size()*3, 3):
-           phys.positions[ii] = phys.myXYZ.coords[ii]
+        XYZReader.XYZReader(self.checkPath(xyzname)).read(phys.myXYZ) # check the path of xyzname and read myXYZ
+	phys.posvec.resize(phys.myXYZ.coords.size()) # resize the position vectir to the size of myXYZ coordinates
+        for ii in range(0, phys.myXYZ.coords.size()*3, 3): # iterate from 0, size of coordinates *3, 3
+        # this loop with iterate and set positions[ii] to myXYZ.coords[ii]
+        # this will do the same for positions[ii+1] and postions[ii+2] 
+           phys.positions[ii] = phys.myXYZ.coords[ii] 
            phys.positions[ii+1] = phys.myXYZ.coords[ii+1]
            phys.positions[ii+2] = phys.myXYZ.coords[ii+2]
 
@@ -669,7 +680,7 @@ class IO:
         @type xyzname: string
         @param xyzname: XYZ file name.
         """
-        XYZBinReader.XYZBinReader(self.checkPath(xyzname)).read(phys.posvec)
+        XYZBinReader.XYZBinReader(self.checkPath(xyzname)).read(phys.posvec) # check the path of xyzname and read posvec
 
    def readXYZVel(self,phys,xyzname):
         """
@@ -681,6 +692,7 @@ class IO:
         @type xyzname: string
         @param xyzname: XYZ file name.
         """
+        # this is similar to the readPDBvel function
         XYZReader.XYZReader(self.checkPath(xyzname)).read(phys.myXYZ)
 	phys.velvec.resize(phys.myXYZ.coords.size())
         for ii in range(0, phys.myXYZ.coords.size()*3, 3):
@@ -698,7 +710,7 @@ class IO:
         @type xyzname: string
         @param xyzname: XYZ file name.
         """
-        XYZBinReader.XYZBinReader(self.checkPath(xyzname)).read(phys.velvec)
+        XYZBinReader.XYZBinReader(self.checkPath(xyzname)).read(phys.velvec) # check the path of xyzname and read velvec
 
    def readDCDTrajectoryPos(self,phys,dcdname):
         """
@@ -712,17 +724,17 @@ class IO:
         @type dcdname: string
         @param dcdname: DCD trajectory file name.
         """
-        dcdname = self.checkPath(dcdname)
-        if (not self.dcdfiles.has_key(dcdname)):
-           self.myDCDTrajectoryReader=DCDTrajectoryReader.DCDTrajectoryReader(dcdname)
-           self.dcdfiles[dcdname] = 0
-        else:
-           self.dcdfiles[dcdname] += 1
-        succeed = self.myDCDTrajectoryReader.read()
-        if (succeed == 0):
+        dcdname = self.checkPath(dcdname) # check the path of dcdname
+        if (not self.dcdfiles.has_key(dcdname)): # if dcdfiles does not have dcdname
+           self.myDCDTrajectoryReader=DCDTrajectoryReader.DCDTrajectoryReader(dcdname)# set myDCTrajectoryReader to DCDTrajectoryReader of dcdname
+           self.dcdfiles[dcdname] = 0 
+        else: # if dcd file had dcdname
+           self.dcdfiles[dcdname] += 1 # iterate through the file
+        succeed = self.myDCDTrajectoryReader.read() #read it
+        if (succeed == 0): # and if succeed = 0 which means nothing
               print "[MDL] ERROR: DCD TRAJECTORY READING FAILURE ON FILE ",
               print dcdname
-        for ii in range(0, self.myDCDTrajectoryReader.size()):
+        for ii in range(0, self.myDCDTrajectoryReader.size()): # similar now to readXYZPos
                phys.positions[ii*3] = self.myDCDTrajectoryReader.getElement(ii, 0)
                phys.positions[ii*3+1] = self.myDCDTrajectoryReader.getElement(ii, 1)
                phys.positions[ii*3+2] = self.myDCDTrajectoryReader.getElement(ii, 2)
@@ -765,7 +777,7 @@ class IO:
         @type eigname: string
         @param eigname: Eigenvector file name.
         """
-        EigenvectorReader.EigenvectorReader(self.checkPath(eigname)).read(phys.myEig)
+        EigenvectorReader.EigenvectorReader(self.checkPath(eigname)).read(phys.myEig) # check the path of eigname and read myEig
 
    def writePDBPos(self,phys,pdbname):
       """
@@ -777,7 +789,7 @@ class IO:
       @type pdbname: string
       @param pdbname: PDB file name.
       """
-      PDBWriter.PDBWriter(pdbname).write(phys.posvec, phys.myPDB)
+      PDBWriter.PDBWriter(pdbname).write(phys.posvec, phys.myPDB) # write position vector and myPDB into Pdbname
 
    def writePDBVel(self,phys,pdbname):
       """
@@ -789,7 +801,7 @@ class IO:
       @type pdbname: string
       @param pdbname: PDB file name.
       """
-      PDBWriter.PDBWriter(pdbname).write(phys.velvec, phys.myPDB)
+      PDBWriter.PDBWriter(pdbname).write(phys.velvec, phys.myPDB) # write velocities vector and myPDB  into Pdbname
 
    def writeXYZPos(self,phys,xyzname):
       """
@@ -801,7 +813,7 @@ class IO:
       @type xyzname: string
       @param xyzname: XYZ file name.
       """
-      XYZWriter.XYZWriter(xyzname).write(phys.posvec, phys.myTop.atoms, phys.myTop.atomTypes)
+      XYZWriter.XYZWriter(xyzname).write(phys.posvec, phys.myTop.atoms, phys.myTop.atomTypes) # write position vector, atoms, and atomTypes into xyzname
 
    def writeXYZVel(self,phys,xyzname):
       """
@@ -813,7 +825,7 @@ class IO:
       @type xyzname: string
       @param xyzname: XYZ file name.
       """
-      XYZWriter.XYZWriter(xyzname).write(phys.velvec, phys.myTop.atoms, phys.myTop.atomTypes)
+      XYZWriter.XYZWriter(xyzname).write(phys.velvec, phys.myTop.atoms, phys.myTop.atomTypes) # write velocity vector, atoms, and atom types omtp xyzname
 
 
 
@@ -865,25 +877,27 @@ class IO:
         @type ylab: string
         @param ylab: Label for y-axis
         """
-        if (not self.doMPL):
-           newGraph = Gnuplot(debug=0)
+        if (not self.doMPL): # not using MatplotLib
+           newGraph = Gnuplot(debug=0) # set newGraph to Gnuplot
 	   #newGraph('set data style linespoints')
-	   newGraph.set_label('xlabel', xlab)
-	   newGraph.set_label('ylabel', ylab)
-           return newGraph
-        else:
-           self.mplFigCount = self.mplFigCount + 1
-           if (self.graphLabelsX.__len__() <= self.mplFigCount):
-               gg = self.graphLabelsX.__len__()
-               while (gg <= self.mplFigCount):
-                   self.graphLabelsX.append('')
-                   gg = gg+1
-           if (self.graphLabelsY.__len__() <= self.mplFigCount):
-               gg = self.graphLabelsY.__len__()
-               while (gg <= self.mplFigCount):
-                   self.graphLabelsY.append('')
-                   gg = gg+1
-           self.graphLabelsX[self.mplFigCount] = xlab
+	   newGraph.set_label('xlabel', xlab) # label xlab xlabel
+	   newGraph.set_label('ylabel', ylab) # label ylab ylabel
+           return newGraph # return the newGraph with the labels
+        else: # or if it is a Matplotlib
+           self.mplFigCount = self.mplFigCount + 1 # iterate mplFigCount by 1
+           if (self.graphLabelsX.__len__() <= self.mplFigCount): # if the length of graphlabelsX is less than or equal to mplFigCount 
+               gg = self.graphLabelsX.__len__() # set gg to the length of graphLabelsX
+               while (gg <= self.mplFigCount): # while the length of graphLabelsX is less than or equal to mplFigcount
+                   self.graphLabelsX.append('') # append ' ' to graphLabelsX
+                   gg = gg+1 # then iterate by 1 on gg
+           if (self.graphLabelsY.__len__() <= self.mplFigCount): # the same goes for graphLabelsy if it is less than or equal to mplFigCount
+               gg = self.graphLabelsY.__len__() # set gg to the length of graphLabelsY
+               while (gg <= self.mplFigCount): # while gg  is less than or equal to mplFigCount
+                   self.graphLabelsY.append('') # append ' ' to graphLabelsY
+                   gg = gg+1 # and iterate gg by 1
+          # Basically what just happened was that empty quotes were set to graphLabelsY and graphLabelsX when their length was less than the mplFigCount
+          # now, we are setting up the graph objects for graphLabelsY and X to either the xlab or ylab 
+           self.graphLabelsX[self.mplFigCount] = xlab 
            self.graphLabelsY[self.mplFigCount] = ylab
            figure(self.mplFigCount, (6,4))
            xlabel(self.graphLabelsX[self.mplFigCount])
@@ -911,50 +925,53 @@ class IO:
         @type rangey: pair
         @param rangey: Plotting range for y-axis (default is to dynamically adjust to the data)
         """
-        if (not self.doMPL):
+        if (not self.doMPL):# if this not MatplotLib
            graph('set data style linespoints')
            miny = 0; maxy = 0; minx = 0; maxx = 0;
            for i in range(0, vec.__len__()):
-              if (vec[i][0] < minx):
-                 minx = vec[i][0]
-              elif (vec[i][0] > maxx):
-                 maxx = vec[i][0]
-              if (vec[i][1] < miny):
+              if (vec[i][0] < minx):# if the data in vec at position i,0 is less than 0
+                 minx = vec[i][0] # then the minx is that data
+              elif (vec[i][0] > maxx): # if the data in vec at position i,0 is greater than 0
+                 maxx = vec[i][0] # then the maxx is that data
+              # the same goes for miny and maxy at position i,1 (x values are at the initial position 0 and y are at position 1)
+              if (vec[i][1] < miny): 
                  miny = vec[i][1]
               elif (vec[i][1] > maxy):
                  maxy = vec[i][1]
-           if (vec.__len__() == 1):
-              if (rangex.__len__() == 0):
-                 graph.set_range('xrange', (minx-0.5, maxx+0.5))
-              else:
-                 graph.set_range('xrange', (rangex[0], rangex[1]))
-              if (rangey.__len__() == 0):
+           if (vec.__len__() == 1): # now, if the vector length is equal to 1
+              if (rangex.__len__() == 0): # and the range of x is 0
+                 graph.set_range('xrange', (minx-0.5, maxx+0.5)) # set the values to go from minx-.5 to maxx+.5
+              else: 
+                 graph.set_range('xrange', (rangex[0], rangex[1])) # set the range of values to range from rangex[0] to rangex[1]
+              # the same goes for rangey
+              if (rangey.__len__() == 0): 
                  graph.set_range('yrange', (miny-0.5, maxy+0.5))
               else:
                  graph.set_range('yrange', (rangey[0], rangey[1]))
            else:
-              if (rangex.__len__() == 0):
-                 graph.set_range('xrange', (minx-0.1, maxx+0.1))
-              else:
-                 graph.set_range('xrange', (rangex[0], rangex[1]))
+              if (rangex.__len__() == 0):# if the rangex length is 0 
+                 graph.set_range('xrange', (minx-0.1, maxx+0.1)) # then iterate it by .1
+              else: # or
+                 graph.set_range('xrange', (rangex[0], rangex[1])) # set the range from rangex[0] to rangex[1]
+               # the same goes for rangey
               if (rangey.__len__() == 0):
                  graph.set_range('yrange', (miny-0.1, maxy+0.1))
               else:
                  graph.set_range('yrange', (rangey[0], rangey[1]))
            graph.plot(vec)
-        else:
+        else: # if this is MatplotLib
            figure(graph, (6,4))
-           xlabel(self.graphLabelsX[graph])
+           xlabel(self.graphLabelsX[graph])#run x and ylabel
            ylabel(self.graphLabelsY[graph])
            hh = 0
-           datax = []
+           datax = []# set datax and datay to be an array
            datay = []
-           while (hh < vec.__len__()):
+           while (hh < vec.__len__()): # while hh is less than the length of vector append vectors at position x to datax and position y to datay
                datax.append(vec[hh][0])
                datay.append(vec[hh][1])
-               hh = hh + 1
-           plot(datax, datay)
-           draw()
+               hh = hh + 1 # iterate hh by 1
+           plot(datax, datay) # plot datax and datay
+           draw() # and draw it
         if ((self.pause != 0) and (prop.myStep % self.pause == 0)):
    	   print "PRESS <RETURN> TO CONTINUE"
    	   raw_input()
@@ -973,41 +990,43 @@ class IO:
     @type name: string
     @param name: Observable name
     """
-    if (not self.doMPL):
+    if (not self.doMPL):# if this is not MatplotLib
       self.graphs[name]('set data style linespoints')
       self.graphs[name].set_label('xlabel', 'Step')
       self.graphs[name].set_label('ylabel', name) 
-      if (step == 0):
+      if (step == 0): # if step is a 0 then graph[name] is set to range 0 to 1
 	 self.graphs[name].set_range('xrange', (0, 1))
-      else:
+      else: # or if the step is not 0 then the graph[name] is set to range between 0, step
+            # then we append the step, qunatity to xyData
 	 self.graphs[name].set_range('xrange', (0, step))
       self.xyData[name].append([step, quantity])
-      miny = self.xyData[name][0][1]
+      miny = self.xyData[name][0][1] # min and max of y is set to xyData[name][0][1]
       maxy = self.xyData[name][0][1]
       for i in range(0, self.xyData[name].__len__()):
-         if (self.xyData[name][i][1] < miny):
-            miny = self.xyData[name][i][1]
-         elif (self.xyData[name][i][1] > maxy):
-            maxy = self.xyData[name][i][1]
-      if (self.xyData[name].__len__() == 1):
-	 self.graphs[name].set_range('yrange', (quantity-0.5, quantity+0.5))
-      else:
-         self.graphs[name].set_range('yrange', (miny-0.001, maxy+0.001))
-      self.graphs[name].plot(self.xyData[name])
+      # iterate from 0 to the length of xyData[name]
+         if (self.xyData[name][i][1] < miny): # iterate here until you find a value smaller than miny
+            miny = self.xyData[name][i][1] # while statement is true (meaning that there is a smaller value) then set that to miny
+         elif (self.xyData[name][i][1] > maxy): # iterate here unitl you find a value larger than maxy
+            maxy = self.xyData[name][i][1] # when a value exists then it's the new maxy
+      if (self.xyData[name].__len__() == 1): # if the xyData[name] is 1
+	 self.graphs[name].set_range('yrange', (quantity-0.5, quantity+0.5)) # set the range of graphs[name] to quantity -.5 and quantity +.5
+      else: # if the length of xyData[name] !=1
+         self.graphs[name].set_range('yrange', (miny-0.001, maxy+0.001))# then the range of graphs[name] is between miny -.001 and maxy+.001
+      self.graphs[name].plot(self.xyData[name]) # plot the data
       if ((self.pause != 0) and (step % self.pause == 0)):
    	 print "PRESS <RETURN> TO CONTINUE"
          raw_input()
-    else:
+    else: # if the step is at 0 then set the figures[name] to the mplFigCount
       if (step == 0):
          self.figures[name] = self.mplFigCount
-         self.mplFigCount = self.mplFigCount + 1
+         self.mplFigCount = self.mplFigCount + 1 # increase by 1
       figure(self.figures[name], (6,4))
       ion()
-      xlabel('Step')
-      ylabel(name)
-      self.xData[name].append(step)
-      self.yData[name].append(quantity)
-      plot(self.xData[name], self.yData[name])
+      xlabel('Step') # set the xlabel to 'Step'
+      ylabel(name) # set the ylabel to name
+      self.xData[name].append(step) # append step into xData[name]
+      self.yData[name].append(quantity) # append quantity into yData[name]
+      plot(self.xData[name], self.yData[name]) # and plot
       #show()
       if ((self.pause != 0) and (step % self.pause == 0)):
    	 print "PRESS <RETURN> TO CONTINUE"
@@ -1033,7 +1052,7 @@ class IO:
       @type step: int
       @param step: Simulation step number
       """
-      self.plotQuantity(step, forces.energies.potentialEnergy(phys), 'potentialenergy')
+      self.plotQuantity(step, forces.energies.potentialEnergy(phys), 'potentialenergy') # plot the potential energy
 
    def plotKinetic(self, phys, forces, step):
       """
@@ -1048,7 +1067,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec), 'kineticenergy')
+      self.plotQuantity(step, TopologyUtilities.kineticEnergy(phys.myTop, phys.velvec), 'kineticenergy')# plot the Kinetic energy
 
    def plotTotal(self, phys, forces, step):
       """
@@ -1078,8 +1097,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step,
-                        TopologyUtilities.temperature(phys.myTop, phys.velvec), 'temperature')
+      self.plotQuantity(step,TopologyUtilities.temperature(phys.myTop, phys.velvec), 'temperature')# plot the temperature
 
    def plotPressure(self, phys, forces, step):
       """
@@ -1094,7 +1112,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, phys.pressure(forces), 'pressure')
+      self.plotQuantity(step, phys.pressure(forces), 'pressure') # plot the pressure
 
    def plotVolume(self, phys, forces, step):
       """
@@ -1109,7 +1127,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, phys.volume(), 'volume')
+      self.plotQuantity(step, phys.volume(), 'volume')# plot volume
 
    def plotCoulombEnergy(self, phys, forces, step):
       """
@@ -1124,7 +1142,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, phys.app.energies.getTable(0), 'coulombenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(0), 'coulombenergy') # plot the coulombenergy
 
    def plotLJEnergy(self, phys, forces, step):
       """
@@ -1139,7 +1157,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, phys.app.energies.getTable(1), 'ljenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(1), 'ljenergy') # plot the LennardJones energy
 
    def plotBondEnergy(self, phys, forces, step):
       """
@@ -1154,7 +1172,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, phys.app.energies.getTable(2), 'bondenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(2), 'bondenergy') # plot the bond energy
 
    def plotAngleEnergy(self, phys, forces, step):
       """
@@ -1169,7 +1187,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, phys.app.energies.getTable(3), 'angleenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(3), 'angleenergy')# plot the angle energy
       
    def plotDihedralEnergy(self, phys, forces, step):
       """
@@ -1184,7 +1202,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, phys.app.energies.getTable(4), 'dihedralenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(4), 'dihedralenergy') # plot the dihedral energy
 
    def plotImproperEnergy(self, phys, forces, step):
       """
@@ -1199,7 +1217,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """      
-      self.plotQuantity(step, phys.app.energies.getTable(5), 'improperenergy')
+      self.plotQuantity(step, phys.app.energies.getTable(5), 'improperenergy') # plot the improper energy
 
    def plotShadowEnergy(self, phys, forces, step):
       """
@@ -1214,7 +1232,7 @@ class IO:
       @type step: int
       @param step: Simulation step number      
       """
-      self.plotQuantity(step, forces.shadowEnergy(), 'shadowenergy')
+      self.plotQuantity(step, forces.shadowEnergy(), 'shadowenergy') # plot shadow energy
 
 
    # RUN ALL PLOTS
@@ -1239,7 +1257,7 @@ class IO:
       ii = 0
       while (ii < self.myPlots.__len__()):
          if (step % self.myPlots[ii][1] == 0):
-            self.myPlots[ii][0](phys, forces, step)
+            self.myPlots[ii][0](phys, forces, step) # run all the plots in the plots directory or array
          ii = ii + 1
    #####################################################################################
        
@@ -1250,9 +1268,9 @@ class IO:
       self.dirty = 0
       
       # Files first
-      for output in self.files.keys():
-         params = self.files[output]
-         if (params[1] != -1):
+      for output in self.files.keys(): # step through the output in self.files.keys()
+         params = self.files[output] # set the parameters to the files[output]
+         if (params[1] != -1): 
             filename = params[0]
             freq = params[1]
             if (output == 'energies'):
@@ -1276,8 +1294,8 @@ class IO:
             elif (output == 'gui'):
                self.myOutputs.append(OutputFAHGUI.OutputFAHGUI(filename, freq, 52753, 1, "MDL_3.0", 0.0, 0))
 
-      if (self.screen != -1):
-         self.myOutputs.append(OutputScreen.OutputScreen(self.screen))
+      if (self.screen != -1): # is self.screen does not equal -1, which means that there is data
+         self.myOutputs.append(OutputScreen.OutputScreen(self.screen)) # append OutputScreen(screen) to the end of myOutputs
 
 
       # Now plots
@@ -1307,11 +1325,11 @@ class IO:
        @param phys: The physical system
 
        """
-       self.myOutputCache.initialize(phys.app)
+       self.myOutputCache.initialize(phys.app) # initialize myOutputCache with phys.app
 
-       for output in self.myOutputs:
-         output.initialize(phys.app)
-         output.run(1)
+       for output in self.myOutputs: # step through the myOutputs with index output
+         output.initialize(phys.app) # initialize
+         output.run(1) # then run
 
 
    # RUN ALL OUTPUTS AND PLOTS
@@ -1337,5 +1355,5 @@ class IO:
        # TMC 1-13-08: Check if args is actually necessary
        #self.recache(phys)
 
-       self.runOutput(phys, forces, step, ts, *args)
-       self.runPlots(phys, forces, step, ts)
+       self.runOutput(phys, forces, step, ts, *args) # runs all registered outputs
+       self.runPlots(phys, forces, step, ts)# runs all the plots
