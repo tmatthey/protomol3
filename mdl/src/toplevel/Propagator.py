@@ -1,4 +1,4 @@
-import MathUtilities
+import MathUtilities 
 from PropagatorFactory import *
 import time
 import Constants
@@ -7,6 +7,7 @@ import numpy
 import ProtoMolApp
 import copy
 import ModifierShake
+from GPUMatrix import *
 
 class Propagator:
    """
@@ -19,15 +20,14 @@ class Propagator:
       self.myStep = 0                        #: Current simulation step
       self.myTimestep = 0                    #: Propagator timestep
       self.myLevel = 0                       #: Number of levels
-      #####################################################################################
-
+      
       phys.build() #Build the physical data
 
       self.phys = phys #: Physical object 
       self.forces = forces #: Forces object
       self.io = io  #: IO object
-      io.phys = phys
-
+      io.phys = phys 
+      #####################################################################################
       
    def reset(self):
       """
@@ -101,8 +101,6 @@ class Propagator:
       @param modifier: Routine which alters propagator behavior.
       """
       integ.postrunmodifiers.append(modifier) # append modifier functions to postrunmodifiers (after propagator execution)
-
-
 
    def addPreForceModifier(self, integ, modifier):
       """
@@ -257,14 +255,65 @@ class Propagator:
       ForceGroup._swig_setattr_nondynamic(ff2, ForceGroup.ForceGroup, "thisown", 0) # this function keeps ff2 and ff from 
                                                                                     # resetting back to original defaults 
       return ff2 # return ff2
+    
+   def CreateGPUMatrix(self,Positions,Velocities,Invmasses,Forces):
+	"""
+   	use this to call GPUMatricies and to run on the GPU
+        all functions in parameter will first be transformed into a numpy.ndarray
+        Then all the functions will be converted to type GPUMatrix to run on the GPU. 
+	"""
+	import GPUMatrix as gpu
+	
+        P = Positions.__len__()
+	self.phys.positions = numpy.array(self.phys.positions)
+	Positions = gpu.GPUMatrix(numpy.random.rand(P,1))
+	for i in range(0,P):
+		Positions[0][i][0]=self.phys.positions[i]
+	return Positions 
+        #Positions.Display2D(Positions)
 
+        self.phys.velocities = numpy.array(self.phys.velocities)
+        V = Velocities.__len__()
+        Velocities = gpu.GPUMatrix(numpy.random.rand(V,1))
+        for i in range(0,V):
+        	Velocities[0][i][0]=self.phys.velocities[i]
+        print type(Velocities)
+	return Velocities
+        #GPUVelocities.Display2D(GPUVelocities)
+
+	Invmasses  = numpy.array(self.phys.invmasses)
+        I = Invmasses.__len__()
+        Invmasses = gpu.GPUMatrix(numpy.random.rand(I,1))
+        for i in range(0,I):
+        	Invmasses[0][i][0]=self.phys.invmasses[i]
+	return Invmasses
+        #GPUInvmasses.Display2D(GPUInvmasses)
+
+        #Masses  =  numpy.array(self.phys.masses)
+        #M = Masses.__len__()
+        #Masses = gpu.GPUMatrix(numpy.random.rand(M,1))
+        #for i in range(0,M):
+        #	Masses[0][i][0]= self.phys.masses[i]
+	#self.phys.masses = Masses 
+	#return Masses
+        #GPUMasses.Display2D(GPUMasses)
+		       
+        forces = numpy.array(self.forces.force)
+        F = Forces.__len__()
+	print F
+        Forces = gpu.GPUMatrix(numpy.random.rand(F,1))
+        for i in range(0,F):
+        	Forces[0][i][0] = self.forces.force[i]
+	return Forces
+   
    # PROPAGATE THE SYSTEM
    # USE METHOD "name"
    # arg1 = NUMBER OF STEPS
    # arg2 = TIMESTEP
    # arg3 = ForceField STRUCTURE
    # args = OPTIONAL EXTRA ARGUMENTS AS TUPLES
-   def propagate(self, scheme="Leapfrog", steps=0, cyclelength=-1, dt=0.1, forcefield=[], params={}):
+
+   def propagate(self, scheme="Leapfrog", steps=0, cyclelength=-1, dt=0.1, forcefield=[], params={}, gpu=False):
        """
        Propagate the system.
 
@@ -286,8 +335,15 @@ class Propagator:
        @type params: dictionary
        @param params: Extra parameters unique for this propagation scheme.
                      (This could be empty).
+       @type gpu: boolean
 
        """
+       if gpu == True:    # if gpu is set to True
+ 	   self.gpu = True # then gpu = True
+       else: # if it does not equal True
+           self.gpu = False # then run on the CPU
+             
+
        self.myTimestep = dt # set myTimestep to dt
        
        ##############################################################################################
@@ -397,46 +453,48 @@ class Propagator:
        # Has anything changed in io?  If so, rebuild it.
        # This could happen in the case where we (for example) run a propagator 10 steps, then want to graph something like potential energy
        # Often happens when we want to equilibrate the system for a number of steps before running calculations.
-       if (self.io.dirty): # if self.io is using the dirty bit
-          self.io.build() # io.build()
+       	  if (self.io.dirty): # if self.io is using the dirty bit
+              self.io.build() # io.build()
         
 
        
        if (propFactory.getType(outerscheme) == "method"): # if the type fo outerscheme is equal to a "method"
 							  # this is true for example in the case of the leapfrog() function
           # Calculate the forces, store them in force.
-
           ###############################################################
 	  # We need a ProtoMolApp, which has been SWIG-wrapped for Python
 	  # This portion passes our velocity, positions and forces vectors to that structure
 	  # So they then become accessible from C
 	  # Note we only need to do this once...
-          if (not hasattr(self.phys, 'app')):
-             self.phys.app = ProtoMolApp.ProtoMolApp()
-             print "Making app 3"
-             self.phys.app.makeApp(self.phys.myTop, self.phys.posvec, self.phys.velvec, self.forces.energies, dt)
+       		if (not hasattr(self.phys, 'app')):
+          		 self.phys.app = ProtoMolApp.ProtoMolApp()
+          		 print "Making app 3"
+          	 	 self.phys.app.makeApp(self.phys.myTop, self.phys.posvec, self.phys.velvec, self.forces.energies, dt)
 	  ##############################################################
-          self.phys.updateCOM_Momenta()  # Update the center of mass of the system, and atomic momenta (note this equals m*v)
-          outerforcefield.calculateForces(self.phys, self.forces)  # Whichever forcefield corresponds to this propagator, calculate forces one time
-          self.io.run(self.phys, self.forces, 0, outertime)        # If the user desired I/O, run it.  We may need to plot physical data or forces vs. time
-          self.io.myProp = self                                    # The IO structure needs access to me and my data.
-          for ii in range(1, steps+1):				   # Run for the appropriate number of steps.
-             self.phys.app.energies.clear()			   # Clear energies to zero.
-             self.forces.energies.initialize(self.phys)		   # Set energies properly (functions of positions and velocities)
+       		self.phys.updateCOM_Momenta()  # Update the center of mass of the system, and atomic momenta (note this equals m*v)
+       		outerforcefield.calculateForces(self.phys, self.forces)  # Whichever forcefield corresponds to this propagator, calculate forces one time
+       		self.io.run(self.phys, self.forces, 0, outertime)        # If the user desired I/O, run it.  We may need to plot physical data or forces vs. time
+       		self.io.myProp = self                                    # The IO structure needs access to me and my data.
+       		for ii in range(1, steps+1):				   # Run for the appropriate number of steps.
+			if gpu == True:
+				self.CreateGPUMatrix(self.phys.positions,self.phys.velocities,self.phys.invmasses,self.forces.force)
+       			self.phys.app.energies.clear()			   # Clear energies to zero.
+                	self.forces.energies.initialize(self.phys)		   # Set energies properly (functions of positions and velocities)
 	     # This calls the propagator function with the following arguments:
 	     # Physical structure (phys), Forces structure (forces), number of steps (1), current time, corresponding force field.
 	     # *chain is empty if we are doing single-timestepping
 	     # If we are doing multiple-timestepping, *chain refers to the next propagator function and its arguments
-             propFactory.create(1, outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
+       			propFactory.create(1, outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
 	     # Update the physical time with the amount that has passed
-             self.phys.time = ii*outertime*Constants.invTimeFactor()
+       			self.phys.time = ii*outertime*Constants.invTimeFactor()
 	     # If the user desired I/O, run it.  
 	     # Note in the configuration file they set a frequency in steps
 	     # In IO.run() we check to see if ii % that frequency is zero, so it will only run that number of steps
-             self.io.run(self.phys, self.forces, ii, outertime)
+       			self.io.run(self.phys, self.forces, ii, outertime)
 	     # Once the propagator has run, we need to update the center of mass and momenta again.
-             self.phys.updateCOM_Momenta()
-       else: # Object - this is the case if (1) the integrator is from ProtoMol, or (2) we created a Python class for our integrator that inherited from
+       			self.phys.updateCOM_Momenta()
+       else: 
+             # Object - this is the case if (1) the integrator is from ProtoMol, or (2) we created a Python class for our integrator that inherited from
 	     # ProtoMol's class.  Note that in either case, we are invoking SWIG-wrapped code to some degree as opposed to a pure Python function like
 	     # above
 	  # This function initializes the propagator
@@ -477,5 +535,5 @@ class Propagator:
           if (rattle): # if rattle
              self.myPropagator.removeModifier(rattleMod)# remove rattlemod in myPropagator
 
-       self.phys.updateCOM_Momenta() # update Center of Mass and angular momentum
+       self.phys.updateCOM_Momenta() # update Center of Mass and  momentum
            
