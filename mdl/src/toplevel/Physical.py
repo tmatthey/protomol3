@@ -16,9 +16,10 @@ import TopologyUtilities
 import GenericTopology
 #import _TopologyUtilities
 import _GenericTopology
-import numpy
+import numpy 
 import sys
 import ProtoMolApp
+import GPUMatrix as gpu
 
 # This is a deepcopy function for two Python lists a and b
 # If you simply set b = a that copies the reference and if you change a you change b
@@ -44,7 +45,11 @@ class MDVec(numpy.ndarray): # takes a paramater of an ndarray
       self.resize(len(b)) # resize the length of b to the resize self
     for i in range (0, len(b)): # for-loop from 0 to the length of b
       self[i] = b[i] # set b[i] equivalent to self[i]
-      
+   def toNumpy(self,MDVec):
+      self = numpy.array(MDVec) 	   
+   def toGPUMAtrix(self,MDVec):
+      self = numpy.array(MDVec)
+      self = gpu.GPUMatrix(self)
 
 # Information about a single atom in our system.
 # 1. The atom number is a unique identifier, starting from zero and going until N-1
@@ -300,8 +305,8 @@ class Physical:
       self.__dict__['myEig'] = EigenvectorReader.EigenvectorInfo() # myEig' is a EigenvectorReader.EigenvectorInfo(), used for Normal Modes.
       ############################################
 
-      #self.positions = numpy.ndarray(0)   #: Atomic position vector
-      #self.velocities = numpy.ndarray(0)  #: Atomic velocity vector
+      self.positions = numpy.ndarray(0)   #: Atomic position vector
+      self.velocities = numpy.ndarray(0)  #: Atomic velocity vector
 
       self.dirty = 1   #: Dirty bit, signifies that the Physical structure has changed since the last build. 
                        #  If the dirty bit is set, we rebuild the Physical structure (call build()) before calculating
@@ -401,12 +406,12 @@ class Physical:
          return self.myTop.time # return myTop time
       else: # if name is not set to 'positions', 'velocities'  or 'time' then 
          print name # print name
-         return self.__dict__[name] # return  __dict_[name]
+         return self.__dict__[name] 
 
    # SPECIAL ASSIGNMENT FOR self.positions or self.velocities
    # TO SET DATA IN WRAPPERS
    # __setattr__ is called uatomatically when you set an attribute of something of type Physical
-   # i.e. phys.seed = 1234 would actually do phys.__setattr__('seed') = 1234
+   # i.e. phys.seed = 1234 would actually do phys.__setattr__('seed',1234)
    # Note we have to know if this is the first time we have set an attribute of the class, if
    # that's the case we have to rebuild the Physical object.
    def __setattr__(self, name, val):
@@ -419,14 +424,39 @@ class Physical:
       # If we are setting phys.positions, we must do an element-by-element copy of the array
       # that it is being set to (stored in val)
       if (name == 'positions'): # if name = 'positions'
-	 for i in range (0, len(self.positions)): # loop from 0 to the length of positions
-	    self.positions[i] = val[i] # set val[i] to positions[i]
-	 #self.__dict__['posvec'].setC(val)
+	 if type(val) != 'numpy.ndarray':
+	 	self.__dict__['self.positions'] = val
+
+	 else:
+	 	for i in range (0, len(self.positions)): # loop from 0 to the length of positions
+	 		self.positions[i] = val[i] # set val[i] to positions[i]
+	 	self.__dict__['posvec'].setC(val)
+   
       # Similar case for the velocities.
       elif (name == 'velocities'): # if name = 'velocities'
-	 for i in range (0, len(self.velocities)): # loop from 0 to length of velocities
-	    self.velocities[i] = val[i] # set val[i] to velocities[i]
-	 #self.__dict__['velvec'].setC(val)
+          if type(val) != 'numpy.ndarray':
+		self.__dict__['self.velocities'] = val
+	  else:
+		 for i in range (0, len(self.velocities)): # loop from 0 to length of velocities
+	    		self.velocities[i] = val[i] # set val[i] to velocities[i]
+		#self.__dict__['velvec'].setC(val)
+
+      #similar case for inverse mass
+      #elif (name == 'invmasses'):
+#	  if type(val) != 'numpy.ndarray':
+ #               self.__dict__['self.invmasses'] = val
+  #        else:
+#		 for i in range (0, len(self.invmasses)): # loop from 0 to length of velocities
+ #                       self.invmasses[i] = val[i] # set val[i] to invmass[i]
+
+  #    elif (name == 'masses'):
+#	  if type(val) != 'numpy.ndarray':
+ #                self.__dict__['self.masses'] = val
+  #        else:
+   #              for i in range (0, len(self.masses)): # loop from 0 to length of velocities
+    #                    self.masses[i] = val[i] # set val[i] to invmass[i]
+
+	  
       # Here we are setting the boundary conditions
       # They will either be Vacuum or Periodic
       # Vacuum assumes no external forces, Periodic assumes wraparound and is generally
@@ -916,8 +946,8 @@ class Physical:
       ###################################################################################
       # STRUCTURE OF THE SYSTEM (PSF)
       self.myTop.setExclusion(self.exclude)
-      print self.myPSF.numAtoms()
-      print hasattr(self.myPAR, 'readFlag')
+      #print self.myPSF.numAtoms()
+      #print hasattr(self.myPAR, 'readFlag')
       if (self.myPSF.numAtoms() > 0 and hasattr(self.myPAR, 'readFlag')):
 	 print "BUILDING TOPOLOGY..."
          GenericTopology.buildTopology(self.myTop, self.myPSF, self.myPAR, 0, self.myTop.makeSCPISM())

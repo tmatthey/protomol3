@@ -267,9 +267,9 @@ class ForceField(ForceGroup):
               if (self.params['Coulomb']['algorithm'] == 'GB' or  # if the params  = Generalized Born or GBACE
 	          self.params['Coulomb']['algorithm'] == 'GBACE'):
 		  self.forcearray.append(self.forceFactory.createBornBurial()) # append and create BornBurial to forcearray
-                  self.addForce(self.forcearray[len(self.forcearray)-1])# add force at the specified index of forcearray - 1
+                  self.addForce(self.forcearray[len(self.forcearray)-1])# add force at the end of forcearray
 	          self.forcearray.append(self.forceFactory.createBornRadii()) # append and create BornRadii to forcearray 
-                  self.addForce(self.forcearray[len(self.forcearray)-1])# add force at the specified index of forcearray - 1
+                  self.addForce(self.forcearray[len(self.forcearray)-1])# add force at the end of forcearray
               if (not self.params['Coulomb'].has_key('OnlyBorn')): # if the parameters of the Coulomb fore does not have 'OnlyBorn'      
                  self.forcearray.append(self.forceFactory.createCoulombForce(self.bc, self.params['Coulomb']))# append the coulomb force to forcearray 
           elif (forcetype == 'e'): # if the forcetype is electrostatic

@@ -44,7 +44,9 @@ class Forces:
    def __setattr__(self, name, val):# set attribute
       if (name == 'force' and self.__dict__.has_key('force')): # if the name is 'force' and the dict has 'force'
          self.__dict__['forcevec'].setC(val) # then set forcevec the specified value
-      else: # otherwise is not a 'force'
+      if type(val) != 'numpy.ndarray' and name == 'force':
+	 self.__dict__['force'] = val	 
+      else:
          self.__dict__[name] = val # set other data to another name
 
    def __str__(self):

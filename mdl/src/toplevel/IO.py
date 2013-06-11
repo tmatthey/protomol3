@@ -241,7 +241,7 @@ class IO:
         phys.posvec.resize(int(numbers[0].replace('\n', ''))) # resize the position vector. Also replace what is at position 0 of numbers with '\ n'
         for i in range(1, len(numbers), 3):  # go to the size 1,length of numbers, 3. this assumes a 3 index array
            if (numbers[i].find('\n') != -1): # find '\n' in numbers at position i where it is not equal to -1.
-           phys.positions[i] = numbers[i+1]  # then iterate through positions and set it equal to numbers at spot i+1
+           	 phys.positions[i] = numbers[i+1]  # then iterate through positions and set it equal to numbers at spot i+1
           	 numbers[i].replace('\n', '') # and replace it with '\n'
            phys.positions[i-1] = numbers[i] # set postions[i-1] to number[i] since numbers[i+1] = positions[i] 
            phys.positions[i] = numbers[i+1] 
@@ -1274,7 +1274,8 @@ class IO:
             filename = params[0]
             freq = params[1]
             if (output == 'energies'):
-               self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0))
+           	 #self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq, 1,0,1.0,0))
+                  self.myOutputs.append(OutputEnergies.OutputEnergies(filename, freq,1))
             elif (output == 'dcdtrajpos'):
                if (os.path.exists(filename)):  # Continue
                   self.myOutputs.append(OutputDCDTrajectory.OutputDCDTrajectory(filename, freq, 1, 1))
