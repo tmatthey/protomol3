@@ -1287,6 +1287,8 @@ protomol/src/protomol/output/OutputCollection.cpp -text
 protomol/src/protomol/output/OutputCollection.h -text
 protomol/src/protomol/output/OutputDCDTrajectory.cpp -text
 protomol/src/protomol/output/OutputDCDTrajectory.h -text
+protomol/src/protomol/output/OutputDCDTrajectoryForces.cpp -text
+protomol/src/protomol/output/OutputDCDTrajectoryForces.h -text
 protomol/src/protomol/output/OutputDCDTrajectoryVel.cpp -text
 protomol/src/protomol/output/OutputDCDTrajectoryVel.h -text
 protomol/src/protomol/output/OutputDihedrals.cpp -text
