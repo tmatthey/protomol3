@@ -1135,6 +1135,8 @@ protomol/src/protomol/integrator/normal/NormalModeLangLf.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeLangLf.h -text
 protomol/src/protomol/integrator/normal/NormalModeLangevin.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeLangevin.h -text
+protomol/src/protomol/integrator/normal/NormalModeLangevinLeapfrogSwitching.cpp -text
+protomol/src/protomol/integrator/normal/NormalModeLangevinLeapfrogSwitching.h -text
 protomol/src/protomol/integrator/normal/NormalModeMinimizer.cpp -text
 protomol/src/protomol/integrator/normal/NormalModeMinimizer.h -text
 protomol/src/protomol/integrator/normal/NormalModeMori.cpp -text
