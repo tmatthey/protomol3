@@ -32,7 +32,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
-
+#include <protomol/type/Real.h>
 #include <protomol/base/Timer.h>
 #include <iostream>
 
@@ -46,7 +46,7 @@ TimeRep::TimeRep() :
   myRealTime(0.0), myUserTime(0.0), mySystemTime(0.0)
 {}
 
-TimeRep::TimeRep(double realTime, double userTime, double sysTime) :
+TimeRep::TimeRep(Real realTime, Real userTime, Real sysTime) :
   myRealTime(realTime), myUserTime(userTime), mySystemTime(sysTime)
 {}
 
@@ -83,7 +83,7 @@ MyStreamer &ProtoMol::operator<<(MyStreamer &os, const TimeRep &time) {
   return os;
 }
 
-void TimeRep::set(double realTime, double userTime, double sysTime) {
+void TimeRep::set(Real realTime, Real userTime, Real sysTime) {
   myRealTime = realTime;
   myUserTime = userTime;
   mySystemTime = sysTime;
@@ -183,19 +183,19 @@ MyStreamer &ProtoMol::operator<<(MyStreamer &os, const Timer &timer) {
 }
 
 TimeRep Timer::getCurrentTime() {
-  double realTime, userTime, sysTime;
+  Real realTime, userTime, sysTime;
 
 #ifdef SVR4
   struct timeval tv;
 
   gettimeofday(&tv, NULL);
-  realTime = (double)tv.tv_sec + (double)tv.tv_usec / 1000000.;
+  realTime = (Real)tv.tv_sec + (Real)tv.tv_usec / 1000000.;
 
   struct tms time;
 
   times(&time);
-  userTime = (double)time.tms_utime / (double)HZ;
-  sysTime = (double)time.tms_stime / (double)HZ;
+  userTime = (Real)time.tms_utime / (Real)HZ;
+  sysTime = (Real)time.tms_stime / (Real)HZ;
 
 #elif defined (WIN32)
 #define EPOCHFILETIME (116444736000000000LL)
@@ -209,22 +209,22 @@ TimeRep Timer::getCurrentTime() {
   t -= EPOCHFILETIME;
   t /= 10;
   realTime =
-    (double)((long)(t / 1000000)) + (double)((long)(t % 1000000)) * .000001;
+    (Real)((long)(t / 1000000)) + (Real)((long)(t % 1000000)) * .000001;
   userTime = clock() / 1000.0;       // don't know how to measure user sys time
   sysTime = 0;                  // this is not a unix system.
 #else
   struct timeval tv;
 
   gettimeofday(&tv, NULL);
-  realTime = (double)tv.tv_sec + (double)tv.tv_usec * .000001;
+  realTime = (Real)tv.tv_sec + (Real)tv.tv_usec * .000001;
 
   struct rusage usage;
 
   getrusage(RUSAGE_SELF, &usage);
-  userTime = (double)usage.ru_utime.tv_sec +
-             (double)usage.ru_utime.tv_usec * .000001;
-  sysTime = (double)usage.ru_stime.tv_sec +
-            (double)usage.ru_stime.tv_usec * .000001;
+  userTime = (Real)usage.ru_utime.tv_sec +
+             (Real)usage.ru_utime.tv_usec * .000001;
+  sysTime = (Real)usage.ru_stime.tv_sec +
+            (Real)usage.ru_stime.tv_usec * .000001;
 #endif
 
   return TimeRep(realTime, userTime, sysTime);

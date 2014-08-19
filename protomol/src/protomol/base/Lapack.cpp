@@ -34,9 +34,9 @@ bool ProtoMol::Lapack::isEnabled() {
 }
 
 
-void ProtoMol::Lapack::dgemv(char *transA, int *m, int *n, double *alpha,
-                             double *A, int *lda, double *x, int *incx,
-                             double *beta, double *Y, int *incY) {
+void ProtoMol::Lapack::dgemv(char *transA, int *m, int *n, Real *alpha,
+                             Real *A, int *lda, Real *x, int *incx,
+                             Real *beta, Real *Y, int *incY) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   dgemv_(transA, m, n, alpha, A, lda, x, incx, beta, Y, incY);
@@ -50,8 +50,8 @@ void ProtoMol::Lapack::dgemv(char *transA, int *m, int *n, double *alpha,
 }
 
 
-void ProtoMol::Lapack::dsyev(char *jobz, char *uplo, int *n, double *a,
-                             int *lda, double *w, double *work, int *lwork,
+void ProtoMol::Lapack::dsyev(char *jobz, char *uplo, int *n, Real *a,
+                             int *lda, Real *w, Real *work, int *lwork,
                              int *info) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
@@ -67,10 +67,10 @@ void ProtoMol::Lapack::dsyev(char *jobz, char *uplo, int *n, double *a,
 
 
 void ProtoMol::Lapack::dsyevr(char *jobz, char *range, char *uplo, int *n,
-                              double *a, int *lda, double *vl, double *vu,
-                              int *il, int *iu, double *abstol, int *m,
-                              double *w, double *z,  int *ldz, int *isuppz,
-                              double *work, int *lwork, int *iwork, int *liwork,
+                              Real *a, int *lda, Real *vl, Real *vu,
+                              int *il, int *iu, Real *abstol, int *m,
+                              Real *w, Real *z,  int *ldz, int *isuppz,
+                              Real *work, int *lwork, int *iwork, int *liwork,
                               int *info) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
@@ -88,7 +88,7 @@ void ProtoMol::Lapack::dsyevr(char *jobz, char *range, char *uplo, int *n,
 }
 
 
-double ProtoMol::Lapack::dlamch(char *cmach) {
+Real ProtoMol::Lapack::dlamch(char *cmach) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   return dlamch_(cmach);
@@ -103,8 +103,8 @@ double ProtoMol::Lapack::dlamch(char *cmach) {
 
 
 void ProtoMol::Lapack::dgemm(char *transA, char *transB, int *m, int *n, int *k,
-                             double *alpha, double *A, int *lda, double *B,
-                             int *ldb, double *beta, double *C, int *l) {
+                             Real *alpha, Real *A, int *lda, Real *B,
+                             int *ldb, Real *beta, Real *C, int *l) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   dgemm_(transA, transB, m, n, k, alpha, A, lda, B, ldb, beta, C, l);
@@ -118,7 +118,7 @@ void ProtoMol::Lapack::dgemm(char *transA, char *transB, int *m, int *n, int *k,
 }
 
 
-double ProtoMol::Lapack::ddot(int *n, double *x, int *incx, double *y,
+Real ProtoMol::Lapack::ddot(int *n, Real *x, int *incx, Real *y,
                               int *incy) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
@@ -133,7 +133,7 @@ double ProtoMol::Lapack::ddot(int *n, double *x, int *incx, double *y,
 }
 
 
-double ProtoMol::Lapack::dnrm2(int *n, double *x, int *incx) {
+Real ProtoMol::Lapack::dnrm2(int *n, Real *x, int *incx) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   return dnrm2_(n, x, incx);
@@ -147,7 +147,7 @@ double ProtoMol::Lapack::dnrm2(int *n, double *x, int *incx) {
 }
 
 
-void ProtoMol::Lapack::dpotri(char *transA, int *n, double *A, int *lda,
+void ProtoMol::Lapack::dpotri(char *transA, int *n, Real *A, int *lda,
                               int *info) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
@@ -160,7 +160,7 @@ void ProtoMol::Lapack::dpotri(char *transA, int *n, double *A, int *lda,
 }
 
 
-void ProtoMol::Lapack::dpotrf(char *transA, int *n, double *A, int *lda,
+void ProtoMol::Lapack::dpotrf(char *transA, int *n, Real *A, int *lda,
                               int *info) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
@@ -173,8 +173,8 @@ void ProtoMol::Lapack::dpotrf(char *transA, int *n, double *A, int *lda,
 }
 
 
-void ProtoMol::Lapack::dposv(char *transA, int *n, int *nrhs, double *a,
-                             int *lda, double *b, int *ldb, int *info) {
+void ProtoMol::Lapack::dposv(char *transA, int *n, int *nrhs, Real *a,
+                             int *lda, Real *b, int *ldb, int *info) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   dposv_(transA, n, nrhs, a, lda, b, ldb, info);
@@ -187,8 +187,8 @@ void ProtoMol::Lapack::dposv(char *transA, int *n, int *nrhs, double *a,
 
 
 void ProtoMol::Lapack::dtrmm(char *sideA, char *ulA, char *transA, char *diagA,
-                             int *m, int *n, double *alpha, double *A,
-                             int *lda, double *B, int *ldb) {
+                             int *m, int *n, Real *alpha, Real *A,
+                             int *lda, Real *B, int *ldb) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   dtrmm_(sideA, ulA, transA, diagA, m, n, alpha, A, lda, B, ldb);
@@ -201,8 +201,8 @@ void ProtoMol::Lapack::dtrmm(char *sideA, char *ulA, char *transA, char *diagA,
 
 
 void ProtoMol::Lapack::dtrsm(char *sideA, char *ulA, char *transA, char *diagA,
-                             int *m, int *n, double *alpha, double *A,
-                             int *lda, double *B, int *ldb) {
+                             int *m, int *n, Real *alpha, Real *A,
+                             int *lda, Real *B, int *ldb) {
   FAHCheckIn();
 #if defined(HAVE_LAPACK)
   dtrsm_(sideA, ulA, transA, diagA, m, n, alpha, A, lda, B, ldb);

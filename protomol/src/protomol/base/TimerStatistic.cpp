@@ -1,5 +1,5 @@
 #include <protomol/base/TimerStatistic.h>
-
+#include <protomol/type/Real.h>
 using namespace std;
 using namespace ProtoMol::Report;
 using namespace ProtoMol;

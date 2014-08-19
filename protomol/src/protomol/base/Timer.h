@@ -36,7 +36,7 @@
 
 #ifndef _TIMER_H
 #define  _TIMER_H
-
+#include <protomol/type/Real.h>
 #include <protomol/base/Report.h>
 
 namespace ProtoMol {
@@ -48,16 +48,16 @@ namespace ProtoMol {
     friend class Timer;
 public:
     TimeRep();
-    TimeRep(double realTime, double userTime, double sysTime);
+    TimeRep(Real realTime, Real userTime, Real sysTime);
 
     /// Elapsed time
-    double getRealTime() const;
+    Real getRealTime() const;
     /// Time spent by this task/thread
-    double getUserTime() const;
+    Real getUserTime() const;
     /// Time spent on system operations
-    double getSystemTime() const;
+    Real getSystemTime() const;
     /// User + System time
-    double getProcessTime() const; // User & Sys
+    Real getProcessTime() const; // User & Sys
 
     TimeRep operator+(const TimeRep &time) const;
     TimeRep operator-(const TimeRep &time) const;
@@ -68,30 +68,30 @@ public:
                                           const TimeRep &time);
 
 private:
-    double myRealTime;
-    double myUserTime;
-    double mySystemTime;
+    Real myRealTime;
+    Real myUserTime;
+    Real mySystemTime;
 
 private:
-    void set(double realTime, double userTime, double sysTime);
+    void set(Real realTime, Real userTime, Real sysTime);
     void reset();
   };
 
   //____________________________________________________________ INLINE TimerRep
 
-  inline double TimeRep::getRealTime() const {
+  inline Real TimeRep::getRealTime() const {
     return myRealTime;
   }
 
-  inline double TimeRep::getUserTime() const {
+  inline Real TimeRep::getUserTime() const {
     return myUserTime;
   }
 
-  inline double TimeRep::getSystemTime() const {
+  inline Real TimeRep::getSystemTime() const {
     return mySystemTime;
   }
 
-  inline double TimeRep::getProcessTime() const {
+  inline Real TimeRep::getProcessTime() const {
     return myUserTime + mySystemTime;
   }
 

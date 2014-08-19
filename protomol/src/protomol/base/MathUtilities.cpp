@@ -172,7 +172,7 @@ namespace ProtoMol {
         Rand::isSeeded = true;
       }
 
-      return double (rand()) / double (RAND_MAX);
+      return Real (rand()) / Real (RAND_MAX);
 #else
       if (!Rand::isSeeded) {
         srand48((long)seed);
