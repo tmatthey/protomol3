@@ -40,7 +40,7 @@ const {
     (Parameter("-cutoff", Value(myCutoff, ConstraintValueType::Positive()),
                Text("CmpCnCn swf cutoff")));
   parameters.push_back
-    (Parameter("-n", Value(myOrder, ConstraintValueType::Positive()), 2.0,
+    (Parameter("-n", Value(myOrder, ConstraintValueType::Positive()), (Real) 2.0,
                Text("CmpCnCn swf smoothness")));
 }
 

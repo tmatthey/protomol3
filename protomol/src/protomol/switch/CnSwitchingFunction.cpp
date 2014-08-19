@@ -71,7 +71,7 @@ void CnSwitchingFunction::getParameters(vector<Parameter> &parameters) const {
                Text("Cn swf switch on")));
   parameters.push_back
     (Parameter("-switchoff",
-               Value(myCutoff, ConstraintValueType::NotNegative()), 0.0,
+               Value(myCutoff, ConstraintValueType::NotNegative()), (Real) 0.0,
                Text("Cn swf switchoff")));
   parameters.push_back
     (Parameter("-cutoff", Value(myCutoff, ConstraintValueType::Positive()),
