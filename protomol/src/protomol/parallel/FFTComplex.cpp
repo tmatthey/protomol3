@@ -185,7 +185,7 @@ namespace ProtoMol {
     int myNY;
     int myNZ;
     zomplex* myArray;
-    double*  myAux;
+    Real*  myAux;
     int myNaux;
   };
 
@@ -216,7 +216,7 @@ namespace ProtoMol {
     }
     if(myAux != NULL)
       delete [] myAux;
-    myAux = new double [myNaux];
+    myAux = new Real [myNaux];
     report << hint <<"ESSL Initialization: naux="<<myNaux<<"."<<endr;
   }
 

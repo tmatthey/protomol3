@@ -1,17 +1,15 @@
 /*  -*- c++ -*-  */
 #ifndef FFTCOMPLEX_H
 #define FFTCOMPLEX_H
-
+#include <protomol/type/Real.h>
   // Define the data type for FFT.
 #ifndef _SGI_FFT_
   // Do not define if already defined by <fft.h>
   typedef struct {
-    double re;
-    double im;
+    ProtoMol::Real re;
+    ProtoMol::Real im;
   } zomplex;
 #endif
-
-#include <protomol/type/Real.h>
 
 namespace ProtoMol {
 
