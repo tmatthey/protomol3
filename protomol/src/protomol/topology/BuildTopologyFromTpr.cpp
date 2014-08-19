@@ -546,12 +546,12 @@ void ProtoMol::buildTopologyFromTpr(GenericTopology *topo, Vector3DBlock &pos,
     const function fnii = functions[i * sizeAtomTypes + i];
 
     if (!fnii.name.compare("LJ_SR")) {
-      const double c6 = fnii.parameters[0];
-      const double c12 = fnii.parameters[1];
+      const Real c6 = fnii.parameters[0];
+      const Real c12 = fnii.parameters[1];
 
       if (c6 && c12) {
         // find sigma frpm c6/c12
-        const double sigma = pow(c12/c6, (1.0/6.0)) * Constant::NM_ANGSTROM;
+        const Real sigma = pow(c12/c6, (1.0/6.0)) * Constant::NM_ANGSTROM;
         topo->atomTypes[i].sigma = sigma;
 
         // find epsilon from c6/c12
@@ -757,13 +757,13 @@ void ProtoMol::buildTopologyFromTpr(GenericTopology *topo, Vector3DBlock &pos,
   // check LJ table
   for (unsigned i = 0; i < sizeAtomTypes; i++) {
     for (unsigned j = i + 1; j < sizeAtomTypes; j++) {
-      double sigma_i = topo->atomTypes[i].sigma;
-      double sigma_j = topo->atomTypes[j].sigma;
+      Real sigma_i = topo->atomTypes[i].sigma;
+      Real sigma_j = topo->atomTypes[j].sigma;
 
-      double epsilon_i = topo->atomTypes[i].epsilon;
-      double epsilon_j = topo->atomTypes[j].epsilon;
+      Real epsilon_i = topo->atomTypes[i].epsilon;
+      Real epsilon_j = topo->atomTypes[j].epsilon;
 
-      double r_ij, e_ij;
+      Real r_ij, e_ij;
       r_ij = 0.5 * (sigma_i + sigma_j);
       e_ij = sqrt(epsilon_i * epsilon_j);
 
@@ -978,7 +978,7 @@ void ProtoMol::buildTopologyFromTpr(GenericTopology *topo, Vector3DBlock &pos,
 
 // atomic radius from lookup
 // ##TODO:Should be read from 'params.agb'
-double ProtoMol::atom_radius(string atom_type, int set) {
+Real ProtoMol::atom_radius(string atom_type, int set) {
   enum {ARRAYSZ = 96};
 
   string amber_atom[2][ARRAYSZ] = {
@@ -1022,7 +1022,7 @@ double ProtoMol::atom_radius(string atom_type, int set) {
      "","","","","","","","","","","","","","","","","","" }
   };
 
-  double rad[2][ARRAYSZ] = {
+  Real rad[2][ARRAYSZ] = {
     // Original set
     {1.875, 1.875, 1.875, 1.875, 1.875, 1.875, 1.875, 1.875,
      1.875, 1.875, 1.900, 1.875, 1.875, 1.875, 1.150, 1.250,

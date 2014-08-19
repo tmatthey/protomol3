@@ -19,7 +19,7 @@ namespace ProtoMol {
   //struct for saving functions
   struct function{
     string name;
-    vector<double> parameters;
+    vector<Real> parameters;
   };
 
   //types
@@ -49,7 +49,7 @@ namespace ProtoMol {
                         ostringstream &os);
 
   //atomic radius from lookup, choose from orig. and Bowman sets
-  double atom_radius( std::string atom_type, int set );
+  Real atom_radius( std::string atom_type, int set );
 
 }
 

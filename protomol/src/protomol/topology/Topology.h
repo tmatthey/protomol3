@@ -52,9 +52,7 @@ namespace ProtoMol {
 
 					cellManager.initialize( cellLists, this->min, this->max,
 											this->boundaryConditions.PERIODIC );
-
 					Vector3D delta( this->boundaryConditions.origin() - this->min );
-
 					/* TODO this use of CubicCellManager locks in the CellManager
 					   implementation for this template.  Either the code below should be
 					   changed to be more generic or the template parameter should be
@@ -63,12 +61,10 @@ namespace ProtoMol {
 					CubicCellManager::Cell myCell;
 					CubicCellManager::CellListStructure::iterator myCellList;
 					CubicCellManager::CellListStructure::iterator end = cellLists.end();
-
 					for( int i = ( int )this->atoms.size() - 1; i >= 0; i-- ) {
 						myCell =
 							cellManager.findCell( delta +
 												  this->boundaryConditions.minimalPosition( ( *positions )[i] ) );
-
 						myCellList = cellLists.find( myCell );
 						if( myCellList == end ) {
 							// This atom is the first on its cell list, so make a new list for
@@ -80,7 +76,6 @@ namespace ProtoMol {
 							myCellList->second = i;
 						}
 					}
-
 					cellManager.updateCache( cellLists );
 				}
 			}
@@ -91,7 +86,7 @@ namespace ProtoMol {
 		public:
 			virtual void getParameters( std::vector<Parameter> &parameters ) const {
 				parameters.push_back( Parameter( "coulombScalingFactor",
-												 Value( this->coulombScalingFactor ), 1.0 ) );
+												 Value( this->coulombScalingFactor ), (Real) 1.0 ) );
 				parameters.push_back( Parameter( "exclude",
 												 Value( this->exclude.getString(), ConstraintValueType::NotEmpty() ),
 												 Text( std::string( "exclusion scheme (" ) +

@@ -51,9 +51,9 @@ namespace ProtoMol {
 		Vector3D vResult( vDiff );
 
 		if( pbc ) {
-			const Real x = vDiff.c[0] / std::max( 1.0, floor( vDiff.c[0] / mCellSize ) );
-			const Real y = vDiff.c[1] / std::max( 1.0, floor( vDiff.c[1] / mCellSize ) );
-			const Real z = vDiff.c[2] / std::max( 1.0, floor( vDiff.c[2] / mCellSize ) );
+			const Real x = vDiff.c[0] / std::max( (Real) 1.0, floor( vDiff.c[0] / mCellSize ) );
+			const Real y = vDiff.c[1] / std::max( (Real) 1.0, floor( vDiff.c[1] / mCellSize ) );
+			const Real z = vDiff.c[2] / std::max( (Real) 1.0, floor( vDiff.c[2] / mCellSize ) );
 
 			mCellSizeVector = Vector3D( x, y, z );
 			mCellSizeVectorInverse = InverseOf( mCellSizeVector );
