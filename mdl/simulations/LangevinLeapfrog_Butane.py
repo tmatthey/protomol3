@@ -27,8 +27,8 @@ ff.bondedForces("badi")
 ff.nonbondedForces("l")
 
 # PYTHON FORCES
-hd = HDForce(phys, forces, 3.14/2.0, 1, 5.0)
-ff.addPythonForce(hd)
+#hd = HDForce(phys, forces, 3.14/2.0, 1, 5.0)
+#ff.addPythonForce(hd)
 
 es = ElectrostaticForce(phys, forces)
 ff.addPythonForce(es)

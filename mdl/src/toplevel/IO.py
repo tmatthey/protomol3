@@ -625,7 +625,7 @@ class IO:
         for ii in range(0, phys.myPDB.coords.size()*3, 3): # loop through the size of myPDB 0,myPDB coordinate size *3, 3
           # then set positions at spot ii to myPDB at ii
           # same goes with positions ii+1 and ii+2
-	   phys.positions[ii] = phys.myPDB.coords[ii] 
+	   phys.positions[ii] = phys.myPDB.coords[ii]
            phys.positions[ii+1] = phys.myPDB.coords[ii+1]
            phys.positions[ii+2] = phys.myPDB.coords[ii+2]
         self.pdbname = pdbname 
@@ -1355,6 +1355,9 @@ class IO:
        """
        # TMC 1-13-08: Check if args is actually necessary
        #self.recache(phys)
-
+       if (self.phys.gpu == True):
+         self.phys.posvec.setC(self.phys.gpuPositions.get_matrix(), False)
+         self.phys.velvec.setC(self.phys.gpuVelocities.get_matrix(), False)
+         self.phys.app.updateApp(self.phys.posvec, self.phys.velvec)
        self.runOutput(phys, forces, step, ts, *args) # runs all registered outputs
        self.runPlots(phys, forces, step, ts)# runs all the plots

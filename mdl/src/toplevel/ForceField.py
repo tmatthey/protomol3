@@ -177,6 +177,7 @@ class ForceField(ForceGroup):
       @type pyforce: PySystemForce
       @param pyforce: An instance of the Python-prototyped force.
       """
+      print "CALLING ADDPYTHONFORCE"
       self.pythonforces.append(pyforce) # append python force
 
 
@@ -208,6 +209,7 @@ class ForceField(ForceGroup):
       @type forces: Forces
       @param forces: MDL Forces object.
       """
+#      phys.gpu = False
      # self.__dict__['forcevec'] = Vector3DBlock.Vector3DBlock()
       if (forces.forcevec.size() != phys.numAtoms()): # if the size of forcevec is not equivalent to the size of numAtoms
          forces.forcevec.resize(phys.numAtoms()) # resize 
@@ -215,11 +217,36 @@ class ForceField(ForceGroup):
       #print len(phys.positions)
       #print phys.app.positions.size()
       phys.app.energies.clear() # clear energies
-      self.phys = forces.phys = phys 
-      #phys.posvec.setC(phys.positions)
+      if (phys.gpu == True):
+        phys.posvec.setC(phys.gpuPositions.get_matrix(), False)
+#        print "Physical:", phys.posvec.getC()
+        phys.velvec.setC(phys.gpuVelocities.get_matrix(), False)
+#        print "New Phys Positions: ", phys.posvec.getC()[0]
+        phys.app.updateApp(phys.posvec, phys.velvec)
+#      print "App Vel: ", phys.velocities.get_matrix()
+#      raw_input()
+#      print "App Pos: ", phys.positions.get_matrix()
+#      raw_input()
       self.evaluateSystemForces(phys.app, forces.forcevec) # now evaluate the System forces: 
+#      if (forces.gpu == True):
+#        forces.gpuForce.set_matrix(forces.forcevec.getC())
+        #forces.forcevec.setC(forces.gpuForce.matrix, True)
+#      print "ForceField System Forces: ", forces.forcevec[0]
+#      print "Forces Forces: ", forces.force[0]
       #sys.exit(1)
       self.evaluateExtendedForces(phys.app, forces.forcevec)# and evaluate the Extended forces :
+#      print "Forces:"
+#      print forces.forcevec.getC()
+#      raw_input()
+      if (phys.gpu):
+        forces.gpuForce.set_matrix(forces.forcevec.getC())
+#      print "Forces:"
+#      print forces.forcevec.getC()
+#      raw_input()
+        #forces.forcevec.setC(forces.gpuForce.matrix, True)
+#      print "ForceField Extended Forces: ", forces.forcevec[0]
+#      print "Forces Forces: ", forces.force[0]
+#      phys.gpu = True
 
    def build(self):
     """
@@ -229,7 +256,7 @@ class ForceField(ForceGroup):
     # 1. Have a build() member of the ForceField class.
     # 2. Make the ForceFactory a singleton.
     # 3. Give the ForceFactory a method which maps force characters to creation functions.  In this way there are multiple mapping levels.
- 
+    print "BUILDING.  ID: ", self
     self.forceFactory.hd = 0 # set the harmonic-dihedral force to 0
 
     if (self.params['LennardJones'] != # if the parameters of the LennardJones and Coulomb forces are not equivalent break them.
@@ -288,8 +315,12 @@ class ForceField(ForceGroup):
 
     if (bornflag != -1): self.forcetypes.insert(bornflag, 'c') # if the bornflag is not at its default 
                                                                # forcetype[bornflag] = 'Coulomb'
+    print "LENGTH OF PYTHON FORCES: ", len(self.pythonforces)
     for pyforce in self.pythonforces: # iterate through pythonforces
          self.forcearray.append(PySystemForce.PySystemForce(pyforce)) #append pySystemForce(pyforce) to forcearray
 	 PySystemForce._swig_setattr_nondynamic(self.forcearray[len(self.forcearray)-1], PySystemForce.PySystemForce, "thisown", 0)
          # used to make sure variable do not reset
+         print "BEFORE"
          self.addSystemForce(self.forcearray[len(self.forcearray)-1]) # then finally addSystemForce at the end of forcearray -1
+	 print self.forcearray[len(self.forcearray)-1]
+         print "AFTER"

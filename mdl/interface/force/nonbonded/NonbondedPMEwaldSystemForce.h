@@ -1007,10 +1007,10 @@ namespace ProtoMol {
     parameters.push_back(Parameter("",Value(myNZ,ConstraintValueType::Positive())));
     parameters.push_back(Parameter("-cutoff",Value(myRc,ConstraintValueType::Positive()),Text("Rc cutoff")));
     parameters.push_back(Parameter("-order",Value(myInterOrder,ConstraintValueType::Positive()),4,Text("interpolation")));
-    parameters.push_back(Parameter("-accuracy",Value(myAccuracy,ConstraintValueType::Positive()),1.e-6));
-    parameters.push_back(Parameter("-alpha",Value(myAlpha),-1.0,Text("splitting")));    
+    parameters.push_back(Parameter("-accuracy",Value(myAccuracy,ConstraintValueType::Positive()),(Real)(1.e-6)));
+    parameters.push_back(Parameter("-alpha",Value(myAlpha),(Real)-1.0,Text("splitting")));    
     if(TBoundaryConditions::VACUUM)
-      parameters.push_back(Parameter("-j",Value(myExpansionFactor),3.0));
+      parameters.push_back(Parameter("-j",Value(myExpansionFactor),(Real)3.0));
   }
 
   template <class TBoundaryConditions, 

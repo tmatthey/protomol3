@@ -35,4 +35,13 @@ void makeApp(GenericTopology* topo,
    self->integrator = new LeapfrogIntegrator(timestep, NULL);
    self->outputCache.initialize(self);
 }
+void updateApp(ProtoMol::Vector3DBlock& positions,
+               ProtoMol::Vector3DBlock& velocities) {
+   self->positions.vec = positions.vec;
+//   delete self->positions.c;
+   self->positions.c = positions.c;
+   self->velocities.vec = velocities.vec;
+//   delete self->velocities.c;
+   self->velocities.c = velocities.c;
+}
 };

@@ -27,11 +27,11 @@ ff = forces.makeForceField(phys, "charmm")
 #                        'gridsize':15,
 #                        'cutoff':12}
 
-ff.params['Coulomb'] = {'algorithm':'MultiGrid',
-                        'switching':'Cutoff',
-                        'gridsize':15,
-                        'smoothdist':1.0,
-                        'levels':3}
+#ff.params['Coulomb'] = {'algorithm':'MultiGrid',
+#                        'switching':'Cutoff',
+#                        'gridsize':15,
+#                        'smoothdist':1.0,
+#                        'levels':3}
 
 # OUTPUT
 io.screen = 1
@@ -39,4 +39,5 @@ io.screen = 1
 
 # PROPAGATION
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate(scheme="BBKMDL", steps=10000, dt=1.0, forcefield=ff)
+#gamma = prop.propagate(scheme="BBKMDL", steps=10000, dt=1.0, forcefield=ff)
+gamma = prop.propagate(scheme="leapfrog", steps=5, dt=1.0, forcefield=ff)#, gpu=True)

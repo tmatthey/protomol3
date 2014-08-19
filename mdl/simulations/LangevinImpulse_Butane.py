@@ -27,11 +27,15 @@ ff.bondedForces("badi")
 ff.nonbondedForces("l")
 
 # PYTHON FORCES
-hd = HDForce(phys, forces, 3.14/2.0, 1, 5.0)
-ff.addPythonForce(hd)
+#hd = HDForce(phys, forces, 3.14/2.0, 1, 5.0)
+#ff.addPythonForce(hd)
 
 es = ElectrostaticForce(phys, forces)
 ff.addPythonForce(es)
+
+print "LIST OF FORCES"
+print ff.pythonforces
+print "FORCEFIELD ID: ", ff
 
 # IO
 io.screen = 1
@@ -39,7 +43,8 @@ io.screen = 1
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-prop.propagate(scheme="LangevinImpulse", steps=1000, dt=1.0, forcefield=ff)
+#prop.propagate(scheme="LangevinImpulse", steps=1000, dt=1.0, forcefield=ff)
+prop.propagate(scheme="LangevinImpulse", steps=1, dt=1.0, forcefield=ff, gpu=True)
     
 stop=time.time()
 print "TOTAL TIME: ", stop-start

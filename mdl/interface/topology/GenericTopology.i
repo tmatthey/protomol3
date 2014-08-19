@@ -38,6 +38,24 @@ using namespace ProtoMol;
 %extend ProtoMol::GenericTopology {
         void setExclusion(char* e) {self->exclude = ExclusionType((const char*)e);}
         CoulombSCPISMParameterTable* makeSCPISM() {CoulombSCPISMParameterTable* SCPISMParameters = new CoulombSCPISMParameterTable(); SCPISMParameters->populateTable(); return SCPISMParameters;}
+        float checkExclusion(int atom1, int atom2, bool same) {
+          ExclusionClass excl = (same ? self->exclusions.check(atom1, atom2) : EXCLUSION_NONE);
+          if (excl == EXCLUSION_FULL)
+            return 0.0;
+          else if (excl == EXCLUSION_NONE)
+            return 1.0;
+          else
+            return excl;
+//          switch(self->exclusions.check(atom1, atom2)) {
+//            case EXCLUSION_NONE:
+//              return 1.0;
+//            case EXCLUSION_MODIFIED:
+//              return self->coulombScalingFactor;
+//            default:
+//              return 0.0;
+//          }
+//          return self->exclusions.check(atom1, atom2);//1.0;
+        }
 };
 
 %extend ProtoMol::Topology<ProtoMol::VacuumBoundaryConditions, ProtoMol::CubicCellManager> {

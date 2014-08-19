@@ -84,6 +84,8 @@ def pyWrap(env, pmhome):
      print pmhome
      env.Append(CXXFLAGS=' -fPIC')
      env.Append(CXXFLAGS='-I'+pmhome)
+     env.Append(SWIGFLAGS='-D'+'USE_REAL_IS_FLOAT=1')
+     env.Append(CXXFLAGS='-D'+'USE_REAL_IS_FLOAT=1')
      env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src')
      env.Append(CXXFLAGS='-I'+pmhome+os.sep+'interface'+os.sep+'force'+os.sep+'nonbonded')
      env.Append(CXXFLAGS='-I'+pmhome+os.sep+'..'+os.sep+'protomol'+os.sep+'src'+os.sep+'protomol'+os.sep+'output')

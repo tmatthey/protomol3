@@ -112,14 +112,14 @@ class Energies(ScalarStructure):
       self.phys.app.energies.setTable(34, self.shadowEnergy()+r) # this sets a table to acquire Shadow energy values into a table
       # at position 34
 
-   def addCoulombEnergy(self, r):
+   def addCoulombEnergy(self, r, phys):
       """
       Accumulate into the electrostatic energy
       
       @type r: float
       @param r: Quantity to accumulate.
       """
-      self.phys.app.energies.setTable(0, self.coulombEnergy()+r) # this sets a table to acquire Coulomb energy values into a table 
+      self.phys.app.energies.setTable(0, self.coulombEnergy(phys)+r) # this sets a table to acquire Coulomb energy values into a table 
       # at position 0
 
    def addLJEnergy(self, r):

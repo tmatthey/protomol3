@@ -41,7 +41,7 @@ class ElectrostaticForce:
     Modify energy and force vector to include this force term.
     """
     n = self.phys.numAtoms()
-    print "CE Before: ", self.forces.energies.coulombEnergy(self.phys)
+#    print "CE Before: ", self.forces.energies.coulombEnergy(self.phys)
 #    values = []
     for i in range (0, n):
       for j in range (i+1, n):
@@ -81,4 +81,4 @@ class ElectrostaticForce:
 #          file.close()
         self.forces.force[i*3:i*3+3] -= fo * rij
         self.forces.force[j*3:j*3+3] += fo * rij
-    print "CE After: ", self.forces.energies.coulombEnergy(self.phys)
+#    print "CE After: ", self.forces.energies.coulombEnergy(self.phys)

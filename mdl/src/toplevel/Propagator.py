@@ -7,7 +7,7 @@ import numpy
 import ProtoMolApp
 import copy
 import ModifierShake
-from GPUMatrix import *
+#from GPUMatrix import *
 
 class Propagator:
    """
@@ -241,13 +241,19 @@ class Propagator:
       self.myPropagator = tempI # set temp variable to myPropagator
 
    def deepCopyForce(self, ff): # ff is forcefield
+      print "DOING DEEP COPY FORCE"
       p = ff.params # set forcefield parameters to p
       if (ff.charmm): # if forcefield.charmm
+         print "FF CHARMM"
          ff2 = self.forces.makeForceField(self.phys, "charmm") # set makeForceField(charmm) to ff2
       else: # else if not charmm
+         print "NOT FF CHARMM"
          ff2 = self.forces.makeForceField(self.phys) # set makeForceField(physical) to ff2
-      for ii in ff.forcetypes: # loop through each element in the forcetype array 
-         ff2.forcetypes.append(ii) # append ii to forcetypes
+         for ii in ff.forcetypes: # loop through each element in the forcetype array 
+           print ii
+           ff2.forcetypes.append(ii) # append ii to forcetypes
+      for pf in ff.pythonforces:
+        ff2.pythonforces.append(pf)
       ff2.params = p # set p to ff2.params
       ff2.build() # build ff2
       #self.forces.removeForceField(ff)
@@ -338,11 +344,11 @@ class Propagator:
        @type gpu: boolean
 
        """
+       print "INSIDE PROPAGATE"
        if gpu == True:    # if gpu is set to True
  	   self.gpu = True # then gpu = True
-       else: # if it does not equal True
-           self.gpu = False # then run on the CPU
-             
+           self.phys.gpu = True
+           self.forces.gpu = True
 
        self.myTimestep = dt # set myTimestep to dt
        
@@ -379,6 +385,7 @@ class Propagator:
           # OF PROPAGATION LEVELS.  If it does not, we error
           if (len(forcefield) != levels): # if the length of forcefield is not equivalent to levels
              print "[MDL] Error in propagate(): ", levels, " levels of propagation with ", len(forcefield), " force fields."
+          print "OPTION A"
           outerforcefield = self.deepCopyForce(forcefield[0]) # Take the outermost forcefield and make a deep copy, store it in outerforcefield
 
           # Now we assemble *chain
@@ -409,6 +416,7 @@ class Propagator:
                 chain += (cyclelength[i],) # Add the cyclelength to the chain
              else: # if not a list
                 chain += (dt,) # Add dt to the chain
+             print "OPTION B"
 	     chain += (self.deepCopyForce(forcefield[i]),) # Perform a deep copy of the appropriate force field for this integrator and add to the chain
              if params.has_key(scheme[i]): # Does this integrator have parameters?
                 chain += (params[scheme[i]],) # If so, add them to the chain
@@ -417,6 +425,9 @@ class Propagator:
        else: #STS, simple.  Four arguments: scheme, dt, forcefield, and parameters (if they are there)
           outertime = dt # set the outertime to dt
           outerscheme = scheme # set outerscheme to scheme
+          print "STS DEEPCOPY"
+          print "OPTION C"
+          print "FF ID: ", forcefield
           outerforcefield = self.deepCopyForce(forcefield) # set outerforcefield to deepCopyForce(forcefield)
           chain += (params,) # chain = chain + (params,)
        ############################################################################################################################
@@ -432,7 +443,9 @@ class Propagator:
        # This is the MTS case.  In this case the type of forcefields is a list.  So we have to loop over every element in that list
        if ((str(type(forcefield)))[7:len(str(type(forcefield)))-2] == 'list'): # if the type of forcefield is a list (MTS)
           for ff in forcefield: # step through each element in forcefield
-             if (ff.dirty): ff.build() # A dirty bit in a forcefield indicates something has changed, we must rebuild
+             if (ff.dirty): 
+		print "DIRTY FORCE FIELD, REBUILDING"
+		ff.build() # A dirty bit in a forcefield indicates something has changed, we must rebuild
 	     if (ff.gbsa): # Do we want to do Generalized Born?  This is a model for implicit solvent, i.e. simulating a molecule inside a solvent
 			   # (i.e. thousands of water molecules) without actually including those molecules.
 	        self.phys.myTop.implicitSolvent = 2 # set implicitSolvent to 2 (which means Generalized Born)
@@ -443,6 +456,7 @@ class Propagator:
        # This is the STS case.  Do exactly the above thing, but only on the single forcefield
        else: # if the type of forcefield is not a list 
           if (forcefield.dirty): # if forcefield has a dirty bit
+	      print "DIRTY FORCE FIELD ELSE CASE, REBUILDING"
               forcefield.build() # then build forcefield
 	  if (forcefield.gbsa): # if forcefield.gbsa
 	      self.phys.myTop.implicitSolvent = 2 # set implicitSolvent to 2
@@ -476,8 +490,8 @@ class Propagator:
        		self.io.run(self.phys, self.forces, 0, outertime)        # If the user desired I/O, run it.  We may need to plot physical data or forces vs. time
        		self.io.myProp = self                                    # The IO structure needs access to me and my data.
        		for ii in range(1, steps+1):				   # Run for the appropriate number of steps.
-			if gpu == True:
-				self.CreateGPUMatrix(self.phys.positions,self.phys.velocities,self.phys.invmasses,self.forces.force)
+#			if gpu == True:
+#				self.CreateGPUMatrix(self.phys.positions,self.phys.velocities,self.phys.invmasses,self.forces.force)
        			self.phys.app.energies.clear()			   # Clear energies to zero.
                 	self.forces.energies.initialize(self.phys)		   # Set energies properly (functions of positions and velocities)
 	     # This calls the propagator function with the following arguments:
@@ -487,6 +501,10 @@ class Propagator:
        			propFactory.create(1, outerscheme, self.phys, self.forces, self.io, 1, outertime*Constants.invTimeFactor(), outerforcefield, *chain)
 	     # Update the physical time with the amount that has passed
        			self.phys.time = ii*outertime*Constants.invTimeFactor()
+#                        if (self.phys.gpu == True):
+#                          self.phys.posvec.setC(self.phys.positions.matrix, True)
+#                          self.phys.velvec.setC(self.phys.velocities.matrix, True)
+#                          self.phys.app.updateApp(self.phys.posvec, self.phys.velvec)
 	     # If the user desired I/O, run it.  
 	     # Note in the configuration file they set a frequency in steps
 	     # In IO.run() we check to see if ii % that frequency is zero, so it will only run that number of steps

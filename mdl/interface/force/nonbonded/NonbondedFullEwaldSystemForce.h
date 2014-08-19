@@ -1185,10 +1185,10 @@ namespace ProtoMol {
 				     reciprocal,
 				     correction,
 				     TSwitchingFunction>::getParameters(std::vector<Parameter>& parameters) const{
-    parameters.push_back(Parameter("-alpha",Value(myAlpha),-1.0,Text("splitting")));    
-    parameters.push_back(Parameter("-accuracy",Value(myAccuracy,ConstraintValueType::Positive()),0.00001));
+    parameters.push_back(Parameter("-alpha",Value(myAlpha),(Real)-1.0,Text("splitting")));    
+    parameters.push_back(Parameter("-accuracy",Value(myAccuracy,ConstraintValueType::Positive()),(Real)0.00001));
     if(TBoundaryConditions::VACUUM)
-      parameters.push_back(Parameter("-j",Value(myExpansionFactor,ConstraintValueType::Positive()),3.0));
+      parameters.push_back(Parameter("-j",Value(myExpansionFactor,ConstraintValueType::Positive()),(Real)3.0));
   }
 
   template <class TBoundaryConditions, 

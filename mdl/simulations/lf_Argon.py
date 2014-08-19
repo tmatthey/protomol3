@@ -32,5 +32,8 @@ io.screen = 1
 
 # EXECUTE
 prop = Propagator(phys, forces, io)
-gamma = prop.propagate(scheme="leapfrog", steps=4000, dt=20.0, forcefield=ff)
-
+t0 = time.time()
+#gamma = prop.propagate(scheme="leapfrog", steps=4000, dt=1.0, forcefield=ff, gpu=True)
+gamma = prop.propagate(scheme="leapfrog", steps=4, dt=1.0, forcefield=ff, gpu=True)
+t1 = time.time()
+print "Execution Time in Seconds: ", t1 - t0

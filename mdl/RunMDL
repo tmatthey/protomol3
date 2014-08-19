@@ -8,10 +8,7 @@ export LD_LIBRARY_PATH=${PWD}:${LD_LIBRARY_PATH}
 
 if [ $1 ] 
 then
-  python $*
+   python $*
 else
   python -i ${PWD}/MDL.py
 fi
-
-
-

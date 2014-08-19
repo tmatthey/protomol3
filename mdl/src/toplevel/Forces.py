@@ -25,6 +25,7 @@ class Forces:
       # THIS IS A WRAPPER FOR THE FORCE ARRAY
       # WHICH IS ACCESSIBLE THROUGH self.force
       self.__dict__['forcevec'] = Vector3DBlock.Vector3DBlock() # set forcevec as a Vector3DBlock.Vector3DBlock()
+      self.gpu = False
       #self.force = 0  #: Atomic force vector.
       #########################################################
  
@@ -35,7 +36,10 @@ class Forces:
    # TO GET DATA FROM WRAPPERS   
    def __getattr__(self, name): # get attribute
       if (name == 'force'): # if the name is 'force'
-         return self.__dict__['forcevec'].getC() # return the data of forcevec
+        if (self.gpu == True):
+          return self.gpuForce
+        else:
+          return self.__dict__['forcevec'].getC() # return the data of forcevec
       else: # or if not 'forces'
          return self.__dict__[name] # return other data
 
@@ -43,9 +47,24 @@ class Forces:
    # TO SET DATA IN WRAPPERS 
    def __setattr__(self, name, val):# set attribute
       if (name == 'force' and self.__dict__.has_key('force')): # if the name is 'force' and the dict has 'force'
-         self.__dict__['forcevec'].setC(val) # then set forcevec the specified value
+#        if (self.gpu == True):
+#          self.gpuForce.set_matrix(val)
+#          self.__dict__['forcevec'].setC(self.gpuForce.matrix)
+#        else:
+          self.__dict__['forcevec'].setC(val, False) # then set forcevec the specified value
       if type(val) != 'numpy.ndarray' and name == 'force':
 	 self.__dict__['force'] = val	 
+      elif (name == 'gpu'):
+         self.__dict__['gpu'] = val
+         if (val == True):
+#           from theano import shared
+           from GPUMatrixPyC import GpuMatrix
+           import pycuda.driver as cuda
+           f = numpy.zeros(self.phys.numAtoms() * 3, numpy.float32)
+           g_f = cuda.mem_alloc(f.nbytes)
+           cuda.memcpy_htod(g_f, f)
+           self.gpuForce = GpuMatrix(g_f, cuda.mem_alloc(f.nbytes), f, self.phys.positions.functions, self.phys.numAtoms() * 3)
+#           self.gpuForce = GpuMatrix(shared(numpy.zeros(self.phys.numAtoms() * 3, numpy.float32)), self.phys.positions.functions)
       else:
          self.__dict__[name] = val # set other data to another name
 

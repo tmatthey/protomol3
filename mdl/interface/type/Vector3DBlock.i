@@ -26,15 +26,17 @@ using namespace ProtoMol;
    void printC(){
       cout << "C: " << self->c << " MEMBER C: " << (*self)[0].c << endl;
 }
-   void setC(PyObject* rhs) {
+   void setC(PyObject* rhs, bool gpu) {
       import_array();
       //self->resize(((PyArrayObject*)rhs)->dimensions[0]/3);
       //if ((PyArrayObject*)(self->c)) {
       if (self->c != NULL && (self->c != (Real*)(((PyArrayObject*)rhs)->data))) {
-	delete self->c;
-        self->c = 0;
+        if (gpu == false) {
+          delete self->c;
+          self->c = 0;
+        }
         self->c = (Real*)(((PyArrayObject*)rhs)->data);
-                                                                                }
+      }
         int n = ((PyArrayObject*)rhs)->dimensions[0]/3;
       if (n < self->size()) {
          for (unsigned int i = 0; i < n; i++) {
@@ -63,7 +65,11 @@ using namespace ProtoMol;
 	int mySize = self->size()*3;
         npy_intp dims[1] = {mySize};
 	import_array1(NULL);
-	PyObject* rhs = PyArray_SimpleNewFromData(1,dims,PyArray_DOUBLE,(char*)(self->c));
+        #ifdef USE_REAL_IS_FLOAT
+          PyObject* rhs = PyArray_SimpleNewFromData(1,dims,PyArray_FLOAT,(char*)(self->c));
+        #else
+	  PyObject* rhs = PyArray_SimpleNewFromData(1,dims,PyArray_DOUBLE,(char*)(self->c));
+        #endif
         return rhs;
                     };
 

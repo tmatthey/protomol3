@@ -21,7 +21,7 @@ using namespace ProtoMol;
 
 
 %extend ProtoMol::HarmDihedralSystemForce<ProtoMol::PeriodicBoundaryConditions> {
-   void setPars(Real k, int dih, double dihref) {
+   void setPars(Real k, int dih, Real dihref) {
       std::vector<Value> v;
       v.push_back(Value(k));
       v.push_back(Value(dih));
@@ -32,7 +32,7 @@ using namespace ProtoMol;
 }
 
 %extend ProtoMol::HarmDihedralSystemForce<ProtoMol::VacuumBoundaryConditions> {
-   void setPars(Real k, int dih, double dihref) {
+   void setPars(Real k, int dih, Real dihref) {
       std::vector<Value> v;
       v.push_back(Value(k));
       v.push_back(Value(dih));

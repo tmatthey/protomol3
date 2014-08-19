@@ -19,7 +19,8 @@ import _GenericTopology
 import numpy 
 import sys
 import ProtoMolApp
-import GPUMatrix as gpu
+#from GPUMatrix import GpuMatFunctions, GpuMatrix
+#from theano import config, shared
 
 # This is a deepcopy function for two Python lists a and b
 # If you simply set b = a that copies the reference and if you change a you change b
@@ -223,7 +224,7 @@ class Physical:
       # in identical results for output, even if they have random processes
       # internally.
       self.seed = 1234               #: Random number seed
-      
+      self.gpu = False
       # Possible values for this include: "1-2", "1-3", "1-4" and "scaled1-4"
       # If set to 1-2, we exclude (do not compute) electrostatic interactions between atoms directly 
       # bonded to each other (because we took this into account with the bond force)
@@ -399,9 +400,20 @@ class Physical:
    # we convert it to an MDVec for these purposes.
    def __getattr__(self, name):
       if (name == 'positions'): # if the name = 'positions'
-	 return (self.__dict__['posvec'].getC()).view(MDVec) # return the position vector
+        if (self.gpu == True):
+          return self.gpuPositions
+        else:
+          return (self.__dict__['posvec'].getC()).view(MDVec) # return the position vector
       elif (name == 'velocities'):# if the name = 'velocities'
-         return (self.__dict__['velvec'].getC()).view(MDVec)  # return the velocity vector
+        if (self.gpu == True):
+          return self.gpuVelocities
+        else:
+          return (self.__dict__['velvec'].getC()).view(MDVec)  # return the velocity vector
+      elif (name == 'invmasses'):
+        if (self.gpu == True):
+          return self.gpuInvmasses
+        else:
+          return self.__dict__['self.invmasses']
       elif (name == 'time'): # if the name = 'time'
          return self.myTop.time # return myTop time
       else: # if name is not set to 'positions', 'velocities'  or 'time' then 
@@ -424,30 +436,108 @@ class Physical:
       # If we are setting phys.positions, we must do an element-by-element copy of the array
       # that it is being set to (stored in val)
       if (name == 'positions'): # if name = 'positions'
-	 if type(val) != 'numpy.ndarray':
-	 	self.__dict__['self.positions'] = val
-
-	 else:
-	 	for i in range (0, len(self.positions)): # loop from 0 to the length of positions
-	 		self.positions[i] = val[i] # set val[i] to positions[i]
-	 	self.__dict__['posvec'].setC(val)
+        if (self.gpu == True):
+#          if (type(val)
+          if (type(val) != numpy.ndarray):
+#            print "Positions:\n",val.matrix
+#            x=raw_input(' ')
+#            print "VERY BAD THINGS - POSITIONS: ", type(val)
+#            try:
+#              print 1
+#              print val, val.matrix
+#            self.gpuPositions.set_matrix(val)
+#            except AttributeError:
+#              print 2
+#              print val
+#              self.gpuPositions.set_matrix(numpy.asarray(val, config.floatX))
+#          else:
+          #if (val != self):
+            self.gpuPositions.set_matrix(val)
+#          print "gpuPos: ", self.gpuPositions.matrix[0]
+#          print "PosVec: ", self.__dict__['posvec'].getC()[0]
+#          print "Type of gpuPositions.matrix: ", type(self.gpuPositions.matrix)
+#          print "gpuPositions.matrix:\n", self.gpuPositions.matrix
+#          print "Type of gpuPositions contents: ", type(self.gpuPositions.matrix[0])
+#	  print "Calling setC for positions"
+#          self.__dict__['posvec'].setC(self.gpuPositions.matrix, True)
+	  
+#          print (self.__dict__['posvec'].getC()[0] == self.gpuPositions.matrix[0])
+#          print self.__dict__['posvec'].getC()[0], " : ", self.gpuPositions.matrix[0] 
+#          print self.__dict__['posvec'].getC()[1], " : ", self.gpuPositions.matrix[1]
+#          print self.__dict__['posvec'].getC()[2], " : ", self.gpuPositions.matrix[2]
+#          print "Positions Matrix set!\n", self.__dict__['posvec'].getC()
+#          raw_input()
+        else:
+          if type(val) != 'numpy.ndarray':
+            self.__dict__['self.positions'] = val
+          else:
+            for i in range (0, len(self.positions)): # loop from 0 to the length of positions
+              self.positions[i] = val[i] # set val[i] to positions[i]
+            self.__dict__['posvec'].setC(val, False)
    
       # Similar case for the velocities.
       elif (name == 'velocities'): # if name = 'velocities'
+        if (self.gpu == True):
+          if (type(val) != numpy.ndarray):
+#            print "Velocities:\n", val.matrix
+#            raw_input()
+#            try:
+            #self.gpuVelocities.set_matrix(val)
+#            except AttributeError:
+#              self.gpuVelocities.set_matrix(val)
+#          else:
+#          if (type(val) != numpy.ndarray):
+          #if (val != self):
+            self.gpuVelocities.set_matrix(val)
+#          print "gpuVel: ", self.gpuVelocities[0]
+#          print "VelVec: ", self.__dict__['velvec'].getC()[0]
+#	  print "Calling setC for velocities"
+#          self.__dict__['velvec'].setC(self.gpuVelocities.matrix, True)
+        else:
           if type(val) != 'numpy.ndarray':
-		self.__dict__['self.velocities'] = val
-	  else:
-		 for i in range (0, len(self.velocities)): # loop from 0 to length of velocities
-	    		self.velocities[i] = val[i] # set val[i] to velocities[i]
-		#self.__dict__['velvec'].setC(val)
-
+            self.__dict__['self.velocities'] = val
+          else:
+            for i in range (0, len(self.__dict__['self.velocities'])): # loop from 0 to length of velocities
+              self.velocities[i] = val[i] # set val[i] to velocities[i]
+            self.__dict__['velvec'].setC(val, False)
+      elif (name == 'gpu'):
+        if (val == True):
+          import pycuda.driver as cuda
+#          from theano import shared
+          from GPUMatrixPyC import GpuMatFunctions, GpuMatrix
+          blanklist = numpy.zeros(self.numAtoms() * 3, numpy.float32)
+#          g_a = cuda.mem_alloc(blanklist.nbytes)
+#          g_b = cuda.mem_alloc(blanklist.nbytes)
+          functions = GpuMatFunctions(blanklist, blanklist)
+          p = numpy.asarray(self.__dict__['posvec'].getC(), numpy.float32)
+          g_pos = cuda.mem_alloc(p.nbytes)
+          cuda.memcpy_htod(g_pos, p)
+          self.gpuPositions = GpuMatrix(g_pos, cuda.mem_alloc(p.nbytes), blanklist.copy(), functions, self.numAtoms() * 3)
+          v = numpy.asarray(self.__dict__['velvec'].getC(), numpy.float32)
+          g_vel = cuda.mem_alloc(v.nbytes)
+          cuda.memcpy_htod(g_vel, v)
+          self.gpuVelocities = GpuMatrix(g_vel, cuda.mem_alloc(v.nbytes), blanklist.copy(), functions, self.numAtoms() * 3)
+          i = numpy.asarray(self.__dict__['self.invmasses'], numpy.float32)
+          g_inv = cuda.mem_alloc(i.nbytes)
+          cuda.memcpy_htod(g_inv, i)
+          self.gpuInvmasses = GpuMatrix(g_inv, cuda.mem_alloc(i.nbytes), blanklist.copy(), functions, self.numAtoms() * 3)
+#          self.gpuPositions = GpuMatrix(shared(self.__dict__['posvec'].getC()), functions)
+#          self.gpuVelocities = GpuMatrix(shared(self.__dict__['velvec'].getC()), functions)
+#          self.gpuInvmasses = GpuMatrix(shared(numpy.asarray(self.__dict__['self.invmasses'], numpy.float32)), functions)
+        self.__dict__['gpu'] = val
       #similar case for inverse mass
-      #elif (name == 'invmasses'):
-#	  if type(val) != 'numpy.ndarray':
- #               self.__dict__['self.invmasses'] = val
-  #        else:
-#		 for i in range (0, len(self.invmasses)): # loop from 0 to length of velocities
- #                       self.invmasses[i] = val[i] # set val[i] to invmass[i]
+      elif (name == 'invmasses'):
+        if (self.gpu == True):
+          if (type(val) != numpy.ndarray):
+#            self.gpuInvmasses = val
+#          else:
+            self.gpuInvmasses.set_matrix(val)
+        else:
+          if type(val) != 'numpy.ndarray':
+            self.__dict__['self.invmasses'] = val
+          else:
+            for i in range (0, len(self.invmasses)): # loop from 0 to length of velocities
+              self.invmasses[i] = val[i] # set val[i] to invmass[i]
 
   #    elif (name == 'masses'):
 #	  if type(val) != 'numpy.ndarray':
@@ -825,7 +915,7 @@ class Physical:
       @rtype: float
       @return: Atomic charge [e]
       """
-      return self.myPSF.getAttributeReal("atom", atom-1, "charge") # return the Atomic charge [e]
+      return self.myPSF.getAttributeReal("atom", atom-1, "charge") * Constants.sqrtCoulombConstant() # return the Atomic charge [e]
    #####################################################################################################
    
   
