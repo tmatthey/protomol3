@@ -162,6 +162,11 @@ if( BUILD_PARALLEL )
 	endif( MPI_FOUND )
 endif( BUILD_PARALLEL )
 
+option( BUILD_SINGLE_PRECISION "Build with single precision" Off )
+if ( BUILD_SINGLE_PRECISION )
+			add_definitions( "-DUSE_REAL_IS_FLOAT=1" )
+endif( BUILD_SINGLE_PRECISION )
+
 # Code Coverage
 option( CODE_COVERAGE "Build library with code coverage instrumentation" Off )
 if( CODE_COVERAGE )
