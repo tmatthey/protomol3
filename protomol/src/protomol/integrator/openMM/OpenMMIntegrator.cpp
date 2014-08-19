@@ -282,7 +282,7 @@ void OpenMMIntegrator::initialize( ProtoMolApp *app ) {
 		gbsa->setSoluteDielectric( mGBSAEpsilon );
 		gbsa->setSolventDielectric( mGBSASolvent );
 
-		vector<Real> scaleFactors;
+		vector<double> scaleFactors;
 		getObcScaleFactors( scaleFactors );
 
 		for( unsigned int i = 0; i < sz; ++i ) {
@@ -706,18 +706,18 @@ void OpenMMIntegrator::getParameters( vector<Parameter> &parameters ) const {
 	parameters.push_back( Parameter( "CHARMMLennardJonesForce", Value ( isUsingCHARMMLennardJonesForce, ConstraintValueType::NoConstraints() ), false) );
 
 	//Implicit solvent parameters
-	parameters.push_back( Parameter( "commonmotion", Value( mCommonMotionRate, ConstraintValueType::NotNegative() ), 0.0 ) );
-	parameters.push_back( Parameter( "GBSAEpsilon", Value( mGBSAEpsilon, ConstraintValueType::NotNegative() ), 1.0 ) );
-	parameters.push_back( Parameter( "GBSASolvent", Value( mGBSASolvent, ConstraintValueType::NotNegative() ), 78.3 ) );
+	parameters.push_back( Parameter( "commonmotion", Value( mCommonMotionRate, ConstraintValueType::NotNegative() ), (Real) 0.0 ) );
+	parameters.push_back( Parameter( "GBSAEpsilon", Value( mGBSAEpsilon, ConstraintValueType::NotNegative() ), (Real) 1.0 ) );
+	parameters.push_back( Parameter( "GBSASolvent", Value( mGBSASolvent, ConstraintValueType::NotNegative() ), (Real) 78.3 ) );
 
 	// OpenMM Parameters
 	parameters.push_back( Parameter( "platform", Value( mPlatform, ConstraintValueType::NoConstraints() ), 2 ) );
 	parameters.push_back( Parameter( "minSteps", Value( mMinSteps, ConstraintValueType::NotNegative() ), 0 ) );
-	parameters.push_back( Parameter( "tolerance", Value( mTolerance, ConstraintValueType::NotNegative() ), 1.0 ) );
+	parameters.push_back( Parameter( "tolerance", Value( mTolerance, ConstraintValueType::NotNegative() ), (Real) 1.0 ) );
 
 	// Cutoff Parameters
-	parameters.push_back( Parameter( "CutoffNonBonded", Value( mNonbondedCutoff, ConstraintValueType::NotNegative() ), 0.0 ) );
-	parameters.push_back( Parameter( "CutoffGB", Value( mGBCutoff, ConstraintValueType::NotNegative() ), 0.0 ) );
+	parameters.push_back( Parameter( "CutoffNonBonded", Value( mNonbondedCutoff, ConstraintValueType::NotNegative() ), (Real) 0.0 ) );
+	parameters.push_back( Parameter( "CutoffGB", Value( mGBCutoff, ConstraintValueType::NotNegative() ), (Real) 0.0 ) );
 
 	parameters.push_back( Parameter( "DeviceID", Value( mPropagatorDevice, ConstraintValueType::NoConstraints() ), -1 ) );
 	parameters.push_back( Parameter( "BlockDeviceID", Value( mBlockDevice, ConstraintValueType::NoConstraints() ), -1 ) );
@@ -733,7 +733,7 @@ unsigned int OpenMMIntegrator::getParameterSize() const {
 }
 
 // Figure out OBC scale factors based on the atomic masses.
-void OpenMMIntegrator::getObcScaleFactors( std::vector<Real>& scaleFactors ) {
+void OpenMMIntegrator::getObcScaleFactors( std::vector<double>& scaleFactors ) {
 	unsigned int numAtoms = app->positions.size();
 
 	scaleFactors.resize( numAtoms );

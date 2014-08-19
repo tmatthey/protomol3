@@ -156,10 +156,10 @@ namespace ProtoMol {
     STSIntegrator::getParameters(parameters);
     parameters.push_back(Parameter("firstmode",Value(firstMode,ConstraintValueType::NoConstraints()),-1,Text("First mode to use in set")));
     parameters.push_back(Parameter("numbermodes",Value(numMode,ConstraintValueType::NoConstraints()),-1,Text("Number of modes propagated")));
-    parameters.push_back(Parameter("gamma",Value(myGamma*(1000 * Constant::INV_TIMEFACTOR),ConstraintValueType::NotNegative()),80.0,Text("Langevin Gamma")));
+    parameters.push_back(Parameter("gamma",Value(myGamma*(1000 * Constant::INV_TIMEFACTOR),ConstraintValueType::NotNegative()),(Real) 80.0,Text("Langevin Gamma")));
     parameters.push_back(Parameter("seed",Value(mySeed,ConstraintValueType::NotNegative()),1234,Text("Langevin random seed")));
-    parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),300.0,Text("Langevin temperature")));
-    parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
+    parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),(Real) 300.0,Text("Langevin temperature")));
+    parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),(Real) 0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
     parameters.push_back(Parameter("randforce",Value(randforce,ConstraintValueType::NotNegative()),1,Text("Add random force/EM steps")));
     parameters.push_back(Parameter("rediag",Value(reDiag,ConstraintValueType::NoConstraints()),false,Text("Force re-digonalize")));
     parameters.push_back(Parameter("simplemin",Value(simpleMin,ConstraintValueType::NoConstraints()),true,Text("Simple minimizer or exact minima projection.")));

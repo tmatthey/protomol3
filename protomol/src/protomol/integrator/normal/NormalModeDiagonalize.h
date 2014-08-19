@@ -116,7 +116,7 @@ namespace ProtoMol
 
       //Checkpointing
       bool checkpointUpdate;    
-      double origCEigVal, origTimestep;
+      Real origCEigVal, origTimestep;
 
       //auto-parameters?
       bool autoParmeters;

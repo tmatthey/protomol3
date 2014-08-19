@@ -72,7 +72,7 @@ namespace ProtoMol {
     static const std::string keyword;
   private:
     typedef TypeSelection::Int<4>::type int32;
-    double *eigVec;
+    Real *eigVec;
     int totStep;
     unsigned int sz;
     std::string evecfile, evalfile, hessfile;

@@ -39,7 +39,7 @@ void NumericallyDifferentiatedHessian::initialize(ProtoMolApp *app) {
 }
 
 long NumericallyDifferentiatedHessian::run(const long numTimesteps) {
-  double *numHess;
+  Real *numHess;
   Real maxHessError = 0.0;
 
   if( numTimesteps < 0 ) return 0;
@@ -48,19 +48,19 @@ long NumericallyDifferentiatedHessian::run(const long numTimesteps) {
   calculateForces();
   //true for mass re-weight;
   hsn.evaluate(&app->positions, app->topology, false);
-  numHess = new double[_3N * _3N];
+  numHess = new Real[_3N * _3N];
   cout << "timesteps " << numTimesteps << endl;
   for (int k = 0; k < numTimesteps; k++) {
     maxHessError = 0.0;
     if (k != 0) epsilon /= 2.0;
 
     //Hessian
-    double* f_plus_2h = new double[_3N];
-    double* f_plus_h = new double[_3N];
-    double* f_x = new double[_3N];
-    double* f_h = new double[_3N];
-    double* f_2h = new double[_3N];
-    double* orig_pos = new double[_3N];
+    Real* f_plus_2h = new Real[_3N];
+    Real* f_plus_h = new Real[_3N];
+    Real* f_x = new Real[_3N];
+    Real* f_h = new Real[_3N];
+    Real* f_2h = new Real[_3N];
+    Real* orig_pos = new Real[_3N];
     Real tempErr;
     for (unsigned int i = 0;i < _3N; i++)
       {
@@ -152,7 +152,7 @@ void NumericallyDifferentiatedHessian::
 getParameters(vector<Parameter> &parameters) const {
   STSIntegrator::getParameters(parameters);
   parameters.push_back
-    (Parameter("epsilon", Value(epsilon, ConstraintValueType::Positive()), 1.0,
+    (Parameter("epsilon", Value(epsilon, ConstraintValueType::Positive()), (Real) 1.0,
                Text("epsilon")));
 }
 

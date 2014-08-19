@@ -59,7 +59,7 @@ namespace ProtoMol {
     public:
         //virtual void forceProjection();
     private:	
-        void modeProjector(Vector3DBlock *inp, double *tmpc, bool forcep);
+        void modeProjector(Vector3DBlock *inp, Real *tmpc, bool forcep);
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // My data members
@@ -80,7 +80,7 @@ namespace ProtoMol {
 
         XYZTrajectoryWriter *myWriter;
 
-        double *posC, *velC;
+        Real *posC, *velC;
         
         ofstream myFile;
 

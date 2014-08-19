@@ -144,14 +144,14 @@ void CGMinimizerIntegrator::getParameters(vector<Parameter> &parameters) const {
   STSIntegrator::getParameters(parameters);
   parameters.push_back
     (Parameter("alpha", Value(myAlpha, ConstraintValueType::NotNegative()),
-               0.001,
+               (Real) 0.001,
                Text("steplength 'sufficient decrease' parameter")));
   parameters.push_back
-    (Parameter("beta", Value(myBeta, ConstraintValueType::NotNegative()), 0.05,
+    (Parameter("beta", Value(myBeta, ConstraintValueType::NotNegative()), (Real) 0.05,
                Text("steplength 'sufficient directional derivative reduction' "
                     "parameter")));
   parameters.push_back
-    (Parameter("restart", Value(myBeta, ConstraintValueType::NotNegative()), 0,
+    (Parameter("restart", Value(myBeta, ConstraintValueType::NotNegative()), (Real) 0,
                Text("steplength 'restart interval")));
 }
 

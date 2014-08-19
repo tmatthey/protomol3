@@ -265,7 +265,7 @@ Real LeapfrogTruncatedShadow::calcNearHamiltonian() {
   accum = 0.0;
   //Impropers
   if (myImproper) {
-    double hessD[144];
+    Real hessD[144];
     for (unsigned int i = 0; i < app->topology->impropers.size(); i++) {
       bool nonZForce = false;       //test for force constants
       for (int j = 0; j < app->topology->impropers[i].multiplicity; j++)
@@ -302,7 +302,7 @@ Real LeapfrogTruncatedShadow::calcNearHamiltonian() {
   }
   //Dihedrals
   if (myDihedral) {
-    double hessD[144];
+    Real hessD[144];
     for (unsigned int i = 0; i < app->topology->dihedrals.size(); i++) {
       bool nonZForce = false;       //test for force constants
       for (int j = 0; j < app->topology->dihedrals[i].multiplicity; j++)
@@ -617,7 +617,7 @@ calcPairInteractionHess(Real doSwitch, Real switchon, Real cutoff, Real order,
 }
 
 void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
-                                          double *hessD) {
+                                          Real *hessD) {
   //
   int a1 = currTorsion.atom1;
   int a2 = currTorsion.atom2;
@@ -625,7 +625,7 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
   int a4 = currTorsion.atom4;
 
   //actual positions
-  double a[9] = {
+  Real a[9] = {
     app->positions[a1][0], app->positions[a2][0], app->positions[a3][0],
     app->positions[a1][1], app->positions[a2][1], app->positions[a3][1],
     app->positions[a1][2], app->positions[a2][2], app->positions[a3][2]
@@ -639,27 +639,27 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
                                          app->positions[a3]));
   // Cross product of r12 and r23v, represents the plane shared by these two
   // vectors
-  double cosPhi = -r12.dot(r23v) / (r12.norm() * r23v.norm());
+  Real cosPhi = -r12.dot(r23v) / (r12.norm() * r23v.norm());
   //  sin(acos(cosPhi));
-  double sinPhi = (r12.cross(r23v)).norm() / (r12.norm() * r23v.norm());
+  Real sinPhi = (r12.cross(r23v)).norm() / (r12.norm() * r23v.norm());
   //double sinPhi= sin(acos(cosPhi));
-  double nsa1 = app->positions[a1].normSquared(); double nsa2 =
-    app->positions[a2].normSquared(); double nsa3 =
+  Real nsa1 = app->positions[a1].normSquared(); Real nsa2 =
+    app->positions[a2].normSquared(); Real nsa3 =
     app->positions[a3].normSquared();
   //
-  double x, y, z;
+  Real x, y, z;
   z = (nsa3 - nsa2 - r23v.norm() * r23v.norm()) / (-2.0 * r23v.norm());
   x =
     (nsa1 - nsa2 - r12.norm() * r12.norm() + 2.0 * z * r12.norm() *
      cosPhi) / (-2.0 * r12.norm() * sinPhi);
   y = sqrt(nsa2 - x * x - z * z);
   //target positions
-  double opC[9] = {
+  Real opC[9] = {
     x - r12.norm() * sinPhi, x, x, y, y, y,
     z - r12.norm() * cosPhi, z, z - r23v.norm()
   };
   //DET  =  a11(a33a22-a32a23)-a21(a33a12-a32a13)+a31(a23a12-a22a13)
-  double dta = a[0] *
+  Real dta = a[0] *
                (a[8] * a[4] - a[7] *
                 a[5]) - a[3] *
                (a[8] * a[1] - a[7] *
@@ -668,7 +668,7 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
   //|a21 a22 a23 |=  1/DET *| -(a33a21-a31a23) a33a11-a31a13  -(a23a11-a21a13) |
   //|a31 a32 a33 |          |  a32a21-a31a22  -(a32a11-a31a12)   a22a11-a21a12 |
   //inverse of a
-  double ia[9] = {
+  Real ia[9] = {
     a[8] * a[4] - a[7] * a[5],
     -(a[8] * a[1] - a[7] * a[2]), a[5] * a[1] - a[4] * a[2],
     -(a[8] * a[3] - a[6] * a[5]), a[8] * a[0] - a[6] * a[2],
@@ -678,7 +678,7 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
   for (int i = 0; i < 9; i++) ia[i] /= dta;
 
   //rotation matrix
-  double aRot[9];
+  Real aRot[9];
   for (int i = 0; i < 9; i++) aRot[i] = 0.0;
 
   for (int i = 0; i < 9; i++)
@@ -686,29 +686,29 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
         opC[(i / 3) * 3 + j] * ia[i % 3 + j * 3];
 
   //fourth body position
-  double in4[3] = {
+  Real in4[3] = {
     app->positions[a4][0], app->positions[a4][1], app->positions[a4][2]
   };
   //rotate it
-  double out4[3] = {
+  Real out4[3] = {
     0.0, 0.0, 0.0
   };
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) out4[i] += aRot[i * 3 + j] * in4[j];
 
-  double dgd[12] = {
+  Real dgd[12] = {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
   };
   // Calculate phi
   //#######################
-  double g;
+  Real g;
   g = -atan((out4[1] - opC[5]) / (out4[0] - opC[2]));
   //dfdxdy := -k*cos(n*g(x, y, z)+ps)*n^2*(diff(g(x, y, z), y))*
   //          (diff(g(x, y, z), x))
   //				-k*sin(n*g(x, y, z)+ps)*n*(diff(g(x, y, z), y, x))
   //multiplicity
-  double fact1 = 0.0;
-  double fact2 = 0.0;
+  Real fact1 = 0.0;
+  Real fact2 = 0.0;
   for (int dm = 0; dm < currTorsion.multiplicity; dm++)    //Dihedrals
     if (currTorsion.periodicity[dm] > 0) {
       fact1 += -currTorsion.forceConstant[dm] *
@@ -765,8 +765,8 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
 
   //
   //common factors
-  double sqTerm1 = (1 + y43_2 / x43_2) * (1 + y43_2 / x43_2);
-  double sqTerm2 = (-1 + z43 / r23) * (-1 + z43 / r23);
+  Real sqTerm1 = (1 + y43_2 / x43_2) * (1 + y43_2 / x43_2);
+  Real sqTerm2 = (-1 + z43 / r23) * (-1 + z43 / r23);
   //#d2x1y1
   hessD[0 * 12 + 1] = hessD[1 * 12 + 0] = -1 / x21_2;
   //d2x1y2
@@ -868,8 +868,8 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
     (-1 + z43 / r23) * y43 / (x43_3 * sqTerm1);
   //
   //**d2x2z3
-  double temphd = y43 / (x43_2 * r23 * (1 + y43_2 / x43_2));      //same but +/-
-  double temphdn = y43 * (1 - z43 / r23) / (x43_2 * r23 * (1 + y43_2 / x43_2));
+  Real temphd = y43 / (x43_2 * r23 * (1 + y43_2 / x43_2));      //same but +/-
+  Real temphdn = y43 * (1 - z43 / r23) / (x43_2 * r23 * (1 + y43_2 / x43_2));
   hessD[(3) * 12 + 6 + 2] = hessD[(6 + 2) * 12 + 3] = temphdn;   //temphd;
   //#d2x2z4
   //-d2x2z3; //-y43/(x43^2*r23*(1+y43^2/x43^2))
@@ -885,16 +885,16 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
   temphd = 1 / (r23 * x21);
   hessD[(3 + 1) * 12 + 2] = hessD[(2) * 12 + 3 + 1] = temphd;   //1/(r23*x21);
   //**Temp for y2z2 and -y3z2
-  double temphd3 =
+  Real temphd3 =
     -(1 / r23 - z21 / r23_2) / x21 - z43 / (r23_2 * x43 * (1 + y43_2 / x43_2));
   //** Tempf for y3z3 and -y2z3
-  double temphd4 = z21 / (r23_2 * x21) - (-1 / r23 + z43 / r23_2) /
+  Real temphd4 = z21 / (r23_2 * x21) - (-1 / r23 + z43 / r23_2) /
     (x43 * (1 + y43_2 / x43_2));
   //**d2y2z2
   //-temphd; //-d2y2z1; //-1/(r23*x21)
   hessD[(3 + 1) * 12 + 3 + 2] = hessD[(3 + 2) * 12 + 3 + 1] = temphd3;
   //#d2y2z4
-  double temphd2 = 1 / (r23 * x43 * (1 + y43_2 / x43_2));
+  Real temphd2 = 1 / (r23 * x43 * (1 + y43_2 / x43_2));
   hessD[(3 + 1) * 12 + 9 + 2] = hessD[(9 + 2) * 12 + 3 + 1] = temphd2;
   //**d2y2z3
   //-temphd2; //-d2y2z4; //-1/(r23*x43*(1+y43^2/x43^2))
@@ -928,7 +928,7 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
         }
 
       for (int k = 0; k < 3; k++) {
-        double v[3] = {
+        Real v[3] = {
           hessD[eyeh + jay + k], hessD[eyeh + jay + k + 12],
           hessD[eyeh + jay + k + 24]
         };
@@ -944,8 +944,8 @@ void LeapfrogTruncatedShadow::TorsionHess(const Torsion &currTorsion,
 }
 
 //Use aRot to rotate the vector back into real space
-double *LeapfrogTruncatedShadow::rotateV3D(double *aRot, double *mf) {
-  double out[3] = {
+Real *LeapfrogTruncatedShadow::rotateV3D(Real *aRot, Real *mf) {
+  Real out[3] = {
     0.0, 0.0, 0.0
   };
   for (int i = 0; i < 3; i++)

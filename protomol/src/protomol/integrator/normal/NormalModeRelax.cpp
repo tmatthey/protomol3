@@ -97,7 +97,7 @@ namespace ProtoMol {
 
   void NormalModeRelax::getParameters(vector<Parameter>& parameters) const {
     MTSIntegrator::getParameters(parameters);
-    parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
+    parameters.push_back(Parameter("minimlim",Value(minLim,ConstraintValueType::NotNegative()),(Real) 0.1,Text("Minimizer target PE difference kcal mole^{-1}")));
     parameters.push_back(Parameter("rediag",Value(reDiag,ConstraintValueType::NoConstraints()),false,Text("Force re-digonalize")));
     parameters.push_back(Parameter("simplemin",Value(simpleMin,ConstraintValueType::NoConstraints()),true,Text("Simple minimizer or exact minima projection.")));
   }

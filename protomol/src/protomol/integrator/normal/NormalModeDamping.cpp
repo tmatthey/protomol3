@@ -98,8 +98,8 @@ namespace ProtoMol {
             x0 = app->positions;
             tempV3DBlk = app->positions;
             //
-            posC = new double[_3N];
-            velC = new double[_3N];
+            posC = new Real[_3N];
+            velC = new Real[_3N];
             //
 
     }
@@ -129,7 +129,7 @@ namespace ProtoMol {
                 calculateForces();
                 waterForces->intoSubtract(*myForces);
                 //project forces due to waters into mode space
-                modeProjector(waterForces, tmpC, true);
+                modeProjector(waterForces, (Real*) tmpC, true);
                 //and positions
                 app->positions.intoSubtract(tempV3DBlk); //tempV3DBlk gets updated during rediag!
                 //myPositions->intoSubtract(x0);
@@ -161,7 +161,7 @@ namespace ProtoMol {
         return numTimesteps;
     }  
 
-    void NormalModeDamping::modeProjector(Vector3DBlock *inp, double *tmpc, bool forcep){
+    void NormalModeDamping::modeProjector(Vector3DBlock *inp, Real *tmpc, bool forcep){
         temp2V3DBlk = *inp;
         //calculate M^{1/2}(I-M^{1/2}\hat{Q}\hat{Q}^TM^{-1/2})M^{-1/2}f using BLAS
         //f'=M^{-1/2}*f
@@ -175,9 +175,9 @@ namespace ProtoMol {
         //c=hQ^T*M^{-1/2}*f
         char transA = 'T';							// Transpose Q, LAPACK checks only first character N/V
         int m = _3N; int n = _rfM; int incxy = 1;	//sizes
-        double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
+        Real alpha = 1.0; Real beta = 0.0;		//multiplyers, see Blas docs.
 
-        Lapack::dgemv(&transA, &m, &n, &alpha, (*Q), &m, temp2V3DBlk.c, &incxy, &beta, tmpc, &incxy);
+        Lapack::dgemv(&transA, &m, &n, &alpha, (Real*) (*Q), &m, temp2V3DBlk.c, &incxy, &beta, tmpc, &incxy);
     }
 
     void NormalModeDamping::getParameters(vector<Parameter>& parameters) const {

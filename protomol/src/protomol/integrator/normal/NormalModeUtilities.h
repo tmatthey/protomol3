@@ -43,14 +43,14 @@ namespace ProtoMol {
         void genProjGaussC(Vector3DBlock *gaussRandCoord, Vector3DBlock *gaussRandCoordm, GenericTopology *myTopo);
         void nmlDrift(Vector3DBlock *myPositions, Vector3DBlock *myVelocities, Real dt, GenericTopology *myTopo);
         bool testRemainingModes();
-        int diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim, int &numFound);
-        void absSort(double *eigVec, double *eigVal, int *eigIndx, int dim);
-        double calcRayleigh(double *rQ, double *boundRq, double *hsnhessM, int numv, double raylAverage);
+        int diagHessian(Real *eigVecO, Real *eigValO, Real *hsnhessM, int dim, int &numFound);
+        void absSort(Real *eigVec, Real *eigVal, int *eigIndx, int dim);
+        Real calcRayleigh(Real *rQ, Real *boundRq, Real *hsnhessM, int numv, Real raylAverage);
         int minimizer(Real peLim, int numloop, bool simpM, bool reDiag, bool nonSubspace, int *forceCalc, Real *lastLambda, 
             ScalarStructure *myEnergies, Vector3DBlock *myPositions, GenericTopology *myTopo);
         virtual void utilityCalculateForces(){};
-        void getInnerHess(double *eigVec, double *hess, double *innerHess);
-        void getNewEigs(double *eigVec, double *origEigVec, double *innerEigVec);
+        void getInnerHess(Real *eigVec, Real *hess, Real *innerHess);
+        void getNewEigs(Real *eigVec, Real *origEigVec, Real *innerEigVec);
     private:
     public:
         Vector3DBlock *subspaceForce(Vector3DBlock * force, Vector3DBlock * iPforce);
@@ -63,8 +63,8 @@ namespace ProtoMol {
         void initialize(int sz, ProtoMolApp *app, Vector3DBlock *myForces, int nm_flags);
         virtual void forceProjection();
         void setIntegratorSetPointers(Integrator *integrator, EigenvectorInfo *eipt, bool eiValid);
-        Vector3DBlock *cartSpaceProj(double *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0);
-        double *modeSpaceProj(double *cPos, Vector3DBlock * iPos, Vector3DBlock * ex0);
+        Vector3DBlock *cartSpaceProj(Real *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0);
+        Real *modeSpaceProj(Real *cPos, Vector3DBlock * iPos, Vector3DBlock * ex0);
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Friends of class NormalModeUtilities
@@ -76,14 +76,14 @@ namespace ProtoMol {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public:
         //pointers to eig pointers, used by all integrators in chain
-        double **Q;
-        double *eigValP;
+        Real **Q;
+        Real *eigValP;
         bool *eigVecChangedP;
         unsigned int numEig;
         //molecule constants
         int _N, _3N, _rfM;
         //linear arrays for blas
-      double /**tmpFX,*/ *tmpC;
+      Real /**tmpFX,*/ *tmpC;
         //inputs for projection/integrator
         int firstMode;
         int numMode;
@@ -104,7 +104,7 @@ namespace ProtoMol {
         bool newDiag;
 
     protected:
-        double *invSqrtMass, *sqrtMass;
+        Real *invSqrtMass, *sqrtMass;
         int numSteps;
         Vector3DBlock gaussRandCoord2, posTemp;
         Vector3DBlock *myForcesP;

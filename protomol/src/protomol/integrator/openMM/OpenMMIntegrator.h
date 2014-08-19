@@ -33,13 +33,13 @@ namespace ProtoMol {
 			virtual long run( const long numTimesteps );
 		private:
 			virtual STSIntegrator *doMake( const std::vector<Value> &values, ForceGroup *fg ) const;
-			void getObcScaleFactors( std::vector<Real>& scaleFactors );
+			void getObcScaleFactors( std::vector<double>& scaleFactors );
 		public:
 			static const std::string keyword;
 		protected:
 			// OpenMM Parameters
 			int mPlatform, mPropagatorDevice, mBlockDevice, mMinSteps;
-			double mTolerance;
+			Real mTolerance;
 
 			OpenMM::System *system;
 			OpenMM::Context *context;
@@ -54,7 +54,7 @@ namespace ProtoMol {
 			Real mGBSAEpsilon, mGBSASolvent;
 
 			// CutoffParams
-			double mNonbondedCutoff, mGBCutoff;
+		        Real mNonbondedCutoff, mGBCutoff;
 
 			// Force Switches
 			bool isUsingHarmonicBondForce;

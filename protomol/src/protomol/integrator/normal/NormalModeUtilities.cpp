@@ -35,8 +35,8 @@ namespace ProtoMol {
     //Set up eigenvector pointers
     numEigvectsu = app->eigenInfo.myNumEigenvectors;
     eigVecChangedP = &app->eigenInfo.myEigVecChanged;
-    eigValP = &app->eigenInfo.myMaxEigenvalue;
-    Q = &app->eigenInfo.myEigenvectors;
+    eigValP = (Real*) &app->eigenInfo.myMaxEigenvalue;
+    Q = (Real**) &app->eigenInfo.myEigenvectors;
 
     //find topology pointer
     GenericTopology *myTopo = app->topology;
@@ -65,12 +65,12 @@ namespace ProtoMol {
     myTopo->degreesOfFreedom = _rfM - (firstMode-1);
     //Removed 11/03/2010 by CRS, correct temperature calculated when assuming NO conserved DOF: if(firstMode == 1) myTopo->degreesOfFreedom -= 3;
     //temporary mode space variable for intermediate calculations
-    tmpC = new double[_3N];
+    tmpC = new Real[_3N];
     //define temporary position/force vector
     //tmpFX = new double[_3N];
     //setup sqrt masses and their inverse
-    invSqrtMass = new double[_N];
-    sqrtMass = new double[_N];
+    invSqrtMass = new Real[_N];
+    sqrtMass = new Real[_N];
     for(int i=0;i<_N;i++){
         sqrtMass[i] = sqrt( myTopo->atoms[i].scaledMass );
         if(sqrtMass[i]) invSqrtMass[i] = 1.0 / sqrtMass[i];
@@ -101,15 +101,15 @@ namespace ProtoMol {
         numEigvectsu = 0;
     }
     eigVecChangedP = &eipt->myEigVecChanged;
-    eigValP = &eipt->myMaxEigenvalue;
-    Q = &eipt->myEigenvectors;
+    eigValP = (Real*) &eipt->myMaxEigenvalue;
+    Q = (Real**) &eipt->myEigenvectors;
     //find next integrators
     for(Integrator* i = integrator->next();i != NULL;i = i->next()){
         nmint = dynamic_cast<NormalModeUtilities*>(i);
         if(nmint == NULL) report << error << "Normal Mode integrator chain contains unknown integrator type."<<endr;
         nmint->eigVecChangedP = &eipt->myEigVecChanged;
-        nmint->eigValP = &eipt->myMaxEigenvalue;
-        nmint->Q = &eipt->myEigenvectors;
+        nmint->eigValP = (Real*) &eipt->myMaxEigenvalue;
+        nmint->Q = (Real**) &eipt->myEigenvectors;
         nmint->numEigvectsu = numEigvectsu;
     }
   }
@@ -131,15 +131,15 @@ namespace ProtoMol {
     //c=hQ^T*M^{-1/2}*f
     char transA = 'T';							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
+    Real alpha = 1.0;	Real beta = 0.0;		//multiplyers, see Blas docs.
 
-    Lapack::dgemv(&transA, &m, &n, &alpha, (*Q), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
+    Lapack::dgemv(&transA, &m, &n, &alpha, (Real*) (*Q), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 
     //calculate f''=M^{-1/2}*f'-hQc using BLAS
     char transB = 'N';
     alpha = -1.0;	beta = 1.0;
 
-    Lapack::dgemv(&transB, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, iPforce->c, &incxy);
+    Lapack::dgemv(&transB, &m, &n, &alpha, (Real*) (*Q), &m, tmpC, &incxy, &beta, iPforce->c, &incxy);
 
     //f'''=M^{1/2}*f''
     for( int i=0; i < _3N; i++)
@@ -163,9 +163,9 @@ namespace ProtoMol {
     //c=hQ^T*M^{-1/2}*f
     char transA = 'T';							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
+    Real alpha = 1.0;	Real beta = 0.0;		//multiplyers, see Blas docs.
 
-    Lapack::dgemv(&transA, &m, &n, &alpha, (*Q), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
+    Lapack::dgemv(&transA, &m, &n, &alpha, (Real*) (*Q), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 
     //calculate f''=M^{-1/2}*f'-hQc using BLAS
     char transB = 'N';
@@ -196,9 +196,9 @@ namespace ProtoMol {
     //c=Q^T*M^{-1/2}*f
     char transA = 'T';							// Transpose, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;
+    Real alpha = 1.0;	Real beta = 0.0;
 
-    Lapack::dgemv(&transA, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
+    Lapack::dgemv(&transA, &m, &n, &alpha, (Real*) &((*Q)[_3N*(firstMode-1)]), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 
     //f''=Qc
     char transB = 'N'; /* LAPACK checks only first character N/V */
@@ -229,7 +229,7 @@ namespace ProtoMol {
     //c=Q^T*M^{-1/2}*v
     char transA = 'T';							//Transpose, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM-(firstMode-1); int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;
+    Real alpha = 1.0;	Real beta = 0.0;
 
     Lapack::dgemv(&transA, &m, &n, &alpha, &((*Q)[_3N*(firstMode-1)]), &m, iPforce->c, &incxy, &beta, tmpC, &incxy);
 
@@ -264,10 +264,10 @@ namespace ProtoMol {
   }
 
   //Project from mode subspace to 3D space
-  Vector3DBlock* NormalModeUtilities::cartSpaceProj(double *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0){
+  Vector3DBlock* NormalModeUtilities::cartSpaceProj(Real *tmpC, Vector3DBlock * iPos, Vector3DBlock * ex0){
     char transA = 'N';							// Transpose Q, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;		//multiplyers, see Blas docs.
+    Real alpha = 1.0;	Real beta = 0.0;		//multiplyers, see Blas docs.
 
     Lapack::dgemv(&transA, &m, &n, &alpha, (*Q), &m, tmpC, &incxy, &beta, iPos->c, &incxy);
 
@@ -283,7 +283,7 @@ namespace ProtoMol {
   }
 
   //Project from 3D space to mode subspace
-  double* NormalModeUtilities::modeSpaceProj(double *cPos, Vector3DBlock * iPos, Vector3DBlock * ex0){
+  Real* NormalModeUtilities::modeSpaceProj(Real *cPos, Vector3DBlock * iPos, Vector3DBlock * ex0){
     //
     Vector3DBlock vPos = *iPos;
     for( int i=0; i < _N; i++) vPos[i] -= (*ex0)[i]; //subtract ex0
@@ -295,7 +295,7 @@ namespace ProtoMol {
     //c=Q^T*M^{-1/2}*v
     char transA = 'T';							//Transpose, LAPACK checks only first character N/V
     int m = _3N; int n = _rfM; int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;
+    Real alpha = 1.0;	Real beta = 0.0;
 
 	Lapack::dgemv(&transA, &m, &n, &alpha, (*Q), &m, vPos.c, &incxy, &beta, cPos, &incxy);
 
@@ -388,22 +388,22 @@ namespace ProtoMol {
   //*************************************************************************************
 
   //Diagonalize hessian******************************************************************//
-  int NormalModeUtilities::diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim, int &numFound){
-	double *wrkSp;
+  int NormalModeUtilities::diagHessian(Real *eigVecO, Real *eigValO, Real *hsnhessM, int dim, int &numFound){
+	Real *wrkSp;
 	int *isuppz, *iwork;
 
-	wrkSp = new double[26*dim];
+	wrkSp = new Real[26*dim];
 	isuppz = new int[2*dim];
 	iwork = new int[10*dim];
 	//Diagonalize
     char jobz = 'V'; char range = 'A'; char uplo = 'U'; /* LAPACK checks only first character N/V */
     int n = dim;             /* order of coefficient matrix a  */
     int lda = dim;           /* leading dimension of a array*/
-    double vl = 1.0;
-    double vu = 1.0;
+    Real vl = 1.0;
+    Real vu = 1.0;
     int il = 1;
     int iu = 1;
-    double abstol = 0;
+    Real abstol = 0;
     int ldz = dim; int lwork = 26*dim; /* dimension of work array*///int m;
     int liwork = 10*dim;						/* dimension of int work array*/
     
@@ -429,11 +429,11 @@ namespace ProtoMol {
   }
 
   //sort vectors for absolute value*******************************************************//
-  void NormalModeUtilities::absSort(double *eigVec, double *eigVal, int *eigIndx, int dim){
+  void NormalModeUtilities::absSort(Real *eigVec, Real *eigVal, int *eigIndx, int dim){
     int i;
 
     //find minimum abs value
-    double minEv = fabs(eigVal[0]);
+    Real minEv = fabs(eigVal[0]);
     for(i=1;i<dim;i++){
         if(minEv < fabs(eigVal[i])) break;
         else minEv = fabs(eigVal[i]);
@@ -453,8 +453,8 @@ namespace ProtoMol {
         while(negp >= 0) eigIndx[j++] = negp--;
     }
     //Sort actual eigenvector array
-    double *tmpVect = new double[dim];
-    double tmpElt, tmpEval;
+    Real *tmpVect = new Real[dim];
+    Real tmpElt, tmpEval;
     int ii, k;
     for(i=0;i<dim;i++){
         if( eigIndx[i] != (int)i && eigIndx[i] != -1){		//need to swap?
@@ -490,12 +490,12 @@ namespace ProtoMol {
   }
 
   //find Hessian projected into mxm 'inner' space
-  void NormalModeUtilities::getInnerHess(double *eigVec, double *hess, double *innerHess){
+  void NormalModeUtilities::getInnerHess(Real *eigVec, Real *hess, Real *innerHess){
     char transA = 'T'; char transB = 'N';
     int m = _rfM; int n = _3N; int k = _3N;
     int lda = _3N; int ldb = _3N; int ldc = _rfM;
-    double alpha = 1.0;	double beta = 0.0;
-    double *tempMat = new double[_rfM*_3N];
+    Real alpha = 1.0;	Real beta = 0.0;
+    Real *tempMat = new Real[_rfM*_3N];
 
     Lapack::dgemm(&transA, &transB, &m, &n, &k, &alpha, eigVec, &lda, hess, &ldb, &beta, tempMat, &ldc);
     n = _rfM; lda = _rfM;
@@ -505,11 +505,11 @@ namespace ProtoMol {
   }
 
   //product of eigenvectors and diagonalized 'inner' hessian
-  void NormalModeUtilities::getNewEigs(double *eigVec, double *origEigVec, double *innerEigVec){
+  void NormalModeUtilities::getNewEigs(Real *eigVec, Real *origEigVec, Real *innerEigVec){
     char transA = 'N'; char transB = 'N';
     int m = _3N; int n = _rfM; int k = _rfM;
     int lda = _3N; int ldb = _rfM; int ldc = _3N;
-    double alpha = 1.0;	double beta = 0.0;
+    Real alpha = 1.0;	Real beta = 0.0;
 
     Lapack::dgemm(&transA, &transB, &m, &n, &k, &alpha, origEigVec, &lda, innerEigVec, &ldb, &beta, eigVec, &ldc);
 
@@ -519,7 +519,7 @@ namespace ProtoMol {
   }
 
   //calculate the Rayleigh quotient
-  double NormalModeUtilities::calcRayleigh(double *rQ, double *boundRq, double *hsnhessM, int numv, double raylAverage){
+  Real NormalModeUtilities::calcRayleigh(Real *rQ, Real *boundRq, Real *hsnhessM, int numv, Real raylAverage){
 
     //Norm Mode diagnostics-Rayleigh Quotient
     //Get current Hessian
@@ -528,11 +528,11 @@ namespace ProtoMol {
     char transA = 'N';
     int m = _3N; int n = _3N;
     int incxy = 1;	//sizes
-    double alpha = 1.0;	double beta = 0.0;
+    Real alpha = 1.0;	Real beta = 0.0;
     //calculate Rayleigh Quo/bound
     //double rQ, boundRq;
     //define temporary position/force vector
-    double *tmpFX = new double[_3N];
+    Real *tmpFX = new Real[_3N];
 
     Lapack::dgemv(&transA, &m, &n, &alpha, hsnhessM, &m, &((*Q)[_3N*(numv)]), &incxy, &beta, tmpFX, &incxy);
     *rQ = Lapack::ddot(&n, &((*Q)[_3N*(numv)]), &incxy, tmpFX, &incxy);

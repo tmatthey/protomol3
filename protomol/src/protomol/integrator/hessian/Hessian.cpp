@@ -47,7 +47,7 @@ Hessian::Hessian() {
 Hessian::Hessian(unsigned int szin) {
   sz = szin;
   try{
-    hessM = new double[sz * sz];   //assign array
+    hessM = new Real[sz * sz];   //assign array
   }catch(bad_alloc&){
     report << error << "[Hessian::Hessian] Cannot allocate memory for Hessian!" << endr;
   }
@@ -62,7 +62,7 @@ Hessian::Hessian(const Hessian &hess) {
   sz = hess.sz;
   if (hess.hessM != 0) {
     try{
-        hessM = new double[sz * sz];   //assign array
+        hessM = new Real[sz * sz];   //assign array
     }catch(bad_alloc&){
         report << error << "[Hessian::Hessian] Cannot allocate memory for Hessian!" << endr;
     }
@@ -105,7 +105,7 @@ void Hessian::initialData(unsigned int szin) {
   sz = szin;
   if (hessM == 0){
       try{
-        hessM = new double[sz * sz];   //assign array
+        hessM = new Real[sz * sz];   //assign array
       }catch(bad_alloc&){
         report << error << "[Hessian::initialData] Cannot allocate memory for Hessian!" << endr;
       }
@@ -562,7 +562,7 @@ void Hessian::evaluate(const Vector3DBlock *myPositions,
 
 void Hessian::evaluatePairs(int i, int j, int pairType, const Vector3DBlock *myPositions,
                                         const GenericTopology *myTopo, bool mrw, 
-                                            int mat_i, int mat_j, int mat_sz, double * mat_array) {
+                                            int mat_i, int mat_j, int mat_sz, Real * mat_array) {
 
   Matrix3By3 rha = evaluatePairsMatrix(i, j, pairType, myPositions, myTopo, mrw);
   //
@@ -684,7 +684,7 @@ Matrix3By3 Hessian::evaluatePairsMatrix(int i, int j, int pairType, const Vector
 }
 
 void Hessian::outputSparsePairMatrix(int i, int j, Real massi, Real massj, 
-                                        Matrix3By3 rha, bool mrw, int arrSz, double *basePoint){
+                                        Matrix3By3 rha, bool mrw, int arrSz, Real *basePoint){
     int eye, jay;
     Real tempf, ms1, ms2, ms3;
 
@@ -710,7 +710,7 @@ void Hessian::outputSparsePairMatrix(int i, int j, Real massi, Real massj,
 }
 
 void Hessian::outputSparseMatrix(int i, int j, Real massi, Real massj, 
-                                    Matrix3By3 rha, bool mrw, int arrSz, double *basePoint){
+                                    Matrix3By3 rha, bool mrw, int arrSz, Real *basePoint){
 
     for (int ll = 0; ll < 3; ll++)
         for (int mm = 0; mm < 3; mm++)

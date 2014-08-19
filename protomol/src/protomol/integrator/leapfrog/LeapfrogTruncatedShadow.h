@@ -50,8 +50,8 @@ namespace ProtoMol {
     Real calcPairInteractionHess(Real doSwitch, Real switchon, Real cutoff,
                                  Real order, Real switchoff, int lj);
     //void Dihedral(int dh, double * hessD);
-    void TorsionHess(const Torsion &currTorsion, double *hessD);
-    double *rotateV3D(double *aRot, double *mf);
+    void TorsionHess(const Torsion &currTorsion, Real *hessD);
+    Real *rotateV3D(Real *aRot, Real *mf);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // From class Makeable

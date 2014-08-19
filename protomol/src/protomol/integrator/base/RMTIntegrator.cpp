@@ -127,16 +127,16 @@ namespace ProtoMol {
   void RMTIntegrator::getParameters(vector<Parameter>& parameters) const {
     STSIntegrator::getParameters(parameters);
     parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),Text("preferred system temperature")));
-    parameters.push_back(Parameter("Q1",Value(myQ1),1.0,Text("heat bath coupling 1")));
-    parameters.push_back(Parameter("Q2",Value(myQ2),1.0,Text("heat bath coupling 2")));
-    parameters.push_back(Parameter("Q3",Value(myQ3),1.0,Text("heat bath coupling 3")));
-    parameters.push_back(Parameter("Q4",Value(myQ4),1.0,Text("heat bath coupling 4")));
-    parameters.push_back(Parameter("Q5",Value(myQ5),1.0,Text("heat bath coupling 5")));
-    parameters.push_back(Parameter("C2",Value(myC2),1.0,Text("auxiliary coefficient 2")));
-    parameters.push_back(Parameter("C3",Value(myC3),1.0,Text("auxiliary coefficient 3")));
-    parameters.push_back(Parameter("C4",Value(myC4),1.0,Text("auxiliary coefficient 4")));
-    parameters.push_back(Parameter("C5",Value(myC5),1.0,Text("auxiliary coefficient 5")));
-    parameters.push_back(Parameter("NumStats",Value(myNumStats),1.0,Text("Length of chain 1-5")));
+    parameters.push_back(Parameter("Q1",Value(myQ1),(Real) 1.0,Text("heat bath coupling 1")));
+    parameters.push_back(Parameter("Q2",Value(myQ2),(Real) 1.0,Text("heat bath coupling 2")));
+    parameters.push_back(Parameter("Q3",Value(myQ3),(Real) 1.0,Text("heat bath coupling 3")));
+    parameters.push_back(Parameter("Q4",Value(myQ4),(Real) 1.0,Text("heat bath coupling 4")));
+    parameters.push_back(Parameter("Q5",Value(myQ5),(Real) 1.0,Text("heat bath coupling 5")));
+    parameters.push_back(Parameter("C2",Value(myC2),(Real) 1.0,Text("auxiliary coefficient 2")));
+    parameters.push_back(Parameter("C3",Value(myC3),(Real) 1.0,Text("auxiliary coefficient 3")));
+    parameters.push_back(Parameter("C4",Value(myC4),(Real) 1.0,Text("auxiliary coefficient 4")));
+    parameters.push_back(Parameter("C5",Value(myC5),(Real) 1.0,Text("auxiliary coefficient 5")));
+    parameters.push_back(Parameter("NumStats",Value(myNumStats),(Real) 1.0,Text("Length of chain 1-5")));
     parameters.push_back(Parameter("incTdof",Value(incTdof,ConstraintValueType::NoConstraints()),true,Text("Increment Tstat dof in method")));
   }
 

@@ -40,15 +40,15 @@ namespace ProtoMol {
             StandardIntegrator *intg);
     void initialize(const int sz);
     Real findEigenvectors(Vector3DBlock *myPositions,
-                          GenericTopology *myTopo, double * mhQu, 
+                          GenericTopology *myTopo, Real * mhQu, 
                           const int _3N, const int _rfM, 
                           const Real blockCutoffDistance, 
                           const Real eigenValueThresh,
                           const int blockVectorCols,
                           const bool geom, const bool numeric);
-    int diagHessian(double *eigVecO, double *eigValO,
-                    double *hsnhessM, int dim, int &numFound);
-    void absSort(double *eigVec, double *eigVal, int *eigIndx, int dim);
+    int diagHessian(Real *eigVecO, Real *eigValO,
+                    Real *hsnhessM, int dim, int &numFound);
+    void absSort(Real *eigVec, Real *eigVal, int *eigIndx, int dim);
 
   private:
     void innerHessian();
@@ -75,7 +75,7 @@ namespace ProtoMol {
     BlockHessian * bHess;
     //Residues
     int *blocks_num_eigs;
-    double *rE;
+    Real *rE;
     //Residue eigenvectors as Block Matrices
     vector<BlockMatrix> blockEigVect;
     BlockMatrix innerDiag, innerEigVec;
@@ -87,7 +87,7 @@ namespace ProtoMol {
     //Diagnostic data
     Timer rediagTime, hessianTime;
     //Diag data
-    double *eigVal;
+    Real *eigVal;
     int *eigIndx;
     //Blocks
     int residues_total_eigs;

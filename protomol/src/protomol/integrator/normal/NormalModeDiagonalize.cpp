@@ -81,7 +81,7 @@ namespace ProtoMol
         report << plain << "NML Memory: "
         << "Hessian: "     << memory_Hessian     << "[Mb], "
         << "diagonalize: " << memory_eigenvector << "[Mb], "
-        << "vectors: "     << _3N*_rfM*sizeof( double ) / 1000000 << "[Mb]."
+        << "vectors: "     << _3N*_rfM*sizeof( Real ) / 1000000 << "[Mb]."
         << endl;
       }
     }
@@ -124,7 +124,7 @@ namespace ProtoMol
 
       //automatically generate parameters?
       if(autoParmeters){
-        residuesPerBlock = (int)pow((double)_N,0.6) / 15;
+        residuesPerBlock = (int)pow((Real)_N,0.6) / 15;
         blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
         blockCutoffDistance = rHsn.cutOff;
         report << debug(1) << "[NormalModeDiagonalize::initialize] Auto parameters: residuesPerBlock " << residuesPerBlock <<
@@ -293,15 +293,15 @@ namespace ProtoMol
         }
 
         //adaptive timestep?
-        const double newCEig = app->eigenInfo.myNewCEigval;
-        const double oldCEig = app->eigenInfo.myOrigCEigval;
-        const double baseTimestep = app->eigenInfo.myOrigTimestep;
+        const Real newCEig = app->eigenInfo.myNewCEigval;
+        const Real oldCEig = app->eigenInfo.myOrigCEigval;
+        const Real baseTimestep = app->eigenInfo.myOrigTimestep;
         
         if(adaptiveTimestep && baseTimestep > 0 && newCEig > 0 && newCEig != oldCEig){
           
-          const double tRatio = sqrt(oldCEig / newCEig);
+          const Real tRatio = sqrt(oldCEig / newCEig);
           
-          const double oldTimestep = bottom()->getTimestep();
+          const Real oldTimestep = bottom()->getTimestep();
     
           if (baseTimestep * tRatio <= baseTimestep) {
                 ((STSIntegrator*)bottom())->setTimestep(baseTimestep * tRatio);
@@ -357,7 +357,7 @@ namespace ProtoMol
       //Diagonalize
       blockDiag.rediagTime.start();
       int numeFound;
-      int info = blockDiag.diagHessian( *Q , blockDiag.eigVal, rHsn.hessM, _3N, numeFound );
+      int info = blockDiag.diagHessian( *Q , (Real*) blockDiag.eigVal, (Real*) rHsn.hessM, _3N, numeFound );
       
       if ( info ) {
         report << error << "Full diagonalization failed." << endr;
@@ -447,12 +447,12 @@ namespace ProtoMol
 
     parameters.push_back( Parameter( "rediagHysteresis",
                                      Value( rediagHysteresis,    ConstraintValueType::NotNegative()   ),
-                                     0.0,
+                                     (Real) 0.0,
                                      Text( "Re-diagonalization hysteresis."                  ) ) );
 
     parameters.push_back( Parameter( "eigenValueThresh",
                                      Value( eigenValueThresh,    ConstraintValueType::NotNegative()   ),
-                                     5.0,
+                                     (Real) 5.0,
                                      Text( "'Inner' eigenvalue inclusion threshold."         ) ) );
 
     parameters.push_back( Parameter( "blockVectorCols",
@@ -487,7 +487,7 @@ namespace ProtoMol
 
     parameters.push_back( Parameter( "minimlim",
                                     Value(minLim,ConstraintValueType::NotNegative() ),
-                                    0.1,
+                                    (Real) 0.1,
                                     Text("Minimizer target PE difference kcal mole^{-1}") ) );
 
     parameters.push_back( Parameter("maxminsteps",

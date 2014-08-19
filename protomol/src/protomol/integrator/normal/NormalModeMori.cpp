@@ -154,9 +154,9 @@ namespace ProtoMol {
     MTSIntegrator::getParameters(parameters);
     parameters.push_back(Parameter("firstmode",Value(firstMode,ConstraintValueType::NotNegative()),1,Text("First mode to use in set")));
     parameters.push_back(Parameter("numbermodes",Value(numMode,ConstraintValueType::NotNegative()),1,Text("Number of modes propagated")));
-    parameters.push_back(Parameter("gamma",Value(myGamma*(1000 * Constant::INV_TIMEFACTOR),ConstraintValueType::NotNegative()),80.0,Text("Langevin Gamma")));
+    parameters.push_back(Parameter("gamma",Value(myGamma*(1000 * Constant::INV_TIMEFACTOR),ConstraintValueType::NotNegative()),(Real) 80.0,Text("Langevin Gamma")));
     parameters.push_back(Parameter("seed",Value(mySeed,ConstraintValueType::NotNegative()),1234,Text("Langevin random seed")));
-    parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),300.0,Text("Langevin temperature")));
+    parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),(Real) 300.0,Text("Langevin temperature")));
     //####diagnostics
     parameters.push_back(Parameter("modeOutput",Value(modeOutput,ConstraintValueType::NoConstraints()),std::string(""),Text("Mode output filename")));
     parameters.push_back(Parameter("instForce",Value(instForce,ConstraintValueType::NoConstraints()),false,Text("Use instantaneous force")));

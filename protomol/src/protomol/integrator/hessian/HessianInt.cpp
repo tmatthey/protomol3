@@ -58,7 +58,7 @@ HessianInt::~HessianInt() {
   //fix summed Hessian to average
   if (hsn.hessM != 0 && totStep > 1 && fullDiag)
     for (unsigned int i = 0; i < sz * sz; i++)
-      hsn.hessM[i] /= (double)totStep;
+      hsn.hessM[i] /= (Real)totStep;
 
   //
   if (eigVec != 0 && totStep &&
@@ -72,7 +72,7 @@ HessianInt::~HessianInt() {
           //info = diagHessian(eigVec, eigVal);
           int numFound;
           blockDiag.rediagTime.start();
-          info = blockDiag.diagHessian(eigVec, blockDiag.eigVal, hsn.hessM, sz, numFound);
+          info = blockDiag.diagHessian((Real*) eigVec, blockDiag.eigVal, (Real*) hsn.hessM, sz, numFound);
           if (info == 0) {
             int numneg;
             for (numneg = 0; numneg < (int)sz; numneg++)
@@ -83,7 +83,7 @@ HessianInt::~HessianInt() {
               "eigenvalues = " << numneg << "." << endr;
             for (unsigned int i = 0; i < sz; i++) blockDiag.eigIndx[i] = i;
             //if (sortOnAbs) absSort();
-            if (sortOnAbs) blockDiag.absSort(eigVec, blockDiag.eigVal, blockDiag.eigIndx, sz);
+            if (sortOnAbs) blockDiag.absSort((Real*) eigVec, blockDiag.eigVal, blockDiag.eigIndx, sz);
             blockDiag.rediagTime.stop();
             //output nose value if eigvals available
             if (noseMass) report << hint << "[HessianInt::run] Nose Mass, Q = " <<
@@ -108,7 +108,7 @@ HessianInt::~HessianInt() {
                   "[s]."<<endl;
           if(!fullDiag) report <<plain<<"NML Memory: Hessian: "<<(hsn.memory_base + hsn.memory_blocks) * sizeof(Real) / 1000000
               <<"[Mb], diagonalize: "<<blockDiag.memory_footprint * sizeof(Real) / 1000000<<
-              "[Mb], vectors: "<<sz*numberOfModes*sizeof(double)/1000000<<"[Mb]."<<endl;
+              "[Mb], vectors: "<<sz*numberOfModes*sizeof(Real)/1000000<<"[Mb]."<<endl;
 
     }
   }
@@ -134,7 +134,7 @@ void HessianInt::initialize(ProtoMolApp *app) {
   //automatically generate parameters?
   if(autoParmeters){
     numberOfModes = 3*(int)sqrt((float)sz);
-    residuesPerBlock = (int)pow((double)_N,0.6) / 15;
+    residuesPerBlock = (int)pow((Real)_N,0.6) / 15;
     blockVectorCols = 10 + (int)sqrt((float)residuesPerBlock);
     blockCutoffDistance = hsn.cutOff;
     report << hint << "[HessianInt::initialize] Auto parameters: numberOfModes " << numberOfModes <<
@@ -158,7 +158,7 @@ void HessianInt::initialize(ProtoMolApp *app) {
   int vecSize = sz * sz;
   if(!fullDiag) vecSize = sz * numberOfModes;
   try{
-    eigVec = new double[vecSize];
+    eigVec = new Real[vecSize];
   }catch(bad_alloc&){
       report << error << "[HessianInt::initialize] Cannot allocate memory for "
              << "Eigenvectors." << endr;
@@ -228,7 +228,7 @@ long HessianInt::run(const long numTimesteps) {
       blockDiag.hessianTime.stop();	//stop timer
     }else{        //coarse diagonalize
       max_eigenvalue = blockDiag.findEigenvectors(&app->positions, app->topology,
-                                                  eigVec, sz, numberOfModes,
+                                                  (Real*) eigVec, sz, numberOfModes,
                                                   blockCutoffDistance, eigenValueThresh,
                                                   blockVectorCols,
 						  geometricfdof, numerichessians);
@@ -314,7 +314,7 @@ void HessianInt::outputDiagHess(int numModes) {
       int numrec = sz / 3;
       int32 vp = vecpos;
       int32 fm = numModes;
-      double ev;
+      Real ev;
       if(fullDiag) ev = blockDiag.eigVal[blockDiag.eigIndx[(numrec - 1) * 3 + 2]];
       else ev = max_eigenvalue;
       //
@@ -324,14 +324,14 @@ void HessianInt::outputDiagHess(int numModes) {
       if (ISLITTLEENDIAN) swapBytes(fm);
       myFile.write((char *)&fm, sizeof(int32));
       if (ISLITTLEENDIAN) swapBytes(ev);
-      myFile.write((char *)&ev, sizeof(double));
+      myFile.write((char *)&ev, sizeof(Real));
       for (int i = 0; i < (int)numModes; i++)
         for (int k = 0; k < vecpos; k++)
           //myFile << k + 1;
           for (int j = 0; j < 3; j++) {
-            double evec = eigVec[i * sz + k * 3 + j];
+            Real evec = eigVec[i * sz + k * 3 + j];
             if (ISLITTLEENDIAN) swapBytes(evec);
-            myFile.write((char *)&evec, sizeof(double));
+            myFile.write((char *)&evec, sizeof(Real));
           }
 
     }
@@ -479,7 +479,7 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
                Text("Full diagonalization?")));
   parameters.push_back
     (Parameter("eigenValueThresh",
-               Value(eigenValueThresh,ConstraintValueType::NotNegative()),5.0,
+               Value(eigenValueThresh,ConstraintValueType::NotNegative()),(Real) 5.0,
                Text("'Inner' eigenvalue inclusion threshold.")));
   parameters.push_back
     (Parameter("blockVectorCols",
@@ -516,7 +516,7 @@ void HessianInt::getParameters(vector<Parameter> &parameters) const {
   parameters.push_back
     (Parameter("Epsilon",
                Value(epsilon, ConstraintValueType::NotNegative()),
-               1e-6, Text("Epsilon for numerical Hessian.")));
+               (Real) 1e-6, Text("Epsilon for numerical Hessian.")));
 }
 
 STSIntegrator *HessianInt::doMake(const vector<Value> &values,

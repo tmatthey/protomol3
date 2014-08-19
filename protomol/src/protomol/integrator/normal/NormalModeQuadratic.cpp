@@ -64,7 +64,7 @@ namespace ProtoMol
     NormalModeUtilities::initialize( ( int )app->positions.size(), app, myForces, COMPLIMENT_FORCES );
 
     //modes
-    cPos = new double[_3N];
+    cPos = new Real[_3N];
     std::fill( cPos, cPos + _3N, 0.0 );
 
     //total steps
@@ -132,7 +132,7 @@ namespace ProtoMol
 
         //****Analytical mode integrator loop*****
         tempFrq = sqrt( fabs( app->eigenInfo.myEigenvalues[currMode] ) );
-        cPos[currMode] = tempKt * sin( ( double )( numSteps % cycleSteps ) / ( double )cycleSteps * 2.0 * M_PI );
+        cPos[currMode] = tempKt * sin( ( Real )( numSteps % cycleSteps ) / ( Real )cycleSteps * 2.0 * M_PI );
 
         cPos[currMode] /= fScale ? tempFrq : sqrt( tempFrq );
 
@@ -166,7 +166,7 @@ namespace ProtoMol
   }
 
   //Project from subspace to 3D space
-  Vector3DBlock* NormalModeQuadratic::subspaceProj( double *tmpC, Vector3DBlock * iPos )
+  Vector3DBlock* NormalModeQuadratic::subspaceProj( Real *tmpC, Vector3DBlock * iPos )
   {
     // Transpose Q, LAPACK checks only first character N/V
     char transA = 'N';
@@ -175,9 +175,9 @@ namespace ProtoMol
     int m = _3N; int n = _rfM; int incxy = 1;
 
     //multiplyers, see Blas docs.
-    double alpha = 1.0; double beta = 0.0;
+    Real alpha = 1.0; Real beta = 0.0;
 
-    Lapack::dgemv( &transA, &m, &n, &alpha, ( *Q ), &m, tmpC, &incxy, &beta, iPos->c, &incxy );
+    Lapack::dgemv( &transA, &m, &n, &alpha, (Real*) ( *Q ), &m, tmpC, &incxy, &beta, iPos->c, &incxy );
 
     //add ex0
     for ( int i = 0; i < _N; i++ ) {
@@ -210,7 +210,7 @@ namespace ProtoMol
     parameters.push_back( Parameter(
                             "temperature",
                             Value( myTemp, ConstraintValueType::NotNegative() ),
-                            300.0,
+                            (Real) 300.0,
                             Text( "Simulation temperature" )
                           )
                         );

@@ -164,7 +164,7 @@ namespace ProtoMol {
     MTSIntegrator::getParameters(parameters);
     parameters.push_back(Parameter("firstmode",Value(firstMode,ConstraintValueType::NotNegative()),1,Text("First mode to use in set")));
     parameters.push_back(Parameter("numbermodes",Value(numMode,ConstraintValueType::NotNegative()),1,Text("Number of modes propagated")));
-    parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),300.0,Text("Langevin temperature")));
+    parameters.push_back(Parameter("temperature",Value(myTemp,ConstraintValueType::NotNegative()),(Real) 300.0,Text("Langevin temperature")));
     parameters.push_back(Parameter("instForce",Value(instForce,ConstraintValueType::NoConstraints()),false,Text("Use instantaneous force")));
     parameters.push_back(Parameter("stepLength",Value(dh,ConstraintValueType::NotNegative()),0,Text("Steplength for integration on collective variable space")));
     parameters.push_back(Parameter("doUpdate",Value(doUpdate,ConstraintValueType::NotNegative()),1,Text("Steplength for integration on collective variable space")));

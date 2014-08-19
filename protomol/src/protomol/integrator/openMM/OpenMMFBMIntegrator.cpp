@@ -98,13 +98,13 @@ namespace ProtoMol {
 		cout << "Diagonalizing" << endl;
 
 		vector<vector<OpenMM::Vec3> > eigenvectors;
-		vector<double> eigenvalues;
+		vector<Real> eigenvalues;
 		FBM fbm(mFBMParameters);
 		string fbmPlatform = "Reference";
 		fbm.run(*context, *blockContext, eigenvectors, eigenvalues, fbmPlatform);
 
 
-		vector<vector<double> > blockHessian;
+		vector<vector<Real> > blockHessian;
 		fbm.getBlockHessian(blockHessian);
 
 		fstream blockHessianOut;
@@ -123,7 +123,7 @@ namespace ProtoMol {
 		blockHessianOut.close();
 		
 
-		vector<vector<double> > blockEigenvectors;
+		vector<vector<Real> > blockEigenvectors;
 		fbm.getBlockEigenvectors(blockEigenvectors);
 
 		fstream blockEigenvectorsOut;
@@ -141,7 +141,7 @@ namespace ProtoMol {
 		  }
 		blockEigenvectorsOut.close();
 
-		vector<vector<double> > projMatrix;
+		vector<vector<Real> > projMatrix;
 		fbm.getProjectionMatrix(projMatrix);
 		
 		fstream projMatrixOut;
@@ -160,7 +160,7 @@ namespace ProtoMol {
 		projMatrixOut.close();
 
 
-		vector<vector<double> > productMatrix;
+		vector<vector<Real> > productMatrix;
 		fbm.getHE(productMatrix);
 		
 		fstream productMatrixOut;
@@ -178,7 +178,7 @@ namespace ProtoMol {
 		  }
 		productMatrixOut.close();
 
-		vector<vector<double> > S;
+		vector<vector<Real> > S;
 		fbm.getCoarseGrainedHessian(S);
 		
 		fstream sOut;

@@ -48,7 +48,7 @@ namespace ProtoMol {
     void evaluateInterBlocks(const Vector3DBlock *myPositions,
                              GenericTopology *myTopo);
     void outputMatrix(int i, int j, Real sqrtMassi, Real sqrtMassj, 
-                        Matrix3By3 rha, int arrSz, double *basePoint);
+                        Matrix3By3 rha, int arrSz, Real *basePoint);
   private:
     Real dihedralAngle(const int *aout, const Vector3DBlock &myPositions) const;
     void outputTorsions(const std::vector<Torsion> &torsions, const Vector3DBlock &myPositions);  

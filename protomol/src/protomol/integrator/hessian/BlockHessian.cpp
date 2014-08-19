@@ -1055,7 +1055,7 @@ void BlockHessian::evaluateInterBlocks(const Vector3DBlock *myPositions,
 // Put matrix into Hessian array
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void BlockHessian::outputMatrix(int i, int j, Real sqrtMassi, Real sqrtMassj, 
-                                    Matrix3By3 rha, int arrSz, double *basePoint){
+                                    Matrix3By3 rha, int arrSz, Real *basePoint){
 
     for (int ll = 0; ll < 3; ll++)
         for (int mm = 0; mm < 3; mm++)

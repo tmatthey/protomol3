@@ -47,11 +47,11 @@ namespace ProtoMol {
                        const GenericTopology *myTopo, bool mrw);
     void evaluatePairs(int i, int j, int pairType, const Vector3DBlock *myPositions,
                        const GenericTopology *myTopo, bool mrw, 
-                       int mat_i, int mat_j, int mat_sz, double * mat_array);
+                       int mat_i, int mat_j, int mat_sz, Real * mat_array);
     void outputSparsePairMatrix(int i, int j, Real massi, Real massj, Matrix3By3 rha, 
-                                bool mrw, int arrSz, double * basePoint);
+                                bool mrw, int arrSz, Real * basePoint);
     void outputSparseMatrix(int i, int j, Real massi, Real massj, Matrix3By3 rha, 
-                            bool mrw, int arrSz, double * basePoint);
+                            bool mrw, int arrSz, Real * basePoint);
 
     void evaluateBornRadii(const Vector3DBlock *myPositions, GenericTopology *myTopo);
 
@@ -113,7 +113,7 @@ namespace ProtoMol {
     int myBornSwitch;
     Real myDielecConst;
   public:
-    double *hessM;  //matrix
+    Real *hessM;  //matrix
     Real cutOff;
   };
 }

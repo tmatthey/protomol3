@@ -129,13 +129,13 @@ void NormalModeLangevin::getParameters(vector<Parameter> &parameters) const {
   parameters.push_back
     (Parameter("gamma", Value(myGamma * (1000 * Constant::INV_TIMEFACTOR),
                               ConstraintValueType::NotNegative()),
-               80.0, Text("Langevin Gamma")));
+               (Real) 80.0, Text("Langevin Gamma")));
   parameters.push_back
     (Parameter("seed", Value(mySeed, ConstraintValueType::NotNegative()),
                1234, Text("Langevin random seed")));
   parameters.push_back
     (Parameter("temperature", Value(myTemp, ConstraintValueType::NotNegative()),
-               300.0, Text("Langevin temperature")));
+               (Real) 300.0, Text("Langevin temperature")));
   parameters.push_back
     (Parameter("gencompnoise",
  Value(genCompNoise, ConstraintValueType::NoConstraints()),

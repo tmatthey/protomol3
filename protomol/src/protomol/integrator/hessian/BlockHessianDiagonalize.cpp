@@ -57,9 +57,9 @@ namespace ProtoMol {
     try{
         //assign resudue eigenvector/value array	
         blocks_num_eigs = new int[bHess->num_blocks];
-        rE = new double[bHess->hess_eig_size * 3];
+        rE = new Real[bHess->hess_eig_size * 3];
         //
-        eigVal = new double[sz];
+        eigVal = new Real[sz];
         eigIndx = new int[sz];
     }catch(bad_alloc&){
         report << error << "[BlockHessianDiagonalize::initialize] Block Eigenvector array allocation error." << endr;
@@ -92,7 +92,7 @@ namespace ProtoMol {
     //assign arrays
     try{
         //
-        eigVal = new double[sz];
+        eigVal = new Real[sz];
         eigIndx = new int[sz];
     }catch(bad_alloc&){
         report << error << "[BlockHessianDiagonalize::initialize] Eigenvector array allocation error." << endr;
@@ -111,7 +111,7 @@ namespace ProtoMol {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Real BlockHessianDiagonalize::findEigenvectors( Vector3DBlock *myPositions,
                        GenericTopology *myTopo, 
-                       double * mhQu, const int sz_row, const int sz_col, 
+                       Real * mhQu, const int sz_row, const int sz_col, 
                        const Real blockCutoffDistance, const Real eigenValueThresh,
                        const int blockVectorCols,
                        const bool geom, const bool numeric) {
@@ -169,12 +169,12 @@ namespace ProtoMol {
     int numeFound;
     rediagTime.start();    
     innerEigVec.initialize(0,0,residues_total_eigs,residues_total_eigs); //set small output matrix
-    int info = diagHessian(innerEigVec.arrayPointer(), 
-                            eigVal, innerDiag.arrayPointer(), residues_total_eigs, numeFound);
+    int info = diagHessian((Real*) innerEigVec.arrayPointer(), 
+                            eigVal, (Real*) innerDiag.arrayPointer(), residues_total_eigs, numeFound);
     rediagTime.stop();
     if( info == 0 ){            
       for(int i=0;i<residues_total_eigs;i++) eigIndx[i] = i;
-      absSort(innerEigVec.arrayPointer(), eigVal, eigIndx, residues_total_eigs);
+      absSort((Real*) innerEigVec.arrayPointer(), eigVal, eigIndx, residues_total_eigs);
     }else{
       report << error << "[BlockHessianDiagonalize::findEigenvectors] Diagnostic diagonalization failed."<<endr;
     }
@@ -404,15 +404,15 @@ namespace ProtoMol {
 
       //diagonalize block
       rediagTime.start();
-      int infor = diagHessian(blockEigVect[ii].arrayPointer(), &rE[bHess->hess_eig_point[ii] * 3], 
-                                bHess->blocks[ii].arrayPointer(), bHess->blocks[ii].Rows, numFound);
+      int infor = diagHessian((Real*) blockEigVect[ii].arrayPointer(), (Real*) &rE[bHess->hess_eig_point[ii] * 3], 
+                                (Real*) bHess->blocks[ii].arrayPointer(), bHess->blocks[ii].Rows, numFound);
       rediagTime.stop();
 
       if(infor) report << error << "[BlockHessianDiagonalize::findCoarseBlockEigs] Residue "<<ii+1<<" diagonalization failed."<<endr;
 
       //sort by magnitude of eigenvalue
       for(int i=0;i<bHess->blocks_max[ii] * 3;i++) eigIndx[i] = i;
-      absSort(blockEigVect[ii].arrayPointer(), &rE[bHess->hess_eig_point[ii] * 3], eigIndx, bHess->blocks_max[ii] * 3);
+      absSort((Real*) blockEigVect[ii].arrayPointer(), (Real*) &rE[bHess->hess_eig_point[ii] * 3], eigIndx, bHess->blocks_max[ii] * 3);
 
       //~~~~Use geometrically generated conserved dof to generate a new basis set?
       if( geom ){
@@ -692,8 +692,8 @@ namespace ProtoMol {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Diagonalize Hessian
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  int BlockHessianDiagonalize::diagHessian(double *eigVecO, double *eigValO, double *hsnhessM, int dim, int &numFound){
-   double *wrkSp = 0;
+  int BlockHessianDiagonalize::diagHessian(Real *eigVecO, Real *eigValO, Real *hsnhessM, int dim, int &numFound){
+   Real *wrkSp = 0;
    int *isuppz, *iwork;
 
 
@@ -707,17 +707,17 @@ namespace ProtoMol {
    for(int i=0;i<dimsq;i++) eigVecO[i] = hsnhessM[i];
    wrkSp = new double[1];
 #else
-   wrkSp = new double[26*dim];
+   wrkSp = new Real[26*dim];
 #endif
 //
     char jobz = 'V'; char range = 'A'; char uplo = 'U'; /* LAPACK checks only first character N/V */
     int n = dim;             /* order of coefficient matrix a  */
     int lda = dim;           /* leading dimension of a array*/
-    double vl = 1.0;
-    double vu = 1.0; 
+    Real vl = 1.0;
+    Real vu = 1.0; 
     int il = 1;
     int iu = 1;
-    double abstol = 0;
+    Real abstol = 0;
     int ldz = dim; int lwork = 26*dim; /* dimension of work array*///int m; 
     int liwork = 10*dim;						/* dimension of int work array*/
     //Recomended abstol for max precision
@@ -733,15 +733,15 @@ namespace ProtoMol {
     if(info == 0){
       lwork = wrkSp[0];
       delete [] wrkSp;
-      wrkSp = new double[lwork];
+      wrkSp = new Real[lwork];
       Lapack::dsyev(&jobz, &uplo, &n, eigVecO, &lda, eigValO, wrkSp, &lwork, &info);
     }
 #else
     abstol = Lapack::dlamch( &cmach);	//find machine safe minimum  
     //abstol = 1e-15;	//use small value for tolerence  
     //
-    Lapack::dsyevr( &jobz, &range, &uplo, &n, hsnhessM, &lda, &vl, &vu, &il, &iu, &abstol, &m, eigValO, eigVecO, &ldz, isuppz, 
-                wrkSp, &lwork, iwork, &liwork, &info);
+    Lapack::dsyevr( &jobz, &range, &uplo, &n, (Real*) hsnhessM, &lda, (Real*) &vl, (Real*) &vu, &il, &iu, (Real*) &abstol, &m, (Real*) eigValO, (Real*) eigVecO, &ldz, isuppz, 
+                (Real*) wrkSp, &lwork, iwork, &liwork, &info);
 #endif
 	numFound = m;
     //delete arrays
@@ -755,11 +755,11 @@ namespace ProtoMol {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Sort vectors for absolute value
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  void BlockHessianDiagonalize::absSort(double *eigVec, double *eigVal, int *eigIndx, int dim){
+  void BlockHessianDiagonalize::absSort(Real *eigVec, Real *eigVal, int *eigIndx, int dim){
     int i;
 
     //find minimum abs value
-    double minEv = fabs(eigVal[0]);
+    Real minEv = fabs(eigVal[0]);
     for(i=1;i<dim;i++){
         if(minEv < fabs(eigVal[i])) break;
         else minEv = fabs(eigVal[i]);
@@ -779,8 +779,8 @@ namespace ProtoMol {
         while(negp >= 0) eigIndx[j++] = negp--;
     }
     //Sort actual eigenvector array
-    double *tmpVect = new double[dim];
-    double tmpElt, tmpEval;
+    Real *tmpVect = new Real[dim];
+    Real tmpElt, tmpEval;
     int ii, k;
     for(i=0;i<dim;i++){
         if( eigIndx[i] != (int)i && eigIndx[i] != -1){		//need to swap?

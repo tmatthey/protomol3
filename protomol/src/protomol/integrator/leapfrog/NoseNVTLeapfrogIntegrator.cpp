@@ -72,7 +72,7 @@ const {
     (Parameter("thermal", Value(myThermalInertia),
                Text( "heat bath coupling: 1.0 very, very strong, 0.0 none")));
   parameters.push_back
-    (Parameter("bathPos", Value(myBathPosition), 0.0,
+    (Parameter("bathPos", Value(myBathPosition), (Real) 0.0,
                Text("history of the difference of system and heat bath")));
 }
 

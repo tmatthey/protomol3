@@ -1,7 +1,8 @@
 /* -*- c++ -*- */
+#include <protomol/type/Real.h>
+using namespace ProtoMol;
 #ifndef LAPACKPROTOMOL_H
 #define LAPACKPROTOMOL_H
-
 //Lapack/Blas Fortran routines for Normal Mode routines
 //Includes:
 //dgemv   : y := alpha*A*x + beta*y,   or   y := alpha*A'*x + beta*y, A mxn matrix.
@@ -38,8 +39,8 @@
 *           Before entry with BETA non-zero, the incremented array Y must contain the vector y. On exit, Y is overwritten by the updated vector y.
 *  INCY   - INTEGER. On entry, INCY specifies the increment for the elements of Y. INCY must not be zero. Unchanged on exit.
 */
-extern "C" void dgemv_(char *transA, int *m, int *n, double *alpha, double *A, int *lda, double *x, int *incx, 
-                       double *beta, double *Y, int *incY);
+extern "C" void dgemv_(char *transA, int *m, int *n, Real *alpha, Real *A, int *lda, Real *x, int *incx, 
+                       Real *beta, Real *Y, int *incY);
 
 /******************************************************************************************************************************************************************
 *       SUBROUTINE DSYEV( JOBZ, UPLO, N, A, LDA, W, WORK, LWORK, INFO )
@@ -105,8 +106,8 @@ extern "C" void dgemv_(char *transA, int *m, int *n, double *alpha, double *A, i
 *                off-diagonal elements of an intermediate tridiagonal
 *                form did not converge to zero.
 */
-extern "C" void dsyev_(char *jobz, char *uplo, int *n, double *a, int *lda,  
-                       double *w, double *work, int *lwork, int *info);
+extern "C" void dsyev_(char *jobz, char *uplo, int *n, Real *a, int *lda,  
+                       Real *w, Real *work, int *lwork, int *info);
 
 
 /******************************************************************************************************************************************************************
@@ -175,9 +176,9 @@ extern "C" void dsyev_(char *jobz, char *uplo, int *n, double *a, int *lda,
 *          routine only calculates the optimal size of the IWORK array, returns this value as the first entry of the IWORK array, and no error message related to LIWORK is issued by XERBLA.
 *  INFO    (output) INTEGER = 0:  successful exit < 0:  if INFO = -i, the i-th argument had an illegal value > 0:  Internal error
 */
-extern "C" void dsyevr_(char *jobz, char *range, char *uplo, int *n, double *a, int *lda, 
-                    double *vl, double *vu, int *il, int *iu, double *abstol, int *m, double *w, double *z, 
-                    int *ldz, int *isuppz, double *work, int *lwork, int *iwork, int *liwork, int *info);
+extern "C" void dsyevr_(char *jobz, char *range, char *uplo, int *n, Real *a, int *lda, 
+                    Real *vl, Real *vu, int *il, int *iu, Real *abstol, int *m, Real *w, Real *z, 
+                    int *ldz, int *isuppz, Real *work, int *lwork, int *iwork, int *liwork, int *info);
 
 /******************************************************************************************************************************************************************
 *      DOUBLE PRECISION FUNCTION DLAMCH( CMACH )
@@ -202,7 +203,7 @@ extern "C" void dsyevr_(char *jobz, char *range, char *uplo, int *n, double *a, 
 *          emin  = minimum exponent before (gradual) underflow; rmin  = underflow threshold - base**(emin-1);
 *          emax  = largest exponent before overflow; rmax  = overflow threshold  - (base**emax)*(1-eps)
 */
-extern "C" double  dlamch_(char *cmach);
+extern "C" Real  dlamch_(char *cmach);
 
 /***************************************************************************************
 *     SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC)
@@ -239,20 +240,20 @@ extern "C" double  dlamch_(char *cmach);
 *           case C need not be set on entry. On exit, the array  C  is overwritten by the  m by n  matrix ( alpha*op( A )*op( B ) + beta*C ).
 *  LDC    - INTEGER. On entry, LDC specifies the first dimension of C as declared in  the  calling  (sub)  program.   LDC  must  be  at  least max( 1, m ). Unchanged on exit.
 */
-extern "C" void dgemm_ (char *transA, char *transB, int *m, int *n, int *k, double *alpha, 
-                            double *A, int *lda, double *B, int *ldb, double *beta, double *C, int *l);
+extern "C" void dgemm_ (char *transA, char *transB, int *m, int *n, int *k, Real *alpha, 
+                            Real *A, int *lda, Real *B, int *ldb, Real *beta, Real *C, int *l);
 
 /***************************************************************************************
       DOUBLE PRECISION FUNCTION DDOT(N,DX,INCX,DY,INCY)
 *     .. Scalar Arguments  INTEGER INCX,INCY,N
 */
-extern "C" double ddot_(int *n, double *x, int *incx, double *y, int *incy);
+extern "C" Real ddot_(int *n, Real *x, int *incx, Real *y, int *incy);
 
 /***************************************************************************************
       DOUBLE PRECISION FUNCTION DNRM2(N,X,INCX)
 *     .. Scalar Arguments .. INTEGER INCX,N
 */
-extern "C" double dnrm2_(int *n, double *x, int *incx);
+extern "C" Real dnrm2_(int *n, Real *x, int *incx);
 
 /***************************************************************************************
       SUBROUTINE DPOTRI( UPLO, N, A, LDA, INFO )
@@ -290,7 +291,7 @@ extern "C" double dnrm2_(int *n, double *x, int *incx);
 *          > 0:  if INFO = i, the (i,i) element of the factor U or L is
 *                zero, and the inverse could not be computed.
 */
-extern "C" void dpotri_(char *transA, int *n, double *A, int *lda, int *info);
+extern "C" void dpotri_(char *transA, int *n, Real *A, int *lda, int *info);
 
 /***************************************************************************************
      SUBROUTINE DPOTRF( UPLO, N, A, LDA, INFO )
@@ -340,7 +341,7 @@ extern "C" void dpotri_(char *transA, int *n, double *A, int *lda, int *info);
 *                positive definite, and the factorization could not be
 *                completed.
 */
-extern "C" void dpotrf_(char *transA, int *n, double *A, int *lda, int *info);
+extern "C" void dpotrf_(char *transA, int *n, Real *A, int *lda, int *info);
 
 /***************************************************************************************
       SUBROUTINE DPOSV( UPLO, N, NRHS, A, LDA, B, LDB, INFO )
@@ -402,7 +403,7 @@ extern "C" void dpotrf_(char *transA, int *n, double *A, int *lda, int *info);
 *                positive definite, so the factorization could not be
 *                completed, and the solution has not been computed.
 */
-extern "C" void dposv_(char *transA, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb,int *info);
+extern "C" void dposv_(char *transA, int *n, int *nrhs, Real *a, int *lda, Real *b, int *ldb,int *info);
 
 /***************************************************************************************
       SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
@@ -491,7 +492,7 @@ extern "C" void dposv_(char *transA, int *n, int *nrhs, double *a, int *lda, dou
 *           max( 1, m ).
 *           Unchanged on exit.
 */
-extern "C" void dtrmm_(char *sideA, char *ulA, char *transA, char *diagA, int *m, int *n, double *alpha, double *A, int *lda, double *B, int *ldb);
+extern "C" void dtrmm_(char *sideA, char *ulA, char *transA, char *diagA, int *m, int *n, Real *alpha, Real *A, int *lda, Real *B, int *ldb);
 
 /***************************************************************************************
 *	  SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
@@ -575,7 +576,7 @@ extern "C" void dtrmm_(char *sideA, char *ulA, char *transA, char *diagA, int *m
 *           max( 1, m ).
 *           Unchanged on exit.
 */
-extern "C" void dtrsm_(char *sideA, char *ulA, char *transA, char *diagA, int *m, int *n, double *alpha, double *A, int *lda, double *B, int *ldb);
+extern "C" void dtrsm_(char *sideA, char *ulA, char *transA, char *diagA, int *m, int *n, Real *alpha, Real *A, int *lda, Real *B, int *ldb);
 
 
 #endif /* LAPACKPROTOMOL_H */

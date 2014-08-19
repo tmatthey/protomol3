@@ -40,7 +40,7 @@ void NumericalDifferentiation::initialize(ProtoMolApp *app) {
 long NumericalDifferentiation::run(const long numTimesteps) {
   Vector3DBlock pmolForces, numForces, num2ndDeriv;
   Real oldPE, forcePE1, forcePE2, hessPE1, hessPE2;
-  double *numHess;
+  Real *numHess;
   Real maxForceError = 0.0, maxHessError = 0.0;
   char coor[3] = {
     'x', 'y', 'z'
@@ -58,7 +58,7 @@ long NumericalDifferentiation::run(const long numTimesteps) {
   //Hessian
   //true for mass re-weight;
   hsn.evaluate(&app->positions, app->topology, false);
-  numHess = new double[_3N * _3N];
+  numHess = new Real[_3N * _3N];
   for (int k = 0; k < numTimesteps; k++) {
     maxForceError = 0.0;
     maxHessError = 0.0;
@@ -140,7 +140,7 @@ void NumericalDifferentiation::getParameters(vector<Parameter> &parameters)
 const {
   STSIntegrator::getParameters(parameters);
   parameters.push_back
-    (Parameter("epsilon", Value(epsilon, ConstraintValueType::Positive()), 1.0,
+    (Parameter("epsilon", Value(epsilon, ConstraintValueType::Positive()), (Real) 1.0,
                Text("epsilon")));
   parameters.push_back
     (Parameter("calcHessian", Value(calcHessian, ConstraintValueType::NoConstraints()), true,

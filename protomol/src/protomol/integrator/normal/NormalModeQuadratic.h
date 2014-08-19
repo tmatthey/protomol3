@@ -29,7 +29,7 @@ namespace ProtoMol
       // New methods of class NormalModeQuadratic
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private:
-      Vector3DBlock* subspaceProj( double *tmpC, Vector3DBlock * iPos );
+      Vector3DBlock* subspaceProj( Real *tmpC, Vector3DBlock * iPos );
 
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // From class Makeable
@@ -61,7 +61,7 @@ namespace ProtoMol
     private:
       NormalModeUtilities *myPreviousNormalMode;
       Vector3DBlock* ex0;
-      double *cPos;
+      Real *cPos;
       Real total_time;
       int cycleSteps, currMode;
       bool fScale, stepModes;
