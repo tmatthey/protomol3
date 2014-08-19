@@ -31,7 +31,7 @@ OutputFAHGUI::OutputFAHGUI() :
 
 
 OutputFAHGUI::OutputFAHGUI(const string &name, int freq, int port, int prange,
-                           const string &projn, double timeout, bool pause) :
+                           const string &projn, Real timeout, bool pause) :
   Output(freq), name(name), port(port), portRange(prange),
   projName(projn), timeout(timeout), pause(pause), server(0) {
 
