@@ -43,7 +43,7 @@ bool EigenvectorReader::read(EigenvectorInfo &ei) {
   File::read(reinterpret_cast<char *>(&ne), sizeof(int32));
   if (ISLITTLEENDIAN) swapBytes(ne);
   ei.myNumEigenvectors = ne;
-  File::read(reinterpret_cast<char *>(&ei.myMaxEigenvalue), sizeof(double));
+  File::read(reinterpret_cast<char *>(&ei.myMaxEigenvalue), sizeof(Real));
   if (ISLITTLEENDIAN) swapBytes(ei.myMaxEigenvalue);
   if(!ei.initializeEigenvectors()) return false;
   for (unsigned int i = 0; i < ei.myEigenvectorLength; i++)
@@ -54,7 +54,7 @@ bool EigenvectorReader::read(EigenvectorInfo &ei) {
                                                        ei.
                                                          myNumEigenvectors
                                                        + j * 3 + k])),
-          sizeof(double));
+          sizeof(Real));
         if (ISLITTLEENDIAN) swapBytes(ei.myEigenvectors[i * 3 *
                                                         ei.myNumEigenvectors
                                                         + j * 3 + k]);

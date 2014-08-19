@@ -57,22 +57,22 @@ bool SCPISMReader::read( std::map<std::string, CoulombSCPISMParameters>& inMap )
             std::string atomName;
             ConvertString( line.substr( 0, 4 ), atomName );
 
-            double alpha_i = 0.0;
+            Real alpha_i = 0.0;
             ConvertString( line.substr( 5, 8 ), alpha_i );
 
-            double hbond_factor = 0.0;
+            Real hbond_factor = 0.0;
             ConvertString( line.substr( 13, 8 ), hbond_factor );
 
-            double R_iw = 0.0;
+            Real R_iw = 0.0;
             ConvertString( line.substr( 21, 8 ), R_iw );
 
-            double unused = 0.0;
+            Real unused = 0.0;
             ConvertString( line.substr( 29, 8 ), unused );
 
-            double r_cov = 0.0;
+            Real r_cov = 0.0;
             ConvertString( line.substr( 37, 8 ), r_cov );
 
-            double gamma_i = 0.0;
+            Real gamma_i = 0.0;
             ConvertString( line.substr( 45, 7 ), gamma_i );
 
             std::string bond;

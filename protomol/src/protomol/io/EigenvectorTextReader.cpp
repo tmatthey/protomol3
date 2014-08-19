@@ -35,7 +35,7 @@ bool EigenvectorTextReader::read(EigenvectorInfo &ei) {
     return false;
 
   int num, num1;
-  double ev;
+  Real ev;
   file >> num;
   report << plain << num << endr;
   file >> num1;
@@ -57,7 +57,7 @@ bool EigenvectorTextReader::read(EigenvectorInfo &ei) {
 
   for (int i = 0; i < num; i++) {
     int x;
-    double y;
+    Real y;
     for (int j = 0; j < num1; j++) {
       file >> x;
 
