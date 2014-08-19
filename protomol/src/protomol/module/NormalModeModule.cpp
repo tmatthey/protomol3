@@ -63,13 +63,13 @@ void NormalModeModule::read(ProtoMolApp *app) {
         THROWS("Could not parse eigenvector file '"
                << (string)config[InputEigTextFile::keyword] << "'");
 
-        if (app->eigenInfo.myEigenvectorLength != (double)app->positions.size())
+        if (app->eigenInfo.myEigenvectorLength != (Real)app->positions.size())
           THROWS("Eigenvector length is wrong, should be "
                  << app->positions.size() << " got "
                  << app->eigenInfo.myEigenvectorLength << ".");
 
         if (app->eigenInfo.myNumEigenvectors < 1 ||
-            app->eigenInfo.myNumEigenvectors > (double)app->positions.size())
+            app->eigenInfo.myNumEigenvectors > (Real)app->positions.size())
           THROWS("Wrong number of eigenvectors ("
                  << app->eigenInfo.myNumEigenvectors << ").");
       }
@@ -86,13 +86,13 @@ void NormalModeModule::read(ProtoMolApp *app) {
              << (string)config[InputEigenVectors::keyword] << "'.");
 
     if (!(evReader >> app->eigenInfo)) {
-      if (app->eigenInfo.myEigenvectorLength != (double)app->positions.size())
+      if (app->eigenInfo.myEigenvectorLength != (Real)app->positions.size())
         THROWS("Eigenvector length is wrong, should be "
                << app->positions.size() << " got "
                << app->eigenInfo.myEigenvectorLength << ".");
 
       if (app->eigenInfo.myNumEigenvectors < 1 ||
-          app->eigenInfo.myNumEigenvectors > (double)app->positions.size())
+          app->eigenInfo.myNumEigenvectors > (Real)app->positions.size())
         THROWS("Wrong number of eigenvectors ("
                << app->eigenInfo.myNumEigenvectors << ").");
     }

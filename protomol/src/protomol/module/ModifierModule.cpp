@@ -39,11 +39,11 @@ void ModifierModule::init(ProtoMolApp *app) {
   InputRemoveLinearMomentum::registerConfiguration(&app->config, -1);
   InputRemoveAngularMomentum::registerConfiguration(&app->config, -1);
   InputShake::registerConfiguration(&app->config, false);
-  InputShakeEpsilon::registerConfiguration(&app->config, 1e-5);
+  InputShakeEpsilon::registerConfiguration(&app->config, (Real) 1e-5);
   InputShakeMaxIter::registerConfiguration(&app->config, 30);
   InputShakeAll::registerConfiguration(&app->config, true);
   InputRattle::registerConfiguration(&app->config, false);
-  InputRattleEpsilon::registerConfiguration(&app->config, 1e-5);
+  InputRattleEpsilon::registerConfiguration(&app->config, (Real) 1e-5);
   InputRattleMaxIter::registerConfiguration(&app->config, 30);
   InputRattleAll::registerConfiguration(&app->config, true);
   InputShadow::registerConfiguration(&app->config, false);
