@@ -15,7 +15,7 @@ EigenvectorInfo::EigenvectorInfo() : myEigenvectorLength( 0 ), myNumEigenvectors
 
 EigenvectorInfo::EigenvectorInfo( unsigned int n, unsigned int m ) : myEigenvectorLength( n ),
 	myNumEigenvectors( m ), myNumUsedEigenvectors( 0 ),
-	myMaxEigenvalue( 0.0 ), myEigenvectors( new double[n *m * 3] ),
+	myMaxEigenvalue( 0.0 ), myEigenvectors( new Real[n *m * 3] ),
 	myOrigCEigval( 0.0 ), myNewCEigval( 0.0 ), myOrigTimestep( 0.0 ), reDiagonalize( false ),
 	havePositionsChanged( false ), OpenMMMinimize( false ), RediagonalizationCount( 0 ), mySingleEigs( 0 ), myEigVecChanged( true ), myMinimumLimit( 0.5 ),
 	currentMode( -1 ) {}
@@ -34,7 +34,7 @@ EigenvectorInfo::~EigenvectorInfo() {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 bool EigenvectorInfo::initializeEigenvectors() {
 	try {
-		myEigenvectors = new double[myEigenvectorLength * myNumEigenvectors * 3];
+		myEigenvectors = new Real[myEigenvectorLength * myNumEigenvectors * 3];
 	} catch( std::bad_alloc & ) {
 		return false;
 	}

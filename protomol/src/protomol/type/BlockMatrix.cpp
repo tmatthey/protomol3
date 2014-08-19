@@ -42,7 +42,7 @@ namespace ProtoMol
   }
 
   // Pointer to data
-  double * BlockMatrix::arrayPointer()
+  Real * BlockMatrix::arrayPointer()
   {
     return &MyArray[0];
   }
@@ -144,10 +144,10 @@ namespace ProtoMol
 		char *transA = ( char * )"N"; char *transB = ( char * )"N";
 		int m = Rows; int n = bm.Columns; int k = kh - kl;
 		int lda = Rows; int ldb = bm.Rows; int ldc = om.Rows;
-		double alpha = 1.0; double beta = 0.0;
+		Real alpha = 1.0; Real beta = 0.0;
 
-		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( double * )&MyArray[( kl-ColumnStart )*Rows], &lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-             &ldb, &beta, &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
+		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( Real* )&MyArray[( kl-ColumnStart )*Rows], &lda, ( Real * )&bm.MyArray[kl - bm.RowStart],
+             &ldb, &beta, (Real*) &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
 	}else{
 		const unsigned int rowLength = RowStart + Rows;
 		const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -186,10 +186,10 @@ namespace ProtoMol
 		char *transA = ( char * )"N"; char *transB = ( char * )"N";
 		int m = Rows; int n = bm.Columns; int k = kh - kl;
 		int lda = Rows; int ldb = bm.Rows; int ldc = om.Rows;
-		double alpha = 1.0; double beta = 0.0;
+		Real alpha = 1.0; Real beta = 0.0;
 
-		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( double * )&MyArray[( kl-ColumnStart )*Rows], &lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-             &ldb, &beta, &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
+		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( Real* )&MyArray[( kl-ColumnStart )*Rows], &lda, ( Real* )&bm.MyArray[kl - bm.RowStart],
+             &ldb, &beta, (Real*) &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
 	}else{
 		const unsigned int rowLength = RowStart + Rows;
 		const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -214,7 +214,7 @@ namespace ProtoMol
 
   // Multiply 'this' with 'bm', put result in double array 'om': TEST A, B, C
   void BlockMatrix::productToArray( const BlockMatrix &bm,
-                                    double *om_MyArray, unsigned int om_RowStart, unsigned int om_ColumnStart,
+                                    Real *om_MyArray, unsigned int om_RowStart, unsigned int om_ColumnStart,
                                     unsigned int om_Rows, unsigned int om_Columns ) const
   {
     const unsigned int kl = max( ColumnStart, bm.RowStart );
@@ -228,10 +228,10 @@ namespace ProtoMol
 		char *transA = ( char * )"N"; char *transB = ( char * )"N";
 		int m = Rows; int n = bm.Columns; int k = kh - kl;
 		int lda = Rows; int ldb = bm.Rows; int ldc = om_Rows;
-		double alpha = 1.0; double beta = 0.0;
+		Real alpha = 1.0; Real beta = 0.0;
 
-		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( double * )&MyArray[( kl-ColumnStart )*Rows], &lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-             &ldb, &beta, &om_MyArray[( RowStart - om_RowStart ) + ( bm.ColumnStart - om_ColumnStart ) * om_Rows], &ldc );
+		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( Real* )&MyArray[( kl-ColumnStart )*Rows], &lda, ( Real* )&bm.MyArray[kl - bm.RowStart],
+             &ldb, &beta, (Real*) &om_MyArray[( RowStart - om_RowStart ) + ( bm.ColumnStart - om_ColumnStart ) * om_Rows], &ldc );
 	}else{
 		const unsigned int rowLength = RowStart + Rows;
 		const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -268,10 +268,10 @@ namespace ProtoMol
 		char *transA = ( char * )"N"; char *transB = ( char * )"N";
 		int m = Rows; int n = bm.Columns; int k = kh - kl;
 		int lda = Rows; int ldb = bm.Rows; int ldc = om.Rows;
-		double alpha = 1.0; double beta = 1.0;
+		Real alpha = 1.0; Real beta = 1.0;
 
-		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( double * )&MyArray[( kl-ColumnStart )*Rows], &lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-             &ldb, &beta, &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
+		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( Real* )&MyArray[( kl-ColumnStart )*Rows], &lda, ( Real* )&bm.MyArray[kl - bm.RowStart],
+             &ldb, &beta, (Real*) &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
 	}else{
 		const unsigned int rowLength = RowStart + Rows;
 		const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -308,10 +308,10 @@ namespace ProtoMol
 		char *transA = ( char * )"T"; char *transB = ( char * )"N";
 		int m = Columns; int n = bm.Columns; int k = kh - kl;//
 		int lda = Rows; int ldb = bm.Rows; int ldc = om.Rows;//
-		double alpha = 1.0; double beta = 0.0;
+		Real alpha = 1.0; Real beta = 0.0;
 
-		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( double * )&MyArray[( kl-RowStart )], &lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-				 &ldb, &beta, &om.MyArray[( ColumnStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
+		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( Real* )&MyArray[( kl-RowStart )], &lda, ( Real* )&bm.MyArray[kl - bm.RowStart],
+				 &ldb, &beta, (Real*) &om.MyArray[( ColumnStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
 	}else{
 		const unsigned int columnLength = ColumnStart + Columns;
 		const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -344,10 +344,10 @@ namespace ProtoMol
 		char *transA = ( char * )"T"; char *transB = ( char * )"N";
 		int m = Columns; int n = bm.Columns; int k = kh - kl;
 		int lda = Rows; int ldb = bm.Rows; int ldc = om.Rows;
-		double alpha = 1.0; double beta = 0.0;
+		Real alpha = 1.0; Real beta = 0.0;
 
-		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( double * )&MyArray[( kl-RowStart )], &lda, ( double * )&bm.MyArray[kl - bm.RowStart],
-				 &ldb, &beta, &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
+		Lapack::dgemm( transA, transB, &m, &n, &k, &alpha, ( Real* )&MyArray[( kl-RowStart )], &lda, ( Real* )&bm.MyArray[kl - bm.RowStart],
+				 &ldb, &beta, (Real*) &om.MyArray[( RowStart - om.RowStart ) + ( bm.ColumnStart - om.ColumnStart ) * om.Rows], &ldc );
 	}else{
 		const unsigned int columnLength = ColumnStart + Columns;
 		const unsigned int otherColumnLength = bm.ColumnStart + bm.Columns;
@@ -402,7 +402,7 @@ namespace ProtoMol
   // Operators~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // Double Index access
-  double & BlockMatrix::operator()(const unsigned int rowIndex,
+  Real & BlockMatrix::operator()(const unsigned int rowIndex,
                                    const unsigned int colIndex )
   {
     if ( rowIndex < RowStart || rowIndex > RowStart + Rows || colIndex < ColumnStart || colIndex > ColumnStart + Columns ) {
@@ -413,7 +413,7 @@ namespace ProtoMol
   }
 
   // Index access
-  double & BlockMatrix::operator[](const unsigned int index )
+  Real & BlockMatrix::operator[](const unsigned int index )
   {
     if ( index > arraySize ) {
       Report::report << Report::error << "[BlockMatrix::operator[]] Index out of range." << Report::endr;

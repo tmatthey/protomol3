@@ -24,7 +24,7 @@ namespace ProtoMol
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public:
       unsigned int RowStart, Rows, ColumnStart, Columns;
-      vector<double> MyArray;
+      vector<Real> MyArray;
       unsigned int arraySize;
 
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,10 +50,10 @@ namespace ProtoMol
       void blockMove( const unsigned int newRowStart, const unsigned int newColumnStart );
 
       // Double Index access
-      double &operator()( const unsigned int rowIndex, const unsigned int colIndex );
+      Real &operator()( const unsigned int rowIndex, const unsigned int colIndex );
 
       // Index access
-      double &operator[]( const unsigned int index );
+      Real &operator[]( const unsigned int index );
 
       // Equals
       BlockMatrix &operator=( const BlockMatrix &bm );
@@ -73,9 +73,9 @@ namespace ProtoMol
       // Multiply 'this' with 'bm', put result in 'om'
       void product( const BlockMatrix &bm, BlockMatrix &om ) const;
 
-      // Multiply 'this' with 'bm', put result in double array 'om': TEST A, B, C
+      // Multiply 'this' with 'bm', put result in Real array 'om': TEST A, B, C
       void productToArray( const BlockMatrix &bm,
-                           double *om_MyArray, unsigned int om_RowStart, unsigned int om_ColumnStart,
+                           Real *om_MyArray, unsigned int om_RowStart, unsigned int om_ColumnStart,
                            unsigned int om_Rows, unsigned int om_Columns ) const;
 
       // Multiply 'this' with 'bm', sum result in 'om'
@@ -91,7 +91,7 @@ namespace ProtoMol
       const BlockMatrix subMatrix( const unsigned int atRow, const unsigned int atColumn, const unsigned int getRows, const unsigned int getColumns ) const;
 
       // Pointer to data
-      double * arrayPointer();
+      Real * arrayPointer();
 
   };
 

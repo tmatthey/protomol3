@@ -3,7 +3,7 @@
 #define EIGENVECTORINFO_H
 
 #include <vector>
-
+#include <protomol/type/Real.h>
 namespace ProtoMol {
 	/**
 	 * Container holding coordinates/Vector3D and names
@@ -31,13 +31,13 @@ namespace ProtoMol {
 		unsigned int myEigenvectorLength;
 		unsigned int myNumEigenvectors;
 		unsigned int myNumUsedEigenvectors;
-		double myMaxEigenvalue;
-		double *myEigenvectors;
+		Real myMaxEigenvalue;
+		Real *myEigenvectors;
 
 		//Current and original max subspace eigenvalue,
 		//for adaptive timestep
-		double myOrigCEigval, myNewCEigval;
-		double myOrigTimestep;
+		Real myOrigCEigval, myNewCEigval;
+		Real myOrigTimestep;
 
 		//re-diagonalization flag
 		bool reDiagonalize;
@@ -50,10 +50,10 @@ namespace ProtoMol {
 		float *mySingleEigs;
 		bool myEigVecChanged;
 
-		double myMinimumLimit;
+		Real myMinimumLimit;
 
 		//Analytic integrator
-		std::vector< double > myEigenvalues;
+		std::vector< Real > myEigenvalues;
 		int currentMode;
 	};
 }

@@ -23,7 +23,7 @@
 \*******************************************************************/
 #include <protomol/type/String.h>
 #include <protomol/base/Exception.h>
-
+#include <protomol/type/Real.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -55,7 +55,7 @@ String::String(const unsigned long x) {
   *this = buf;
 }
 
-String::String(const double x) {
+String::String(const Real x) {
   char buf[16];
   sprintf(buf, "%f", x);
   *this = buf;

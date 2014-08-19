@@ -25,7 +25,7 @@
 #define STRING_H
 
 #include <string>
-
+#include <protomol/type/Real.h>
 namespace ProtoMol {
 
   /**
@@ -84,7 +84,7 @@ namespace ProtoMol {
      * 
      * @param x The double to convert.
      */
-    String(const double x);
+    String(const Real x);
 
     static unsigned char parseUByte(const std::string s);
     static char parseByte(const std::string s);
