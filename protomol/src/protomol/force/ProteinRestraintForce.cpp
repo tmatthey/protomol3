@@ -17,7 +17,7 @@ unsigned int ProteinRestraintForce::getParameterSize() {
 
 void ProteinRestraintForce::getParameters(vector<Parameter> &parameters) const {
   parameters.push_back(
-                       Parameter("-tetherconstant",Value(sphereK, ConstraintValueType::NoConstraints()),3.0, Text("Tether constant parameter")));
+                       Parameter("-tetherconstant",Value(sphereK, ConstraintValueType::NoConstraints()),(Real) 3.0, Text("Tether constant parameter")));
   parameters.push_back(
 		       Parameter("-atom", Value(myAtom, ConstraintValueType::Positive()), 1, Text("Atom to restrain")));
 }

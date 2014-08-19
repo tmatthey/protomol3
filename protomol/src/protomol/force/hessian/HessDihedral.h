@@ -49,23 +49,23 @@ namespace ProtoMol {
     bool rotateAndCalcPhi(const Vector3D &a1, const Vector3D &a2, 
                             const Vector3D &a3, const Vector3D &a4,
                             Real &x21, Real &x43, Real &y43, Real &z21, Real &z43, Real &r23, 
-                            double *aRot, Real &g);
+                            Real *aRot, Real &g);
 
-    void outputHessian(const double fact1, const double fact2, 
+    void outputHessian(const Real fact1, const Real fact2, 
                        const Real x21, const Real x43, const Real y43, const Real z21, const Real z43, const Real r23, 
-                       const double *aRot);
+                       const Real *aRot);
 
     //Use aRot to rotate the vector back into real space
-    double *rotateV3D(const double *aRot, double *mf);
+    Real *rotateV3D(const Real *aRot, Real *mf);
 
     //Calculates determinate of 3x3 matrix
-    double det(const double* a);
+    Real det(const Real* a);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Friends of class HessDihedral
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public:
-    double hessD[144];  //storage for 4x4 hessian matrices in 3D
+    Real hessD[144];  //storage for 4x4 hessian matrices in 3D
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // private data members

@@ -27,7 +27,7 @@ TimeForce::TimeForce(Force *actualForce) {
 
 TimeForce::~TimeForce() {
   if (myActualForce != NULL) delete myActualForce;
-  double totalTime = myTimer.getTime().getRealTime();
+  Real totalTime = myTimer.getTime().getRealTime();
   for (int i = myTimeList.size() - 1; i > 0; i--)
     myTimeList[i] = myTimeList[i] - myTimeList[i - 1];
 
@@ -40,12 +40,12 @@ TimeForce::~TimeForce() {
              string(""))
          << " : " << totalTime << "[s] process time";
   if (myTimeList.size() > 1) {
-    double stddev = 0;
-    double average = totalTime / ((double)myTimeList.size());
+    Real stddev = 0;
+    Real average = totalTime / ((Real)myTimeList.size());
     for (unsigned int i = 0; i < myTimeList.size(); i++)
       stddev += power<2>(myTimeList[i].getRealTime() - average);
 
-    stddev = sqrt(stddev / ((double)myTimeList.size() - 1.0));
+    stddev = sqrt(stddev / ((Real)myTimeList.size() - 1.0));
     report << ", " << average << "[s] average, "
            << "standard deviation " << stddev
            << ", n=" << myTimeList.size();

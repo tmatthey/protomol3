@@ -1,7 +1,7 @@
 /* -*- c++ -*- */
 #ifndef ONEATOMPAIRTWO_H
 #define ONEATOMPAIRTWO_H
-
+#include <fstream>
 #include <protomol/topology/Topology.h>
 #include <protomol/config/Parameter.h>
 #include <protomol/force/OneAtomPair.h>
@@ -37,12 +37,12 @@ namespace ProtoMol {
       Vector3D diff(Base::realTopo->boundaryConditions.
                     minimalDifference((*Base::positions)[i], (*Base::positions)[j],
                                       distSquared));
+
       // Do switching function rough test, if necessary.
       if ((SwitchA::USE || SwitchB::USE ||
            ForceA::CUTOFF ||
            ForceB::CUTOFF) && distSquared > Base::mySquaredCutoff)
         return;
-
       // Check for an exclusion.
       int mi = Base::realTopo->atoms[i].molecule;
       int mj = Base::realTopo->atoms[j].molecule;
@@ -51,7 +51,6 @@ namespace ProtoMol {
         (same ? Base::realTopo->exclusions.check(i, j) : EXCLUSION_NONE);
       if (excl == EXCLUSION_FULL)
         return;
-
       // Calculate the force and energy.
       Real rDistSquared =
         ((ForceA::DIST_R2 ||
@@ -61,7 +60,6 @@ namespace ProtoMol {
                                   diff, Base::realTopo, i, j, excl);
       ForceFunctionB(energy2, force2, distSquared, rDistSquared,
                                    diff, Base::realTopo, i, j, excl);
-      
       // Calculate the switched force and energy.
       if (SwitchA::MODIFY || SwitchB::MODIFY) {
         Real switchingValue, switchingDeriv;
@@ -69,12 +67,10 @@ namespace ProtoMol {
         Base::SwitchFunction(switchingValue, switchingDeriv, distSquared);
         force1 = force1 * switchingValue - energy1 * switchingDeriv;
         energy1 = energy1 * switchingValue;
-
         SwitchFunctionB(switchingValue, switchingDeriv, distSquared);
         force2 = force2 * switchingValue - energy2 * switchingDeriv;
         energy2 = energy2 * switchingValue;
       }
-
       // Add this energy into the total system energy.
       Base::ForceFunction.accumulateEnergy(Base::energies, energy1);
       ForceFunctionB.accumulateEnergy(Base::energies, energy2);

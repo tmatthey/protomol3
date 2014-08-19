@@ -24,7 +24,7 @@ const {
                78, Text("DiElect Dval")));
   parameters.push_back
     (Parameter("-S", Value(S, ConstraintValueType::NotNegative()),
-               0.3, Text("DiElect Sval")));
+               (Real) 0.3, Text("DiElect Sval")));
 }
 
 CoulombForceDiElec CoulombForceDiElec::make(const vector<Value> &values) {

@@ -137,11 +137,11 @@ namespace ProtoMol {
       parameters.push_back
       (Parameter("-onvdwratio",
                  Value(onvdwratio, ConstraintValueType::Positive()),
-                 0.8));
+                 (Real) 0.8));
       parameters.push_back
       (Parameter("-offvdwratio",
                  Value(offvdwratio, ConstraintValueType::Positive()),
-                 1.0));
+                 (Real) 1.0));
     }
 
     static LennardJonesVDWForce make(const std::vector<Value> &values) {

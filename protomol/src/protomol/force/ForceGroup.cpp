@@ -55,25 +55,22 @@ void ForceGroup::evaluateSystemForces(ProtoMolApp *app,
                                       Vector3DBlock *forces) const {
 	if (mySystemForcesList.empty()) return;
 	app->topology->uncacheCellList();
-
   //not parallel forces?~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if( !Parallel::isParallel() ){
-    
 		TimerStatistic::timer[TimerStatistic::FORCES].start();
 		list<SystemForce *>::const_iterator currentForce;
     
     //calculate forces and post process if required
+	int i = 0;
 		for (currentForce = mySystemForcesList.begin(); currentForce != mySystemForcesList.end(); ++currentForce){
       (*currentForce)->preProcess(app->topology, &app->positions);
-      (*currentForce)->evaluate(app->topology, &app->positions, forces, &app->energies);
+      (*currentForce)->evaluate(app->topology, &(app->positions), forces, &app->energies);
       (*currentForce)->postProcess(app->topology, &app->energies, forces);
     }
-
     TimerStatistic::timer[TimerStatistic::FORCES].stop();
 
   }else{
     //parallel code here~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
     Parallel::distribute(&app->energies, forces);
     
     //find forces that require post-parallel processing

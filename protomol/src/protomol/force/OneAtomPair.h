@@ -55,7 +55,6 @@ namespace ProtoMol {
         Vector3D diff = realTopo->
           boundaryConditions.minimalDifference((*positions)[i], (*positions)[j],
                                                distSquared);
-        //      cout << "DIFF: " << diff << endl;
         // Do switching function rough test, if necessary.
         if (Switch::USE || Force::CUTOFF)
           if (distSquared > mySquaredCutoff)

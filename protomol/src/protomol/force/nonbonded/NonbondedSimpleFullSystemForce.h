@@ -127,9 +127,7 @@ namespace ProtoMol {
                     int i1, int j0, int j1) {
       const RealTopologyType *realTopo =
         (const RealTopologyType *)(topo);
-      
       myOneAtomPair.initialize(realTopo, positions, forces, energies);
-      
       for (int blocki = i0; blocki < i1; blocki += myBlockSize) {
         int blocki_max = blocki;
         if (blocki_max < j0) blocki_max = j0;

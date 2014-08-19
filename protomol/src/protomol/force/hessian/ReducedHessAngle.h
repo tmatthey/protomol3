@@ -27,8 +27,8 @@ namespace ProtoMol {
     ReducedHessAngle(const Vector3D &atom_i, ///< position of atom i
                      const Vector3D &atom_j, ///< position of atom j
                      const Vector3D &atom_k, ///< position of atom k
-                     const double k_t, ///< angluar spring constant
-                     const double theta0, ///< rest angle
+                     const Real k_t, ///< angluar spring constant
+                     const Real theta0, ///< rest angle
                      bool computeReduced = false);
     // spring constants, and rest length, rest angle: from Topology
     //ReducedHessAngle(const ReducedHessAngle &H);
@@ -41,8 +41,8 @@ namespace ProtoMol {
     void evaluate(const Vector3D &P1,
                   const Vector3D &P2,
                   const Vector3D &P3,
-                  const double kt,
-                  const double t0,
+                  const Real kt,
+                  const Real t0,
                   bool computeReduced = 0);
 
   public:

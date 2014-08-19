@@ -297,9 +297,9 @@ unsigned int GBForce::getParameterSize() {
 
 void GBForce::getParameters(vector<Parameter> &parameters) const {
    parameters.push_back
-     (Parameter("-soluteDielec", Value(soluteDielec, ConstraintValueType::NoConstraints()), 1.0, Text("Solute Dielectric")));
+     (Parameter("-soluteDielec", Value(soluteDielec, ConstraintValueType::NoConstraints()), (Real) 1.0, Text("Solute Dielectric")));
    parameters.push_back
-     (Parameter("-solventDielec", Value(solventDielec, ConstraintValueType::NoConstraints()), 80.0, Text("Solvent Dielectric")));
+     (Parameter("-solventDielec", Value(solventDielec, ConstraintValueType::NoConstraints()), (Real) 80.0, Text("Solvent Dielectric")));
 }
 
 GBForce GBForce::make(const vector<Value> &values) {
