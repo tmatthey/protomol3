@@ -64,7 +64,7 @@ try:
         f.write('"' + tag[1] + '"\n')
 
     f.write('\n#endif // PROTOMOL_PACKAGE_H\n')
-    env.Append(CPPDEFINES = ['HAVE_PACKAGE_H'])
+    #env.Append(CPPDEFINES = ['HAVE_PACKAGE_H'])
 
 finally:
     f.close()
