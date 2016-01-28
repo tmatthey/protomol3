@@ -1,3 +1,5 @@
+![protomol.gif](./img/2186237608-protomol.gif)
+
 # ProtoMol 3.0 #
 
 ProtoMol is an object-oriented, component based, framework for molecular dynamics (MD) simulations. The framework supports the CHARMM 19 and 28a2 force fields and is able to process PDB, PSF, XYZ and DCD trajectory files. It is designed for high flexibility, easy extendibility and maintenance, and high performance demands, including parallelization. The technique of multiple time-stepping is used to improve long-term efficiency. The use of fast electrostatic force evaluation algorithms like Ewald, particle Mesh Ewald (PME), and Multigrid (MG) summation further enhances performance. Longer time steps are possible using MOLLY, Langevin Molly and Hybrid Monte Carlo, Nose-Hoover, and Langevin integrators.
